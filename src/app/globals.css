@@ -1,26 +1,176 @@
 @import "tailwindcss";
 
+/* DMTC logo language — orange primary, blue accent */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --brand-primary: #f37021;
+  --brand-primary-deep: #1a1210;
+  --brand-primary-soft: #f9a066;
+  --brand-on-primary: #ffffff;
+  --brand-gold: #f37021;
+  --brand-gold-soft: #f9a066;
+  --brand-gold-deep: #c45a12;
+  --brand-secondary: #c45a12;
+  --brand-secondary-container: #ffe3d0;
+  --brand-blue: #00aeef;
+  --brand-blue-soft: #7dd3f5;
+  --brand-wordmark: #662d91;
+  --brand-wordmark-deep: #4a1f6b;
+  --brand-orange: #f37021;
+  --brand-orange-soft: #f9a066;
+  --brand-ink: #1a1520;
+  --brand-ink-muted: #5c5666;
+  --brand-silver: #8a8494;
+  --brand-surface: #faf7f4;
+  --brand-surface-mint: #fff4ec;
+  --brand-surface-muted: #f3ebe4;
+  --brand-surface-container: #ffe8d8;
+  --brand-surface-elevated: #ffffff;
+  --brand-border: #eadfd5;
+  --brand-black: #1a1210;
+  --brand-white: #ffffff;
+  --brand-whatsapp: #25d366;
+  --brand-radius-sm: 0.5rem;
+  --brand-radius-md: 0.75rem;
+  --brand-radius-lg: 1rem;
+  --brand-radius-xl: 1.5rem;
+  --brand-shadow-sm: 0 2px 12px -2px rgb(243 112 33 / 0.08),
+    0 1px 3px rgb(26 18 16 / 0.04);
+  --brand-shadow-md: 0 12px 32px -8px rgb(243 112 33 / 0.16),
+    0 4px 12px -4px rgb(26 18 16 / 0.08);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-primary: var(--brand-primary);
+  --color-primary-deep: var(--brand-primary-deep);
+  --color-primary-soft: var(--brand-primary-soft);
+  --color-on-primary: var(--brand-on-primary);
+  --color-gold: var(--brand-gold);
+  --color-gold-soft: var(--brand-gold-soft);
+  --color-gold-deep: var(--brand-gold-deep);
+  --color-secondary: var(--brand-secondary);
+  --color-secondary-container: var(--brand-secondary-container);
+  --color-orange: var(--brand-orange);
+  --color-orange-soft: var(--brand-orange-soft);
+  --color-blue: var(--brand-blue);
+  --color-blue-soft: var(--brand-blue-soft);
+  --color-wordmark: var(--brand-wordmark);
+  --color-wordmark-deep: var(--brand-wordmark-deep);
+  --color-ink: var(--brand-ink);
+  --color-ink-muted: var(--brand-ink-muted);
+  --color-silver: var(--brand-silver);
+  --color-surface: var(--brand-surface);
+  --color-surface-mint: var(--brand-surface-mint);
+  --color-surface-muted: var(--brand-surface-muted);
+  --color-surface-container: var(--brand-surface-container);
+  --color-surface-elevated: var(--brand-surface-elevated);
+  --color-border: var(--brand-border);
+  --color-black: var(--brand-black);
+  --color-white: var(--brand-white);
+  --color-whatsapp: var(--brand-whatsapp);
+  --font-sans: var(--font-latin);
+  --font-arabic: var(--font-arabic);
+  --font-display: var(--font-display);
+  --font-label: var(--font-label);
+  --radius-sm: var(--brand-radius-sm);
+  --radius-md: var(--brand-radius-md);
+  --radius-lg: var(--brand-radius-lg);
+  --radius-xl: var(--brand-radius-xl);
+  --shadow-sm: var(--brand-shadow-sm);
+  --shadow-md: var(--brand-shadow-md);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* Native CSS smooth scroll fights Lenis; Lenis owns wheel inertia.
+   Keep auto for reduced-motion / anchor fallbacks. */
+html {
+  scroll-behavior: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
   }
 }
 
+html[lang="ar"] body {
+  font-family: var(--font-arabic), var(--font-latin), system-ui, sans-serif;
+}
+
+html[lang="en"] body {
+  font-family: var(--font-latin), system-ui, sans-serif;
+}
+
+.font-display {
+  font-family: var(--font-display), var(--font-arabic), var(--font-latin), serif;
+}
+
+.font-label {
+  font-family: var(--font-label-ar), var(--font-label), var(--font-arabic),
+    var(--font-latin), sans-serif;
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: #ffffff;
+  color: var(--brand-ink);
+  min-height: 100dvh;
+  letter-spacing: -0.01em;
+  line-height: 1.6;
+  overflow-x: clip;
+}
+
+::selection {
+  background: var(--brand-orange);
+  color: var(--brand-white);
+}
+
+@keyframes ken-burns {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.08);
+  }
+}
+
+@keyframes haze-drift {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(4%, -6%, 0);
+  }
+}
+
+.animate-ken-burns {
+  animation: ken-burns 28s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+.animate-haze {
+  animation: haze-drift 18s ease-in-out infinite alternate;
+}
+
+.animate-haze-slow {
+  animation: haze-drift 26s ease-in-out infinite alternate-reverse;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-ken-burns,
+  .animate-haze,
+  .animate-haze-slow {
+    animation: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
