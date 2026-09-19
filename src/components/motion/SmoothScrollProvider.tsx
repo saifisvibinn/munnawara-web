@@ -28,6 +28,9 @@ export const SmoothScrollProvider = ({
       autoRaf: false,
     })
 
+    // Expose for Playwright / debug scroll control
+    ;(window as Window & { __lenis?: Lenis }).__lenis = lenis
+
     lenis.on("scroll", ScrollTrigger.update)
 
     const handleTick = (time: number) => {
@@ -39,6 +42,8 @@ export const SmoothScrollProvider = ({
 
     return () => {
       gsap.ticker.remove(handleTick)
+      const w = window as Window & { __lenis?: Lenis }
+      if (w.__lenis === lenis) delete w.__lenis
       lenis.destroy()
     }
   }, [reduced])

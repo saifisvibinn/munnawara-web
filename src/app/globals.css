@@ -70,6 +70,7 @@
   --font-sans: var(--font-latin);
   --font-arabic: var(--font-arabic);
   --font-display: var(--font-display);
+  --font-display-ar: var(--font-display-ar);
   --font-label: var(--font-label);
   --radius-sm: var(--brand-radius-sm);
   --radius-md: var(--brand-radius-md);
@@ -100,7 +101,13 @@ html[lang="en"] body {
 }
 
 .font-display {
-  font-family: var(--font-display), var(--font-arabic), var(--font-latin), serif;
+  font-family: var(--font-display-ar), var(--font-display), var(--font-arabic),
+    var(--font-latin), serif;
+}
+
+html[lang="en"] .font-display {
+  font-family: var(--font-display), var(--font-display-ar), var(--font-latin),
+    serif;
 }
 
 .font-label {
@@ -173,4 +180,54 @@ body {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* Cinematic intro: hide site until React intro is ready (boot script sets data-intro-active before paint) */
+html[data-intro-active] {
+  background: #f5aa64;
+}
+
+html[data-intro-active] body {
+  overflow: hidden;
+}
+
+html[data-intro-active]:not([data-intro-ready]) header,
+html[data-intro-active]:not([data-intro-ready]) #main,
+html[data-intro-active]:not([data-intro-ready]) footer,
+html[data-intro-active]:not([data-intro-ready]) [data-whatsapp-fab] {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* Homepage: match sky plate so Lenis scroll gaps never flash body white/black */
+html:has([data-brand-section]) {
+  background: #f5aa64;
+}
+
+html:has([data-brand-section]) body {
+  background: #f5aa64;
+}
+
+/* Homepage: header is fixed (out of flow) so hiding it never leaves a white gap */
+html:has([data-brand-section]) header[data-site-header] {
+  position: fixed;
+  inset-inline: 0;
+  top: 0;
+  width: 100%;
+}
+
+/* Homepage: hide header until scroll morph — unlocked when data-logo-in-header is set */
+html:has([data-brand-section]):not([data-logo-in-header]) header[data-site-header] {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+html:has([data-brand-section]):not([data-logo-in-header]) [data-site-logo] {
+  opacity: 0;
+  pointer-events: none;
+}
+
+html[data-intro-active] [data-site-logo] {
+  opacity: 0;
 }

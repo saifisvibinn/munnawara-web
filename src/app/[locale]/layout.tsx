@@ -6,12 +6,14 @@ import { routing } from "@/i18n/routing"
 import { NextIntlClientProvider, hasLocale } from "next-intl"
 import { getMessages, setRequestLocale } from "next-intl/server"
 import {
+  Amiri,
   IBM_Plex_Sans,
   IBM_Plex_Sans_Arabic,
   Noto_Sans,
   Noto_Sans_Arabic,
   Noto_Serif,
 } from "next/font/google"
+import { INTRO_BOOT_SCRIPT } from "@/components/intro/introConfig"
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import type { ReactNode } from "react"
@@ -42,6 +44,13 @@ const fontDisplay = Noto_Serif({
   subsets: ["latin"],
   weight: ["500", "600", "700"],
   variable: "--font-display",
+  display: "swap",
+})
+
+const fontDisplayAr = Amiri({
+  subsets: ["arabic", "latin"],
+  weight: ["400", "700"],
+  variable: "--font-display-ar",
   display: "swap",
 })
 
@@ -81,8 +90,12 @@ const LocaleLayout = async ({ children, params }: LocaleLayoutProps) => {
     <html
       lang={locale}
       dir={dir}
-      className={`${fontArabic.variable} ${fontLatin.variable} ${fontDisplay.variable} ${fontLabel.variable} ${fontLabelAr.variable}`}
+      suppressHydrationWarning
+      className={`${fontArabic.variable} ${fontLatin.variable} ${fontDisplay.variable} ${fontDisplayAr.variable} ${fontLabel.variable} ${fontLabelAr.variable}`}
     >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: INTRO_BOOT_SCRIPT }} />
+      </head>
       <body className="antialiased">
         <NextIntlClientProvider messages={messages}>
           <SmoothScrollProvider>

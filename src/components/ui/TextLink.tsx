@@ -20,7 +20,7 @@ export const TextLink = ({
       href={href}
       className={cn(
         "font-label inline-flex items-center gap-1 text-[15px] font-semibold transition hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange",
-        tone === "dark" ? "text-blue" : "text-blue-soft",
+        tone === "dark" ? "text-blue" : "text-white/85 hover:text-white",
         className,
       )}
     >
