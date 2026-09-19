@@ -29,11 +29,24 @@ export const Header = () => {
   const tMeta = useTranslations("meta")
   const pathname = usePathname()
   const [open, setOpen] = useState(false)
+  const [logoInHeader, setLogoInHeader] = useState(false)
   const menuId = useId()
 
   useEffect(() => {
     setOpen(false)
   }, [pathname])
+
+  useEffect(() => {
+    const sync = () =>
+      setLogoInHeader(document.documentElement.hasAttribute("data-logo-in-header"))
+    sync()
+    const observer = new MutationObserver(sync)
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-logo-in-header"],
+    })
+    return () => observer.disconnect()
+  }, [])
 
   useEffect(() => {
     if (!open) return
@@ -46,14 +59,14 @@ export const Header = () => {
 
   const handleToggle = () => setOpen((value) => !value)
   const isHome = pathname === "/"
+  const hideChrome = isHome && !logoInHeader
 
   return (
     <header
+      data-site-header
       className={cn(
-        "sticky top-0 z-30 transition",
-        isHome
-          ? "border-b border-transparent bg-white/70 backdrop-blur-xl"
-          : "border-b border-ink/6 bg-white/95 backdrop-blur-xl",
+        "sticky top-0 z-40 border-b border-ink/6 bg-white/95 text-ink backdrop-blur-xl",
+        hideChrome && "pointer-events-none",
       )}
     >
       <div className="mx-auto flex h-16 max-w-[80rem] items-center justify-between gap-4 px-4 md:h-[4.5rem] md:px-10">
@@ -62,14 +75,16 @@ export const Header = () => {
           className="flex items-center gap-2.5 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange focus-visible:ring-offset-2"
           aria-label={tMeta("siteName")}
         >
-          <Image
-            src="/logo.png"
-            alt=""
-            width={605}
-            height={491}
-            className="h-10 w-auto object-contain md:h-11"
-            priority
-          />
+          <span data-site-logo className="inline-flex items-center">
+            <Image
+              src="/logo.png"
+              alt=""
+              width={605}
+              height={491}
+              className="h-10 w-auto object-contain md:h-11"
+              priority
+            />
+          </span>
         </Link>
 
         <nav className="hidden items-center gap-7 xl:flex" aria-label="Primary">
@@ -81,7 +96,9 @@ export const Header = () => {
                 href={item.href}
                 className={cn(
                   "font-label text-[13px] font-medium tracking-wide transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange",
-                  active ? "text-orange" : "text-ink/65 hover:text-ink",
+                  active
+                    ? "text-orange"
+                    : "text-ink/65 hover:text-ink",
                 )}
               >
                 {t(item.key)}

@@ -1,6 +1,5 @@
 "use client"
 
-import { QuoteRequestForm } from "@/components/forms/QuoteRequestForm"
 import { HeroLoopVideo } from "@/components/sections/HeroLoopVideo"
 import { useReducedMotion } from "@/hooks/useReducedMotion"
 import { motion } from "motion/react"
@@ -11,17 +10,9 @@ type HeroClientProps = {
   siteName: string
   headline: string
   subhead: string
-  whatsappNumber: string
-  whatsappPrefill: string
 }
 
-export const HeroClient = ({
-  siteName,
-  headline,
-  subhead,
-  whatsappNumber,
-  whatsappPrefill,
-}: HeroClientProps) => {
+export const HeroClient = ({ siteName, headline, subhead }: HeroClientProps) => {
   const reduced = useReducedMotion()
   const [allowMotionMedia, setAllowMotionMedia] = useState(false)
   const poster = "/hero/cover.png"
@@ -31,64 +22,59 @@ export const HeroClient = ({
   }, [reduced])
 
   return (
-    <section id="hero" className="relative isolate overflow-x-clip bg-white">
+    <section id="hero" className="relative isolate -mt-8 overflow-x-clip sm:-mt-10 md:-mt-12">
       <div className="relative min-h-[70dvh] sm:min-h-[75dvh] md:min-h-[85dvh]">
         <div className="absolute inset-0 overflow-hidden" aria-hidden>
           <Image
             src={poster}
             alt=""
             fill
-            priority
             className="object-cover object-[center_40%] md:object-[center_35%]"
             sizes="100vw"
           />
           <HeroLoopVideo enabled={allowMotionMedia} />
-          {/* Soft wash so copy stays readable while the loop stays visible */}
-          <div className="absolute inset-0 bg-gradient-to-b from-white/45 via-white/18 to-white" />
-          <div className="absolute inset-0 bg-gradient-to-r from-white/72 via-white/28 to-white/10 rtl:bg-gradient-to-l md:from-white/58 md:via-white/22 md:to-transparent" />
+          <div
+            className="pointer-events-none absolute inset-x-0 top-0 h-28 sm:h-32 md:h-36"
+            style={{
+              background:
+                "linear-gradient(to bottom, rgb(245 170 100 / 0.4) 0%, rgb(245 170 100 / 0.12) 50%, transparent 100%)",
+            }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/8 to-white" />
+          <div className="absolute inset-0 bg-gradient-to-r from-white/40 via-white/12 to-transparent rtl:bg-gradient-to-l md:from-white/30 md:via-white/8" />
         </div>
 
-        <div className="relative z-10 mx-auto flex min-h-[68dvh] max-w-[80rem] flex-col justify-end px-4 pb-36 pt-20 sm:min-h-[75dvh] sm:pb-40 sm:pt-24 md:min-h-[85dvh] md:px-10 md:pb-44 md:pt-32">
+        <div className="relative z-10 mx-auto flex min-h-[68dvh] max-w-[80rem] flex-col justify-end px-4 pb-16 pt-20 sm:min-h-[75dvh] sm:pb-20 sm:pt-24 md:min-h-[85dvh] md:px-10 md:pb-24 md:pt-32">
           <div className="max-w-2xl">
             <motion.h1
               className="text-[2rem] leading-[1.1] font-semibold tracking-tight text-ink break-words sm:text-5xl md:text-7xl lg:text-[5.25rem]"
               initial={reduced ? false : { opacity: 0, y: 22 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.75, delay: 0.08, ease: [0.16, 1, 0.3, 1] }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.4 }}
+              transition={{ duration: 0.75, ease: [0.16, 1, 0.3, 1] }}
             >
               {headline}
             </motion.h1>
             <motion.p
               className="mt-4 max-w-lg text-[15px] leading-relaxed text-ink/70 sm:mt-5 sm:text-base md:text-xl"
               initial={reduced ? false : { opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.16, ease: [0.16, 1, 0.3, 1] }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.4 }}
+              transition={{ duration: 0.7, delay: 0.08, ease: [0.16, 1, 0.3, 1] }}
             >
               {subhead}
             </motion.p>
             <motion.p
               className="mt-2 text-sm text-ink/45 sm:mt-3"
               initial={reduced ? false : { opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.6, delay: 0.24 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.14 }}
             >
               {siteName}
             </motion.p>
           </div>
         </div>
-      </div>
-
-      <div className="relative z-20 mx-auto -mt-20 max-w-[80rem] px-4 sm:-mt-28 md:-mt-32 md:px-10">
-        <motion.div
-          initial={reduced ? false : { opacity: 0, y: 28 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.75, delay: 0.22, ease: [0.16, 1, 0.3, 1] }}
-        >
-          <QuoteRequestForm
-            whatsappNumber={whatsappNumber}
-            whatsappPrefill={whatsappPrefill}
-          />
-        </motion.div>
       </div>
     </section>
   )
