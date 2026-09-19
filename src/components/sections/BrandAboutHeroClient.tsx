@@ -4,8 +4,10 @@ import { INTRO_STORAGE_KEY } from "@/components/intro/introConfig"
 import { HeroLoopVideo } from "@/components/sections/HeroLoopVideo"
 import { TextLink } from "@/components/ui/TextLink"
 import { useReducedMotion } from "@/hooks/useReducedMotion"
+import { cn } from "@/lib/cn"
 import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
+import { useLocale } from "next-intl"
 import Image from "next/image"
 import { useLayoutEffect, useRef } from "react"
 
@@ -37,7 +39,6 @@ const resolveHeaderSlot = (siteLogo: HTMLElement) => {
     }
   }
 
-  // Fallback if layout hasn't resolved yet (centered max-w shell + side padding)
   const md = window.matchMedia("(min-width: 768px)").matches
   const headerH = md ? 72 : 64
   const logoH = md ? 44 : 40
@@ -69,6 +70,8 @@ export const BrandAboutHeroClient = ({
   const seatRef = useRef<HTMLDivElement>(null)
   const logoRef = useRef<HTMLImageElement>(null)
   const reduced = useReducedMotion()
+  const locale = useLocale()
+  const isRtl = locale === "ar"
 
   useLayoutEffect(() => {
     const section = sectionRef.current
@@ -448,11 +451,14 @@ export const BrandAboutHeroClient = ({
       ref={sectionRef}
       id="brand"
       data-brand-section
-      className="relative overflow-x-clip bg-surface text-ink"
+      className="relative isolate overflow-x-clip bg-ink text-white"
     >
-      {/* Full-bleed landing media */}
+      {/* Full-bleed landing media — mirrored in Arabic so the coach clears the copy side */}
       <div
-        className="pointer-events-none absolute inset-x-0 top-0 h-[100dvh] overflow-hidden"
+        className={cn(
+          "pointer-events-none absolute inset-0 overflow-hidden",
+          isRtl && "-scale-x-100",
+        )}
         aria-hidden
       >
         <Image
@@ -464,83 +470,94 @@ export const BrandAboutHeroClient = ({
           sizes="100vw"
         />
         <HeroLoopVideo enabled={!reduced} framing="wide" />
-        {/* Soft bottom melt into the page */}
-        <div
-          className="absolute inset-x-0 bottom-0 h-[52%]"
-          style={{
-            background:
-              "linear-gradient(to bottom, transparent 0%, rgb(255 255 255 / 0.2) 28%, rgb(255 255 255 / 0.55) 50%, rgb(250 247 244 / 0.92) 75%, var(--brand-surface) 100%)",
-          }}
-        />
       </div>
 
-      {/* Landing screen: logo + about copy in one viewport */}
-      <div className="relative z-10 flex min-h-[100dvh] flex-col items-center justify-center px-4 pt-14 pb-24 sm:pt-16 sm:pb-28 md:px-10">
-        <div
-          ref={seatRef}
-          data-brand-logo
-          className="relative w-[min(56vw,14.5rem)] sm:w-[min(40vw,16rem)] md:w-[min(26vw,17rem)]"
-        >
-          {/* Subtle fog behind the lockup for contrast on the dark coach */}
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-[-18%] z-0 rounded-full"
-            style={{
-              background:
-                "radial-gradient(ellipse 55% 58% at 50% 46%, rgb(255 255 255 / 0.78) 0%, rgb(255 252 248 / 0.42) 45%, transparent 72%)",
-              filter: "blur(10px)",
-            }}
-          />
-          <img
-            ref={logoRef}
-            data-brand-lockup
-            src="/logo-full.png"
-            alt="DMTC — Durrah Al-Munawwara"
-            width={800}
-            height={1000}
-            className="relative z-10 h-auto w-full object-contain opacity-0 drop-shadow-[0_0_16px_rgb(255_255_255_/_0.85)]"
-            draggable={false}
-          />
-        </div>
+      {/* Readability scrim from the copy edge */}
+      <div
+        aria-hidden
+        className={cn(
+          "pointer-events-none absolute inset-0",
+          isRtl
+            ? "bg-gradient-to-l from-black/75 via-black/40 to-transparent"
+            : "bg-gradient-to-r from-black/75 via-black/40 to-transparent",
+        )}
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-[36%]"
+        style={{
+          background:
+            "linear-gradient(to bottom, transparent 0%, rgb(0 0 0 / 0.2) 40%, var(--brand-surface) 100%)",
+        }}
+      />
 
-        <div
-          data-brand-copy
-          className="relative mt-5 max-w-xl text-center opacity-0 sm:mt-6 md:mt-7 md:max-w-2xl"
-        >
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-[-1.25rem_-1rem] z-0 sm:inset-[-1.5rem_-1.5rem]"
-            style={{
-              background:
-                "radial-gradient(ellipse 70% 65% at 50% 45%, rgb(255 255 255 / 0.82) 0%, rgb(250 247 244 / 0.55) 48%, transparent 75%)",
-              filter: "blur(8px)",
-            }}
-          />
-          <div className="relative z-10">
-            <p className="font-label text-[11px] font-semibold tracking-[0.22em] text-orange uppercase sm:text-xs">
-              {eyebrow}
-            </p>
-            <h1 className="font-display mt-2 text-[1.5rem] leading-[1.25] font-bold tracking-tight text-ink sm:text-[1.85rem] md:text-[2.15rem] md:leading-[1.3]">
-              {title}
-            </h1>
-            {mission ? (
-              <p className="mt-2.5 text-sm leading-[1.7] text-ink/70 sm:mt-3 sm:text-[0.95rem] md:leading-[1.75]">
-                {mission}
-              </p>
-            ) : null}
-            <p
-              className={
-                mission
-                  ? "mt-2 text-sm leading-[1.7] text-ink/60"
-                  : "mt-3 text-sm leading-[1.75] font-medium text-ink/75 sm:mt-4 sm:text-[0.95rem] md:text-base"
-              }
+      {/* Landing composition: logo + copy on the start edge */}
+      <div className="relative z-10 flex min-h-[100dvh] items-center px-4 pt-16 pb-24 sm:pt-20 sm:pb-28 md:px-10">
+        <div className="mx-auto flex w-full max-w-[80rem] justify-start">
+          <div className="w-full max-w-xl text-start md:max-w-[32rem] lg:max-w-[36rem]">
+            <div
+              ref={seatRef}
+              data-brand-logo
+              className="relative w-[min(42vw,11rem)] sm:w-[min(28vw,12.5rem)] md:w-[min(18vw,13.5rem)]"
             >
-              {intro}
-            </p>
-            <div className="mt-4 flex justify-center sm:mt-5">
-              <TextLink href="/about" tone="dark">
-                {ctaLabel}
-              </TextLink>
+              <div
+                aria-hidden
+                className="pointer-events-none absolute inset-[-18%] z-0 rounded-full"
+                style={{
+                  background:
+                    "radial-gradient(ellipse 55% 58% at 50% 46%, rgb(255 255 255 / 0.55) 0%, rgb(255 252 248 / 0.22) 45%, transparent 72%)",
+                  filter: "blur(10px)",
+                }}
+              />
+              <img
+                ref={logoRef}
+                data-brand-lockup
+                src="/logo-full.png"
+                alt="DMTC — Durrah Al-Munawwara"
+                width={800}
+                height={1000}
+                className="relative z-10 h-auto w-full object-contain opacity-0 drop-shadow-[0_0_18px_rgb(0_0_0_/_0.45)]"
+                draggable={false}
+              />
+            </div>
+
+            <div
+              data-brand-copy
+              className="relative mt-6 opacity-0 sm:mt-7 md:mt-8"
+            >
+              <p
+                className={cn(
+                  "font-label text-[11px] font-semibold text-orange sm:text-xs",
+                  isRtl ? "tracking-normal" : "tracking-[0.22em] uppercase",
+                )}
+              >
+                {eyebrow}
+              </p>
+              <h1 className="font-display mt-3 text-[clamp(1.75rem,4.2vw,3rem)] leading-[1.15] font-bold tracking-tight text-white">
+                {title}
+              </h1>
+              {mission ? (
+                <p className="mt-3 text-sm leading-[1.7] text-white/75 sm:mt-4 sm:text-[0.95rem] md:leading-[1.75]">
+                  {mission}
+                </p>
+              ) : null}
+              <p
+                className={cn(
+                  "max-w-[40ch] text-sm leading-[1.75] text-white/80 sm:text-[0.95rem] md:text-base md:leading-[1.8]",
+                  mission ? "mt-2" : "mt-4 sm:mt-5",
+                )}
+              >
+                {intro}
+              </p>
+              <div className="mt-5 flex justify-start sm:mt-6">
+                <TextLink
+                  href="/about"
+                  tone="light"
+                  className="text-orange hover:text-orange-soft"
+                >
+                  {ctaLabel}
+                </TextLink>
+              </div>
             </div>
           </div>
         </div>
