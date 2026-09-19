@@ -1,12 +1,13 @@
 import { Footer } from "@/components/layout/Footer"
+import { FloatingActions } from "@/components/layout/FloatingActions"
 import { Header } from "@/components/layout/Header"
-import { WhatsAppButton } from "@/components/layout/WhatsAppButton"
 import { SmoothScrollProvider } from "@/components/motion/SmoothScrollProvider"
 import { routing } from "@/i18n/routing"
 import { NextIntlClientProvider, hasLocale } from "next-intl"
 import { getMessages, setRequestLocale } from "next-intl/server"
 import {
   Amiri,
+  Cairo,
   IBM_Plex_Sans,
   IBM_Plex_Sans_Arabic,
   Noto_Sans,
@@ -20,6 +21,8 @@ import type { ReactNode } from "react"
 import "../globals.css"
 
 export const metadata: Metadata = {
+  title: "DMTC | Durrah Al-Munawwara",
+  description: "Durrah Al-Munawwara Group — transport and pilgrimage services",
   icons: {
     icon: "/icon.png",
     apple: "/icon.png",
@@ -47,10 +50,17 @@ const fontDisplay = Noto_Serif({
   display: "swap",
 })
 
-const fontDisplayAr = Amiri({
+const fontDisplayAr = Cairo({
   subsets: ["arabic", "latin"],
-  weight: ["400", "700"],
+  weight: ["600", "700"],
   variable: "--font-display-ar",
+  display: "swap",
+})
+
+const fontNumeralAr = Amiri({
+  subsets: ["arabic", "latin"],
+  weight: ["700"],
+  variable: "--font-numeral-ar",
   display: "swap",
 })
 
@@ -91,7 +101,7 @@ const LocaleLayout = async ({ children, params }: LocaleLayoutProps) => {
       lang={locale}
       dir={dir}
       suppressHydrationWarning
-      className={`${fontArabic.variable} ${fontLatin.variable} ${fontDisplay.variable} ${fontDisplayAr.variable} ${fontLabel.variable} ${fontLabelAr.variable}`}
+      className={`${fontArabic.variable} ${fontLatin.variable} ${fontDisplay.variable} ${fontDisplayAr.variable} ${fontNumeralAr.variable} ${fontLabel.variable} ${fontLabelAr.variable}`}
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: INTRO_BOOT_SCRIPT }} />
@@ -102,7 +112,7 @@ const LocaleLayout = async ({ children, params }: LocaleLayoutProps) => {
             <Header />
             <main id="main" className="min-h-[60dvh]">{children}</main>
             <Footer />
-            <WhatsAppButton />
+            <FloatingActions />
           </SmoothScrollProvider>
         </NextIntlClientProvider>
       </body>

@@ -14,17 +14,25 @@ type QuoteRequestFormProps = {
   className?: string
   whatsappNumber: string
   whatsappPrefill: string
+  variant?: "card" | "overlay"
+  formId?: string
 }
 
 const fieldClass =
   "w-full min-w-0 rounded-2xl border border-ink/8 bg-surface-muted px-3.5 py-3 text-base text-ink outline-none transition placeholder:text-ink-muted/50 focus:border-orange focus:bg-white focus:ring-2 focus:ring-orange/20 sm:text-sm"
 
+const overlayFieldClass =
+  "w-full min-w-0 rounded-2xl border-0 bg-surface-muted px-4 py-3.5 text-base text-ink outline-none transition placeholder:text-ink-muted/45 focus:bg-surface focus:ring-2 focus:ring-orange/25 sm:text-sm"
+
 export const QuoteRequestForm = ({
   className,
   whatsappNumber,
   whatsappPrefill,
+  variant = "card",
+  formId = "quote",
 }: QuoteRequestFormProps) => {
   const t = useTranslations("quote")
+  const isOverlay = variant === "overlay"
   const [tripType, setTripType] = useState<TripType>("individual")
   const [pickup, setPickup] = useState("")
   const [destination, setDestination] = useState("")
@@ -64,20 +72,27 @@ export const QuoteRequestForm = ({
 
   return (
     <div
-      id="quote"
+      id={formId}
       className={cn(
-        "rounded-[1.5rem] border border-ink/6 bg-white p-4 text-start shadow-md sm:rounded-[1.75rem] sm:p-5 md:p-7",
+        isOverlay
+          ? "bg-transparent p-0 text-start shadow-none"
+          : "rounded-[1.5rem] border border-ink/6 bg-white p-4 text-start shadow-md sm:rounded-[1.75rem] sm:p-5 md:p-7",
         className,
       )}
     >
       <form onSubmit={handleSubmit} noValidate>
-        <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 sm:gap-4 xl:grid-cols-4">
+        <div
+          className={cn(
+            "grid grid-cols-1 gap-3.5 sm:grid-cols-2 sm:gap-4",
+            isOverlay ? "lg:gap-5" : "xl:grid-cols-4",
+          )}
+        >
           <label className="block min-w-0">
             <span className="font-label mb-1.5 block text-xs font-medium text-ink sm:mb-2">
               {t("tripType")}
             </span>
             <select
-              className={fieldClass}
+              className={isOverlay ? overlayFieldClass : fieldClass}
               value={tripType}
               onChange={(event) => setTripType(event.target.value as TripType)}
               required
@@ -100,7 +115,7 @@ export const QuoteRequestForm = ({
               {t("pickup")}
             </span>
             <input
-              className={fieldClass}
+              className={isOverlay ? overlayFieldClass : fieldClass}
               value={pickup}
               onChange={(event) => setPickup(event.target.value)}
               required
@@ -114,7 +129,7 @@ export const QuoteRequestForm = ({
               {t("destination")}
             </span>
             <input
-              className={fieldClass}
+              className={isOverlay ? overlayFieldClass : fieldClass}
               value={destination}
               onChange={(event) => setDestination(event.target.value)}
               required
@@ -128,7 +143,7 @@ export const QuoteRequestForm = ({
             </span>
             <input
               type="date"
-              className={fieldClass}
+              className={isOverlay ? overlayFieldClass : fieldClass}
               value={date}
               onChange={(event) => setDate(event.target.value)}
               required
@@ -145,7 +160,7 @@ export const QuoteRequestForm = ({
               min={1}
               max={500}
               inputMode="numeric"
-              className={fieldClass}
+              className={isOverlay ? overlayFieldClass : fieldClass}
               value={passengers}
               onChange={(event) => setPassengers(event.target.value)}
               required
@@ -153,13 +168,13 @@ export const QuoteRequestForm = ({
             />
           </label>
 
-          <label className="block min-w-0 sm:col-span-1 xl:col-span-2">
+          <label className={cn("block min-w-0", !isOverlay && "sm:col-span-1 xl:col-span-2")}>
             <span className="font-label mb-1.5 block text-xs font-medium text-ink sm:mb-2">
               {t("phone")}
             </span>
             <input
               type="tel"
-              className={fieldClass}
+              className={isOverlay ? overlayFieldClass : fieldClass}
               value={phone}
               onChange={(event) => setPhone(event.target.value)}
               required
@@ -171,7 +186,12 @@ export const QuoteRequestForm = ({
           </label>
         </div>
 
-        <div className="mt-4 flex flex-col gap-2.5 sm:mt-5 sm:flex-row sm:flex-wrap">
+        <div
+          className={cn(
+            "mt-4 flex flex-col gap-2.5 sm:mt-5 sm:flex-row sm:flex-wrap",
+            isOverlay && "sm:mt-8 sm:justify-end",
+          )}
+        >
           <button
             type="submit"
             disabled={status === "submitting"}

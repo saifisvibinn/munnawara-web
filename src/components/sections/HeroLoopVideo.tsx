@@ -3,16 +3,25 @@
 import { cn } from "@/lib/cn"
 import { useEffect, useRef, useState } from "react"
 
-const VIDEO_SRC = "/hero/hero-loop.mp4"
-const POSTER = "/hero/cover.png"
+const DEFAULT_VIDEO_SRC = "/hero/hero-loop.mp4"
+const DEFAULT_POSTER = "/hero/cover.png"
 /** Crossfade length in seconds — hides the hard loop cut */
 const CROSSFADE_SEC = 1.25
 
 type HeroLoopVideoProps = {
   enabled: boolean
+  /** Wider scene framing (less tight crop on the coach) */
+  framing?: "default" | "wide" | "center"
+  src?: string
+  poster?: string
 }
 
-export const HeroLoopVideo = ({ enabled }: HeroLoopVideoProps) => {
+export const HeroLoopVideo = ({
+  enabled,
+  framing = "default",
+  src = DEFAULT_VIDEO_SRC,
+  poster = DEFAULT_POSTER,
+}: HeroLoopVideoProps) => {
   const aRef = useRef<HTMLVideoElement>(null)
   const bRef = useRef<HTMLVideoElement>(null)
   const [front, setFront] = useState<0 | 1>(0)
@@ -93,12 +102,18 @@ export const HeroLoopVideo = ({ enabled }: HeroLoopVideoProps) => {
         video.pause()
       }
     }
-  }, [enabled])
+  }, [enabled, src])
 
   if (!enabled) return null
 
-  const sharedClass =
-    "absolute inset-0 size-full object-cover object-[center_40%] md:object-[center_35%] transition-opacity ease-in-out"
+  const sharedClass = cn(
+    "absolute inset-0 size-full object-cover transition-opacity ease-in-out",
+    framing === "wide"
+      ? "object-[center_32%]"
+      : framing === "center"
+        ? "object-center"
+        : "object-[center_40%] md:object-[center_35%]",
+  )
 
   return (
     <>
@@ -109,9 +124,9 @@ export const HeroLoopVideo = ({ enabled }: HeroLoopVideoProps) => {
         muted
         playsInline
         preload="auto"
-        poster={POSTER}
+        poster={poster}
       >
-        <source src={VIDEO_SRC} type="video/mp4" />
+        <source src={src} type="video/mp4" />
       </video>
       <video
         ref={bRef}
@@ -120,9 +135,9 @@ export const HeroLoopVideo = ({ enabled }: HeroLoopVideoProps) => {
         muted
         playsInline
         preload="auto"
-        poster={POSTER}
+        poster={poster}
       >
-        <source src={VIDEO_SRC} type="video/mp4" />
+        <source src={src} type="video/mp4" />
       </video>
     </>
   )

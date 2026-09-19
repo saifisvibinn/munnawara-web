@@ -16,7 +16,7 @@ export const WhatsAppButton = () => {
       rel="noopener noreferrer"
       aria-label={t("common.whatsapp")}
       tabIndex={0}
-      className="fixed bottom-[max(1.25rem,env(safe-area-inset-bottom))] end-4 z-40 inline-flex size-12 items-center justify-center rounded-full bg-whatsapp text-white shadow-md transition hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-whatsapp focus-visible:ring-offset-2 sm:end-6 sm:bottom-6"
+      className="inline-flex size-12 items-center justify-center rounded-full bg-whatsapp text-white shadow-md transition hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-whatsapp focus-visible:ring-offset-2"
       data-whatsapp-fab
     >
       <svg aria-hidden viewBox="0 0 24 24" className="size-5 fill-current">

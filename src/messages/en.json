@@ -7,7 +7,6 @@
     "home": "Home",
     "about": "About",
     "companies": "Our Companies",
-    "hajjUmrah": "Hajj & Umrah",
     "fleet": "Fleet",
     "corporate": "Corporate",
     "clients": "Clients",
@@ -22,6 +21,7 @@
   "common": {
     "learnMore": "Learn more",
     "requestQuote": "Request a quote",
+    "close": "Close",
     "contactUs": "Contact us",
     "whatsapp": "WhatsApp",
     "comingSoon": "Content in preparation",
@@ -38,13 +38,12 @@
     "phone": "Phone",
     "email": "Email",
     "workingHours": "Working hours",
-    "mapPending": "Map embed coming in a later milestone"
-  },
-  "hajj": {
-    "step1": "Contact us and request a quote",
-    "step2": "Confirm transport, stay, and support services",
-    "step3": "Operate and support throughout the journey",
-    "faqTitle": "FAQ"
+    "mapPending": "Map embed coming in a later milestone",
+    "followUs": "Follow us on social media",
+    "socialTwitter": "X (Twitter)",
+    "socialFacebook": "Facebook",
+    "socialInstagram": "Instagram",
+    "socialSnapchat": "Snapchat"
   },
   "corporate": {
     "intro": "Staff, school, and institutional transport — arranged to your schedule.",
@@ -79,7 +78,7 @@
     "hajjStepHint2": "We align fleet, routes, and support",
     "hajjStepHint3": "Dedicated care throughout the season",
     "fleetTitle": "Our fleet",
-    "fleetSubtitle": "From VIP coaches to city transport",
+    "fleetSubtitle": "Calm, comfortable journeys on a modern, safety-led coach fleet.",
     "fleetExplore": "Open the interactive fleet showcase",
     "cabinEyebrow": "Cabin experience",
     "cabinTitle": "Comfort designed for long sacred journeys",
@@ -89,8 +88,8 @@
     "cabinFeature3": "Onboard entertainment readiness",
     "cabinFeature4": "Quiet, well-lit passenger aisles",
     "clientsTitle": "Serving multiple sectors",
-    "ctaBandTitle": "Ready to serve you",
-    "ctaBandSubtitle": "Reach us by phone or WhatsApp to arrange your journey",
+    "ctaBandTitle": "Sit back, we'll coordinate the rest.",
+    "ctaBandSubtitle": "Share your trip details and our team will follow up with clear options.",
     "ctaFormHint": "Tell us about your group and we will prepare a tailored transport plan.",
     "viewAllNews": "View all news",
     "previousTestimonial": "Previous testimonial",
@@ -116,6 +115,18 @@
     "honeypot": "Leave blank"
   },
   "whatsappPrefill": "Hello, I would like to inquire about Durrah Al-Munawwara services",
+  "aiAssistant": {
+    "open": "Open AI assistant",
+    "close": "Close assistant",
+    "title": "DMTC Assistant",
+    "subtitle": "Ask about fleet, trips, and booking",
+    "welcome": "Hello — how can we help with your journey today?",
+    "placeholder": "Type your question…",
+    "send": "Send message",
+    "thinking": "Thinking…",
+    "unavailable": "The assistant backend is not connected yet. Please use WhatsApp or the quote form, and we will follow up shortly.",
+    "error": "Something went wrong. Please try again or contact us on WhatsApp."
+  },
   "fleetViewer": {
     "carouselLabel": "Fleet carousel",
     "interactive": "3D tour",
@@ -130,6 +141,6 @@
     "previousBus": "Previous bus",
     "nextBus": "Next bus",
     "close": "Close",
-    "scrollHint": "Scroll or use the arrows to move through the fleet. Click the front bus to open it."
+    "scrollHint": "Drag to browse the fleet, or use the arrows. Click the front bus to open it."
   }
 }

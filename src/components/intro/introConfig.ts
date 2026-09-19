@@ -16,11 +16,11 @@ export const INTRO_EASE = {
   site: "power2.out",
 } as const
 
-export const INTRO_SKY_SRC = "/brand/landing-sky.jpg"
+export const INTRO_SKY_SRC = "/hero/cover.png"
 
-/** Fallback tone while sky image paints / for Lenis gaps during intro */
+/** Fallback tone while cover paints / for Lenis gaps during intro */
 export const INTRO_COLORS = {
-  plate: "#f5aa64",
+  plate: "#c4a078",
 } as const
 
 /** Pre-paint boot — sky plate + logo; removed only after React logo is live */

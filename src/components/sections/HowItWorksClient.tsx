@@ -2,6 +2,7 @@
 
 import { useReducedMotion } from "@/hooks/useReducedMotion"
 import { Link } from "@/i18n/navigation"
+import { toLocaleDigits } from "@/lib/localeDigits"
 import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { useLocale } from "next-intl"
@@ -19,6 +20,7 @@ type HowStep = {
 type HowItWorksClientProps = {
   title: string
   subtitle: string
+  stepPrefix: string
   steps: readonly HowStep[]
 }
 
@@ -27,135 +29,184 @@ gsap.registerPlugin(ScrollTrigger)
 export const HowItWorksClient = ({
   title,
   subtitle,
+  stepPrefix,
   steps,
 }: HowItWorksClientProps) => {
   const reduced = useReducedMotion()
   const locale = useLocale()
+  const isRtl = locale === "ar"
   const rootRef = useRef<HTMLElement>(null)
-  const direction = locale === "ar" ? 1 : -1
+  const digitRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (reduced || !rootRef.current) return
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return
+    const root = rootRef.current
+    const digit = digitRef.current
+    if (!root) return
+
+    if (reduced || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      root.querySelectorAll<HTMLElement>("[data-how-progress]").forEach((bar) => {
+        bar.style.transform = "scaleX(0)"
+      })
+      return
+    }
 
     const ctx = gsap.context(() => {
-      const mm = gsap.matchMedia()
+      const panels = gsap.utils.toArray<HTMLElement>("[data-how-step]")
+      if (!panels.length) return
 
-      const animateStep = (item: HTMLElement, index: number, withX: boolean) => {
-        const numberEl = item.querySelector<HTMLElement>("[data-how-number]")
-        const contentEls = item.querySelectorAll<HTMLElement>("[data-how-content]")
+      const list = root.querySelector("ol")
+      const first = panels[0]
+      const last = panels[panels.length - 1]
 
-        if (numberEl) {
-          gsap.set(numberEl, { yPercent: 110 })
-          gsap.to(numberEl, {
-            yPercent: 0,
-            duration: 0.95,
-            delay: index * 0.04,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: item,
-              start: "top 85%",
-              toggleActions: "play none none none",
+      if (digit && first && last) {
+        const stepH = () => digit.querySelector("span")?.offsetHeight ?? 0
+        gsap.set(digit, { y: 0 })
+        gsap.to(digit, {
+          y: () => -stepH() * (steps.length - 1),
+          ease: "none",
+          scrollTrigger: {
+            trigger: list ?? root,
+            start: () => `top ${window.innerHeight * 0.35}`,
+            end: () => {
+              const lastBottom = last.getBoundingClientRect().bottom + window.scrollY
+              const listTop = (list ?? root).getBoundingClientRect().top + window.scrollY
+              return `+=${Math.max(lastBottom - listTop - window.innerHeight * 0.35, 400)}`
             },
-          })
-        }
-
-        gsap.fromTo(
-          contentEls,
-          { opacity: 0, y: withX ? 36 : 24, x: withX ? 20 * direction : 0 },
-          {
-            opacity: 1,
-            y: 0,
-            x: 0,
-            duration: 0.85,
-            delay: index * 0.05 + 0.06,
-            ease: "power3.out",
-            stagger: 0.06,
-            scrollTrigger: {
-              trigger: item,
-              start: "top 85%",
-              toggleActions: "play none none none",
-            },
+            scrub: 0.4,
+            invalidateOnRefresh: true,
           },
-        )
+        })
       }
 
-      mm.add("(min-width: 768px)", () => {
-        const items = gsap.utils.toArray<HTMLElement>("[data-how-step]")
-        items.forEach((item, index) => animateStep(item, index, true))
+      panels.forEach((panel) => {
+        const bar = panel.querySelector<HTMLElement>("[data-how-progress]")
+        if (!bar) return
+        gsap.set(bar, {
+          scaleX: 1,
+          transformOrigin: isRtl ? "100% 50%" : "0% 50%",
+        })
+        gsap.to(bar, {
+          scaleX: 0,
+          ease: "none",
+          scrollTrigger: {
+            trigger: panel,
+            start: "top 42%",
+            end: "bottom 42%",
+            scrub: 0.3,
+            invalidateOnRefresh: true,
+          },
+        })
       })
-
-      mm.add("(max-width: 767px)", () => {
-        const items = gsap.utils.toArray<HTMLElement>("[data-how-step]")
-        items.forEach((item, index) => animateStep(item, index, false))
-      })
-    }, rootRef)
+    }, root)
 
     return () => ctx.revert()
-  }, [reduced, direction])
+  }, [reduced, steps.length, isRtl])
 
   return (
     <section
       ref={rootRef}
-      className="overflow-x-clip bg-white px-4 py-16 sm:py-20 md:px-10 md:py-32"
+      data-how-it-works
+      className="relative overflow-x-clip bg-white px-4 py-16 sm:px-6 sm:py-20 md:px-10 md:py-24 lg:py-28"
+      aria-labelledby="how-it-works-heading"
     >
       <div className="mx-auto max-w-[80rem]">
-        <div className="max-w-2xl">
-          <p className="font-label text-[11px] font-semibold tracking-[0.2em] text-orange uppercase sm:text-xs sm:tracking-[0.24em]">
-            {subtitle}
-          </p>
-          <h2 className="mt-3 text-3xl font-semibold tracking-tight break-words text-ink sm:mt-4 sm:text-4xl md:text-5xl">
-            {title}
-          </h2>
-        </div>
+        <header className="sr-only">
+          <p>{subtitle}</p>
+          <h2 id="how-it-works-heading">{title}</h2>
+        </header>
 
-        <ol className="mt-10 divide-y divide-ink/8 border-y border-ink/8 sm:mt-16">
-          {steps.map((step) => (
-            <li
-              key={step.id}
-              data-how-step
-              className="grid gap-4 py-8 sm:gap-6 sm:py-10 md:grid-cols-[9rem_1fr_auto] md:items-center md:gap-10 md:py-12"
+        <div className="md:grid md:grid-cols-[minmax(8rem,0.28fr)_1fr] md:gap-10 lg:grid-cols-[minmax(10rem,0.3fr)_1fr] lg:gap-16">
+          {/* Sticky digit column — numerals stay LTR (including Arabic-Indic) */}
+          <div className="pointer-events-none relative hidden md:block" aria-hidden>
+            <div
+              dir="ltr"
+              className="sticky top-[22vh] flex items-start justify-start text-ink"
             >
-              <div className="h-12 overflow-hidden sm:h-14 md:h-[4.5rem]">
-                <span
-                  data-how-number
-                  className="inline-block text-5xl font-semibold tracking-tight text-ink/15 sm:text-6xl md:text-7xl"
-                >
-                  {step.number}
+              {!isRtl ? (
+                <span className="font-numeral text-[clamp(6rem,12vw,9rem)] leading-none font-bold tracking-tight">
+                  0
                 </span>
+              ) : null}
+              <div className="h-[clamp(6rem,12vw,9rem)] w-[0.65em] overflow-hidden text-[clamp(6rem,12vw,9rem)]">
+                <div ref={digitRef} className="flex flex-col will-change-transform">
+                  {steps.map((step) => (
+                    <span
+                      key={step.id}
+                      className="font-numeral flex h-[1em] items-start text-[1em] leading-none font-bold tracking-tight"
+                    >
+                      {toLocaleDigits(step.number.slice(-1), locale)}
+                    </span>
+                  ))}
+                </div>
               </div>
-              <div data-how-content className={`min-w-0 ${reduced ? "" : "opacity-0"}`}>
-                <h3 className="text-xl font-semibold tracking-tight break-words text-ink sm:text-2xl md:text-3xl">
-                  {step.title}
-                </h3>
-                <p className="mt-2 text-[15px] leading-relaxed text-ink/60 sm:mt-3 sm:text-base">
-                  {step.description}
-                </p>
-              </div>
-              {step.ctaLabel && step.ctaHref ? (
-                step.ctaHref.startsWith("#") ? (
-                  <a
-                    data-how-content
-                    href={step.ctaHref}
-                    className={`font-label inline-flex w-full items-center justify-center rounded-full bg-ink px-5 py-3 text-sm font-semibold text-white transition hover:bg-orange focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange md:w-fit ${reduced ? "" : "opacity-0"}`}
+            </div>
+          </div>
+
+          {/* Scrolling step panels */}
+          <ol className="min-w-0">
+            {steps.map((step, index) => {
+              const stepIndex = Number.parseInt(step.number, 10) || index + 1
+              const stepLabel = `${stepPrefix} ${toLocaleDigits(stepIndex, locale)}`
+              const displayNumber = toLocaleDigits(
+                isRtl ? step.number.replace(/^0+/, "") || "0" : step.number,
+                locale,
+              )
+
+              return (
+                <li
+                  key={step.id}
+                  data-how-step
+                  className="border-b border-ink/10 py-12 first:border-t first:border-ink/10 sm:py-14 md:py-16 lg:min-h-[70vh] lg:py-20"
+                >
+                  <p
+                    dir="ltr"
+                    className="font-numeral mb-6 text-5xl font-bold tracking-tight text-ink md:hidden"
+                    aria-hidden
                   >
-                    {step.ctaLabel}
-                  </a>
-                ) : (
-                  <Link
-                    data-how-content
-                    href={step.ctaHref}
-                    className={`font-label inline-flex w-full items-center justify-center rounded-full bg-ink px-5 py-3 text-sm font-semibold text-white transition hover:bg-orange focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange md:w-fit ${reduced ? "" : "opacity-0"}`}
-                  >
-                    {step.ctaLabel}
-                  </Link>
-                )
-              ) : (
-                <span className="hidden md:block" />
-              )}
-            </li>
-          ))}
-        </ol>
+                    {displayNumber}
+                  </p>
+
+                  <div className="relative h-0.5 w-full overflow-hidden bg-ink/10">
+                    <div
+                      data-how-progress
+                      className="absolute inset-y-0 start-0 w-full bg-orange"
+                    />
+                  </div>
+
+                  <p className="font-label mt-5 text-[13px] font-semibold tracking-tight text-ink sm:mt-6">
+                    {stepLabel}
+                  </p>
+
+                  <h3 className="mt-3 max-w-[18ch] text-[clamp(1.75rem,3.8vw,2.75rem)] leading-[1.15] font-semibold tracking-tight text-ink sm:mt-4">
+                    {step.title}
+                  </h3>
+
+                  <p className="mt-4 max-w-xl text-[15px] leading-relaxed font-medium text-ink/65 sm:mt-5 sm:text-base md:leading-[1.7]">
+                    {step.description}
+                  </p>
+
+                  {step.ctaLabel && step.ctaHref ? (
+                    step.ctaHref.startsWith("#") ? (
+                      <a
+                        href={step.ctaHref}
+                        className="font-label mt-7 inline-flex items-center justify-center rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-orange focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange sm:mt-8"
+                      >
+                        {step.ctaLabel}
+                      </a>
+                    ) : (
+                      <Link
+                        href={step.ctaHref}
+                        className="font-label mt-7 inline-flex items-center justify-center rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-orange focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange sm:mt-8"
+                      >
+                        {step.ctaLabel}
+                      </Link>
+                    )
+                  ) : null}
+                </li>
+              )
+            })}
+          </ol>
+        </div>
       </div>
     </section>
   )

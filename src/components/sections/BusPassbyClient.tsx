@@ -33,24 +33,39 @@ export const BusPassbyClient = ({
     if (reduced || !rootRef.current || !busRef.current) return
 
     const ctx = gsap.context(() => {
-      const startX = isRtl ? "70vw" : "-70vw"
-      const endX = isRtl ? "-70vw" : "70vw"
+      const bus = busRef.current
+      const media = bus?.firstElementChild as HTMLElement | null
+      if (!bus || !media) return
 
-      gsap.set(busRef.current, { x: startX })
+      const getClearance = () => {
+        const halfViewport = window.innerWidth * 0.5
+        const halfBus = media.offsetWidth * 0.5
+        // Extra pad so the nose/tail fully clears before/after the scrub range
+        return halfViewport + halfBus + 48
+      }
+
+      const getStartX = () => (isRtl ? getClearance() : -getClearance())
+      const getEndX = () => (isRtl ? -getClearance() : getClearance())
+
+      gsap.set(bus, { x: getStartX() })
       gsap.set(titleBeforeRef.current, { opacity: 1 })
       gsap.set(titleAfterRef.current, { opacity: 0 })
 
-      gsap.to(busRef.current, {
-        x: endX,
-        ease: "none",
-        scrollTrigger: {
-          trigger: rootRef.current,
-          start: "top top",
-          end: "bottom bottom",
-          scrub: 0.25,
-          invalidateOnRefresh: true,
+      gsap.fromTo(
+        bus,
+        { x: getStartX },
+        {
+          x: getEndX,
+          ease: "none",
+          scrollTrigger: {
+            trigger: rootRef.current,
+            start: "top top",
+            end: "bottom bottom",
+            scrub: 0.25,
+            invalidateOnRefresh: true,
+          },
         },
-      })
+      )
 
       const copyTl = gsap.timeline({
         scrollTrigger: {

@@ -1,23 +1,23 @@
-import { QuoteRequestForm } from "@/components/forms/QuoteRequestForm"
-import { getSiteConfig } from "@/content"
-import { getTranslations } from "next-intl/server"
+import { QuoteSectionClient } from "@/components/sections/QuoteSectionClient"
+import { getHome, getSiteConfig } from "@/content"
+import type { AppLocale } from "@/content/types"
+import { getLocale, getTranslations } from "next-intl/server"
 
 export const QuoteSection = async () => {
-  const tWhatsapp = await getTranslations()
+  const locale = (await getLocale()) as AppLocale
+  const home = getHome(locale)
   const config = getSiteConfig()
+  const t = await getTranslations("quote")
+  const tWhatsapp = await getTranslations()
 
   return (
-    <section
-      id="quote-section"
-      className="relative z-10 bg-white px-4 pb-16 sm:px-6 sm:pb-20 md:px-10 md:pb-24"
-      aria-label="Request a quote"
-    >
-      <div className="mx-auto max-w-[80rem]">
-        <QuoteRequestForm
-          whatsappNumber={config.whatsappNumber}
-          whatsappPrefill={tWhatsapp("whatsappPrefill")}
-        />
-      </div>
-    </section>
+    <QuoteSectionClient
+      eyebrow={home.quoteEyebrow}
+      headline={home.quoteHeadline}
+      body={home.quoteBody}
+      ariaLabel={t("title")}
+      whatsappNumber={config.whatsappNumber}
+      whatsappPrefill={tWhatsapp("whatsappPrefill")}
+    />
   )
 }

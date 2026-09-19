@@ -27,17 +27,21 @@ const CompanyDetailPage = async ({
       <div className="mx-auto max-w-6xl px-6">
         <TextLink href="/companies">{tCommon("backToCompanies")}</TextLink>
       </div>
-      <div className="relative mx-auto mt-8 aspect-[16/8] max-w-6xl overflow-hidden rounded-xl bg-ink/5">
+
+      <div className="relative mx-auto mt-8 flex min-h-[min(52vw,28rem)] max-w-6xl items-center justify-center overflow-hidden rounded-2xl bg-ink px-8 py-14 sm:px-14">
         <Image
-          src={company.heroImage}
+          src={company.logo}
           alt={company.name}
-          fill
-          className="object-cover"
-          sizes="100vw"
+          width={900}
+          height={600}
+          className="h-auto max-h-[22rem] w-full max-w-xl object-contain"
+          sizes="(max-width:768px) 90vw, 36rem"
+          priority
         />
       </div>
+
       <div className="mx-auto mt-14 max-w-3xl px-6 text-center">
-        <h1 className="text-4xl font-semibold tracking-tight text-ink md:text-5xl">
+        <h1 className="font-display text-4xl font-semibold tracking-tight text-ink md:text-5xl">
           {company.name}
         </h1>
         {!company.contentReady ? (

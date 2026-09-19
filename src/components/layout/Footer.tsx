@@ -1,3 +1,4 @@
+import { SocialLinksRow } from "@/components/ui/SocialLinks"
 import { getCompanies, getSiteConfig } from "@/content"
 import type { AppLocale } from "@/content/types"
 import { Link } from "@/i18n/navigation"
@@ -8,6 +9,7 @@ export const Footer = async () => {
   const t = await getTranslations("footer")
   const tNav = await getTranslations("nav")
   const tMeta = await getTranslations("meta")
+  const tCommon = await getTranslations("common")
   const locale = (await getLocale()) as AppLocale
   const companies = getCompanies(locale).filter((c) => c.contentReady)
   const config = getSiteConfig()
@@ -44,7 +46,6 @@ export const Footer = async () => {
               [
                 ["/", "home"],
                 ["/fleet", "fleet"],
-                ["/hajj-umrah", "hajjUmrah"],
                 ["/gallery", "gallery"],
                 ["/contact", "contact"],
               ] as const
@@ -83,8 +84,20 @@ export const Footer = async () => {
           </p>
         </div>
       </div>
-      <div className="border-t border-ink/6 px-4 py-5 text-center text-xs md:px-10">
-        © {year} {config.brandShort}. {t("rights")}
+
+      <div className="border-t border-ink/6 px-4 py-5 pb-[calc(5.5rem+env(safe-area-inset-bottom))] md:px-10">
+        <div className="mx-auto flex max-w-[80rem] flex-col items-center justify-between gap-4 sm:flex-row">
+          <p className="text-center text-xs sm:text-start">
+            © {year} {config.brandShort}. {t("rights")}
+          </p>
+          <SocialLinksRow
+            links={config.social}
+            twitterLabel={tCommon("socialTwitter")}
+            facebookLabel={tCommon("socialFacebook")}
+            instagramLabel={tCommon("socialInstagram")}
+            snapchatLabel={tCommon("socialSnapchat")}
+          />
+        </div>
       </div>
     </footer>
   )

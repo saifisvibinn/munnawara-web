@@ -7,11 +7,21 @@ import { cn } from "@/lib/cn"
 import { motion } from "motion/react"
 import { useLocale, useTranslations } from "next-intl"
 import Image from "next/image"
-import { useCallback, useEffect, useRef, useState } from "react"
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type PointerEvent,
+} from "react"
 
 type FleetShowcaseProps = {
   categories: readonly FleetCategory[]
 }
+
+const AUTO_ADVANCE_MS = 4800
+const DRAG_STEP_PX = 56
+const CLICK_SUPPRESS_PX = 10
 
 const wrapIndex = (index: number, length: number) =>
   ((index % length) + length) % length
@@ -24,8 +34,30 @@ export const FleetShowcase = ({ categories }: FleetShowcaseProps) => {
   const direction = locale === "ar" ? -1 : 1
   const [activeIndex, setActiveIndex] = useState(0)
   const [viewerOpen, setViewerOpen] = useState(false)
+  const [isDragging, setIsDragging] = useState(false)
   const stageRef = useRef<HTMLDivElement>(null)
+  const activeIndexRef = useRef(activeIndex)
+  const viewerOpenRef = useRef(viewerOpen)
+  const dragRef = useRef({
+    tracking: false,
+    dragging: false,
+    startX: 0,
+    startY: 0,
+    lastX: 0,
+    leftover: 0,
+    moved: 0,
+    pointerId: -1,
+  })
+  const suppressClickRef = useRef(false)
   const active = categories[activeIndex]
+
+  useEffect(() => {
+    activeIndexRef.current = activeIndex
+  }, [activeIndex])
+
+  useEffect(() => {
+    viewerOpenRef.current = viewerOpen
+  }, [viewerOpen])
 
   const handleSelect = useCallback(
     (index: number) => {
@@ -39,46 +71,126 @@ export const FleetShowcase = ({ categories }: FleetShowcaseProps) => {
     setViewerOpen(true)
   }
 
+  const handleCardActivate = (index: number, isActive: boolean) => {
+    if (suppressClickRef.current) {
+      suppressClickRef.current = false
+      return
+    }
+    if (isActive) {
+      handleOpenViewer(index)
+      return
+    }
+    handleSelect(index)
+  }
+
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (viewerOpen) return
+      if (viewerOpenRef.current) return
       if (event.key === "ArrowRight") {
         event.preventDefault()
-        handleSelect(activeIndex + direction)
+        handleSelect(activeIndexRef.current + direction)
       }
       if (event.key === "ArrowLeft") {
         event.preventDefault()
-        handleSelect(activeIndex - direction)
+        handleSelect(activeIndexRef.current - direction)
       }
     }
     window.addEventListener("keydown", handleKeyDown)
     return () => window.removeEventListener("keydown", handleKeyDown)
-  }, [activeIndex, direction, handleSelect, viewerOpen])
+  }, [direction, handleSelect])
 
   useEffect(() => {
-    const node = stageRef.current
-    if (!node) return
+    if (reduced || viewerOpen || isDragging || categories.length <= 1) return
 
-    const handleWheel = (event: WheelEvent) => {
-      if (viewerOpen) return
-      if (Math.abs(event.deltaY) < 18 && Math.abs(event.deltaX) < 18) return
-      event.preventDefault()
-      const delta =
-        Math.abs(event.deltaX) > Math.abs(event.deltaY)
-          ? event.deltaX
-          : event.deltaY
-      handleSelect(activeIndex + (delta > 0 ? direction : -direction))
+    const timer = window.setInterval(() => {
+      handleSelect(activeIndexRef.current + 1)
+    }, AUTO_ADVANCE_MS)
+
+    return () => window.clearInterval(timer)
+  }, [reduced, viewerOpen, isDragging, categories.length, handleSelect])
+
+  const handlePointerDown = (event: PointerEvent<HTMLDivElement>) => {
+    if (viewerOpenRef.current) return
+    if (event.button !== 0) return
+
+    dragRef.current = {
+      tracking: true,
+      dragging: false,
+      startX: event.clientX,
+      startY: event.clientY,
+      lastX: event.clientX,
+      leftover: 0,
+      moved: 0,
+      pointerId: event.pointerId,
+    }
+  }
+
+  const handlePointerMove = (event: PointerEvent<HTMLDivElement>) => {
+    const drag = dragRef.current
+    if (!drag.tracking) return
+
+    if (!drag.dragging) {
+      const totalX = event.clientX - drag.startX
+      const totalY = event.clientY - drag.startY
+      if (Math.abs(totalX) < 8 && Math.abs(totalY) < 8) return
+      if (Math.abs(totalY) > Math.abs(totalX)) {
+        drag.tracking = false
+        return
+      }
+
+      drag.dragging = true
+      drag.lastX = event.clientX
+      setIsDragging(true)
+      event.currentTarget.setPointerCapture(event.pointerId)
     }
 
-    node.addEventListener("wheel", handleWheel, { passive: false })
-    return () => node.removeEventListener("wheel", handleWheel)
-  }, [activeIndex, direction, handleSelect, viewerOpen])
+    const dx = event.clientX - drag.lastX
+    drag.lastX = event.clientX
+    drag.leftover += dx
+    drag.moved += Math.abs(dx)
+
+    if (Math.abs(drag.leftover) < DRAG_STEP_PX) return
+
+    const step = drag.leftover > 0 ? -direction : direction
+    handleSelect(activeIndexRef.current + step)
+    drag.leftover = 0
+  }
+
+  const handlePointerUp = (event: PointerEvent<HTMLDivElement>) => {
+    const drag = dragRef.current
+    if (!drag.tracking && !drag.dragging) return
+
+    if (drag.moved > CLICK_SUPPRESS_PX) {
+      suppressClickRef.current = true
+    }
+
+    if (
+      drag.dragging &&
+      event.currentTarget.hasPointerCapture(event.pointerId)
+    ) {
+      event.currentTarget.releasePointerCapture(event.pointerId)
+    }
+
+    drag.tracking = false
+    drag.dragging = false
+    setIsDragging(false)
+  }
 
   if (!active) return null
 
   return (
     <div className="space-y-8">
-      <div ref={stageRef} className="relative overflow-hidden py-6">
+      <div
+        ref={stageRef}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
+        onPointerCancel={handlePointerUp}
+        className={cn(
+          "relative touch-pan-y overflow-hidden py-6",
+          isDragging ? "cursor-grabbing" : "cursor-grab",
+        )}
+      >
         <div
           className="relative mx-auto h-[min(62vw,420px)] max-w-6xl"
           aria-roledescription="carousel"
@@ -104,18 +216,11 @@ export const FleetShowcase = ({ categories }: FleetShowcaseProps) => {
                 aria-label={`${bus.name} ${bus.yearLabel}`}
                 tabIndex={hidden ? -1 : 0}
                 disabled={hidden}
-                onClick={() => {
-                  if (isActive) {
-                    handleOpenViewer(index)
-                    return
-                  }
-                  handleSelect(index)
-                }}
+                onClick={() => handleCardActivate(index, isActive)}
                 onKeyDown={(event) => {
                   if (event.key === "Enter" || event.key === " ") {
                     event.preventDefault()
-                    if (isActive) handleOpenViewer(index)
-                    else handleSelect(index)
+                    handleCardActivate(index, isActive)
                   }
                 }}
                 className={cn(
@@ -132,7 +237,7 @@ export const FleetShowcase = ({ categories }: FleetShowcaseProps) => {
                 transition={
                   reduced
                     ? { duration: 0 }
-                    : { type: "spring", stiffness: 90, damping: 18 }
+                    : { type: "spring", stiffness: 70, damping: 22, mass: 0.9 }
                 }
                 style={{
                   transformStyle: "preserve-3d",
@@ -143,12 +248,13 @@ export const FleetShowcase = ({ categories }: FleetShowcaseProps) => {
                   src={bus.coverImage}
                   alt={bus.name}
                   fill
-                  className="object-cover"
+                  className="object-cover pointer-events-none"
                   sizes="(max-width:768px) 80vw, 520px"
+                  draggable={false}
                   priority={isActive}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
-                <div className="absolute inset-x-0 bottom-0 p-5 text-white">
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 p-5 text-white">
                   <p className="text-xs font-medium tracking-wide text-white/60">
                     {bus.yearLabel}
                     {bus.interactive ? ` · ${t("interactive")}` : ""}

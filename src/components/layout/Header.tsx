@@ -9,7 +9,6 @@ import { useEffect, useId, useState } from "react"
 
 const navKeys = [
   { href: "/fleet", key: "fleet" as const },
-  { href: "/hajj-umrah", key: "hajjUmrah" as const },
   { href: "/companies", key: "companies" as const },
   { href: "/about", key: "about" as const },
   { href: "/contact", key: "contact" as const },

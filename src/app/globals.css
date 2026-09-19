@@ -71,6 +71,7 @@
   --font-arabic: var(--font-arabic);
   --font-display: var(--font-display);
   --font-display-ar: var(--font-display-ar);
+  --font-numeral-ar: var(--font-numeral-ar);
   --font-label: var(--font-label);
   --radius-sm: var(--brand-radius-sm);
   --radius-md: var(--brand-radius-md);
@@ -101,13 +102,21 @@ html[lang="en"] body {
 }
 
 .font-display {
-  font-family: var(--font-display-ar), var(--font-display), var(--font-arabic),
-    var(--font-latin), serif;
+  font-family: var(--font-display-ar), var(--font-arabic), var(--font-display),
+    var(--font-latin), sans-serif;
 }
 
 html[lang="en"] .font-display {
-  font-family: var(--font-display), var(--font-display-ar), var(--font-latin),
-    serif;
+  font-family: var(--font-display), var(--font-latin), var(--font-display-ar),
+    sans-serif;
+}
+
+.font-numeral {
+  font-family: var(--font-numeral-ar), var(--font-display), serif;
+}
+
+html[lang="en"] .font-numeral {
+  font-family: var(--font-display), var(--font-numeral-ar), serif;
 }
 
 .font-label {
@@ -184,7 +193,7 @@ body {
 
 /* Cinematic intro: hide site until React intro is ready (boot script sets data-intro-active before paint) */
 html[data-intro-active] {
-  background: #f5aa64;
+  background: #c4a078;
 }
 
 html[data-intro-active] body {
@@ -199,13 +208,13 @@ html[data-intro-active]:not([data-intro-ready]) [data-whatsapp-fab] {
   pointer-events: none !important;
 }
 
-/* Homepage: match sky plate so Lenis scroll gaps never flash body white/black */
+/* Homepage: match landing bus plate so Lenis scroll gaps never flash body white/black */
 html:has([data-brand-section]) {
-  background: #f5aa64;
+  background: #c4a078;
 }
 
 html:has([data-brand-section]) body {
-  background: #f5aa64;
+  background: #c4a078;
 }
 
 /* Homepage: header is fixed (out of flow) so hiding it never leaves a white gap */

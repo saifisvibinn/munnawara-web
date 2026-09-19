@@ -1,6 +1,7 @@
 import type {
   AboutContent,
   AppLocale,
+  CareRevealContent,
   CareerRole,
   ClientCategory,
   Company,
@@ -8,6 +9,7 @@ import type {
   FaqItem,
   FleetCategory,
   FleetCategoryId,
+  FleetPageContent,
   HomeContent,
   NewsPost,
   SiteConfig,
@@ -17,6 +19,8 @@ import { siteConfig } from "./siteConfig"
 
 import { about as aboutAr } from "./ar/about"
 import { about as aboutEn } from "./en/about"
+import { careReveal as careRevealAr } from "./ar/careReveal"
+import { careReveal as careRevealEn } from "./en/careReveal"
 import { careers as careersAr } from "./ar/careers"
 import { careers as careersEn } from "./en/careers"
 import { clients as clientsAr } from "./ar/clients"
@@ -27,6 +31,8 @@ import { faq as faqAr } from "./ar/faq"
 import { faq as faqEn } from "./en/faq"
 import { fleet as fleetAr } from "./ar/fleet"
 import { fleet as fleetEn } from "./en/fleet"
+import { fleetPage as fleetPageAr } from "./ar/fleetPage"
+import { fleetPage as fleetPageEn } from "./en/fleetPage"
 import { home as homeAr } from "./ar/home"
 import { home as homeEn } from "./en/home"
 import { news as newsAr } from "./ar/news"
@@ -40,6 +46,9 @@ export const getSiteConfig = (): SiteConfig => siteConfig
 
 export const getAbout = (locale: AppLocale): AboutContent =>
   isAr(locale) ? aboutAr : aboutEn
+
+export const getCareReveal = (locale: AppLocale): CareRevealContent =>
+  isAr(locale) ? careRevealAr : careRevealEn
 
 export const getHome = (locale: AppLocale): HomeContent =>
   isAr(locale) ? homeAr : homeEn
@@ -57,6 +66,9 @@ export const getCompany = (
 
 export const getFleet = (locale: AppLocale): readonly FleetCategory[] =>
   isAr(locale) ? fleetAr : fleetEn
+
+export const getFleetPage = (locale: AppLocale): FleetPageContent =>
+  isAr(locale) ? fleetPageAr : fleetPageEn
 
 export const getFleetCategory = (
   locale: AppLocale,

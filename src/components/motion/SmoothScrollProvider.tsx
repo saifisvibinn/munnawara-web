@@ -20,7 +20,7 @@ export const SmoothScrollProvider = ({
     if (reduced) return
 
     const lenis = new Lenis({
-      // Lower lerp = more glide / inertia (Airvoir-like)
+      // Lower lerp = more glide / inertia
       lerp: 0.085,
       smoothWheel: true,
       wheelMultiplier: 0.9,

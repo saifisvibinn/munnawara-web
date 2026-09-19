@@ -37,11 +37,17 @@ export const HeroClient = ({ siteName, headline, subhead }: HeroClientProps) => 
             className="pointer-events-none absolute inset-x-0 top-0 h-28 sm:h-32 md:h-36"
             style={{
               background:
-                "linear-gradient(to bottom, rgb(245 170 100 / 0.4) 0%, rgb(245 170 100 / 0.12) 50%, transparent 100%)",
+                "linear-gradient(to bottom, rgb(245 170 100 / 0.22) 0%, rgb(245 170 100 / 0.06) 45%, transparent 100%)",
             }}
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/8 to-white" />
-          <div className="absolute inset-0 bg-gradient-to-r from-white/40 via-white/12 to-transparent rtl:bg-gradient-to-l md:from-white/30 md:via-white/8" />
+          <div
+            className="pointer-events-none absolute inset-x-0 bottom-0 h-[22%] sm:h-[24%] md:h-[26%]"
+            style={{
+              background:
+                "linear-gradient(to bottom, transparent 0%, rgb(250 247 244 / 0.45) 55%, var(--brand-surface) 100%)",
+            }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-white/28 via-white/8 to-transparent rtl:bg-gradient-to-l md:from-white/22 md:via-white/6" />
         </div>
 
         <div className="relative z-10 mx-auto flex min-h-[68dvh] max-w-[80rem] flex-col justify-end px-4 pb-16 pt-20 sm:min-h-[75dvh] sm:pb-20 sm:pt-24 md:min-h-[85dvh] md:px-10 md:pb-24 md:pt-32">

@@ -11,6 +11,7 @@ export const HowItWorks = async () => {
     <HowItWorksClient
       title={home.howTitle}
       subtitle={home.howSubtitle}
+      stepPrefix={home.howStepPrefix}
       steps={home.howSteps}
     />
   )

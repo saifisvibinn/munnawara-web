@@ -32,44 +32,64 @@ export const home: HomeContent = {
   passbyTitleAfter: "من العرض إلى تأكيد المغادرة",
   howTitle: "كيف نعمل",
   howSubtitle: "ثلاث خطوات واضحة من الطلب إلى تأكيد النقل.",
+  howStepPrefix: "الخطوة",
   howSteps: [
     {
       id: "request",
       number: "01",
-      title: "اطلب رحلتك",
+      title: "اطلب رحلتك وانتظر المتابعة،",
       description:
-        "شاركونا نوع الرحلة والمدن والتواريخ وعدد الركاب عبر نموذج العرض أو واتساب.",
+        "شاركونا نوع الرحلة والمدن والتواريخ وعدد الركاب عبر نموذج العرض أو واتساب. يراجع فريقنا الطلب ويعدّ خيارات واضحة.",
       ctaLabel: "اطلب عرض سعر",
       ctaHref: "#quote",
     },
     {
       id: "quote",
       number: "02",
-      title: "احصل على عرض وخطة مؤكدة",
+      title: "اختر الأنسب لمجموعتك.",
       description:
-        "يعدّ فريقنا خطة واضحة للأسطول والتوقيت والخدمات المساندة.",
+        "نرسل عرضاً وخطة مؤكدة تشمل الأسطول والتوقيت والخدمات المساندة لتقرروا بثقة.",
       ctaLabel: null,
       ctaHref: null,
     },
     {
       id: "confirm",
       number: "03",
-      title: "تأكيد الرحلة وتعيين الحافلة والسائق",
+      title: "تأكيد الرحلة.",
       description:
-        "بعد الموافقة نعيّن المركبة ونبقي التنسيق مفتوحاً حتى المغادرة.",
+        "بعد الموافقة نعيّن الحافلة والسائق ونبقي التنسيق مفتوحاً حتى المغادرة.",
       ctaLabel: "تواصل معنا",
       ctaHref: "/contact",
     },
   ],
   aboutEyebrow: "عن المجموعة",
   aboutCta: "اقرأ قصتنا",
-  aboutImage: "/fleet/coach-2025-2026/cover.webp",
-  testimonialsTitle: "ماذا يقول الشركاء",
+  aboutSecondaryCta: "تواصل معنا",
+  aboutSocialCta: "تابعوا @dmtcSA",
+  aboutImage: "/hero/landing-sky.jpg",
+  aboutHeadlineLines: [
+    "رحلات آمنة ومريحة.",
+    "أسطول منظم. معايير واضحة.",
+  ],
+  quoteEyebrow: "خطّط لرحلتك",
+  quoteHeadline: "استرخوا. نحن نرتّب الباقي.",
+  quoteBody:
+    "شاركوا نوع الرحلة والمدن والتواريخ وعدد الركاب. يتابعكم فريقنا بخيارات واضحة.",
+  testimonialsTitle: "شركاؤنا",
+  testimonialsSubtitle:
+    "نقل منظم للحملات والمؤسسات والمهام الرسمية.",
+  testimonialsCta: "تواصل معنا",
   // TODO(content): replace once client provides approved testimonials
   testimonialsEmpty: "ستظهر شهادات العملاء هنا بعد اعتمادها للنشر.",
-  newsTitle: "المستجدات",
-  newsSubtitle: "ملاحظات موسمية وإعلانات المجموعة.",
+  newsTitle: "اقرأ عن المجموعة",
+  newsSubtitle:
+    "ملاحظات موسمية وتحديثات الأسطول وإعلانات من درة المنورة.",
   newsEmpty: "لا توجد أخبار منشورة حالياً — تابعونا قريباً.",
   faqTitle: "الأسئلة الشائعة",
-  faqSubtitle: "إجابات سريعة للمجموعات والمؤسسات التي تخطط للنقل.",
+  faqSubtitle: "إجابات على أكثر ما تسأله المجموعات والمؤسسات.",
+  faqCta: "تواصل معنا",
+  ctaBandEyebrow: "تجربة نقل منظم لم تعهدوها من قبل",
+  ctaBandTitle: "استرخوا، نحن نرتّب الباقي.",
+  ctaBandSubtitle:
+    "شاركوا تفاصيل رحلتكم وسيتابعكم فريقنا بخيارات واضحة.",
 }

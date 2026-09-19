@@ -11,6 +11,8 @@ export type Company = {
   name: string
   summary: string | null
   services: readonly string[]
+  /** Subsidiary brand lockup on dark background */
+  logo: string
   heroImage: string
   contentReady: boolean
 }
@@ -40,6 +42,19 @@ export type FleetCategory = {
   notes?: string
 }
 
+export type FleetPageContent = {
+  title: string
+  subtitle: string
+  intro: string
+  typesEyebrow: string
+  highlightsTitle: string
+  highlights: readonly string[]
+  clientsTitle: string
+  clients: readonly string[]
+  exploreTitle: string
+  exploreSubtitle: string
+}
+
 export type ClientCategory = {
   id: string
   label: string
@@ -58,6 +73,8 @@ export type NewsPost = {
   excerpt: string
   publishedAt: string
   body: string
+  /** Optional cover; null until editorial assets are provided */
+  coverImage: string | null
 }
 
 export type CareerRole = {
@@ -113,17 +130,45 @@ export type HomeContent = {
   passbyTitleAfter: string
   howTitle: string
   howSubtitle: string
+  howStepPrefix: string
   howSteps: readonly HomeHowStep[]
   aboutEyebrow: string
   aboutCta: string
   aboutImage: string
+  aboutHeadlineLines: readonly [string, string]
+  aboutSecondaryCta: string
+  aboutSocialCta: string
+  quoteEyebrow: string
+  quoteHeadline: string
+  quoteBody: string
   testimonialsTitle: string
+  testimonialsSubtitle: string
+  testimonialsCta: string
   testimonialsEmpty: string
   newsTitle: string
   newsSubtitle: string
   newsEmpty: string
   faqTitle: string
   faqSubtitle: string
+  faqCta: string
+  ctaBandEyebrow: string
+  ctaBandTitle: string
+  ctaBandSubtitle: string
+}
+
+export type CareRevealBenefitIcon = "group" | "signal" | "shield" | "route"
+
+export type CareRevealBenefit = {
+  id: string
+  icon: CareRevealBenefitIcon
+  label: string
+}
+
+export type CareRevealContent = {
+  eyebrow: string
+  headingLines: readonly [string, string]
+  body: string
+  benefits: readonly CareRevealBenefit[]
 }
 
 export type SiteConfig = {

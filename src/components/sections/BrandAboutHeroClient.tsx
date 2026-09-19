@@ -1,10 +1,12 @@
 "use client"
 
 import { INTRO_STORAGE_KEY } from "@/components/intro/introConfig"
+import { HeroLoopVideo } from "@/components/sections/HeroLoopVideo"
 import { TextLink } from "@/components/ui/TextLink"
 import { useReducedMotion } from "@/hooks/useReducedMotion"
 import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
+import Image from "next/image"
 import { useLayoutEffect, useRef } from "react"
 
 gsap.registerPlugin(ScrollTrigger)
@@ -210,7 +212,7 @@ export const BrandAboutHeroClient = ({
       )
 
       // Unlock + fade header only once the mark is near its slot
-      morphTl.call(() => setLogoInHeader(true), null, 0.42)
+      morphTl.call(() => setLogoInHeader(true), undefined, 0.42)
       morphTl.to(
         header,
         {
@@ -446,48 +448,49 @@ export const BrandAboutHeroClient = ({
       ref={sectionRef}
       id="brand"
       data-brand-section
-      className="relative flex min-h-[100dvh] flex-col justify-center overflow-visible text-ink"
+      className="relative overflow-x-clip bg-surface text-ink"
     >
-      <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
-        <img
-          src="/brand/landing-sky.jpg"
-          alt=""
-          className="absolute inset-0 h-full w-full object-cover object-[center_42%]"
-          draggable={false}
-        />
-        <div
-          className="absolute inset-0"
-          style={{
-            backgroundImage:
-              "radial-gradient(ellipse 70% 55% at 50% 42%, rgb(255 248 240 / 0.2), transparent 72%)",
-          }}
-        />
-      </div>
-      {/* Soft sky continuation over Hero — kills the hard section cut */}
+      {/* Full-bleed landing media */}
       <div
-        className="pointer-events-none absolute inset-x-0 top-[92%] z-[5] h-[18vh] min-h-[7rem]"
+        className="pointer-events-none absolute inset-x-0 top-0 h-[100dvh] overflow-hidden"
         aria-hidden
       >
-        <img
-          src="/brand/landing-sky.jpg"
+        <Image
+          src="/hero/cover.png"
           alt=""
-          className="absolute inset-0 h-full w-full object-cover object-[center_95%]"
+          fill
+          priority
+          className="object-cover object-[center_32%]"
+          sizes="100vw"
+        />
+        <HeroLoopVideo enabled={!reduced} framing="wide" />
+        {/* Soft bottom melt into the page */}
+        <div
+          className="absolute inset-x-0 bottom-0 h-[52%]"
           style={{
-            WebkitMaskImage:
-              "linear-gradient(to bottom, #000 0%, rgba(0,0,0,0.55) 45%, transparent 100%)",
-            maskImage:
-              "linear-gradient(to bottom, #000 0%, rgba(0,0,0,0.55) 45%, transparent 100%)",
+            background:
+              "linear-gradient(to bottom, transparent 0%, rgb(255 255 255 / 0.2) 28%, rgb(255 255 255 / 0.55) 50%, rgb(250 247 244 / 0.92) 75%, var(--brand-surface) 100%)",
           }}
-          draggable={false}
         />
       </div>
 
-      <div className="relative z-10 mx-auto flex w-full max-w-[80rem] flex-col items-center px-4 py-16 md:px-10 md:py-20">
+      {/* Landing screen: logo + about copy in one viewport */}
+      <div className="relative z-10 flex min-h-[100dvh] flex-col items-center justify-center px-4 pt-14 pb-24 sm:pt-16 sm:pb-28 md:px-10">
         <div
           ref={seatRef}
           data-brand-logo
-          className="relative w-[min(78vw,22rem)] sm:w-[min(56vw,24rem)] md:w-[min(38vw,26rem)]"
+          className="relative w-[min(56vw,14.5rem)] sm:w-[min(40vw,16rem)] md:w-[min(26vw,17rem)]"
         >
+          {/* Subtle fog behind the lockup for contrast on the dark coach */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-[-18%] z-0 rounded-full"
+            style={{
+              background:
+                "radial-gradient(ellipse 55% 58% at 50% 46%, rgb(255 255 255 / 0.78) 0%, rgb(255 252 248 / 0.42) 45%, transparent 72%)",
+              filter: "blur(10px)",
+            }}
+          />
           <img
             ref={logoRef}
             data-brand-lockup
@@ -495,39 +498,50 @@ export const BrandAboutHeroClient = ({
             alt="DMTC — Durrah Al-Munawwara"
             width={800}
             height={1000}
-            className="h-auto w-full object-contain opacity-0 drop-shadow-[0_8px_28px_rgb(255_255_255_/_0.35)]"
+            className="relative z-10 h-auto w-full object-contain opacity-0 drop-shadow-[0_0_16px_rgb(255_255_255_/_0.85)]"
             draggable={false}
           />
         </div>
 
         <div
           data-brand-copy
-          className="mt-10 max-w-2xl text-center opacity-0 sm:mt-12 md:mt-14"
+          className="relative mt-5 max-w-xl text-center opacity-0 sm:mt-6 md:mt-7 md:max-w-2xl"
         >
-          <p className="font-label text-[11px] font-semibold tracking-[0.22em] text-orange uppercase sm:text-xs">
-            {eyebrow}
-          </p>
-          <h1 className="font-display mt-3 text-[1.85rem] leading-[1.25] font-bold tracking-tight text-ink sm:text-4xl md:text-[2.75rem] md:leading-[1.3]">
-            {title}
-          </h1>
-          {mission ? (
-            <p className="mt-4 text-base leading-[1.85] text-ink/75 sm:mt-5 sm:text-lg">
-              {mission}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-[-1.25rem_-1rem] z-0 sm:inset-[-1.5rem_-1.5rem]"
+            style={{
+              background:
+                "radial-gradient(ellipse 70% 65% at 50% 45%, rgb(255 255 255 / 0.82) 0%, rgb(250 247 244 / 0.55) 48%, transparent 75%)",
+              filter: "blur(8px)",
+            }}
+          />
+          <div className="relative z-10">
+            <p className="font-label text-[11px] font-semibold tracking-[0.22em] text-orange uppercase sm:text-xs">
+              {eyebrow}
             </p>
-          ) : null}
-          <p
-            className={
-              mission
-                ? "mt-3 text-sm leading-[1.85] text-ink/60 sm:text-base"
-                : "mt-5 text-[15px] leading-[1.9] font-medium text-ink/72 sm:mt-6 sm:text-lg md:text-[1.125rem]"
-            }
-          >
-            {intro}
-          </p>
-          <div className="mt-8 flex justify-center sm:mt-10">
-            <TextLink href="/about" tone="dark">
-              {ctaLabel}
-            </TextLink>
+            <h1 className="font-display mt-2 text-[1.5rem] leading-[1.25] font-bold tracking-tight text-ink sm:text-[1.85rem] md:text-[2.15rem] md:leading-[1.3]">
+              {title}
+            </h1>
+            {mission ? (
+              <p className="mt-2.5 text-sm leading-[1.7] text-ink/70 sm:mt-3 sm:text-[0.95rem] md:leading-[1.75]">
+                {mission}
+              </p>
+            ) : null}
+            <p
+              className={
+                mission
+                  ? "mt-2 text-sm leading-[1.7] text-ink/60"
+                  : "mt-3 text-sm leading-[1.75] font-medium text-ink/75 sm:mt-4 sm:text-[0.95rem] md:text-base"
+              }
+            >
+              {intro}
+            </p>
+            <div className="mt-4 flex justify-center sm:mt-5">
+              <TextLink href="/about" tone="dark">
+                {ctaLabel}
+              </TextLink>
+            </div>
           </div>
         </div>
       </div>
