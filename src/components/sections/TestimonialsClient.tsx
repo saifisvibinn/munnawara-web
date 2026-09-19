@@ -96,23 +96,28 @@ export const TestimonialsClient = ({
         )
       }
 
-      cols.forEach((col, index) => {
-        const direction = index % 2 === 0 ? -1 : 1
-        gsap.fromTo(
-          col,
-          { y: 48 * direction },
-          {
-            y: -48 * direction,
-            ease: "none",
-            scrollTrigger: {
-              trigger: section,
-              start: "top bottom",
-              end: "bottom top",
-              scrub: 0.55,
-              invalidateOnRefresh: true,
-            },
-          },
-        )
+      // Column parallax only from sm up — on phones a single stack + opposing Y causes overlap
+      ScrollTrigger.matchMedia({
+        "(min-width: 640px)": () => {
+          cols.forEach((col, index) => {
+            const direction = index % 2 === 0 ? -1 : 1
+            gsap.fromTo(
+              col,
+              { y: 48 * direction },
+              {
+                y: -48 * direction,
+                ease: "none",
+                scrollTrigger: {
+                  trigger: section,
+                  start: "top bottom",
+                  end: "bottom top",
+                  scrub: 0.55,
+                  invalidateOnRefresh: true,
+                },
+              },
+            )
+          })
+        },
       })
     }, section)
 

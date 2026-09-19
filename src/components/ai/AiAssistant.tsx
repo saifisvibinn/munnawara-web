@@ -260,7 +260,7 @@ export const AiAssistant = () => {
                 onKeyDown={handleInputKeyDown}
                 placeholder={t("placeholder")}
                 disabled={pending}
-                className="max-h-28 min-h-[2.5rem] flex-1 resize-none rounded-full bg-surface px-4 py-2.5 text-sm text-ink outline-none ring-1 ring-ink/10 placeholder:text-ink/40 focus-visible:ring-2 focus-visible:ring-orange disabled:opacity-60"
+                className="max-h-28 min-h-[2.75rem] flex-1 resize-none rounded-full bg-surface px-4 py-2.5 text-base text-ink outline-none ring-1 ring-ink/10 placeholder:text-ink/40 focus-visible:ring-2 focus-visible:ring-orange disabled:opacity-60"
               />
               <button
                 type="submit"
