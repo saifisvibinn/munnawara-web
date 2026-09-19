@@ -14,14 +14,6 @@ const navKeys = [
   { href: "/contact", key: "contact" as const },
 ]
 
-const extraKeys = [
-  { href: "/corporate", key: "corporate" as const },
-  { href: "/clients", key: "clients" as const },
-  { href: "/gallery", key: "gallery" as const },
-  { href: "/news", key: "news" as const },
-  { href: "/careers", key: "careers" as const },
-]
-
 export const Header = () => {
   const t = useTranslations("nav")
   const tCommon = useTranslations("common")
@@ -138,7 +130,7 @@ export const Header = () => {
         className="border-t border-ink/6 bg-white xl:hidden"
       >
         <nav className="mx-auto flex max-w-[80rem] flex-col px-4 py-4" aria-label="Mobile">
-          {[...navKeys, ...extraKeys].map((item) => (
+          {navKeys.map((item) => (
             <Link
               key={item.href}
               href={item.href}

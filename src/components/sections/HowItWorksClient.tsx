@@ -115,19 +115,19 @@ export const HowItWorksClient = ({
           <h2 id="how-it-works-heading">{title}</h2>
         </header>
 
-        <div className="md:grid md:grid-cols-[minmax(8rem,0.28fr)_1fr] md:gap-10 lg:grid-cols-[minmax(10rem,0.3fr)_1fr] lg:gap-16">
+        <div className="grid grid-cols-[auto_1fr] gap-4 md:grid-cols-[minmax(8rem,0.28fr)_1fr] md:gap-10 lg:grid-cols-[minmax(10rem,0.3fr)_1fr] lg:gap-16">
           {/* Sticky digit column — numerals stay LTR (including Arabic-Indic) */}
-          <div className="pointer-events-none relative hidden md:block" aria-hidden>
+          <div className="pointer-events-none relative" aria-hidden>
             <div
               dir="ltr"
-              className="sticky top-[22vh] flex items-start justify-start text-ink"
+              className="sticky top-[18vh] flex items-start justify-start text-ink md:top-[22vh]"
             >
               {!isRtl ? (
-                <span className="font-numeral text-[clamp(6rem,12vw,9rem)] leading-none font-bold tracking-tight">
+                <span className="font-numeral text-[clamp(3.5rem,14vw,9rem)] leading-none font-bold tracking-tight">
                   0
                 </span>
               ) : null}
-              <div className="h-[clamp(6rem,12vw,9rem)] w-[0.65em] overflow-hidden text-[clamp(6rem,12vw,9rem)]">
+              <div className="h-[clamp(3.5rem,14vw,9rem)] w-[0.65em] overflow-hidden text-[clamp(3.5rem,14vw,9rem)]">
                 <div ref={digitRef} className="flex flex-col will-change-transform">
                   {steps.map((step) => (
                     <span
@@ -147,25 +147,13 @@ export const HowItWorksClient = ({
             {steps.map((step, index) => {
               const stepIndex = Number.parseInt(step.number, 10) || index + 1
               const stepLabel = `${stepPrefix} ${toLocaleDigits(stepIndex, locale)}`
-              const displayNumber = toLocaleDigits(
-                isRtl ? step.number.replace(/^0+/, "") || "0" : step.number,
-                locale,
-              )
 
               return (
                 <li
                   key={step.id}
                   data-how-step
-                  className="border-b border-ink/10 py-12 first:border-t first:border-ink/10 sm:py-14 md:py-16 lg:min-h-[70vh] lg:py-20"
+                  className="min-h-[65vh] border-b border-ink/10 py-12 first:border-t first:border-ink/10 sm:min-h-[70vh] sm:py-14 md:py-16 lg:py-20"
                 >
-                  <p
-                    dir="ltr"
-                    className="font-numeral mb-6 text-5xl font-bold tracking-tight text-ink md:hidden"
-                    aria-hidden
-                  >
-                    {displayNumber}
-                  </p>
-
                   <div className="relative h-0.5 w-full overflow-hidden bg-ink/10">
                     <div
                       data-how-progress

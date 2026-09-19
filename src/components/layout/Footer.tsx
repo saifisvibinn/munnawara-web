@@ -46,7 +46,8 @@ export const Footer = async () => {
               [
                 ["/", "home"],
                 ["/fleet", "fleet"],
-                ["/gallery", "gallery"],
+                ["/companies", "companies"],
+                ["/about", "about"],
                 ["/contact", "contact"],
               ] as const
             ).map(([href, key]) => (
