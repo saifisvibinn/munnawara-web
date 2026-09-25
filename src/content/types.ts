@@ -129,9 +129,6 @@ export type LandingHeroContent = {
   brandWords: readonly [string, string, string, string]
   backTop: string
   chatAria: string
-  chatWith: string
-  chatAi: string
-  brand: string
 }
 
 export type HomeContent = {

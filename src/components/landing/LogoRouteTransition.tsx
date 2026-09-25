@@ -277,7 +277,6 @@ export const LogoRouteTransition = () => {
   const landIntoBar = async (nextPath: string) => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       markSeen()
-      document.documentElement.setAttribute("data-logo-in-header", "")
       phaseRef.current = "idle"
       dismissOverlay()
       return
@@ -324,11 +323,18 @@ export const LogoRouteTransition = () => {
       if (navItems.length) gsap.set(navItems, { x: rtl ? 10 : -10, opacity: 0 })
       if (langSwitch) gsap.set(langSwitch, { opacity: 0, visibility: "visible", y: -8 })
     } else {
-      document.documentElement.removeAttribute("data-logo-in-header")
       if (siteHeader) {
         gsap.set(siteHeader, { opacity: 1, visibility: "visible", pointerEvents: "auto" })
       }
       if (siteLogo) gsap.set(siteLogo, { opacity: 0 })
+      if (nav) gsap.set(nav, { visibility: "visible" })
+      if (navBar) {
+        gsap.set(navBar, { scaleX: 1, opacity: 1, clearProps: "transform" })
+      }
+      if (navItems.length) gsap.set(navItems, { x: 0, opacity: 1 })
+      if (langSwitch) {
+        gsap.set(langSwitch, { opacity: 1, visibility: "visible", y: 0 })
+      }
     }
 
     bloomTlRef.current?.progress(1)
@@ -409,9 +415,6 @@ export const LogoRouteTransition = () => {
           "<0.05",
         )
       } else {
-        timeline.call(() => {
-          document.documentElement.setAttribute("data-logo-in-header", "")
-        })
         tweenIf(
           timeline,
           siteLogo,
@@ -437,10 +440,7 @@ export const LogoRouteTransition = () => {
           document.body.classList.remove("is-page-transitioning")
         },
       })
-      if (!isHome) {
-        document.documentElement.setAttribute("data-logo-in-header", "")
-        if (siteLogo) gsap.set(siteLogo, { opacity: 1 })
-      }
+      if (!isHome && siteLogo) gsap.set(siteLogo, { opacity: 1 })
     }
   }
 

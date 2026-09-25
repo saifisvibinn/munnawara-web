@@ -1,6 +1,5 @@
 "use client"
 
-import { INTRO_STORAGE_KEY } from "@/components/intro/introConfig"
 import { HeroLoopVideo } from "@/components/sections/HeroLoopVideo"
 import { TextLink } from "@/components/ui/TextLink"
 import { useReducedMotion } from "@/hooks/useReducedMotion"
@@ -21,15 +20,11 @@ type BrandAboutHeroClientProps = {
   ctaLabel: string
 }
 
-const setLogoInHeader = (inHeader: boolean) => {
-  document.documentElement.toggleAttribute("data-logo-in-header", inHeader)
-}
-
 const MARK_RATIO = 491 / 605
 
 const resolveHeaderSlot = (siteLogo: HTMLElement) => {
-  const img = siteLogo.querySelector("img")
-  const rect = (img ?? siteLogo).getBoundingClientRect()
+  const mark = siteLogo.querySelector("svg, img") as HTMLElement | null
+  const rect = (mark ?? siteLogo).getBoundingClientRect()
   if (rect.width >= 4 && rect.height >= 4) {
     return {
       left: rect.left,
@@ -39,19 +34,17 @@ const resolveHeaderSlot = (siteLogo: HTMLElement) => {
     }
   }
 
-  const md = window.matchMedia("(min-width: 768px)").matches
-  const headerH = md ? 72 : 64
-  const logoH = md ? 44 : 40
-  const logoW = logoH / MARK_RATIO
-  const pad = md ? 40 : 16
-  const shell = Math.min(window.innerWidth, 80 * 16)
-  const gutter = Math.max(0, (window.innerWidth - shell) / 2) + pad
+  const styles = getComputedStyle(document.documentElement)
+  const size =
+    Number.parseFloat(styles.getPropertyValue("--corner-logo-size")) || 54
+  const pad =
+    Number.parseFloat(styles.getPropertyValue("--page-pad")) || 18
   const rtl = document.documentElement.dir === "rtl"
   return {
-    left: rtl ? window.innerWidth - gutter - logoW : gutter,
-    top: (headerH - logoH) / 2,
-    width: logoW,
-    height: logoH,
+    left: rtl ? window.innerWidth - pad - size : pad,
+    top: 14,
+    width: size,
+    height: size,
   }
 }
 
@@ -77,9 +70,9 @@ export const BrandAboutHeroClient = ({
     const section = sectionRef.current
     const brandSeat = seatRef.current
     const brandLockup = logoRef.current
-    const header = document.querySelector<HTMLElement>("header")
+    const siteHeader = document.querySelector<HTMLElement>("[data-site-header]")
     const siteLogo = document.querySelector<HTMLElement>("[data-site-logo]")
-    if (!section || !brandSeat || !brandLockup || !header || !siteLogo) return
+    if (!section || !brandSeat || !brandLockup || !siteHeader || !siteLogo) return
 
     let killed = false
     let flying: HTMLImageElement | null = null
@@ -92,17 +85,6 @@ export const BrandAboutHeroClient = ({
       if (copy) gsap.set(copy, { opacity: 1, y: 0 })
     }
 
-    const syncLandingVisibility = () => {
-      if (document.documentElement.hasAttribute("data-intro-active")) return
-      try {
-        if (sessionStorage.getItem(INTRO_STORAGE_KEY) === "1" || !document.getElementById("intro-boot")) {
-          if (!parked) showLanding()
-        }
-      } catch {
-        if (!parked) showLanding()
-      }
-    }
-
     const killFlyer = () => {
       flying?.remove()
       flying = null
@@ -110,15 +92,8 @@ export const BrandAboutHeroClient = ({
 
     const parkHeaderInstant = () => {
       parked = true
-      setLogoInHeader(true)
       brandSeat.style.minHeight = ""
-      gsap.set(header, {
-        clearProps: "transform,translate,y,yPercent",
-        opacity: 1,
-        visibility: "visible",
-        pointerEvents: "auto",
-      })
-      gsap.set(siteLogo, { opacity: 1 })
+      gsap.set(siteLogo, { opacity: 1, visibility: "visible" })
       gsap.set(brandLockup, {
         opacity: 0,
         clearProps: "position,left,top,width,zIndex,margin,maxWidth,transform,clipPath",
@@ -127,7 +102,7 @@ export const BrandAboutHeroClient = ({
     }
 
     const playToHeader = () => {
-      if (killed || parked || document.documentElement.hasAttribute("data-intro-active")) return
+      if (killed || parked) return
       if (morphTl?.isActive()) morphTl.kill()
 
       const seat = brandLockup.getBoundingClientRect()
@@ -154,13 +129,7 @@ export const BrandAboutHeroClient = ({
       document.body.appendChild(fly)
       flying = fly
 
-      // Keep CSS header-hide until the flyer is near the slot (avoids white bar flash)
-      gsap.set(header, {
-        opacity: 0,
-        visibility: "hidden",
-        pointerEvents: "none",
-        clearProps: "transform,translate,y,yPercent",
-      })
+      // Keep chrome nav visible — only swap the corner mark
       gsap.set(siteLogo, { opacity: 0 })
 
       gsap.set(fly, {
@@ -188,13 +157,7 @@ export const BrandAboutHeroClient = ({
       morphTl = gsap.timeline({
         defaults: { ease: "power3.inOut" },
         onComplete: () => {
-          gsap.set(header, {
-            clearProps: "transform,translate,y,yPercent",
-            opacity: 1,
-            visibility: "visible",
-            pointerEvents: "auto",
-          })
-          gsap.set(siteLogo, { opacity: 1 })
+          gsap.set(siteLogo, { opacity: 1, visibility: "visible" })
           gsap.set(brandLockup, { opacity: 0, clearProps: "transform,clipPath" })
           killFlyer()
         },
@@ -214,13 +177,10 @@ export const BrandAboutHeroClient = ({
         0,
       )
 
-      // Unlock + fade header only once the mark is near its slot
-      morphTl.call(() => setLogoInHeader(true), undefined, 0.42)
       morphTl.to(
-        header,
+        siteLogo,
         {
           opacity: 1,
-          visibility: "visible",
           duration: 0.28,
           ease: "power2.out",
         },
@@ -228,12 +188,11 @@ export const BrandAboutHeroClient = ({
       )
 
       morphTl.to(fly, { opacity: 0, duration: 0.14 }, 0.58)
-      // Reveal real mark under the flyer before the flyer fades (same rect = no snap)
       morphTl.set(siteLogo, { opacity: 1 }, 0.56)
     }
 
     const playToLanding = () => {
-      if (killed || document.documentElement.hasAttribute("data-intro-active")) return
+      if (killed) return
       if (!parked) return
       if (morphTl?.isActive()) morphTl.kill()
 
@@ -315,14 +274,7 @@ export const BrandAboutHeroClient = ({
         defaults: { ease: "power3.inOut" },
         onComplete: () => {
           gsap.set(brandLockup, { opacity: 1, clearProps: "clipPath" })
-          gsap.set(header, {
-            opacity: 0,
-            visibility: "hidden",
-            clearProps: "transform,y,yPercent",
-            pointerEvents: "none",
-          })
           gsap.set(siteLogo, { opacity: 0 })
-          setLogoInHeader(false)
           killFlyer()
           requestAnimationFrame(releasePinnedLockup)
         },
@@ -341,24 +293,14 @@ export const BrandAboutHeroClient = ({
         0,
       )
 
-      // Mirror of scroll-down: header stays until mark is near its seat, then fades
       morphTl.to(
-        header,
+        siteLogo,
         {
           opacity: 0,
           duration: 0.3,
           ease: "power2.in",
         },
         0.4,
-      )
-      morphTl.set(
-        header,
-        {
-          visibility: "hidden",
-          pointerEvents: "none",
-          clearProps: "transform,y,yPercent",
-        },
-        0.7,
       )
 
       // When flyer covers the seat, show petal-clipped lockup under it, then unclip text
@@ -371,15 +313,9 @@ export const BrandAboutHeroClient = ({
       morphTl.to(fly, { opacity: 0, duration: 0.18 }, 0.58)
     }
 
-    gsap.set(header, {
-      opacity: 0,
-      visibility: "hidden",
-      clearProps: "transform,y,yPercent",
-      pointerEvents: "none",
-    })
+    // Chrome stays visible; only the corner mark starts hidden until parked
     gsap.set(siteLogo, { opacity: 0 })
-    setLogoInHeader(false)
-    syncLandingVisibility()
+    if (!parked) showLanding()
 
     // Two triggers so down-morph stays late (near header) while up-morph
     // can start as soon as the seat returns — playToLanding aims at rest Y.
@@ -396,14 +332,7 @@ export const BrandAboutHeroClient = ({
       onLeaveBack: () => {
         if (reduced) {
           parked = false
-          setLogoInHeader(false)
           brandSeat.style.minHeight = ""
-          gsap.set(header, {
-            opacity: 0,
-            visibility: "hidden",
-            clearProps: "transform",
-            pointerEvents: "none",
-          })
           gsap.set(siteLogo, { opacity: 0 })
           gsap.set(brandLockup, {
             opacity: 1,
@@ -415,32 +344,18 @@ export const BrandAboutHeroClient = ({
       },
     })
 
-    const onIntroDone = () => {
-      if (!document.documentElement.hasAttribute("data-intro-active")) {
-        syncLandingVisibility()
-        ScrollTrigger.refresh()
-      }
-    }
-    const obs = new MutationObserver(onIntroDone)
-    obs.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ["data-intro-active"],
-    })
     const t = window.setTimeout(() => {
-      syncLandingVisibility()
+      if (!parked) showLanding()
       ScrollTrigger.refresh()
     }, 100)
 
     return () => {
       killed = true
       window.clearTimeout(t)
-      obs.disconnect()
       stPark.kill()
       morphTl?.kill()
       killFlyer()
       brandSeat.style.minHeight = ""
-      setLogoInHeader(false)
-      gsap.set(header, { clearProps: "all" })
       gsap.set(siteLogo, { clearProps: "opacity" })
       gsap.set(brandLockup, { clearProps: "all" })
     }

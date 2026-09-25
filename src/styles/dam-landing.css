@@ -20,10 +20,53 @@ html:has(.dam-landing) body::-webkit-scrollbar {
   height: 0;
 }
 /* Dam landing brings its own glass nav + corner AI control */
-html:has(.dam-landing) header[data-site-header],
+html:has(.dam-landing) [data-site-header],
 html:has(.dam-landing) [data-floating-actions],
 html:has(.dam-landing) [data-floating-quote-chrome] {
   display: none !important;
+}
+
+/* Shared chrome tokens outside the landing root */
+:root {
+  --page-pad: clamp(18px, 3vw, 48px);
+  --corner-logo-size: clamp(54px, 5vw, 64px);
+}
+
+/* Inner-page chrome — same floating pill bar as the landing */
+.site-chrome {
+  --page-pad: clamp(18px, 3vw, 48px);
+  --corner-logo-size: clamp(54px, 5vw, 64px);
+  --brand-peach: rgb(255, 184, 112);
+  --brand-orange: rgb(247, 91, 18);
+  --font-display: "Archivo", var(--font-latin), sans-serif;
+  --font-body: "Nunito Sans", var(--font-latin), sans-serif;
+  --font-arabic: var(--font-display-ar), "Cairo", sans-serif;
+  font-family: var(--font-body);
+}
+
+.site-chrome__spacer {
+  height: calc(var(--corner-logo-size) + 28px);
+  pointer-events: none;
+}
+
+.site-chrome .corner-logo,
+.site-chrome .site-chrome__logo {
+  opacity: 1;
+  visibility: visible;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.site-chrome .lang-switch {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+@media (max-width: 980px) {
+  .site-chrome__spacer {
+    height: calc(var(--corner-logo-size) + 22px);
+  }
 }
 html:has(.dam-landing) main#main {
   min-height: 0;
@@ -83,10 +126,6 @@ body.is-transitioning {
   height: 100svh;
   overflow: hidden;
   isolation: isolate;
-}
-
-.hero__page-blur {
-  z-index: 12;
 }
 
 .site-below {
@@ -470,6 +509,9 @@ body.is-transitioning {
 .line-mask {
   display: block;
   overflow: hidden;
+  /* Room for ascenders/descenders while intro still clips horizontally */
+  padding-block: 0.12em;
+  margin-block: -0.12em;
 }
 
 .line-mask--cta {
@@ -832,6 +874,15 @@ body.is-transitioning {
   letter-spacing: 0.24em;
   visibility: hidden;
   opacity: 0;
+  direction: ltr;
+}
+
+.loader-status--ar {
+  direction: rtl;
+  gap: 0;
+  letter-spacing: 0;
+  font-family: var(--font-arabic);
+  font-size: 0.78rem;
 }
 
 .loader-brand {
@@ -999,6 +1050,16 @@ body.is-page-transitioning {
   justify-content: center;
   visibility: hidden;
   pointer-events: none;
+}
+
+/* Inner pages: same pill bar as landing, always visible */
+.site-nav.site-nav--chrome {
+  visibility: visible;
+  pointer-events: none;
+}
+
+.site-nav.site-nav--chrome .site-nav__bar {
+  pointer-events: auto;
 }
 
 .site-nav__bar {
@@ -1383,38 +1444,57 @@ body.is-landing-menu-open .site-nav__bar {
     height: auto;
     width: 100%;
     max-width: none;
-    padding: 18px 0 8px;
+    padding: 12px 0 16px;
     gap: 0;
+    align-items: center;
+    text-align: center;
   }
 
   .hero__eyebrow {
-    margin-bottom: 14px;
-    font-size: 0.68rem;
-    letter-spacing: 0.12em;
+    margin: 0 0 12px;
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    line-height: 1.35;
+    max-width: 100%;
+    text-wrap: balance;
   }
 
   .hero h1 {
-    font-size: clamp(2.35rem, 11vw, 3.25rem);
-    line-height: 1.02;
-    letter-spacing: -0.03em;
+    font-size: clamp(2.15rem, 9.5vw, 2.85rem);
+    line-height: 1.12;
+    letter-spacing: -0.028em;
+    gap: 0.06em;
+    align-items: center;
+    text-align: center;
+  }
+
+  .hero h1 .line-mask {
+    padding-block: 0.16em;
+    margin-block: -0.04em;
+    text-align: center;
   }
 
   .hero__sub {
     width: 100%;
-    max-width: 36ch;
-    margin: 14px 0 18px;
-    font-size: 0.98rem;
+    max-width: 34ch;
+    margin: 12px auto 16px;
+    font-size: 0.95rem;
     line-height: 1.55;
+    text-align: center;
   }
 
   .hero__cta {
-    width: 100%;
+    width: auto;
+    max-width: 100%;
+    margin-inline: auto;
   }
 
   .explore-btn {
-    width: 100%;
+    width: auto;
+    min-width: min(100%, 18rem);
+    max-width: 100%;
     justify-content: center;
-    padding: 0.9rem 1.25rem;
+    padding: 0.9rem 1.5rem;
     min-height: 48px;
     touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
@@ -1422,9 +1502,12 @@ body.is-landing-menu-open .site-nav__bar {
   }
 
   .line-mask--cta {
-    width: 100%;
+    width: auto;
+    max-width: 100%;
     padding: 4px 0 8px;
-    margin: 0;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
   }
 
   .hero__blob {
@@ -1444,7 +1527,7 @@ body.is-landing-menu-open .site-nav__bar {
   }
 }
 
-@media (max-height: 600px) {
+@media (max-height: 600px) and (min-width: 981px) {
   .hero__content {
     padding: 20px 22px;
   }
@@ -1611,21 +1694,44 @@ html[dir='rtl'] .site-nav__links {
   }
 
   html[dir='rtl'] .hero__content {
-    padding: 18px 0 8px;
-    align-items: stretch;
-    text-align: start;
+    padding: 12px 0 16px;
+    align-items: center;
+    text-align: center;
+  }
+
+  html[dir='rtl'] .hero__eyebrow {
+    letter-spacing: 0.02em;
+    font-size: 0.72rem;
+    line-height: 1.45;
+  }
+
+  html[dir='rtl'] .hero h1 {
+    font-family: var(--font-display-ar, var(--font-arabic));
+    font-size: clamp(2rem, 9vw, 2.7rem);
+    line-height: 1.28;
+    letter-spacing: 0;
   }
 
   html[dir='rtl'] .hero h1,
   html[dir='rtl'] .hero h1 .line-mask {
-    text-align: start;
-    align-items: flex-start;
+    text-align: center;
+    align-items: center;
+  }
+
+  html[dir='rtl'] .hero__sub {
+    font-size: 0.98rem;
+    line-height: 1.65;
+    max-width: 100%;
+    margin-inline: auto;
+    text-align: center;
   }
 
   html[dir='rtl'] .hero__cta,
   html[dir='rtl'] .line-mask--cta {
-    align-self: stretch;
-    width: 100%;
+    align-self: center;
+    width: auto;
+    max-width: 100%;
+    margin-inline: auto;
   }
 
   html[dir='rtl'] .hero__stage-wrap {

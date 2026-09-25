@@ -2,6 +2,7 @@
 
 import type { LandingHeroContent } from "@/content/types"
 import gsap from "gsap"
+import { useLocale, useTranslations } from "next-intl"
 import {
   useLayoutEffect,
   useRef,
@@ -87,6 +88,11 @@ type DamLandingProps = {
 }
 
 export const DamLanding = ({ copy }: DamLandingProps) => {
+  const tCommon = useTranslations("common")
+  const locale = useLocale()
+  const loadingLabel = tCommon("loading")
+  const loadingChars =
+    locale === "ar" ? [loadingLabel] : loadingLabel.toUpperCase().split("")
   const [prefersReducedMotion] = useState(
     () =>
       typeof window !== "undefined" &&
@@ -447,8 +453,13 @@ export const DamLanding = ({ copy }: DamLandingProps) => {
             />
           ))}
         </div>
-        <div className="loader-status" ref={loaderStatusRef} aria-label="Loading">
-          {"LOADING".split("").map((letter, index) => (
+        <div
+          className={`loader-status${locale === "ar" ? " loader-status--ar" : ""}`}
+          ref={loaderStatusRef}
+          aria-label={loadingLabel}
+          dir={locale === "ar" ? "rtl" : "ltr"}
+        >
+          {loadingChars.map((letter, index) => (
             <span
               aria-hidden="true"
               key={`${letter}-${index}`}

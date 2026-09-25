@@ -10,9 +10,6 @@ export const home: HomeContent = {
     brandWords: ["DURRAH", "AL", "MUNAWWARA", "TRANSPORTATION"],
     backTop: "درة المنورة — العودة للأعلى",
     chatAria: "محادثة مع درة المنورة",
-    chatWith: "تحدث مع",
-    chatAi: "الذكاء",
-    brand: "DMTC",
   },
   valueTitle: "نقل مصمم للرحلات المقدسة",
   valueIntro:

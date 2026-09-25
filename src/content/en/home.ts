@@ -10,9 +10,6 @@ export const home: HomeContent = {
     brandWords: ["DURRAH", "AL", "MUNAWWARA", "TRANSPORTATION"],
     backTop: "DMTC — back to top",
     chatAria: "Chat with DMTC",
-    chatWith: "Chat with",
-    chatAi: "AI",
-    brand: "DMTC",
   },
   valueTitle: "Transport built for sacred journeys",
   valueIntro:
