@@ -473,7 +473,7 @@ body.is-transitioning {
 }
 
 .hero__eyebrow {
-  margin: 0 0 clamp(20px, 2.8vh, 32px);
+  margin: 0 0 clamp(18px, 2.4vh, 28px);
   color: var(--brand-orange);
   font-family: var(--font-body);
   font-size: 0.8rem;
@@ -488,22 +488,30 @@ body.is-transitioning {
   align-items: flex-start;
   margin: 0;
   font-family: var(--font-display);
-  font-size: clamp(3.6rem, 6.2vw, 6rem);
+  font-size: clamp(3.8rem, 7vw, 6.4rem);
   font-weight: 700;
-  letter-spacing: -0.045em;
-  line-height: 0.92;
+  letter-spacing: -0.05em;
+  line-height: 1;
+  gap: 0;
   text-align: start;
   width: 100%;
+  color: var(--paper);
 }
 
 .hero h1 .line-mask {
   width: 100%;
   text-align: start;
+  /* Keep mask clip for intro reveal, but don't collapse into the next row */
+  overflow: hidden;
+  padding-block: 0.06em 0.14em;
+  margin-block: 0;
 }
 
+/* Accent the final headline row (e.g. "forward" / "إلى الأمام") */
 .hero h1 .line-mask:last-child {
   padding-inline: 0;
   color: var(--brand-blue);
+  white-space: nowrap;
 }
 
 .line-mask {
@@ -1326,26 +1334,57 @@ body.is-landing-menu-open .site-nav__bar {
 
   .site-nav {
     top: 14px;
+    justify-content: flex-end;
+    /* Menu on the end side (LTR right / RTL left); leave room for logo + lang */
+    padding-inline-start: calc(var(--page-pad) + var(--corner-logo-size) + 6.2rem);
+    padding-inline-end: var(--page-pad);
   }
 
   .site-nav__bar {
-    min-height: 45px;
-    padding: 3px 5px 3px 28px;
+    /* Same compact pill in both languages — only the menu icon remains */
+    box-sizing: border-box;
+    width: auto;
+    min-width: 0;
+    min-height: 44px;
+    padding-block: 4px;
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+    margin-inline: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    border-radius: 100px;
   }
 
   .site-nav__links,
   .site-nav__quote {
-    display: none;
+    display: none !important;
   }
 
   .lang-switch {
     top: 14px;
+    /* Sit beside the logo (start side) */
+    inset-inline-start: calc(var(--page-pad) + var(--corner-logo-size) + 10px);
+    inset-inline-end: auto;
     min-width: 4.6rem;
     padding: 8px 12px;
   }
 
   .menu-hook {
-    display: block;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    flex: 0 0 auto;
+    width: 44px;
+    height: 44px;
+    margin: 0;
+  }
+
+  .menu-hook span {
+    margin: 0;
   }
 
   .hero {
@@ -1380,10 +1419,12 @@ body.is-landing-menu-open .site-nav__bar {
   .hero__stage-wrap {
     grid-column: auto;
     grid-row: auto;
-    width: 100%;
+    width: 100% !important;
     height: min(42svh, 320px);
-    margin: 0;
-    margin-inline: 0;
+    margin: 0 !important;
+    margin-inline: 0 !important;
+    margin-inline-start: 0 !important;
+    margin-inline-end: 0 !important;
     justify-self: stretch;
   }
 
@@ -1408,13 +1449,21 @@ body.is-landing-menu-open .site-nav__bar {
     background: #eaeae6;
   }
 
+  .hero-video {
+    justify-content: center;
+    align-items: center;
+  }
+
   .hero-video__media {
+    /* Full frame, no crop — stage is already full width and centered */
     width: 100%;
     height: 100%;
     max-width: none;
     max-height: none;
     object-fit: contain;
     object-position: center center;
+    -webkit-mask-image: none;
+    mask-image: none;
   }
 
   .hero__stage-seam {
@@ -1461,7 +1510,7 @@ body.is-landing-menu-open .site-nav__bar {
 
   .hero h1 {
     font-size: clamp(2.15rem, 9.5vw, 2.85rem);
-    line-height: 1.12;
+    line-height: 1.08;
     letter-spacing: -0.028em;
     gap: 0.06em;
     align-items: center;
@@ -1469,9 +1518,10 @@ body.is-landing-menu-open .site-nav__bar {
   }
 
   .hero h1 .line-mask {
-    padding-block: 0.16em;
-    margin-block: -0.04em;
+    padding-block: 0.06em 0.12em;
+    margin-block: 0;
     text-align: center;
+    overflow: hidden;
   }
 
   .hero__sub {
@@ -1581,20 +1631,31 @@ html[dir='rtl'] .site-section__link {
 html[dir='rtl'] .hero__eyebrow,
 html[dir='rtl'] .site-section__eyebrow {
   letter-spacing: 0.04em;
+  text-transform: none;
 }
 
 html[dir='rtl'] .hero__content {
   align-items: stretch;
   text-align: start;
+  width: min(100%, 34rem);
   padding-inline: clamp(28px, 3.5vw, 44px);
 }
 
 html[dir='rtl'] .hero h1 {
   align-items: flex-start;
   text-align: start;
+  font-family: var(--font-display-ar, var(--font-arabic));
+  font-size: clamp(3.2rem, 5.4vw, 5.2rem);
+  letter-spacing: 0;
+  line-height: 1.12;
 }
 
 html[dir='rtl'] .hero h1 .line-mask:last-child {
+  /* nowrap phrase must not be clipped by the intro line-mask */
+  width: max-content;
+  max-width: 100%;
+  overflow: visible;
+  white-space: nowrap;
   padding-inline: 0;
 }
 
@@ -1604,8 +1665,8 @@ html[dir='rtl'] .line-mask--cta {
 }
 
 html[dir='rtl'] .hero__blend {
-  /* Same column roles as LTR — html[dir=rtl] mirrors placement to the start side */
-  grid-template-columns: minmax(280px, 30rem) minmax(0, 1fr);
+  /* Wider copy column so "إلى الأمام" fits on one line */
+  grid-template-columns: minmax(320px, 36rem) minmax(0, 1fr);
 }
 
 html[dir='rtl'] .hero__glass,
@@ -1707,9 +1768,13 @@ html[dir='rtl'] .site-nav__links {
 
   html[dir='rtl'] .hero h1 {
     font-family: var(--font-display-ar, var(--font-arabic));
-    font-size: clamp(2rem, 9vw, 2.7rem);
+    font-size: clamp(1.75rem, 7.5vw, 2.4rem);
     line-height: 1.28;
     letter-spacing: 0;
+  }
+
+  html[dir='rtl'] .hero h1 .line-mask:last-child {
+    white-space: nowrap;
   }
 
   html[dir='rtl'] .hero h1,
@@ -1736,17 +1801,15 @@ html[dir='rtl'] .site-nav__links {
 
   html[dir='rtl'] .hero__stage-wrap {
     grid-column: auto;
-    width: 100%;
-    margin: 0;
-    margin-inline: 0;
+    width: 100% !important;
+    margin: 0 !important;
+    margin-inline: 0 !important;
+    margin-inline-start: 0 !important;
+    margin-inline-end: 0 !important;
   }
 
   html[dir='rtl'] .hero__stage {
     border-radius: 0;
-  }
-
-  html[dir='rtl'] .site-nav__bar {
-    padding-inline: 5px;
   }
 
   html[dir='rtl'] .lang-switch {
@@ -1754,7 +1817,10 @@ html[dir='rtl'] .site-nav__links {
   }
 
   html[dir='rtl'] .hero-video__media {
+    object-fit: contain;
     object-position: center center;
+    -webkit-mask-image: none;
+    mask-image: none;
   }
 }
 

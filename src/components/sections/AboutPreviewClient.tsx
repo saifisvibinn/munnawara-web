@@ -1,6 +1,5 @@
 "use client"
 
-import { HeroLoopVideo } from "@/components/sections/HeroLoopVideo"
 import { SocialFollowButton } from "@/components/ui/SocialFollowButton"
 import { useReducedMotion } from "@/hooks/useReducedMotion"
 import { Link } from "@/i18n/navigation"
@@ -12,8 +11,6 @@ import Image from "next/image"
 import { useLayoutEffect, useRef } from "react"
 
 gsap.registerPlugin(ScrollTrigger)
-
-const ABOUT_VIDEO_SRC = "/hero/gemini_generated_video_a0ffd1c9.mp4"
 
 type SocialLinks = {
   handle: string
@@ -105,12 +102,6 @@ export const AboutPreviewClient = ({
           className="object-cover object-center"
           sizes="130vw"
           priority={false}
-        />
-        <HeroLoopVideo
-          enabled={!reduced}
-          framing="center"
-          src={ABOUT_VIDEO_SRC}
-          poster="/hero/landing-sky.jpg"
         />
       </div>
 

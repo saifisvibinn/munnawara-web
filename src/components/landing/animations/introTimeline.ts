@@ -76,7 +76,15 @@ export function createIntroTimeline(elements: IntroElements) {
   let state: 'start' | 'forward' | 'end' = 'start'
 
   const rtl = document.documentElement.dir === 'rtl'
-  const navOrigin = rtl ? 'right center' : 'left center'
+  /* Mobile menu sits on the end side; desktop pill grows from the start */
+  const isMobileNav = window.matchMedia(`(max-width: ${motion.video.mobileBreakpoint}px)`).matches
+  const navOrigin = isMobileNav
+    ? rtl
+      ? 'left center'
+      : 'right center'
+    : rtl
+      ? 'right center'
+      : 'left center'
   const cardOrigin = rtl ? 'right center' : 'left center'
   const stageOrigin = rtl ? '35% 55%' : '65% 55%'
   const navItemFrom = rtl ? 12 : -12

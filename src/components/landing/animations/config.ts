@@ -40,7 +40,7 @@ export const animationConfig = {
     fadeDuration: 0.85,
     loop: false,
     objectPositionDesktop: "70% center",
-    objectPositionMobile: "55% center",
+    objectPositionMobile: "center center",
     mobileBreakpoint: 980,
     /** Freeze playback this many seconds before the true end */
     endFrameOffsetSeconds: 1,

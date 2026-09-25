@@ -21,7 +21,7 @@ type HeroVideoProps = {
   reducedMotion: boolean
 }
 
-const VIDEO_SRC = "/hero/Locked_off_static_camera_no_c.mp4"
+const VIDEO_SRC = "/hero/backvid.mp4"
 
 export const HeroVideo = forwardRef<HeroVideoHandle, HeroVideoProps>(
   function HeroVideo({ reducedMotion }, ref) {

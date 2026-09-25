@@ -394,12 +394,11 @@ export const DamLanding = ({ copy }: DamLandingProps) => {
                       <span ref={collectHeroLine}>{copy.eyebrow}</span>
                     </p>
                     <h1 id="hero-title">
-                      <span className="line-mask">
-                        <span ref={collectHeroLine}>{copy.line1}</span>
-                      </span>
-                      <span className="line-mask">
-                        <span ref={collectHeroLine}>{copy.line2}</span>
-                      </span>
+                      {copy.lines.map((line) => (
+                        <span className="line-mask" key={line}>
+                          <span ref={collectHeroLine}>{line}</span>
+                        </span>
+                      ))}
                     </h1>
                     <p className="hero__sub line-mask">
                       <span ref={collectHeroLine}>{copy.sub}</span>

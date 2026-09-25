@@ -3,8 +3,7 @@ import type { HomeContent } from "../types"
 export const home: HomeContent = {
   landingHero: {
     eyebrow: "Durrah Al Munawwara Transportation",
-    line1: "Moving you",
-    line2: "forward",
+    lines: ["Moving", "you", "forward"],
     sub: "Premium journeys, thoughtfully driven across every mile.",
     cta: "Explore our services",
     brandWords: ["DURRAH", "AL", "MUNAWWARA", "TRANSPORTATION"],

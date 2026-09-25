@@ -122,8 +122,8 @@ export type HomeHowStep = {
 
 export type LandingHeroContent = {
   eyebrow: string
-  line1: string
-  line2: string
+  /** Headline rows; the last row uses the brand blue accent. */
+  lines: readonly string[]
   sub: string
   cta: string
   brandWords: readonly [string, string, string, string]
