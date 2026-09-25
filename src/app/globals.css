@@ -191,15 +191,6 @@ body {
   }
 }
 
-/* Cinematic intro boot (legacy desert hero) — kept harmless when unused */
-html[data-intro-active] {
-  background: #f4f0e8;
-}
-
-html[data-intro-active] body {
-  overflow: hidden;
-}
-
 /* Homepage: match locked-off studio video plate */
 html:has(.dam-landing) {
   background: #eaeae6;

@@ -7,7 +7,6 @@ export const home: HomeContent = {
     line2: "إلى الأمام",
     sub: "رحلات راقية، تُقاد بعناية في كل ميل.",
     cta: "استكشف خدماتنا",
-    scrollHint: "مرّر للدخول",
     brandWords: ["DURRAH", "AL", "MUNAWWARA", "TRANSPORTATION"],
     backTop: "درة المنورة — العودة للأعلى",
     chatAria: "محادثة مع درة المنورة",

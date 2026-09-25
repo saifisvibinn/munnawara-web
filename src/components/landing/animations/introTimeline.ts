@@ -9,7 +9,6 @@ export type IntroElements = {
   target: HTMLElement
   cornerLogo: HTMLElement
   overlay: HTMLElement
-  hint: HTMLElement
   brandName: HTMLElement
   nav: HTMLElement
   navBar: HTMLElement
@@ -44,7 +43,6 @@ export function setIntroFinalState(elements: IntroElements) {
   gsap.set(elements.petalFlights, { opacity: 0 })
   gsap.set(elements.cornerLogo, { opacity: 1, visibility: 'visible' })
   gsap.set(elements.overlay, { opacity: 0, visibility: 'hidden' })
-  gsap.set(elements.hint, { opacity: 0 })
   gsap.set(elements.brandName, { opacity: 0, visibility: 'hidden' })
   gsap.set(elements.nav, { visibility: 'visible' })
   gsap.set(elements.navBar, { scaleX: 1, opacity: 1 })
@@ -146,11 +144,6 @@ export function createIntroTimeline(elements: IntroElements) {
   })
 
   timeline
-    .to(
-      elements.hint,
-      { opacity: 0, y: -10, duration: 0.12, ease: motion.ease.soft },
-      0,
-    )
     .to(
       elements.overlay,
       { opacity: 0, duration: motion.intro.overlayFadeDuration, ease: motion.ease.inOut },

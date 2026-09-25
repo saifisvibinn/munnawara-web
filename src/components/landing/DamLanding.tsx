@@ -36,6 +36,8 @@ type LenisLike = {
 const getLenis = () =>
   (window as Window & { __lenis?: LenisLike }).__lenis
 
+const ASSET_WAIT_MS = 2800
+
 const waitForPageAssets = (root: HTMLElement) => {
   const fonts = document.fonts?.ready ?? Promise.resolve()
   const images = Array.from(root.querySelectorAll("img")).map((image) => {
@@ -55,7 +57,11 @@ const waitForPageAssets = (root: HTMLElement) => {
     })
   })
 
-  return Promise.all([fonts, ...images, ...videos])
+  const assets = Promise.all([fonts, ...images, ...videos]).then(() => undefined)
+  const timeout = new Promise<void>((resolve) => {
+    window.setTimeout(resolve, ASSET_WAIT_MS)
+  })
+  return Promise.race([assets, timeout])
 }
 
 const scrollToTarget = (
@@ -96,7 +102,6 @@ export const DamLanding = ({ copy }: DamLandingProps) => {
   const targetRef = useRef<HTMLDivElement>(null)
   const cornerLogoRef = useRef<HTMLButtonElement>(null)
   const overlayRef = useRef<HTMLDivElement>(null)
-  const hintRef = useRef<HTMLDivElement>(null)
   const loaderStatusRef = useRef<HTMLDivElement>(null)
   const loaderLettersRef = useRef<HTMLSpanElement[]>([])
   const brandNameRef = useRef<HTMLDivElement>(null)
@@ -129,7 +134,6 @@ export const DamLanding = ({ copy }: DamLandingProps) => {
       !targetRef.current ||
       !cornerLogoRef.current ||
       !overlayRef.current ||
-      !hintRef.current ||
       !brandNameRef.current ||
       !navRef.current ||
       !navBarRef.current ||
@@ -150,7 +154,6 @@ export const DamLanding = ({ copy }: DamLandingProps) => {
       target: targetRef.current,
       cornerLogo: cornerLogoRef.current,
       overlay: overlayRef.current,
-      hint: hintRef.current,
       brandName: brandNameRef.current,
       nav: navRef.current,
       navBar: navBarRef.current,
@@ -227,7 +230,6 @@ export const DamLanding = ({ copy }: DamLandingProps) => {
       scale: 0.7,
       transformOrigin: "center center",
     })
-    gsap.set(elements.hint, { opacity: 0, y: 8 })
     gsap.set(loaderStatus, { opacity: 1, visibility: "visible" })
     gsap.set(loaderLetters, { opacity: 1, y: 0 })
     gsap.set(elements.brandName, { opacity: 0, visibility: "visible" })
@@ -286,7 +288,6 @@ export const DamLanding = ({ copy }: DamLandingProps) => {
       breathing.kill()
       loadingPulse.kill()
       gsap.set(elements.logo, { scale: 1 })
-      gsap.set(elements.hint, { opacity: 0, visibility: "hidden" })
       reveal = gsap.timeline({
         onComplete: () => {
           document.body.classList.remove("is-loading")
@@ -322,8 +323,21 @@ export const DamLanding = ({ copy }: DamLandingProps) => {
 
     void finishLoading()
 
+    // Hard failsafe: never leave mobile stuck behind is-loading
+    const failsafeId = window.setTimeout(() => {
+      if (cancelled) return
+      document.body.classList.remove("is-loading")
+      setLoaded(true)
+      try {
+        sessionStorage.setItem(LOGO_INTRO_SEEN_KEY, "1")
+      } catch {
+        // ignore
+      }
+    }, ASSET_WAIT_MS + motion.loader.minimumMs + 4000)
+
     return () => {
       cancelled = true
+      window.clearTimeout(failsafeId)
       bloom.kill()
       breathing.kill()
       loadingPulse.kill()
@@ -476,11 +490,6 @@ export const DamLanding = ({ copy }: DamLandingProps) => {
           scrollTo={scrollToTarget}
         />
         <LandingLanguageSwitcher ref={langSwitchRef} />
-
-        <div className="scroll-hint" ref={hintRef} aria-hidden="true">
-          <span>{copy.scrollHint}</span>
-          <i />
-        </div>
 
         <AiChatButton
           ref={aiChatRef}

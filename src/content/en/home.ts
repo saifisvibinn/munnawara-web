@@ -7,7 +7,6 @@ export const home: HomeContent = {
     line2: "forward",
     sub: "Premium journeys, thoughtfully driven across every mile.",
     cta: "Explore our services",
-    scrollHint: "Scroll to enter",
     brandWords: ["DURRAH", "AL", "MUNAWWARA", "TRANSPORTATION"],
     backTop: "DMTC — back to top",
     chatAria: "Chat with DMTC",

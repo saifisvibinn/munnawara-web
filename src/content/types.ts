@@ -126,7 +126,6 @@ export type LandingHeroContent = {
   line2: string
   sub: string
   cta: string
-  scrollHint: string
   brandWords: readonly [string, string, string, string]
   backTop: string
   chatAria: string
