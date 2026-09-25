@@ -14,11 +14,12 @@ import {
   Noto_Sans_Arabic,
   Noto_Serif,
 } from "next/font/google"
-import { INTRO_BOOT_SCRIPT } from "@/components/intro/introConfig"
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import type { ReactNode } from "react"
+import { LogoRouteTransition } from "@/components/landing/LogoRouteTransition"
 import "../globals.css"
+import "@/styles/dam-landing.css"
 
 export const metadata: Metadata = {
   title: "DMTC | Durrah Al-Munawwara",
@@ -103,9 +104,6 @@ const LocaleLayout = async ({ children, params }: LocaleLayoutProps) => {
       suppressHydrationWarning
       className={`${fontArabic.variable} ${fontLatin.variable} ${fontDisplay.variable} ${fontDisplayAr.variable} ${fontNumeralAr.variable} ${fontLabel.variable} ${fontLabelAr.variable}`}
     >
-      <head>
-        <script dangerouslySetInnerHTML={{ __html: INTRO_BOOT_SCRIPT }} />
-      </head>
       <body className="antialiased">
         <NextIntlClientProvider messages={messages}>
           <SmoothScrollProvider>
@@ -113,6 +111,7 @@ const LocaleLayout = async ({ children, params }: LocaleLayoutProps) => {
             <main id="main" className="min-h-[60dvh]">{children}</main>
             <Footer />
             <FloatingActions />
+            <LogoRouteTransition />
           </SmoothScrollProvider>
         </NextIntlClientProvider>
       </body>

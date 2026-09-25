@@ -17,7 +17,7 @@ const GalleryPage = async ({ params }: PageProps) => {
 
   return (
     <AnimatedSection className="pb-28 pt-20">
-      <PageIntro title={t("gallery")} />
+      <PageIntro title={t("gallery")} align="start" />
       <div className="mx-auto mt-16 grid max-w-6xl gap-4 px-6 sm:grid-cols-2">
         {fleet.map((item) => (
           <div

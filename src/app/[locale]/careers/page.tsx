@@ -17,7 +17,7 @@ const CareersPage = async ({ params }: PageProps) => {
 
   return (
     <AnimatedSection className="pb-28 pt-20">
-      <PageIntro title={t("careers")} />
+      <PageIntro title={t("careers")} align="start" />
       <div className="mx-auto mt-16 max-w-2xl px-6 text-center">
         {roles.length === 0 ? (
           <p className="text-lg text-ink-muted">{tCommon("noOpenRoles")}</p>

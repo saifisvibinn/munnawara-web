@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  DMTC official logo — animation-ready layered SVG
+  Recreated for cinematic motion (named groups + real gradients).
+  Source references: public/logo.png, public/logo-full.png
+-->
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 500 560"
+  width="500"
+  height="560"
+  role="img"
+  aria-labelledby="dmtc-logo-title dmtc-logo-desc"
+>
+  <title id="dmtc-logo-title">DMTC — Durrah Al-Munawwara</title>
+  <desc id="dmtc-logo-desc">
+    Five-petal mark with orange upper petals, blue lower petals, purple DMTC wordmark, and Arabic lockup.
+  </desc>
+
+  <defs>
+    <linearGradient id="grad-orange-body" x1="20%" y1="0%" x2="80%" y2="100%">
+      <stop offset="0%" stop-color="#D4550A" />
+      <stop offset="35%" stop-color="#F37021" />
+      <stop offset="70%" stop-color="#F9A066" />
+      <stop offset="100%" stop-color="#E8B86D" />
+    </linearGradient>
+
+    <linearGradient id="grad-orange-gloss" x1="15%" y1="10%" x2="85%" y2="90%">
+      <stop offset="0%" stop-color="#FFF8EE" stop-opacity="0" />
+      <stop offset="32%" stop-color="#FFE4C2" stop-opacity="0.55" />
+      <stop offset="48%" stop-color="#FFFFFF" stop-opacity="0.92" />
+      <stop offset="62%" stop-color="#FFD19A" stop-opacity="0.45" />
+      <stop offset="100%" stop-color="#F37021" stop-opacity="0" />
+    </linearGradient>
+
+    <linearGradient id="grad-blue-body" x1="10%" y1="15%" x2="95%" y2="85%">
+      <stop offset="0%" stop-color="#0A6FA8" />
+      <stop offset="35%" stop-color="#00AEEF" />
+      <stop offset="75%" stop-color="#7DD3F5" />
+      <stop offset="100%" stop-color="#C8ECFA" />
+    </linearGradient>
+
+    <linearGradient id="grad-blue-violet" x1="0%" y1="100%" x2="80%" y2="0%">
+      <stop offset="0%" stop-color="#5B2C8A" stop-opacity="0.5" />
+      <stop offset="50%" stop-color="#00AEEF" stop-opacity="0" />
+      <stop offset="100%" stop-color="#7DD3F5" stop-opacity="0" />
+    </linearGradient>
+
+    <linearGradient id="grad-blue-gloss" x1="10%" y1="20%" x2="90%" y2="80%">
+      <stop offset="0%" stop-color="#EAF8FD" stop-opacity="0" />
+      <stop offset="40%" stop-color="#D7F3FA" stop-opacity="0.75" />
+      <stop offset="52%" stop-color="#FFFFFF" stop-opacity="0.9" />
+      <stop offset="68%" stop-color="#7DD3F5" stop-opacity="0.35" />
+      <stop offset="100%" stop-color="#00AEEF" stop-opacity="0" />
+    </linearGradient>
+
+    <linearGradient id="grad-wordmark" x1="50%" y1="0%" x2="50%" y2="100%">
+      <stop offset="0%" stop-color="#8B4BB8" />
+      <stop offset="50%" stop-color="#662D91" />
+      <stop offset="100%" stop-color="#4A1F6B" />
+    </linearGradient>
+
+    <!-- Faceted leaf / petal — pointed tip at top, wider mid, taper to base -->
+    <path
+      id="petal-body"
+      d="M 0 -112
+         C 14 -108 34 -88 42 -58
+         C 52 -20 46 28 24 68
+         C 12 92 4 104 0 112
+         C -4 104 -12 92 -24 68
+         C -46 28 -52 -20 -42 -58
+         C -34 -88 -14 -108 0 -112 Z"
+    />
+
+    <path
+      id="petal-gloss"
+      d="M -6 -96
+         C 4 -94 12 -70 14 -36
+         C 16 4 8 48 -2 84
+         C -4 56 -2 16 -4 -24
+         C -6 -56 -10 -82 -6 -96 Z"
+    />
+  </defs>
+
+  <g id="logo-mark" transform="translate(250 172)">
+    <g id="orange-left" transform="rotate(-40) translate(0 -4)">
+      <use href="#petal-body" fill="url(#grad-orange-body)" />
+      <use href="#petal-gloss" fill="url(#grad-orange-gloss)" />
+    </g>
+
+    <g id="orange-right" transform="rotate(40) translate(0 -4)">
+      <use href="#petal-body" fill="url(#grad-orange-body)" />
+      <use href="#petal-gloss" fill="url(#grad-orange-gloss)" transform="scale(-1 1)" />
+    </g>
+
+    <g id="orange-center" transform="translate(0 -8)">
+      <use href="#petal-body" fill="url(#grad-orange-body)" />
+      <use href="#petal-gloss" fill="url(#grad-orange-gloss)" />
+    </g>
+
+    <g id="blue-left" transform="rotate(-105) translate(0 8) scale(0.72 0.7)">
+      <use href="#petal-body" fill="url(#grad-blue-body)" />
+      <use href="#petal-body" fill="url(#grad-blue-violet)" />
+      <use href="#petal-gloss" fill="url(#grad-blue-gloss)" />
+    </g>
+
+    <g id="blue-right" transform="rotate(105) translate(0 8) scale(0.72 0.7)">
+      <use href="#petal-body" fill="url(#grad-blue-body)" />
+      <use href="#petal-body" fill="url(#grad-blue-violet)" />
+      <use href="#petal-gloss" fill="url(#grad-blue-gloss)" transform="scale(-1 1)" />
+    </g>
+  </g>
+
+  <g id="dmtc" transform="translate(250 340)">
+    <text
+      text-anchor="middle"
+      dominant-baseline="middle"
+      font-family="Segoe UI, Arial Black, Arial, Helvetica, sans-serif"
+      font-size="56"
+      font-weight="800"
+      letter-spacing="0.06em"
+      fill="url(#grad-wordmark)"
+    >DMTC</text>
+  </g>
+
+  <g id="arabic" transform="translate(250 402)">
+    <text
+      text-anchor="middle"
+      dominant-baseline="middle"
+      font-family="Segoe UI, Traditional Arabic, Tahoma, sans-serif"
+      font-size="36"
+      font-weight="700"
+      fill="url(#grad-wordmark)"
+    >درة المنورة</text>
+  </g>
+
+  <g id="arabic-sub" transform="translate(250 450)">
+    <text
+      text-anchor="middle"
+      dominant-baseline="middle"
+      font-family="Segoe UI, Traditional Arabic, Tahoma, sans-serif"
+      font-size="15"
+      font-weight="500"
+      fill="#9A94A3"
+    >لنقل الحجاج والمعتمرين</text>
+  </g>
+</svg>

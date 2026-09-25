@@ -191,52 +191,20 @@ body {
   }
 }
 
-/* Cinematic intro: hide site until React intro is ready (boot script sets data-intro-active before paint) */
+/* Cinematic intro boot (legacy desert hero) — kept harmless when unused */
 html[data-intro-active] {
-  background: #c4a078;
+  background: #f4f0e8;
 }
 
 html[data-intro-active] body {
   overflow: hidden;
 }
 
-html[data-intro-active]:not([data-intro-ready]) header,
-html[data-intro-active]:not([data-intro-ready]) #main,
-html[data-intro-active]:not([data-intro-ready]) footer,
-html[data-intro-active]:not([data-intro-ready]) [data-whatsapp-fab] {
-  opacity: 0 !important;
-  pointer-events: none !important;
+/* Homepage: match locked-off studio video plate */
+html:has(.dam-landing) {
+  background: #eaeae6;
 }
 
-/* Homepage: match landing bus plate so Lenis scroll gaps never flash body white/black */
-html:has([data-brand-section]) {
-  background: #c4a078;
-}
-
-html:has([data-brand-section]) body {
-  background: #c4a078;
-}
-
-/* Homepage: header is fixed (out of flow) so hiding it never leaves a white gap */
-html:has([data-brand-section]) header[data-site-header] {
-  position: fixed;
-  inset-inline: 0;
-  top: 0;
-  width: 100%;
-}
-
-/* Homepage: hide header until scroll morph — unlocked when data-logo-in-header is set */
-html:has([data-brand-section]):not([data-logo-in-header]) header[data-site-header] {
-  opacity: 0 !important;
-  visibility: hidden !important;
-  pointer-events: none !important;
-}
-
-html:has([data-brand-section]):not([data-logo-in-header]) [data-site-logo] {
-  opacity: 0;
-  pointer-events: none;
-}
-
-html[data-intro-active] [data-site-logo] {
-  opacity: 0;
+html:has(.dam-landing) body {
+  background: #eaeae6;
 }

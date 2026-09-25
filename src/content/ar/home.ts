@@ -1,6 +1,20 @@
 import type { HomeContent } from "../types"
 
 export const home: HomeContent = {
+  landingHero: {
+    eyebrow: "درة المنورة للنقل",
+    line1: "ننقلك",
+    line2: "إلى الأمام",
+    sub: "رحلات راقية، تُقاد بعناية في كل ميل.",
+    cta: "استكشف خدماتنا",
+    scrollHint: "مرّر للدخول",
+    brandWords: ["DURRAH", "AL", "MUNAWWARA", "TRANSPORTATION"],
+    backTop: "درة المنورة — العودة للأعلى",
+    chatAria: "محادثة مع درة المنورة",
+    chatWith: "تحدث مع",
+    chatAi: "الذكاء",
+    brand: "DMTC",
+  },
   valueTitle: "نقل مصمم للرحلات المقدسة",
   valueIntro:
     "تنسّق مجموعة درة المنورة أسطولاً حديثاً وتشغيلاً دقيقاً وتواصلاً واضحاً ليشعر الحجاج والمؤسسات بالثقة في كل رحلة.",

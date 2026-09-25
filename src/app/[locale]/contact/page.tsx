@@ -24,8 +24,8 @@ const ContactPage = async ({ params }: PageProps) => {
 
   return (
     <AnimatedSection className="pb-28 pt-20">
-      <PageIntro title={t("contact")} subtitle={tHome("ctaBandSubtitle")} />
-      <div className="mx-auto mt-16 grid max-w-5xl gap-16 px-6 md:grid-cols-2 md:items-start">
+      <PageIntro title={t("contact")} subtitle={tHome("ctaBandSubtitle")} align="start" />
+      <div className="mx-auto mt-12 grid max-w-5xl gap-12 px-4 text-start sm:mt-16 sm:gap-16 sm:px-6 md:grid-cols-2 md:items-start">
         <div className="space-y-10">
           <div>
             <p className="text-sm text-ink-muted">{tCommon("email")}</p>

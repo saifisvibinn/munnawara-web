@@ -120,7 +120,23 @@ export type HomeHowStep = {
   ctaHref: string | null
 }
 
+export type LandingHeroContent = {
+  eyebrow: string
+  line1: string
+  line2: string
+  sub: string
+  cta: string
+  scrollHint: string
+  brandWords: readonly [string, string, string, string]
+  backTop: string
+  chatAria: string
+  chatWith: string
+  chatAi: string
+  brand: string
+}
+
 export type HomeContent = {
+  landingHero: LandingHeroContent
   valueTitle: string
   valueIntro: string
   valueImage: string

@@ -69,7 +69,7 @@ export const QuoteSectionClient = ({
   return (
     <section
       ref={sectionRef}
-      id="quote-section"
+      id="quote"
       data-quote-section
       className="relative isolate overflow-hidden bg-surface px-4 py-20 sm:px-6 sm:py-28 md:px-10 md:py-36"
       aria-label={ariaLabel}

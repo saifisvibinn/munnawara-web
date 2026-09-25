@@ -1,5 +1,4 @@
 import { AboutPreview } from "@/components/sections/AboutPreview"
-import { BrandAboutHero } from "@/components/sections/BrandAboutHero"
 import { BusPassby } from "@/components/sections/BusPassby"
 import { CareReveal } from "@/components/sections/CareReveal"
 import { CTABand } from "@/components/sections/CTABand"
@@ -9,8 +8,9 @@ import { NewsTeaser } from "@/components/sections/NewsTeaser"
 import { QuoteSection } from "@/components/sections/QuoteSection"
 import { Testimonials } from "@/components/sections/Testimonials"
 import { FloatingQuoteCta } from "@/components/layout/FloatingQuoteCta"
-import { MunawwaraIntro } from "@/components/intro/MunawwaraIntro"
-import { getSiteConfig } from "@/content"
+import { DamLanding } from "@/components/landing/DamLanding"
+import { getHome, getSiteConfig } from "@/content"
+import type { AppLocale } from "@/content/types"
 import { getTranslations, setRequestLocale } from "next-intl/server"
 
 type PageProps = {
@@ -21,12 +21,12 @@ const HomePage = async ({ params }: PageProps) => {
   const { locale } = await params
   setRequestLocale(locale)
   const config = getSiteConfig()
+  const home = getHome(locale as AppLocale)
   const tWhatsapp = await getTranslations()
 
   return (
     <>
-      <MunawwaraIntro />
-      <BrandAboutHero />
+      <DamLanding copy={home.landingHero} />
       <CareReveal />
       <BusPassby />
       <HowItWorks />

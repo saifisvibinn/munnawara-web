@@ -42,7 +42,16 @@ next-env.d.ts
 
 # local design references
 .stitch-ref/
-.cursor/
+
+# Cursor local config — keep design hook trackable; skills live in .agents/skills
+.cursor/*
+!.cursor/hooks.json
+
+# Impeccable local runtime (shared hook config is committed)
+.impeccable/config.local.json
+.impeccable/hook.cache.json
+.impeccable/live/
+.impeccable/build/
 
 # temp / local scratch
 tmp-*.png

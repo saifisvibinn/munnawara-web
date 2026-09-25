@@ -9,6 +9,8 @@ import { useEffect } from "react"
 
 gsap.registerPlugin(ScrollTrigger)
 
+type WindowWithLenis = Window & { __lenis?: Lenis }
+
 export const SmoothScrollProvider = ({
   children,
 }: {
@@ -28,8 +30,7 @@ export const SmoothScrollProvider = ({
       autoRaf: false,
     })
 
-    // Expose for Playwright / debug scroll control
-    ;(window as Window & { __lenis?: Lenis }).__lenis = lenis
+    ;(window as WindowWithLenis).__lenis = lenis
 
     lenis.on("scroll", ScrollTrigger.update)
 
@@ -40,9 +41,26 @@ export const SmoothScrollProvider = ({
     gsap.ticker.add(handleTick)
     gsap.ticker.lagSmoothing(0)
 
+    const syncGate = () => {
+      const locked =
+        document.body.classList.contains("is-loading") ||
+        document.body.classList.contains("is-transitioning") ||
+        document.body.classList.contains("is-page-transitioning")
+      if (locked) lenis.stop()
+      else lenis.start()
+    }
+
+    syncGate()
+    const observer = new MutationObserver(syncGate)
+    observer.observe(document.body, {
+      attributes: true,
+      attributeFilter: ["class"],
+    })
+
     return () => {
+      observer.disconnect()
       gsap.ticker.remove(handleTick)
-      const w = window as Window & { __lenis?: Lenis }
+      const w = window as WindowWithLenis
       if (w.__lenis === lenis) delete w.__lenis
       lenis.destroy()
     }

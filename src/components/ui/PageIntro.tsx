@@ -23,8 +23,9 @@ export const PageIntro = ({
   return (
     <div
       className={cn(
-        "mx-auto max-w-4xl px-6",
+        "mx-auto max-w-4xl px-4 sm:px-6",
         align === "center" && "text-center",
+        align === "start" && "text-start",
         className,
       )}
     >
@@ -40,7 +41,7 @@ export const PageIntro = ({
       ) : null}
       <h1
         className={cn(
-          "font-display text-[40px] leading-[1.05] font-semibold tracking-tight md:text-6xl lg:text-7xl",
+          "font-display text-[clamp(1.85rem,7vw,2.5rem)] leading-[1.15] font-semibold tracking-tight sm:text-[40px] sm:leading-[1.05] md:text-6xl lg:text-7xl",
           tone === "dark" ? "text-ink" : "text-white",
         )}
       >
@@ -49,8 +50,9 @@ export const PageIntro = ({
       {subtitle ? (
         <p
           className={cn(
-            "mx-auto mt-5 max-w-2xl text-lg leading-relaxed md:text-xl",
-            align === "start" && "mx-0",
+            "mt-5 max-w-2xl text-base leading-relaxed sm:text-lg md:text-xl",
+            align === "center" && "mx-auto",
+            align === "start" && "ms-0 me-auto",
             tone === "dark" ? "text-ink-muted" : "text-white/70",
           )}
         >

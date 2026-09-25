@@ -15,21 +15,21 @@ const AboutPage = async ({ params }: PageProps) => {
 
   return (
     <AnimatedSection className="pb-28 pt-20">
-      <PageIntro title={about.title} subtitle={about.intro} />
-      <div className="mx-auto mt-20 max-w-2xl space-y-16 px-6">
+      <PageIntro title={about.title} subtitle={about.intro} align="start" />
+      <div className="mx-auto mt-16 max-w-2xl space-y-14 px-4 text-start sm:mt-20 sm:space-y-16 sm:px-6">
         <div>
-          <h2 className="text-3xl font-semibold tracking-tight text-ink">
+          <h2 className="text-2xl font-semibold tracking-tight text-ink sm:text-3xl">
             {about.historyTitle}
           </h2>
-          <p className="mt-4 text-lg leading-relaxed text-ink-muted">
+          <p className="mt-4 text-base leading-relaxed text-ink-muted sm:text-lg">
             {about.history}
           </p>
         </div>
         <div>
-          <h2 className="text-3xl font-semibold tracking-tight text-ink">
+          <h2 className="text-2xl font-semibold tracking-tight text-ink sm:text-3xl">
             {about.missionTitle}
           </h2>
-          <p className="mt-4 text-lg leading-relaxed text-ink-muted">
+          <p className="mt-4 text-base leading-relaxed text-ink-muted sm:text-lg">
             {about.mission}
           </p>
         </div>

@@ -22,7 +22,7 @@ const CorporatePage = async ({ params }: PageProps) => {
 
   return (
     <AnimatedSection className="pb-28 pt-20">
-      <PageIntro title={t("corporate")} subtitle={tCorporate("intro")} />
+      <PageIntro title={t("corporate")} subtitle={tCorporate("intro")} align="start" />
       <ul className="mx-auto mt-16 max-w-2xl px-6">
         {services.map((service) => (
           <li

@@ -18,3 +18,19 @@
 ## Locales
 - URL: `/ar/...` and `/en/...`; `/` redirects to `/ar`
 - Set `dir` and `lang` on `<html>` from the locale layout
+
+## Agent skills
+Project skills live in `.agents/skills/` (mirrored locally at `.cursor/skills/` for Cursor). Restore with `npx skills experimental_install`. Impeccable design hook is enabled via `.cursor/hooks.json` + `.impeccable/config.json`. Prefer these for UI craft work:
+
+| Skill | Use when |
+|---|---|
+| `impeccable` | Design, redesign, critique, audit, polish, or improve frontend UI |
+| `emil-design-eng` | Design-engineering taste, polish, and interaction details |
+| `animate` / `improve-animations` / `review-animations` / `find-animation-opportunities` / `animation-vocabulary` | Motion work (Motion, GSAP, ScrollTrigger, Lenis) |
+| `prototype` | Fast UI prototyping |
+| `ask-sonner` | Toast / notification UX with Sonner |
+| `pick-ui-library` | Choosing a UI library |
+
+Also installed (use only if relevant): `animate-expo`, `apple-design`, `mobile-native`, `write-swift`.
+
+Do not invent brand tokens — follow `src/lib/theme.ts`, `DESIGN.md`, and existing page patterns.

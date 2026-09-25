@@ -1,6 +1,20 @@
 import type { HomeContent } from "../types"
 
 export const home: HomeContent = {
+  landingHero: {
+    eyebrow: "Durrah Al Munawwara Transportation",
+    line1: "Moving you",
+    line2: "forward",
+    sub: "Premium journeys, thoughtfully driven across every mile.",
+    cta: "Explore our services",
+    scrollHint: "Scroll to enter",
+    brandWords: ["DURRAH", "AL", "MUNAWWARA", "TRANSPORTATION"],
+    backTop: "DMTC — back to top",
+    chatAria: "Chat with DMTC",
+    chatWith: "Chat with",
+    chatAi: "AI",
+    brand: "DMTC",
+  },
   valueTitle: "Transport built for sacred journeys",
   valueIntro:
     "Durrah Al-Munawwara Group coordinates modern coaches, careful operations, and clear communication so pilgrims and institutions travel with confidence.",

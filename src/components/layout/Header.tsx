@@ -108,7 +108,7 @@ export const Header = () => {
           </Link>
           <button
             type="button"
-            className="inline-flex size-9 items-center justify-center rounded-full text-ink xl:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange"
+            className="inline-flex size-11 items-center justify-center rounded-full text-ink xl:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange"
             aria-expanded={open}
             aria-controls={menuId}
             aria-label={open ? t("closeMenu") : t("openMenu")}
@@ -129,17 +129,24 @@ export const Header = () => {
         hidden={!open}
         className="border-t border-ink/6 bg-white xl:hidden"
       >
-        <nav className="mx-auto flex max-w-[80rem] flex-col px-4 py-4" aria-label="Mobile">
+        <nav className="mx-auto flex max-w-[80rem] flex-col px-4 py-4 text-start" aria-label="Mobile">
           {navKeys.map((item) => (
             <Link
               key={item.href}
               href={item.href}
-              className="rounded-xl px-3 py-3 text-base text-ink hover:bg-surface-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange"
+              className="rounded-xl px-3 py-3.5 text-base leading-snug text-ink hover:bg-surface-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange"
               tabIndex={0}
             >
               {t(item.key)}
             </Link>
           ))}
+          <Link
+            href="/contact"
+            className="mt-2 inline-flex min-h-12 items-center justify-center rounded-full bg-ink px-4 py-3 text-sm font-semibold text-white transition hover:bg-orange focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange sm:hidden"
+            tabIndex={0}
+          >
+            {tCommon("contactUs")}
+          </Link>
         </nav>
       </div>
     </header>

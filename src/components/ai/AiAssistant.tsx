@@ -1,5 +1,6 @@
 "use client"
 
+import { LogoMark } from "@/components/landing/LogoMark"
 import {
   sendAssistantMessage,
   type AssistantMessage,
@@ -14,26 +15,6 @@ import {
   type FormEvent,
   type KeyboardEvent,
 } from "react"
-
-const BotIcon = ({ className }: { className?: string }) => (
-  <svg viewBox="0 0 24 24" fill="none" aria-hidden className={className}>
-    <path
-      d="M12 3v2.5M8.5 8h7A3.5 3.5 0 0 1 19 11.5v4A3.5 3.5 0 0 1 15.5 19h-7A3.5 3.5 0 0 1 5 15.5v-4A3.5 3.5 0 0 1 8.5 8Z"
-      stroke="currentColor"
-      strokeWidth="1.7"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-    <circle cx="9.25" cy="12.25" r="1" fill="currentColor" />
-    <circle cx="14.75" cy="12.25" r="1" fill="currentColor" />
-    <path
-      d="M9.5 15.25h5"
-      stroke="currentColor"
-      strokeWidth="1.7"
-      strokeLinecap="round"
-    />
-  </svg>
-)
 
 const CloseIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" aria-hidden className="size-4">
@@ -185,7 +166,10 @@ export const AiAssistant = () => {
           <div className="flex items-start justify-between gap-3 border-b border-ink/10 bg-surface px-4 py-3.5">
             <div className="flex min-w-0 items-center gap-3">
               <span className="inline-flex size-9 shrink-0 items-center justify-center rounded-full bg-orange text-white">
-                <BotIcon className="size-5" />
+                <LogoMark
+                  className="size-5 logo-mark logo-mark--live"
+                  idPrefix="ai-panel"
+                />
               </span>
               <div className="min-w-0">
                 <p
@@ -290,7 +274,14 @@ export const AiAssistant = () => {
           open ? "bg-ink hover:bg-ink/90" : "bg-orange hover:bg-orange-soft",
         )}
       >
-        {open ? <CloseIcon /> : <BotIcon className="size-5" />}
+        {open ? (
+          <CloseIcon />
+        ) : (
+          <LogoMark
+            className="size-5 logo-mark logo-mark--live"
+            idPrefix="ai-fab"
+          />
+        )}
       </button>
     </div>
   )

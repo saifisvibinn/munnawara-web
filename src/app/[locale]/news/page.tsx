@@ -18,7 +18,7 @@ const NewsPage = async ({ params }: PageProps) => {
 
   return (
     <AnimatedSection className="pb-28 pt-20">
-      <PageIntro title={t("news")} />
+      <PageIntro title={t("news")} align="start" />
       <div className="mx-auto mt-16 max-w-2xl px-6 text-center">
         {posts.length === 0 ? (
           <p className="text-lg text-ink-muted">{tCommon("noNews")}</p>

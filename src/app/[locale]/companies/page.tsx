@@ -20,7 +20,7 @@ const CompaniesPage = async ({ params }: PageProps) => {
 
   return (
     <AnimatedSection className="pb-28 pt-20">
-      <PageIntro title={t("companies")} subtitle={tHome("companiesSubtitle")} />
+      <PageIntro title={t("companies")} subtitle={tHome("companiesSubtitle")} align="start" />
       <div className="mx-auto mt-16 grid max-w-6xl gap-5 px-6 md:grid-cols-2">
         {companies.map((company) => (
           <article

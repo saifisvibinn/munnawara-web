@@ -105,6 +105,7 @@ export const HowItWorksClient = ({
   return (
     <section
       ref={rootRef}
+      id="how-it-works"
       data-how-it-works
       className="relative overflow-x-clip bg-white px-4 py-16 sm:px-6 sm:py-20 md:px-10 md:py-24 lg:py-28"
       aria-labelledby="how-it-works-heading"

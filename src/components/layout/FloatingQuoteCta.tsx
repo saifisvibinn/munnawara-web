@@ -112,36 +112,41 @@ export const FloatingQuoteCta = ({
   }, [])
 
   useEffect(() => {
-    const hero =
-      document.getElementById("hero") ?? document.getElementById("brand")
+    // Appear only after the AboutPreview headlines block
+    // ("Safe, comfortable journeys…" / Arabic equivalent).
+    const aboutGate =
+      document.querySelector("[data-about-preview]") ??
+      document.getElementById("about-preview-heading")?.closest("section")
     const quote = document.querySelector("[data-quote-section]")
-    let pastHero = !hero
+    let pastAbout = false
     let overQuote = false
 
     const syncVisible = () => {
       if (openRef.current) return
-      setScrollVisible(pastHero && !overQuote)
+      setScrollVisible(pastAbout && !overQuote)
     }
 
     const triggers: ScrollTrigger[] = []
 
-    if (hero) {
+    if (aboutGate) {
       triggers.push(
         ScrollTrigger.create({
-          trigger: hero,
+          trigger: aboutGate,
           start: "bottom top+=48",
           onEnter: () => {
-            pastHero = true
+            pastAbout = true
             syncVisible()
           },
           onLeaveBack: () => {
-            pastHero = false
+            pastAbout = false
+            syncVisible()
+          },
+          onRefresh: (self) => {
+            pastAbout = self.scroll() >= self.start
             syncVisible()
           },
         }),
       )
-    } else {
-      pastHero = true
     }
 
     if (quote) {
@@ -500,6 +505,7 @@ export const FloatingQuoteCta = ({
       </div>
 
       <div
+        data-floating-quote-chrome
         className="pointer-events-none fixed inset-x-0 bottom-[max(1.25rem,env(safe-area-inset-bottom))] z-[50] flex justify-center px-4 sm:bottom-6"
         aria-hidden={!chromeVisible}
       >
