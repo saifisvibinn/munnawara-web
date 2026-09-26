@@ -207,7 +207,7 @@ export const DamLanding = ({ copy }: DamLandingProps) => {
   const heroVideoRef = useRef<HeroVideoHandle>(null)
   const heroCardRef = useRef<HTMLDivElement>(null)
   const videoStageRef = useRef<HTMLDivElement>(null)
-  const aiChatRef = useRef<HTMLAnchorElement>(null)
+  const aiChatRef = useRef<HTMLButtonElement>(null)
   const whatsappRef = useRef<HTMLDivElement>(null)
 
   const collectNavItem = (element: HTMLElement | null) => {

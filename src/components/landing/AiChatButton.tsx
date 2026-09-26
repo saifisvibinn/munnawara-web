@@ -1,30 +1,30 @@
 "use client"
 
-import { Link } from "@/i18n/navigation"
+import { AiAssistant } from "@/components/ai/AiAssistant"
 import { forwardRef } from "react"
 import { LogoMark } from "./LogoMark"
 
 type AiChatButtonProps = {
-  href?: string
   chatAria: string
 }
 
-/** Floating Chat-with-AI control — squircle + brand flower mark. */
-export const AiChatButton = forwardRef<HTMLAnchorElement, AiChatButtonProps>(
-  function AiChatButton({ href = "/contact", chatAria }, ref) {
+/** Floating Chat-with-AI control — opens the assistant panel (landing fab). */
+export const AiChatButton = forwardRef<HTMLButtonElement, AiChatButtonProps>(
+  function AiChatButton({ chatAria }, ref) {
     return (
-      <Link
-        className="ai-chat-btn"
-        href={href}
-        ref={ref}
-        aria-label={chatAria}
-        tabIndex={0}
-      >
-        <LogoMark
-          className="ai-chat-btn__icon logo-mark logo-mark--live"
-          idPrefix="ai-chat"
-        />
-      </Link>
+      <AiAssistant
+        className="landing-ai-assistant"
+        triggerRef={ref}
+        triggerClassName="ai-chat-btn"
+        triggerAriaLabel={chatAria}
+        swapTriggerWhenOpen={false}
+        triggerContent={
+          <LogoMark
+            className="ai-chat-btn__icon logo-mark logo-mark--live"
+            idPrefix="ai-chat"
+          />
+        }
+      />
     )
   },
 )
