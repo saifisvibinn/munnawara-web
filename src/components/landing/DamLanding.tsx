@@ -11,7 +11,7 @@ import {
   type CSSProperties,
   type MouseEvent,
 } from "react"
-import { AiChatButton } from "./AiChatButton"
+import { ChatWidget } from "@/components/chat/ChatWidget"
 import { animationConfig as motion } from "./animations/config"
 import {
   createIntroTimeline,
@@ -785,10 +785,7 @@ export const DamLanding = ({ copy }: DamLandingProps) => {
         <LandingLanguageSwitcher ref={langSwitchRef} />
 
         <div className="landing-fab-row">
-          <AiChatButton
-            ref={aiChatRef}
-            chatAria={copy.chatAria}
-          />
+          <ChatWidget ref={aiChatRef} revealed={false} />
           <div className="landing-whatsapp-btn" ref={whatsappRef}>
             <WhatsAppButton />
           </div>
