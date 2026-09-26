@@ -22,7 +22,54 @@ type HeroVideoProps = {
 }
 
 const VIDEO_SRC = "/hero/backvid.mp4"
-const VIDEO_POSTER = "/hero/cover.png"
+
+type VideoWithFrameCallback = HTMLVideoElement & {
+  requestVideoFrameCallback?: (callback: () => void) => number
+}
+
+const markFirstFrame = (
+  video: HTMLVideoElement,
+  onFrame: () => void,
+) => {
+  const painted =
+    !video.paused &&
+    video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA &&
+    video.currentTime > 0
+  if (painted) {
+    onFrame()
+    return () => undefined
+  }
+
+  let done = false
+  const finish = () => {
+    if (done) return
+    done = true
+    video.removeEventListener("playing", onTick)
+    video.removeEventListener("timeupdate", onTick)
+    onFrame()
+  }
+  const onTick = () => {
+    if (
+      !video.paused &&
+      video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA &&
+      video.currentTime > 0
+    ) {
+      finish()
+    }
+  }
+
+  const rvfc = (video as VideoWithFrameCallback).requestVideoFrameCallback
+  if (typeof rvfc === "function") {
+    rvfc.call(video, finish)
+  }
+  video.addEventListener("playing", onTick)
+  video.addEventListener("timeupdate", onTick)
+  return () => {
+    done = true
+    video.removeEventListener("playing", onTick)
+    video.removeEventListener("timeupdate", onTick)
+  }
+}
 
 export const HeroVideo = forwardRef<HeroVideoHandle, HeroVideoProps>(
   function HeroVideo({ reducedMotion }, ref) {
@@ -31,7 +78,6 @@ export const HeroVideo = forwardRef<HeroVideoHandle, HeroVideoProps>(
     const startedRef = useRef(false)
     const finishedRef = useRef(false)
     const preferFinalFrameRef = useRef(false)
-    const playPendingRef = useRef(false)
     const [ready, setReady] = useState(false)
     const [mobile, setMobile] = useState(false)
     const [rtl, setRtl] = useState(false)
@@ -47,7 +93,6 @@ export const HeroVideo = forwardRef<HeroVideoHandle, HeroVideoProps>(
         video.duration - motion.video.endFrameOffsetSeconds,
       )
       finishedRef.current = true
-      playPendingRef.current = false
       video.pause()
 
       if (Math.abs(video.currentTime - holdAt) > 0.04) {
@@ -60,7 +105,6 @@ export const HeroVideo = forwardRef<HeroVideoHandle, HeroVideoProps>(
       preferFinalFrameRef.current = true
       startedRef.current = true
       finishedRef.current = true
-      playPendingRef.current = false
 
       const video = videoRef.current
       if (!video) return
@@ -102,13 +146,6 @@ export const HeroVideo = forwardRef<HeroVideoHandle, HeroVideoProps>(
       const video = videoRef.current
       if (!video || reducedMotion || document.hidden) return
       if (finishedRef.current || preferFinalFrameRef.current) return
-      if (!startedRef.current && !playPendingRef.current) return
-
-      // Not buffered enough to show — stay pending until canplaythrough
-      if (video.readyState < HTMLMediaElement.HAVE_FUTURE_DATA) {
-        playPendingRef.current = true
-        return
-      }
 
       if (
         Number.isFinite(video.duration) &&
@@ -120,12 +157,16 @@ export const HeroVideo = forwardRef<HeroVideoHandle, HeroVideoProps>(
         return
       }
 
-      playPendingRef.current = false
+      if (!video.paused) {
+        markFirstFrame(video, () => setReady(true))
+        return
+      }
+
       void video.play().then(
-        () => setReady(true),
         () => {
-          playPendingRef.current = true
+          markFirstFrame(video, () => setReady(true))
         },
+        () => undefined,
       )
     }, [freezeAtLastSecond, reducedMotion])
 
@@ -136,7 +177,6 @@ export const HeroVideo = forwardRef<HeroVideoHandle, HeroVideoProps>(
         playOnce: () => {
           if (finishedRef.current || preferFinalFrameRef.current) return
           startedRef.current = true
-          playPendingRef.current = true
           playForward()
         },
         showFinalFrame,
@@ -150,6 +190,7 @@ export const HeroVideo = forwardRef<HeroVideoHandle, HeroVideoProps>(
 
       try {
         video.muted = true
+        video.defaultMuted = true
         video.playsInline = true
         video.preload = "auto"
         video.load()
@@ -157,19 +198,13 @@ export const HeroVideo = forwardRef<HeroVideoHandle, HeroVideoProps>(
         // ignore
       }
 
-      const markPlayable = () => {
-        if (video.readyState < HTMLMediaElement.HAVE_FUTURE_DATA) return
-        setReady(true)
+      const revealWhenPainted = () => {
         if (reducedMotion || preferFinalFrameRef.current) {
           freezeAtLastSecond()
+          setReady(true)
           return
         }
-        if (
-          (startedRef.current || playPendingRef.current) &&
-          !finishedRef.current
-        ) {
-          playForward()
-        }
+        markFirstFrame(video, () => setReady(true))
       }
 
       const onTimeUpdate = () => {
@@ -193,23 +228,20 @@ export const HeroVideo = forwardRef<HeroVideoHandle, HeroVideoProps>(
           video.pause()
           return
         }
-        if (finishedRef.current || !startedRef.current) return
+        if (finishedRef.current) return
         playForward()
       }
 
-      video.addEventListener("loadeddata", markPlayable)
-      video.addEventListener("canplay", markPlayable)
-      video.addEventListener("canplaythrough", markPlayable)
+      video.addEventListener("playing", revealWhenPainted)
       video.addEventListener("timeupdate", onTimeUpdate)
       video.addEventListener("ended", onEnded)
       document.addEventListener("visibilitychange", onVisibilityChange)
 
-      if (video.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA) markPlayable()
+      if (!video.paused) revealWhenPainted()
+      else void video.play().then(revealWhenPainted, () => undefined)
 
       return () => {
-        video.removeEventListener("loadeddata", markPlayable)
-        video.removeEventListener("canplay", markPlayable)
-        video.removeEventListener("canplaythrough", markPlayable)
+        video.removeEventListener("playing", revealWhenPainted)
         video.removeEventListener("timeupdate", onTimeUpdate)
         video.removeEventListener("ended", onEnded)
         document.removeEventListener("visibilitychange", onVisibilityChange)
@@ -252,17 +284,17 @@ export const HeroVideo = forwardRef<HeroVideoHandle, HeroVideoProps>(
         <video
           className="hero-video__media"
           ref={videoRef}
+          src={VIDEO_SRC}
           muted
+          defaultMuted
+          autoPlay
           playsInline
           preload="auto"
-          poster={VIDEO_POSTER}
           loop={false}
           style={{
             objectPosition,
           }}
-        >
-          <source src={VIDEO_SRC} type="video/mp4" />
-        </video>
+        />
       </div>
     )
   },

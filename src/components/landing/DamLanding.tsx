@@ -100,16 +100,52 @@ const forceHomeTop = () => {
   }
 }
 
-/** Hero video can take longer on mobile — don't abandon the veil early. */
-const VIDEO_READY_TIMEOUT_MS = 25000
-const INTRO_LOAD_FAILSAFE_MS = VIDEO_READY_TIMEOUT_MS + 8000
-
 /** First-scroll assets that sit outside the intro root but cause jank if cold. */
 const CRITICAL_PRELOAD_URLS = [
   "/motion/bus-top.png",
   "/hero/landing-sky.jpg",
-  "/hero/cover.png",
 ] as const
+
+type VideoWithFrameCallback = HTMLVideoElement & {
+  requestVideoFrameCallback?: (callback: () => void) => number
+}
+
+const waitForFirstPaintedFrame = (video: HTMLVideoElement) =>
+  new Promise<void>((resolve) => {
+    let settled = false
+    const finish = () => {
+      if (settled) return
+      settled = true
+      video.removeEventListener("playing", onTick)
+      video.removeEventListener("timeupdate", onTick)
+      resolve()
+    }
+
+    const onTick = () => {
+      if (
+        !video.paused &&
+        video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA &&
+        video.currentTime > 0
+      ) {
+        finish()
+      }
+    }
+
+    onTick()
+    if (settled) return
+
+    const rvfc = (video as VideoWithFrameCallback).requestVideoFrameCallback
+    if (typeof rvfc === "function") {
+      rvfc.call(video, finish)
+    }
+    video.addEventListener("playing", onTick)
+    video.addEventListener("timeupdate", onTick)
+  })
+
+const videoHasPaintedFrame = (video: HTMLVideoElement) =>
+  !video.paused &&
+  video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA &&
+  video.currentTime > 0
 
 const waitForEvent = (
   target: EventTarget,
@@ -127,16 +163,13 @@ const waitForEvent = (
   })
 
 const waitForVideoReady = (video: HTMLVideoElement) => {
-  // Gate the site on a playable buffer — not metadata alone.
-  if (video.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA) {
-    return Promise.resolve()
-  }
+  if (videoHasPaintedFrame(video)) return Promise.resolve()
 
   try {
     video.muted = true
+    video.defaultMuted = true
     video.playsInline = true
     video.preload = "auto"
-    video.load()
   } catch {
     // ignore
   }
@@ -146,51 +179,27 @@ const waitForVideoReady = (video: HTMLVideoElement) => {
     const finish = () => {
       if (settled) return
       settled = true
-      video.removeEventListener("canplaythrough", onReady)
-      video.removeEventListener("canplay", onReady)
-      video.removeEventListener("loadeddata", onData)
-      video.removeEventListener("error", onError)
-      window.clearInterval(pollId)
-      window.clearTimeout(hardTimer)
+      document.removeEventListener("pointerdown", retryOnGesture, true)
       resolve()
     }
 
-    const isPlayable = () =>
-      video.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA
-
-    const onReady = () => {
-      if (isPlayable()) finish()
+    const startPlayback = async () => {
+      if (settled) return
+      try {
+        await video.play()
+        await waitForFirstPaintedFrame(video)
+        finish()
+      } catch {
+        // Low Power Mode / autoplay block — wait for a user tap.
+      }
     }
-    const onData = () => {
-      if (isPlayable()) finish()
+
+    const retryOnGesture = () => {
+      void startPlayback()
     }
-    const onError = () => finish()
 
-    video.addEventListener("canplaythrough", onReady)
-    video.addEventListener("canplay", onReady)
-    video.addEventListener("loadeddata", onData)
-    video.addEventListener("error", onError)
-
-    // iOS often won't buffer until play() is attempted (muted + playsInline).
-    void video
-      .play()
-      .then(() => {
-        video.pause()
-        if (video.currentTime > 0) video.currentTime = 0
-        if (isPlayable()) finish()
-      })
-      .catch(() => {
-        // Autoplay may be blocked until more data — keep listening.
-      })
-
-    if (isPlayable()) finish()
-
-    const pollId = window.setInterval(() => {
-      if (isPlayable()) finish()
-    }, 200)
-
-    // Escape hatch only for hard failures — prefer waiting on real networks
-    const hardTimer = window.setTimeout(finish, VIDEO_READY_TIMEOUT_MS)
+    document.addEventListener("pointerdown", retryOnGesture, true)
+    void startPlayback()
   })
 }
 
@@ -544,14 +553,9 @@ export const DamLanding = ({ copy }: DamLandingProps) => {
 
     void finishLoading()
 
-    // Hard failsafe: never leave mobile stuck behind is-loading
-    failsafeId = window.setTimeout(() => {
-      if (cancelled || introFinished) return
-      // Only recover a stuck veil — do not yank scroll after a successful intro.
-      if (!document.body.classList.contains("is-loading")) return
-      forceHomeTop()
-      completeIntroLoad()
-    }, INTRO_LOAD_FAILSAFE_MS)
+    // Do not lift the veil on a timer. If autoplay is blocked, the next tap
+    // retries play() inside waitForVideoReady.
+    failsafeId = 0
 
     return () => {
       cancelled = true
