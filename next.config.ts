@@ -14,11 +14,9 @@ const nextConfig: NextConfig = {
     formats: ["image/avif", "image/webp"],
   },
   async rewrites() {
+    // /chat is handled by src/app/chat/[...path]/route.ts (strips Origin so
+    // droplet CORS allowlists do not block same-origin Vercel proxy calls).
     return [
-      {
-        source: "/chat/:path*",
-        destination: `${chatApiTarget}/chat/:path*`,
-      },
       {
         source: "/socket.io/:path*",
         destination: `${chatApiTarget}/socket.io/:path*`,
