@@ -14,6 +14,7 @@ import { AiChatButton } from "./AiChatButton"
 import { animationConfig as motion } from "./animations/config"
 import {
   createIntroTimeline,
+  playFabEntrance,
   setIntroFinalState,
   type IntroElements,
 } from "./animations/introTimeline"
@@ -37,32 +38,118 @@ type LenisLike = {
 const getLenis = () =>
   (window as Window & { __lenis?: LenisLike }).__lenis
 
-const ASSET_WAIT_MS = 2800
+const ASSET_FAILSAFE_MS = 9000
 
+/** First-scroll assets that sit outside the intro root but cause jank if cold. */
+const CRITICAL_PRELOAD_URLS = [
+  "/motion/bus-top.png",
+  "/hero/landing-sky.jpg",
+  "/hero/cover.png",
+] as const
+
+const waitForEvent = (
+  target: EventTarget,
+  success: string,
+  failure?: string,
+) =>
+  new Promise<void>((resolve) => {
+    const done = () => {
+      target.removeEventListener(success, done)
+      if (failure) target.removeEventListener(failure, done)
+      resolve()
+    }
+    target.addEventListener(success, done, { once: true })
+    if (failure) target.addEventListener(failure, done, { once: true })
+  })
+
+const waitForVideoReady = (video: HTMLVideoElement) => {
+  // HAVE_ENOUGH_DATA — browser believes it can play through without stalling
+  if (video.readyState >= HTMLMediaElement.HAVE_ENOUGH_DATA) {
+    return Promise.resolve()
+  }
+
+  try {
+    video.preload = "auto"
+    if (video.networkState === HTMLMediaElement.NETWORK_EMPTY) video.load()
+  } catch {
+    // ignore
+  }
+
+  return new Promise<void>((resolve) => {
+    let settled = false
+    const finish = () => {
+      if (settled) return
+      settled = true
+      video.removeEventListener("canplaythrough", onReady)
+      video.removeEventListener("loadeddata", onSoftReady)
+      video.removeEventListener("error", onReady)
+      window.clearTimeout(softTimer)
+      window.clearTimeout(hardTimer)
+      resolve()
+    }
+
+    const onReady = () => finish()
+    let softTimer = 0
+    const onSoftReady = () => {
+      // First frame is in — give a short buffer window, then proceed
+      softTimer = window.setTimeout(finish, 500)
+    }
+
+    video.addEventListener("canplaythrough", onReady)
+    video.addEventListener("loadeddata", onSoftReady)
+    video.addEventListener("error", onReady)
+
+    if (video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) onSoftReady()
+
+    // Per-video cap so a stalled stream never owns the whole intro
+    const hardTimer = window.setTimeout(finish, 6000)
+  })
+}
+
+const waitForImageReady = (image: HTMLImageElement) => {
+  if (image.complete && image.naturalWidth > 0) {
+    return image.decode?.().catch(() => undefined) ?? Promise.resolve()
+  }
+  return waitForEvent(image, "load", "error").then(
+    () => image.decode?.().catch(() => undefined) ?? Promise.resolve(),
+  )
+}
+
+const preloadUrl = (src: string) =>
+  new Promise<void>((resolve) => {
+    const image = new Image()
+    image.decoding = "async"
+    const finish = () => resolve()
+    image.addEventListener("load", finish, { once: true })
+    image.addEventListener("error", finish, { once: true })
+    image.src = src
+    if (image.complete) finish()
+  })
+
+/**
+ * Real warm-up for the home experience: fonts, hero media in the intro,
+ * plus the next critical images users hit on first scroll.
+ * Caps with a failsafe so a stalled asset never traps the loader.
+ */
 const waitForPageAssets = (root: HTMLElement) => {
   const fonts = document.fonts?.ready ?? Promise.resolve()
-  const images = Array.from(root.querySelectorAll("img")).map((image) => {
-    if (image.complete)
-      return image.decode?.().catch(() => undefined) ?? Promise.resolve()
-    return new Promise<void>((resolve) => {
-      image.addEventListener("load", () => resolve(), { once: true })
-      image.addEventListener("error", () => resolve(), { once: true })
-    })
-  })
-  const videos = Array.from(root.querySelectorAll("video")).map((video) => {
-    if (video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA)
-      return Promise.resolve()
-    return new Promise<void>((resolve) => {
-      video.addEventListener("loadeddata", () => resolve(), { once: true })
-      video.addEventListener("error", () => resolve(), { once: true })
-    })
+  const images = Array.from(root.querySelectorAll("img")).map(waitForImageReady)
+  const videos = Array.from(root.querySelectorAll("video")).map(waitForVideoReady)
+  const preloads = CRITICAL_PRELOAD_URLS.map(preloadUrl)
+
+  const assets = Promise.allSettled([
+    fonts,
+    ...images,
+    ...videos,
+    ...preloads,
+  ]).then(() => undefined)
+
+  const failsafe = new Promise<void>((resolve) => {
+    window.setTimeout(resolve, ASSET_FAILSAFE_MS)
   })
 
-  const assets = Promise.all([fonts, ...images, ...videos]).then(() => undefined)
-  const timeout = new Promise<void>((resolve) => {
-    window.setTimeout(resolve, ASSET_WAIT_MS)
-  })
-  return Promise.race([assets, timeout])
+  // Wait for real readiness — only the hard failsafe can cut it short
+  return Promise.race([assets, failsafe])
 }
 
 const scrollToTarget = (
@@ -121,6 +208,7 @@ export const DamLanding = ({ copy }: DamLandingProps) => {
   const heroCardRef = useRef<HTMLDivElement>(null)
   const videoStageRef = useRef<HTMLDivElement>(null)
   const aiChatRef = useRef<HTMLAnchorElement>(null)
+  const whatsappRef = useRef<HTMLDivElement>(null)
 
   const collectNavItem = (element: HTMLElement | null) => {
     if (element && !navItemsRef.current.includes(element))
@@ -147,7 +235,8 @@ export const DamLanding = ({ copy }: DamLandingProps) => {
       !heroVideoRef.current?.container ||
       !heroCardRef.current ||
       !videoStageRef.current ||
-      !aiChatRef.current
+      !aiChatRef.current ||
+      !whatsappRef.current
     ) {
       return null
     }
@@ -170,6 +259,7 @@ export const DamLanding = ({ copy }: DamLandingProps) => {
       videoStage: videoStageRef.current,
       heroCard: heroCardRef.current,
       aiChat: aiChatRef.current,
+      whatsapp: whatsappRef.current,
       playVideo: () => heroVideoRef.current?.playOnce(),
     }
   }
@@ -204,13 +294,16 @@ export const DamLanding = ({ copy }: DamLandingProps) => {
       alreadySeen = false
     }
     if (alreadySeen) {
-      setIntroFinalState(elements)
+      setIntroFinalState(elements, { animateFabs: true })
       // Intro skip also skips playOnce — jump straight to the settled end frame
       heroVideoRef.current?.showFinalFrame()
       setSkipIntroMorph(true)
       setLoaded(true)
       document.body.classList.remove("is-loading")
-      return
+      const fabEntrance = playFabEntrance(elements)
+      return () => {
+        fabEntrance.kill()
+      }
     }
 
     let cancelled = false
@@ -339,7 +432,7 @@ export const DamLanding = ({ copy }: DamLandingProps) => {
       } catch {
         // ignore
       }
-    }, ASSET_WAIT_MS + motion.loader.minimumMs + 4000)
+    }, ASSET_FAILSAFE_MS + motion.loader.minimumMs + 4000)
 
     return () => {
       cancelled = true
@@ -501,12 +594,14 @@ export const DamLanding = ({ copy }: DamLandingProps) => {
         />
         <LandingLanguageSwitcher ref={langSwitchRef} />
 
-        <AiChatButton
-          ref={aiChatRef}
-          chatAria={copy.chatAria}
-        />
-        <div className="landing-whatsapp-btn">
-          <WhatsAppButton />
+        <div className="landing-fab-row">
+          <AiChatButton
+            ref={aiChatRef}
+            chatAria={copy.chatAria}
+          />
+          <div className="landing-whatsapp-btn" ref={whatsappRef}>
+            <WhatsAppButton />
+          </div>
         </div>
       </section>
     </div>

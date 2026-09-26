@@ -22,6 +22,7 @@ type HeroVideoProps = {
 }
 
 const VIDEO_SRC = "/hero/backvid.mp4"
+const VIDEO_POSTER = "/hero/cover.png"
 
 export const HeroVideo = forwardRef<HeroVideoHandle, HeroVideoProps>(
   function HeroVideo({ reducedMotion }, ref) {
@@ -204,6 +205,7 @@ export const HeroVideo = forwardRef<HeroVideoHandle, HeroVideoProps>(
           muted
           playsInline
           preload="auto"
+          poster={VIDEO_POSTER}
           loop={false}
           style={{
             objectPosition,

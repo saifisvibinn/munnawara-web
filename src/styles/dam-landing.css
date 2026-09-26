@@ -766,12 +766,23 @@ body.is-transitioning {
   z-index: 1;
 }
 
-/* Floating Chat-with-AI — brand flower squircle (above WhatsApp) */
-.ai-chat-btn {
+/* Floating action row — AI chat + WhatsApp side by side */
+.landing-fab-row {
   position: fixed;
   inset-inline-end: max(14px, 1.6vw);
-  bottom: calc(max(14px, 2vh) + 3.35rem);
+  bottom: max(14px, 2vh);
   z-index: 80;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.65rem;
+  pointer-events: none;
+}
+
+/* Floating Chat-with-AI — brand flower squircle */
+.ai-chat-btn {
+  position: relative;
+  z-index: 1;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -789,15 +800,25 @@ body.is-transitioning {
   border-radius: 16px;
   box-shadow: 0 4px 14px rgba(55, 67, 77, 0.12), 0 1px 3px rgba(55, 67, 77, 0.06);
   transition:
-    transform 220ms cubic-bezier(0.25, 0.8, 0.25, 1),
     background-color 220ms ease,
     box-shadow 220ms ease;
   will-change: transform, opacity;
 }
 
+.ai-chat-btn.is-revealed {
+  transition:
+    transform 220ms cubic-bezier(0.25, 0.8, 0.25, 1),
+    background-color 220ms ease,
+    box-shadow 220ms ease;
+}
+
 .ai-chat-btn:hover,
 .ai-chat-btn:focus-visible {
   background: #ffffff;
+}
+
+.ai-chat-btn.is-revealed:hover,
+.ai-chat-btn.is-revealed:focus-visible {
   transform: scale(1.05);
   box-shadow: 0 6px 18px rgba(55, 67, 77, 0.14), 0 2px 6px rgba(247, 91, 18, 0.2);
 }
@@ -807,7 +828,7 @@ body.is-transitioning {
   outline-offset: 3px;
 }
 
-.ai-chat-btn:active {
+.ai-chat-btn.is-revealed:active {
   transform: scale(0.96);
 }
 
@@ -817,12 +838,15 @@ body.is-transitioning {
   display: block;
 }
 
-/* WhatsApp FAB under the AI chat control on the landing */
+/* WhatsApp FAB beside the AI chat control — hidden until intro morph */
 .landing-whatsapp-btn {
-  position: fixed;
-  inset-inline-end: max(14px, 1.6vw);
-  bottom: max(14px, 2vh);
-  z-index: 80;
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  will-change: transform, opacity;
 }
 
 .loader-surface {
@@ -924,10 +948,18 @@ body.is-transitioning {
   z-index: 200;
   display: grid;
   place-items: center;
-  background: #eaeae6;
+  background: transparent;
   pointer-events: none;
   opacity: 0;
   visibility: hidden;
+}
+
+.logo-route-transition__backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: #eaeae6;
+  pointer-events: none;
 }
 
 .logo-route-transition[data-active="true"] {
@@ -1567,13 +1599,12 @@ body.is-landing-menu-open .site-nav__bar {
   .ai-chat-btn {
     width: 3.15rem;
     height: 3.15rem;
-    inset-inline-end: max(12px, env(safe-area-inset-inline-end, 0px));
-    bottom: calc(max(12px, env(safe-area-inset-bottom, 0px)) + 3.35rem);
   }
 
-  .landing-whatsapp-btn {
+  .landing-fab-row {
     inset-inline-end: max(12px, env(safe-area-inset-inline-end, 0px));
     bottom: max(12px, env(safe-area-inset-bottom, 0px));
+    gap: 0.55rem;
   }
 }
 
@@ -1828,14 +1859,14 @@ html[dir='rtl'] .site-nav__links {
 html.is-locale-out .intro__stage,
 html.is-locale-out .site-below,
 html.is-locale-out .site-nav,
-html.is-locale-out .ai-chat-btn {
+html.is-locale-out .landing-fab-row {
   animation: locale-out 220ms ease forwards;
 }
 
 html.is-locale-in .intro__stage,
 html.is-locale-in .site-below,
 html.is-locale-in .site-nav,
-html.is-locale-in .ai-chat-btn {
+html.is-locale-in .landing-fab-row {
   animation: locale-in 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
@@ -1859,8 +1890,8 @@ html.is-locale-out .hero__glass,
 html.is-locale-in .hero__glass,
 html.is-locale-out .hero__stage-wrap,
 html.is-locale-in .hero__stage-wrap,
-html.is-locale-out .ai-chat-btn,
-html.is-locale-in .ai-chat-btn {
+html.is-locale-out .landing-fab-row,
+html.is-locale-in .landing-fab-row {
   transition:
     grid-template-columns 420ms cubic-bezier(0.22, 1, 0.36, 1),
     margin 420ms cubic-bezier(0.22, 1, 0.36, 1),

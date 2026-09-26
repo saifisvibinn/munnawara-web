@@ -1,6 +1,7 @@
 export const animationConfig = {
   loader: {
-    minimumMs: 2200,
+    /** Short brand beat only — real wait is asset readiness, not padding. */
+    minimumMs: 900,
     bloomDuration: 0.65,
     bloomStagger: 0.09,
     bloomRotation: 18,
@@ -58,8 +59,10 @@ export const animationConfig = {
     revealDuration: 0.82,
   },
   aiChat: {
-    revealStart: 1.58,
     revealDuration: 0.55,
+  },
+  whatsapp: {
+    revealDuration: 0.5,
   },
   videoBleed: {
     left: "4rem",

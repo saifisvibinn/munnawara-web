@@ -19,6 +19,7 @@ export type IntroElements = {
   videoStage: HTMLElement
   heroCard: HTMLElement
   aiChat: HTMLElement
+  whatsapp: HTMLElement
   playVideo: () => void
 }
 
@@ -38,7 +39,10 @@ function destinationFor(logo: SVGSVGElement, target: HTMLElement): Destination {
   }
 }
 
-export function setIntroFinalState(elements: IntroElements) {
+export function setIntroFinalState(
+  elements: IntroElements,
+  options?: { animateFabs?: boolean },
+) {
   gsap.set(elements.logo, { opacity: 0 })
   gsap.set(elements.petalFlights, { opacity: 0 })
   gsap.set(elements.cornerLogo, { opacity: 1, visibility: 'visible' })
@@ -59,7 +63,35 @@ export function setIntroFinalState(elements: IntroElements) {
     clearProps: 'clipPath',
   })
   gsap.set(elements.heroCard, { opacity: 1, y: 0, scale: 1, rotate: 0 })
-  gsap.set(elements.aiChat, {
+
+  if (options?.animateFabs) {
+    hideFabs(elements)
+  } else {
+    showFabsSettled(elements)
+  }
+}
+
+function fabFromX() {
+  return document.documentElement.dir === 'rtl' ? -28 : 28
+}
+
+function hideFabs(elements: Pick<IntroElements, 'aiChat' | 'whatsapp'>) {
+  const fromX = fabFromX()
+  const rtl = document.documentElement.dir === 'rtl'
+  gsap.set([elements.aiChat, elements.whatsapp], {
+    opacity: 0,
+    scale: 0.35,
+    y: 36,
+    x: fromX,
+    rotate: rtl ? 18 : -18,
+    visibility: 'hidden',
+    pointerEvents: 'none',
+    transformOrigin: 'center center',
+  })
+}
+
+function showFabsSettled(elements: Pick<IntroElements, 'aiChat' | 'whatsapp'>) {
+  gsap.set([elements.aiChat, elements.whatsapp], {
     opacity: 1,
     scale: 1,
     y: 0,
@@ -68,6 +100,62 @@ export function setIntroFinalState(elements: IntroElements) {
     visibility: 'visible',
     pointerEvents: 'auto',
   })
+  elements.aiChat.classList.add('is-revealed')
+  elements.whatsapp.classList.add('is-revealed')
+}
+
+/** Pop AI + WhatsApp into place after the intro morph settles. */
+export function playFabEntrance(
+  elements: Pick<IntroElements, 'aiChat' | 'whatsapp'>,
+) {
+  const fromX = fabFromX()
+  const rtl = document.documentElement.dir === 'rtl'
+
+  gsap.killTweensOf([elements.aiChat, elements.whatsapp])
+  gsap.set([elements.aiChat, elements.whatsapp], {
+    opacity: 0,
+    scale: 0.35,
+    y: 36,
+    x: fromX,
+    rotate: rtl ? 18 : -18,
+    visibility: 'visible',
+    pointerEvents: 'none',
+    transformOrigin: 'center center',
+  })
+
+  const timeline = gsap.timeline({
+    defaults: { ease: 'back.out(2.2)' },
+    onComplete: () => {
+      elements.aiChat.classList.add('is-revealed')
+      elements.whatsapp.classList.add('is-revealed')
+    },
+  })
+
+  timeline
+    .to(elements.aiChat, {
+      opacity: 1,
+      scale: 1,
+      y: 0,
+      x: 0,
+      rotate: 0,
+      duration: motion.aiChat.revealDuration,
+      pointerEvents: 'auto',
+    })
+    .to(
+      elements.whatsapp,
+      {
+        opacity: 1,
+        scale: 1,
+        y: 0,
+        x: 0,
+        rotate: 0,
+        duration: motion.whatsapp.revealDuration,
+        pointerEvents: 'auto',
+      },
+      0.1,
+    )
+
+  return timeline
 }
 
 export function createIntroTimeline(elements: IntroElements) {
@@ -88,7 +176,6 @@ export function createIntroTimeline(elements: IntroElements) {
   const cardOrigin = rtl ? 'right center' : 'left center'
   const stageOrigin = rtl ? '35% 55%' : '65% 55%'
   const navItemFrom = rtl ? 12 : -12
-  const chatFromX = rtl ? -28 : 28
 
   gsap.set(petals, { clearProps: 'transform', opacity: 1 })
   gsap.set(elements.logo, {
@@ -129,25 +216,19 @@ export function createIntroTimeline(elements: IntroElements) {
     rotate: rtl ? -1.5 : 1.5,
     transformOrigin: cardOrigin,
   })
-  gsap.set(elements.aiChat, {
-    opacity: 0,
-    scale: 0.2,
-    y: 48,
-    x: chatFromX,
-    rotate: rtl ? 28 : -28,
-    visibility: 'hidden',
-    pointerEvents: 'none',
-    transformOrigin: 'center center',
-  })
+  hideFabs(elements)
   gsap.set(elements.brandName, { opacity: 1, y: 0, visibility: 'visible' })
 
   const unlockScroll = () => document.body.classList.remove('is-transitioning')
+  let fabEntrance: gsap.core.Timeline | undefined
   const timeline = gsap.timeline({
     paused: true,
     defaults: { ease: motion.ease.inOut },
     onComplete: () => {
       state = 'end'
       unlockScroll()
+      // FABs land after the morph — not during loading / petal flight
+      fabEntrance = playFabEntrance(elements)
     },
   })
 
@@ -201,35 +282,6 @@ export function createIntroTimeline(elements: IntroElements) {
     )
     .set(elements.logo, { opacity: 0 }, motion.intro.petalStart)
     .set(elements.petalFlights, { opacity: 1 }, motion.intro.petalStart)
-    .set(
-      elements.aiChat,
-      { visibility: 'visible', pointerEvents: 'auto' },
-      motion.aiChat.revealStart,
-    )
-    .to(
-      elements.aiChat,
-      {
-        opacity: 1,
-        scale: 1.12,
-        y: -6,
-        x: 0,
-        rotate: 8,
-        duration: motion.aiChat.revealDuration * 0.55,
-        ease: 'back.out(2.4)',
-      },
-      motion.aiChat.revealStart,
-    )
-    .to(
-      elements.aiChat,
-      {
-        scale: 1,
-        y: 0,
-        rotate: 0,
-        duration: motion.aiChat.revealDuration * 0.45,
-        ease: 'power2.out',
-      },
-      motion.aiChat.revealStart + motion.aiChat.revealDuration * 0.5,
-    )
 
   elements.petalFlights.forEach((petal, index) => {
     const start = motion.intro.petalStart + index * motion.intro.petalTravelStagger
@@ -325,6 +377,7 @@ export function createIntroTimeline(elements: IntroElements) {
 
   return () => {
     window.clearTimeout(autoPlayId)
+    fabEntrance?.kill()
     timeline.kill()
   }
 }

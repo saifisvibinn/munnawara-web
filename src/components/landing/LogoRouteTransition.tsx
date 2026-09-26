@@ -9,20 +9,24 @@ import { LogoMark } from "./LogoMark"
 /** Session flag so home can skip the long first-load intro on return visits. */
 export const LOGO_INTRO_SEEN_KEY = "dmtc-logo-intro-seen"
 
-const FAST = {
-  spin: 0.32,
-  bloom: 0.22,
-  stagger: 0.025,
-  rotation: 14,
-  hold: 0.04,
-  travel: 0.48,
-  handoff: 0.1,
-  nav: 0.24,
-  fade: 0.18,
-  breathe: 1.2,
+/** Deliberate page-switch timing — slowed so the bloom reads as intentional. */
+const TIMING = {
+  spin: 0.72,
+  bloom: 0.52,
+  stagger: 0.055,
+  rotation: 16,
+  /** Beat at center after bloom / while destination warms */
+  hold: 0.28,
+  travel: 1.05,
+  nav: 0.48,
+  fade: 0.4,
+  breathe: 1.65,
 } as const
 
-const SAFETY_MS = 4200
+/** Must exceed bloom + wait + travel + handoff on slow networks. */
+const SAFETY_MS = 12000
+const PAGE_READY_MS = 6500
+const TARGET_WAIT_MS = 1400
 
 const markSeen = () => {
   try {
@@ -60,7 +64,7 @@ const resolveTarget = (preferHome: boolean) => {
 
 const waitForTarget = (
   preferHome: boolean,
-  maxMs = 400,
+  maxMs = TARGET_WAIT_MS,
 ): Promise<HTMLElement | null> =>
   new Promise((resolve) => {
     const started = performance.now()
@@ -79,18 +83,94 @@ const waitForTarget = (
     tick()
   })
 
-const destinationFor = (logo: SVGSVGElement, target: HTMLElement) => {
-  const to = target.getBoundingClientRect()
-  const flight = logo.parentElement?.getBoundingClientRect()
-  const width = logo.clientWidth || 1
-  const centerX = flight ? flight.left + flight.width / 2 : window.innerWidth / 2
-  const centerY = flight ? flight.top + flight.height / 2 : window.innerHeight / 2
-
-  return {
-    x: to.left + to.width / 2 - centerX,
-    y: to.top + to.height / 2 - centerY,
-    scale: Math.min(1, to.width / width),
+const waitForImage = (image: HTMLImageElement) => {
+  if (image.complete && image.naturalWidth > 0) {
+    return image.decode?.().catch(() => undefined) ?? Promise.resolve()
   }
+  return new Promise<void>((resolve) => {
+    const done = () => resolve()
+    image.addEventListener("load", done, { once: true })
+    image.addEventListener("error", done, { once: true })
+  })
+}
+
+/**
+ * Hold the cover until the destination route has painted and its above-the-fold
+ * media is warm — then the logo morphs in over a settled page.
+ */
+const waitForDestinationReady = async (preferHome: boolean) => {
+  // Two frames so RSC-committed DOM has layout before we measure / decode
+  await new Promise<void>((resolve) => {
+    requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
+  })
+
+  const fonts = document.fonts?.ready ?? Promise.resolve()
+  const main = document.querySelector("main")
+  const images = main
+    ? Array.from(main.querySelectorAll("img")).map(waitForImage)
+    : []
+  const videos = main
+    ? Array.from(main.querySelectorAll("video")).map((video) => {
+        if (video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
+          return Promise.resolve()
+        }
+        return new Promise<void>((resolve) => {
+          const done = () => resolve()
+          video.addEventListener("loadeddata", done, { once: true })
+          video.addEventListener("error", done, { once: true })
+          window.setTimeout(done, 2000)
+        })
+      })
+    : []
+
+  const assets = Promise.allSettled([fonts, ...images, ...videos]).then(
+    () => undefined,
+  )
+  const failsafe = new Promise<void>((resolve) => {
+    window.setTimeout(resolve, PAGE_READY_MS)
+  })
+
+  await Promise.race([assets, failsafe])
+  return waitForTarget(preferHome)
+}
+
+/**
+ * Viewport box of the painted mark inside a corner/chrome logo target.
+ */
+const markRect = (target: HTMLElement) => {
+  const mark =
+    (target.matches("svg")
+      ? target
+      : target.querySelector<SVGSVGElement>("svg")) ?? target
+  const r = mark.getBoundingClientRect()
+  return { left: r.left, top: r.top, width: r.width, height: r.height }
+}
+
+/** Pin the flight SVG to an exact viewport box (no scale/x transform math). */
+const pinFlightBox = (
+  logo: SVGSVGElement,
+  box: { left: number; top: number; width: number; height: number },
+) => {
+  gsap.set(logo, {
+    position: "fixed",
+    left: box.left,
+    top: box.top,
+    width: box.width,
+    height: box.height,
+    margin: 0,
+    x: 0,
+    y: 0,
+    scale: 1,
+    rotation: 0,
+    transformOrigin: "0 0",
+  })
+}
+
+const resetFlightLayout = (logo: SVGSVGElement) => {
+  gsap.set(logo, {
+    clearProps:
+      "position,left,top,width,height,margin,x,y,scale,rotation,transform,transformOrigin",
+  })
 }
 
 const isInternalNavClick = (event: MouseEvent, currentPath: string) => {
@@ -131,12 +211,13 @@ const tweenIf = (
 }
 
 /**
- * Fast logo bloom + morph into the top bar on each client-side page switch.
- * Cover plate shows on click (before RSC finishes) so loading feels instant.
+ * Intentional logo bloom + morph into the top bar on each client-side page switch.
+ * Cover shows on click; land waits until the destination page is warm.
  */
 export const LogoRouteTransition = () => {
   const pathname = usePathname()
   const overlayRef = useRef<HTMLDivElement>(null)
+  const backdropRef = useRef<HTMLDivElement>(null)
   const logoRef = useRef<SVGSVGElement>(null)
   const isFirstPath = useRef(true)
   const runIdRef = useRef(0)
@@ -166,11 +247,15 @@ export const LogoRouteTransition = () => {
 
   const dismissOverlay = () => {
     const overlay = overlayRef.current
+    const backdrop = backdropRef.current
+    const logo = logoRef.current
     if (!overlay) return
     overlay.setAttribute("data-active", "false")
     overlay.removeAttribute("data-locking")
     overlay.setAttribute("aria-hidden", "true")
     gsap.set(overlay, { autoAlpha: 0 })
+    if (backdrop) gsap.set(backdrop, { autoAlpha: 1 })
+    if (logo) resetFlightLayout(logo)
     document.body.classList.remove("is-page-transitioning")
   }
 
@@ -205,6 +290,7 @@ export const LogoRouteTransition = () => {
     if (phaseRef.current !== "idle") return
 
     const overlay = overlayRef.current
+    const backdrop = backdropRef.current
     const logo = logoRef.current
     if (!overlay || !logo) return
 
@@ -225,6 +311,8 @@ export const LogoRouteTransition = () => {
     overlay.removeAttribute("data-locking")
     overlay.setAttribute("aria-hidden", "false")
     gsap.set(overlay, { autoAlpha: 1 })
+    if (backdrop) gsap.set(backdrop, { autoAlpha: 1 })
+    resetFlightLayout(logo)
     gsap.set(logo, {
       x: 0,
       y: 0,
@@ -236,7 +324,7 @@ export const LogoRouteTransition = () => {
     gsap.set(petals, {
       opacity: 0,
       scale: 0.12,
-      rotation: (index) => (index % 2 ? -1 : 1) * FAST.rotation,
+      rotation: (index) => (index % 2 ? -1 : 1) * TIMING.rotation,
       transformOrigin: "427.5px 427.5px",
     })
 
@@ -247,7 +335,7 @@ export const LogoRouteTransition = () => {
       .to(logo, {
         rotation: 0,
         scale: 1,
-        duration: FAST.spin,
+        duration: TIMING.spin,
         ease: "expo.out",
       })
       .to(
@@ -256,17 +344,22 @@ export const LogoRouteTransition = () => {
           opacity: 1,
           scale: 1,
           rotation: 0,
-          duration: FAST.bloom,
-          stagger: FAST.stagger,
+          duration: TIMING.bloom,
+          stagger: TIMING.stagger,
           ease: "power3.out",
         },
-        0.04,
+        0.08,
       )
       .add(() => {
-        if (runId !== runIdRef.current || phaseRef.current !== "covering") return
+        if (runId !== runIdRef.current) return
+        // Covering or landing-wait — keep the logo alive until travel starts
+        if (phaseRef.current !== "covering" && phaseRef.current !== "landing") {
+          return
+        }
+        if (breatheRef.current) return
         breatheRef.current = gsap.to(logo, {
           scale: 1.035,
-          duration: FAST.breathe,
+          duration: TIMING.breathe,
           yoyo: true,
           repeat: -1,
           ease: "sine.inOut",
@@ -283,6 +376,7 @@ export const LogoRouteTransition = () => {
     }
 
     const overlay = overlayRef.current
+    const backdrop = backdropRef.current
     const logo = logoRef.current
     if (!overlay || !logo) return
 
@@ -293,16 +387,24 @@ export const LogoRouteTransition = () => {
 
     const runId = runIdRef.current
     phaseRef.current = "landing"
-    // Now that navigation committed, trap pointer so the new page isn't clickable mid-morph
+    // Trap pointer so the new page isn't clickable mid-morph
     overlay.setAttribute("data-locking", "true")
     armSafety(runId)
 
+    const isHome = nextPath === "/"
+
+    // Keep breathing while the destination route paints + warms media
+    const target = await waitForDestinationReady(isHome)
+    if (runId !== runIdRef.current) return
+
+    // Minimum center beat after bloom so the land never feels rushed
+    await new Promise<void>((resolve) => {
+      window.setTimeout(resolve, TIMING.hold * 1000)
+    })
+    if (runId !== runIdRef.current) return
+
     breatheRef.current?.kill()
     breatheRef.current = null
-
-    const isHome = nextPath === "/"
-    const target = await waitForTarget(isHome)
-    if (runId !== runIdRef.current) return
 
     const cornerLogo = document.querySelector<HTMLElement>(".corner-logo")
     const nav = document.querySelector<HTMLElement>(".site-nav")
@@ -315,6 +417,7 @@ export const LogoRouteTransition = () => {
     const siteHeader = document.querySelector<HTMLElement>("[data-site-header]")
     const rtl = document.documentElement.dir === "rtl"
     const navOrigin = rtl ? "right center" : "left center"
+    const settledLogo = isHome ? cornerLogo : siteLogo
 
     if (isHome) {
       if (cornerLogo) gsap.set(cornerLogo, { opacity: 0, visibility: "visible" })
@@ -338,7 +441,8 @@ export const LogoRouteTransition = () => {
     }
 
     bloomTlRef.current?.progress(1)
-    gsap.set(logo, { scale: 1, rotation: 0, opacity: 1 })
+    // Drop scale/x transforms before measuring — leftover breathe/bloom skews the box.
+    gsap.set(logo, { x: 0, y: 0, scale: 1, rotation: 0, opacity: 1 })
 
     landTlRef.current?.eventCallback("onComplete", null)
     landTlRef.current?.eventCallback("onInterrupt", null)
@@ -349,51 +453,53 @@ export const LogoRouteTransition = () => {
     landTlRef.current = timeline
 
     if (target) {
-      const dest = () => destinationFor(logo, target)
+      // Pin to the current painted box, then tween left/top/width/height so the
+      // flight SVG's box matches the destination mark exactly (no scale+x math).
+      const startRect = logo.getBoundingClientRect()
+      pinFlightBox(logo, {
+        left: startRect.left,
+        top: startRect.top,
+        width: startRect.width,
+        height: startRect.height,
+      })
+      const endBox = markRect(target)
+
+      const clipIntoPlace = () => {
+        // Remeasure under the still-locked scroll, snap boxes, then swap.
+        pinFlightBox(logo, markRect(target))
+        if (settledLogo) gsap.set(settledLogo, { opacity: 1, visibility: "visible" })
+        gsap.set(logo, { opacity: 0 })
+        overlay.removeAttribute("data-locking")
+        document.body.classList.remove("is-page-transitioning")
+      }
 
       timeline
         .to(logo, {
-          x: () => dest().x,
-          y: () => dest().y,
-          scale: () => dest().scale,
-          duration: FAST.travel,
+          left: endBox.left,
+          top: endBox.top,
+          width: endBox.width,
+          height: endBox.height,
+          duration: TIMING.travel,
           ease: "power3.inOut",
-          delay: FAST.hold,
         })
         .to(
-          overlay,
+          backdrop ?? overlay,
           {
             autoAlpha: 0,
-            duration: FAST.fade * 1.1,
+            duration: TIMING.fade,
             ease: "power2.inOut",
-            onStart: () => {
-              // Drop pointer trap as soon as fade begins
-              overlay.setAttribute("data-active", "false")
-              overlay.removeAttribute("data-locking")
-              overlay.setAttribute("aria-hidden", "true")
-              document.body.classList.remove("is-page-transitioning")
-            },
           },
-          `-=${FAST.travel * 0.7}`,
+          `-=${TIMING.travel * 0.55}`,
         )
+        // Seat the real bar logo the instant travel finishes (not when the fade ends).
+        .add(clipIntoPlace, TIMING.travel)
 
       if (isHome) {
         tweenIf(
           timeline,
-          cornerLogo,
-          { opacity: 1, duration: FAST.handoff, ease: "power2.inOut" },
-          "-=0.12",
-        )
-        timeline.to(
-          logo,
-          { opacity: 0, duration: FAST.handoff, ease: "power2.inOut" },
-          "<",
-        )
-        tweenIf(
-          timeline,
           navBar,
-          { scaleX: 1, opacity: 1, duration: FAST.nav, ease: "power3.out" },
-          "-=0.1",
+          { scaleX: 1, opacity: 1, duration: TIMING.nav, ease: "power3.out" },
+          "-=0.14",
         )
         if (navItems.length) {
           timeline.to(
@@ -401,46 +507,31 @@ export const LogoRouteTransition = () => {
             {
               x: 0,
               opacity: 1,
-              duration: FAST.nav,
-              stagger: 0.03,
+              duration: TIMING.nav,
+              stagger: 0.045,
               ease: "power3.out",
             },
-            "<0.04",
+            "<0.06",
           )
         }
         tweenIf(
           timeline,
           langSwitch,
-          { opacity: 1, y: 0, duration: FAST.nav, ease: "power3.out" },
-          "<0.05",
-        )
-      } else {
-        tweenIf(
-          timeline,
-          siteLogo,
-          { opacity: 1, duration: FAST.handoff, ease: "power2.inOut" },
-          "-=0.1",
-        )
-        timeline.to(
-          logo,
-          { opacity: 0, duration: FAST.handoff, ease: "power2.inOut" },
-          "<",
+          { opacity: 1, y: 0, duration: TIMING.nav, ease: "power3.out" },
+          "<0.08",
         )
       }
     } else {
-      timeline.to(overlay, {
+      timeline.to(backdrop ?? overlay, {
         autoAlpha: 0,
-        duration: FAST.fade,
+        duration: TIMING.fade,
         ease: "power2.inOut",
-        delay: FAST.hold,
         onStart: () => {
-          overlay.setAttribute("data-active", "false")
           overlay.removeAttribute("data-locking")
-          overlay.setAttribute("aria-hidden", "true")
           document.body.classList.remove("is-page-transitioning")
         },
       })
-      if (!isHome && siteLogo) gsap.set(siteLogo, { opacity: 1 })
+      if (settledLogo) gsap.set(settledLogo, { opacity: 1, visibility: "visible" })
     }
   }
 
@@ -483,6 +574,7 @@ export const LogoRouteTransition = () => {
       aria-hidden="true"
       role="presentation"
     >
+      <div ref={backdropRef} className="logo-route-transition__backdrop" aria-hidden="true" />
       <LogoMark
         ref={logoRef}
         className="logo-route-transition__mark"

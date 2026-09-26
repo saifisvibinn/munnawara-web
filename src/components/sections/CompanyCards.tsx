@@ -27,7 +27,7 @@ export const CompanyCards = async () => {
             key={company.slug}
             className="group flex flex-col overflow-hidden rounded-lg border border-border bg-surface-elevated shadow-sm transition hover:shadow-md"
           >
-            <div className="relative flex aspect-[16/11] items-center justify-center bg-ink px-5 py-6">
+            <div className="relative flex aspect-[16/11] items-center justify-center bg-white px-5 py-6">
               <Image
                 src={company.logo}
                 alt=""
