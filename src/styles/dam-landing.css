@@ -409,7 +409,8 @@ body.is-loading .loader-surface {
   align-items: center;
   justify-content: flex-end;
   overflow: hidden;
-  background: #eaeae6;
+  background-color: #eaeae6;
+  background-repeat: no-repeat;
   opacity: 0;
 }
 

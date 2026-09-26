@@ -125,14 +125,17 @@ const waitForEvent = (
   })
 
 const waitForVideoReady = (video: HTMLVideoElement) => {
-  // HAVE_ENOUGH_DATA — browser believes it can play through without stalling
-  if (video.readyState >= HTMLMediaElement.HAVE_ENOUGH_DATA) {
+  // Soft floor: metadata is enough to reveal the plate; full buffer can finish later.
+  if (video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
     return Promise.resolve()
   }
 
   try {
+    video.muted = true
+    video.playsInline = true
     video.preload = "auto"
     if (video.networkState === HTMLMediaElement.NETWORK_EMPTY) video.load()
+    else if (video.readyState < HTMLMediaElement.HAVE_METADATA) video.load()
   } catch {
     // ignore
   }
@@ -143,7 +146,9 @@ const waitForVideoReady = (video: HTMLVideoElement) => {
       if (settled) return
       settled = true
       video.removeEventListener("canplaythrough", onReady)
+      video.removeEventListener("canplay", onReady)
       video.removeEventListener("loadeddata", onSoftReady)
+      video.removeEventListener("loadedmetadata", onMeta)
       video.removeEventListener("error", onReady)
       window.clearTimeout(softTimer)
       window.clearTimeout(hardTimer)
@@ -153,18 +158,25 @@ const waitForVideoReady = (video: HTMLVideoElement) => {
     const onReady = () => finish()
     let softTimer = 0
     const onSoftReady = () => {
-      // First frame is in — give a short buffer window, then proceed
-      softTimer = window.setTimeout(finish, 500)
+      // First frame is in — brief beat then proceed so mobile intro isn't starved
+      softTimer = window.setTimeout(finish, 280)
+    }
+    const onMeta = () => {
+      // Metadata alone is enough to continue — playback can catch up on mobile.
+      softTimer = window.setTimeout(finish, 120)
     }
 
     video.addEventListener("canplaythrough", onReady)
+    video.addEventListener("canplay", onReady)
     video.addEventListener("loadeddata", onSoftReady)
+    video.addEventListener("loadedmetadata", onMeta)
     video.addEventListener("error", onReady)
 
+    if (video.readyState >= HTMLMediaElement.HAVE_METADATA) onMeta()
     if (video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) onSoftReady()
 
-    // Per-video cap so a stalled stream never owns the whole intro
-    const hardTimer = window.setTimeout(finish, 6000)
+    // Mobile networks stall often — don't hold the whole intro hostage
+    const hardTimer = window.setTimeout(finish, 3500)
   })
 }
 
