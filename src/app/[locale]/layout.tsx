@@ -93,6 +93,11 @@ const LocaleLayout = async ({ children, params }: LocaleLayoutProps) => {
       className={`${fontArabic.variable} ${fontLatin.variable} ${fontDisplay.variable} ${fontDisplayAr.variable} ${fontNumeralAr.variable}`}
     >
       <body className="antialiased" suppressHydrationWarning>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var p=location.pathname.replace(/\\/+$/,"")||"/";if(p==="/"||p==="/en"||p==="/ar"){if("scrollRestoration"in history)history.scrollRestoration="manual";window.scrollTo(0,0);document.documentElement.scrollTop=0;document.body.scrollTop=0;}}catch(e){}})();`,
+          }}
+        />
         <NextIntlClientProvider messages={messages}>
           <SmoothScrollProvider>
             <Header />

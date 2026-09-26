@@ -29,17 +29,76 @@ import { LOGO_INTRO_SEEN_KEY } from "./LogoRouteTransition"
 
 gsap.registerPlugin(ScrollTrigger)
 
+/**
+ * PerformanceNavigationTiming.type is the *document* load type for the whole
+ * session tab — it stays "reload" after a hard refresh even during later
+ * client navigations. Only clear the intro flag once per document load.
+ */
+let didHandleDocumentNavType = false
+const clearIntroSeenOnHardReload = () => {
+  if (didHandleDocumentNavType) return
+  didHandleDocumentNavType = true
+  try {
+    const nav = performance.getEntriesByType("navigation")[0] as
+      | PerformanceNavigationTiming
+      | undefined
+    if (nav?.type === "reload") {
+      sessionStorage.removeItem(LOGO_INTRO_SEEN_KEY)
+    }
+  } catch {
+    // ignore
+  }
+}
+
 type LenisLike = {
   stop: () => void
   start: () => void
   scrollTo: (
-    target: string | HTMLElement,
-    options?: { offset?: number; duration?: number },
+    target: string | number | HTMLElement,
+    options?: { offset?: number; duration?: number; immediate?: boolean },
   ) => void
 }
 
 const getLenis = () =>
   (window as Window & { __lenis?: LenisLike }).__lenis
+
+/** Pin the page to the hero before / during the intro so a refresh mid-scroll stays clean. */
+const forceHomeTop = () => {
+  try {
+    if ("scrollRestoration" in history) {
+      history.scrollRestoration = "manual"
+    }
+  } catch {
+    // ignore
+  }
+
+  if (window.location.hash) {
+    try {
+      history.replaceState(
+        null,
+        "",
+        `${window.location.pathname}${window.location.search}`,
+      )
+    } catch {
+      // ignore
+    }
+  }
+
+  window.scrollTo(0, 0)
+  document.documentElement.scrollTop = 0
+  document.body.scrollTop = 0
+  const lenis = getLenis()
+  lenis?.stop()
+  try {
+    lenis?.scrollTo(0, { immediate: true })
+  } catch {
+    try {
+      lenis?.scrollTo(0, { offset: 0, duration: 0 })
+    } catch {
+      // ignore
+    }
+  }
+}
 
 const ASSET_FAILSAFE_MS = 9000
 
@@ -273,6 +332,17 @@ export const DamLanding = ({ copy }: DamLandingProps) => {
     else lenis?.start()
   }, [loaded])
 
+  // Before paint: never let a restored scroll offset sit under the intro.
+  // Soft returns already skip the bloom — don't yank scroll on those.
+  useLayoutEffect(() => {
+    try {
+      if (sessionStorage.getItem(LOGO_INTRO_SEEN_KEY) === "1") return
+    } catch {
+      // ignore
+    }
+    forceHomeTop()
+  }, [])
+
   useLayoutEffect(() => {
     const elements = getElements()
     if (!elements) return
@@ -289,15 +359,10 @@ export const DamLanding = ({ copy }: DamLandingProps) => {
       return
     }
 
-    // Soft navigations back to home skip the long bloom; full reload always replays.
+    // Soft navigations back to home skip the long bloom; hard reload replays once.
+    clearIntroSeenOnHardReload()
     let alreadySeen = false
     try {
-      const nav = performance.getEntriesByType("navigation")[0] as
-        | PerformanceNavigationTiming
-        | undefined
-      if (nav?.type === "reload") {
-        sessionStorage.removeItem(LOGO_INTRO_SEEN_KEY)
-      }
       alreadySeen = sessionStorage.getItem(LOGO_INTRO_SEEN_KEY) === "1"
     } catch {
       alreadySeen = false
@@ -324,8 +389,19 @@ export const DamLanding = ({ copy }: DamLandingProps) => {
     const loaderLetters = loaderLettersRef.current
     const brandWords = brandWordsRef.current
     let reveal: gsap.core.Timeline | undefined
+
+    forceHomeTop()
     document.body.classList.add("is-loading")
-    getLenis()?.stop()
+    // Browser can restore scroll after first paint — keep pinning during load.
+    const keepTop = () => {
+      if (cancelled) return
+      if (window.scrollY !== 0 || document.documentElement.scrollTop !== 0) {
+        forceHomeTop()
+      }
+    }
+    keepTop()
+    window.addEventListener("scroll", keepTop, { passive: true })
+    const topWatchId = window.setInterval(keepTop, 100)
 
     gsap.set(petalOrder, {
       opacity: 0,
@@ -398,6 +474,9 @@ export const DamLanding = ({ copy }: DamLandingProps) => {
       gsap.set(elements.logo, { scale: 1 })
       reveal = gsap.timeline({
         onComplete: () => {
+          window.removeEventListener("scroll", keepTop)
+          window.clearInterval(topWatchId)
+          forceHomeTop()
           document.body.classList.remove("is-loading")
           try {
             sessionStorage.setItem(LOGO_INTRO_SEEN_KEY, "1")
@@ -434,6 +513,9 @@ export const DamLanding = ({ copy }: DamLandingProps) => {
     // Hard failsafe: never leave mobile stuck behind is-loading
     const failsafeId = window.setTimeout(() => {
       if (cancelled) return
+      window.removeEventListener("scroll", keepTop)
+      window.clearInterval(topWatchId)
+      forceHomeTop()
       document.body.classList.remove("is-loading")
       setLoaded(true)
       try {
@@ -445,6 +527,8 @@ export const DamLanding = ({ copy }: DamLandingProps) => {
 
     return () => {
       cancelled = true
+      window.removeEventListener("scroll", keepTop)
+      window.clearInterval(topWatchId)
       window.clearTimeout(failsafeId)
       bloom.kill()
       breathing.kill()
