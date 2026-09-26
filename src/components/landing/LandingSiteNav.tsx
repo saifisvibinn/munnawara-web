@@ -1,6 +1,7 @@
 "use client"
 
 import { Link, usePathname } from "@/i18n/navigation"
+import { OPEN_QUOTE_EVENT } from "@/components/layout/FloatingQuoteCta"
 import { useLocale, useTranslations } from "next-intl"
 import {
   useEffect,
@@ -107,13 +108,9 @@ export const LandingSiteNav = ({
     scrollTo("#home", { offset: 0 })
   }
 
-  const handleQuoteClick = (event: MouseEvent<HTMLAnchorElement>) => {
+  const handleQuoteClick = () => {
     setMenuOpen(false)
-    if (pathname !== "/") return
-    const quote = document.getElementById("quote")
-    if (!quote) return
-    event.preventDefault()
-    scrollTo("#quote", { offset: -88 })
+    window.dispatchEvent(new Event(OPEN_QUOTE_EVENT))
   }
 
   const handleNavClick = () => setMenuOpen(false)
@@ -152,15 +149,15 @@ export const LandingSiteNav = ({
               </Link>
             ))}
           </div>
-          <Link
+          <button
+            type="button"
             className="site-nav__quote"
-            href="/contact"
             ref={collectNavItem}
             onClick={handleQuoteClick}
             tabIndex={0}
           >
             {t("quote")}
-          </Link>
+          </button>
           <button
             className={`menu-hook${menuOpen ? " is-open" : ""}`}
             type="button"
@@ -203,14 +200,14 @@ export const LandingSiteNav = ({
                 {t(item.key)}
               </Link>
             ))}
-            <Link
+            <button
+              type="button"
               className="site-nav__drawer-quote"
-              href="/contact"
               onClick={handleQuoteClick}
               tabIndex={0}
             >
               {t("quote")}
-            </Link>
+            </button>
           </nav>
         </div>
       ) : null}

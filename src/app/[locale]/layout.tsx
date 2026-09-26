@@ -1,5 +1,6 @@
 import { Footer } from "@/components/layout/Footer"
 import { FloatingActions } from "@/components/layout/FloatingActions"
+import { FloatingQuoteCta } from "@/components/layout/FloatingQuoteCta"
 import { Header } from "@/components/layout/Header"
 import { SmoothScrollProvider } from "@/components/motion/SmoothScrollProvider"
 import { routing } from "@/i18n/routing"
@@ -111,6 +112,7 @@ const LocaleLayout = async ({ children, params }: LocaleLayoutProps) => {
             <main id="main" className="min-h-[60dvh]">{children}</main>
             <Footer />
             <FloatingActions />
+            <FloatingQuoteCta />
             <LogoRouteTransition />
           </SmoothScrollProvider>
         </NextIntlClientProvider>

@@ -2,6 +2,7 @@
 
 import { LandingLanguageSwitcher } from "@/components/landing/LandingLanguageSwitcher"
 import { LogoMark } from "@/components/landing/LogoMark"
+import { OPEN_QUOTE_EVENT } from "@/components/layout/FloatingQuoteCta"
 import { Link, usePathname } from "@/i18n/navigation"
 import { useLocale, useTranslations } from "next-intl"
 import {
@@ -103,6 +104,11 @@ export const Header = () => {
     event.preventDefault()
   }
 
+  const handleQuoteClick = () => {
+    setMenuOpen(false)
+    window.dispatchEvent(new Event(OPEN_QUOTE_EVENT))
+  }
+
   return (
     <div data-site-header className="site-chrome">
       <div className="site-chrome__spacer" aria-hidden="true" />
@@ -145,14 +151,14 @@ export const Header = () => {
               </Link>
             ))}
           </div>
-          <Link
+          <button
+            type="button"
             className="site-nav__quote"
-            href="/contact"
-            onClick={handleNavClick}
+            onClick={handleQuoteClick}
             tabIndex={0}
           >
             {t("quote")}
-          </Link>
+          </button>
           <button
             className={`menu-hook${menuOpen ? " is-open" : ""}`}
             type="button"
@@ -196,14 +202,14 @@ export const Header = () => {
                 {t(item.key)}
               </Link>
             ))}
-            <Link
+            <button
+              type="button"
               className="site-nav__drawer-quote"
-              href="/contact"
-              onClick={handleNavClick}
+              onClick={handleQuoteClick}
               tabIndex={0}
             >
               {t("quote")}
-            </Link>
+            </button>
           </nav>
         </div>
       ) : null}

@@ -12,22 +12,18 @@ import { useState, type FormEvent } from "react"
 
 type QuoteRequestFormProps = {
   className?: string
-  whatsappNumber: string
-  whatsappPrefill: string
   variant?: "card" | "overlay"
   formId?: string
 }
 
 const fieldClass =
-  "w-full min-w-0 rounded-2xl border border-ink/8 bg-surface-muted px-3.5 py-3 text-base text-ink outline-none transition placeholder:text-ink-muted/50 focus:border-orange focus:bg-white focus:ring-2 focus:ring-orange/20 sm:text-sm"
+  "w-full min-w-0 rounded-xl border-0 bg-ink/[0.04] px-3.5 py-3.5 text-base text-ink outline-none transition placeholder:text-ink/35 focus:bg-white focus:ring-2 focus:ring-orange/25 sm:py-3 sm:text-[0.9375rem]"
 
 const overlayFieldClass =
-  "w-full min-w-0 rounded-2xl border-0 bg-surface-muted px-4 py-3.5 text-base text-ink outline-none transition placeholder:text-ink-muted/45 focus:bg-surface focus:ring-2 focus:ring-orange/25 sm:text-sm"
+  "w-full min-w-0 rounded-xl border-0 bg-ink/[0.04] px-4 py-3.5 text-base text-ink outline-none transition placeholder:text-ink/35 focus:bg-white focus:ring-2 focus:ring-orange/25 sm:text-[0.9375rem]"
 
 export const QuoteRequestForm = ({
   className,
-  whatsappNumber,
-  whatsappPrefill,
   variant = "card",
   formId = "quote",
 }: QuoteRequestFormProps) => {
@@ -43,8 +39,6 @@ export const QuoteRequestForm = ({
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">(
     "idle",
   )
-
-  const whatsappHref = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappPrefill)}`
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -70,29 +64,37 @@ export const QuoteRequestForm = ({
     setStatus(result.ok ? "success" : "error")
   }
 
+  const tripLabel = (type: TripType) =>
+    type === "individual"
+      ? t("tripIndividual")
+      : type === "group"
+        ? t("tripGroup")
+        : t("tripCorporate")
+
   return (
     <div
       id={formId}
       className={cn(
         isOverlay
           ? "bg-transparent p-0 text-start shadow-none"
-          : "rounded-[1.5rem] border border-ink/6 bg-white p-4 text-start shadow-md sm:rounded-[1.75rem] sm:p-5 md:p-7",
+          : "rounded-2xl bg-white/90 p-4 text-start ring-1 ring-ink/6 backdrop-blur-md sm:p-6 md:p-8",
         className,
       )}
     >
-      <form onSubmit={handleSubmit} noValidate>
-        <div
-          className={cn(
-            "grid grid-cols-1 gap-3.5 sm:grid-cols-2 sm:gap-4",
-            isOverlay ? "lg:gap-5" : "xl:grid-cols-4",
-          )}
-        >
-          <label className="block min-w-0">
-            <span className="font-label mb-1.5 block text-xs font-medium text-ink sm:mb-2">
-              {t("tripType")}
-            </span>
+      <form onSubmit={handleSubmit} noValidate className="space-y-4 sm:space-y-6">
+        <fieldset className="min-w-0">
+          <legend className="font-label mb-2 block text-[0.7rem] font-semibold tracking-[0.14em] text-ink/45 uppercase sm:mb-2.5">
+            {t("tripType")}
+          </legend>
+
+          {/* Native select on small screens — 3 long labels crush in a row */}
+          <label className="block sm:hidden">
+            <span className="sr-only">{t("tripType")}</span>
             <select
-              className={isOverlay ? overlayFieldClass : fieldClass}
+              className={cn(fieldClass, "appearance-none bg-[length:1rem] bg-[right_0.85rem_center] bg-no-repeat pr-10")}
+              style={{
+                backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' viewBox='0 0 24 24'%3E%3Cpath stroke='%235c5666' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m6 9 6 6 6-6'/%3E%3C/svg%3E")`,
+              }}
               value={tripType}
               onChange={(event) => setTripType(event.target.value as TripType)}
               required
@@ -100,18 +102,43 @@ export const QuoteRequestForm = ({
             >
               {tripTypes.map((type) => (
                 <option key={type} value={type}>
-                  {type === "individual"
-                    ? t("tripIndividual")
-                    : type === "group"
-                      ? t("tripGroup")
-                      : t("tripCorporate")}
+                  {tripLabel(type)}
                 </option>
               ))}
             </select>
           </label>
 
+          <div
+            role="radiogroup"
+            aria-label={t("tripType")}
+            className="hidden grid-cols-3 gap-1 rounded-xl bg-ink/[0.04] p-1 sm:grid"
+          >
+            {tripTypes.map((type) => {
+              const selected = tripType === type
+              return (
+                <button
+                  key={type}
+                  type="button"
+                  role="radio"
+                  aria-checked={selected}
+                  onClick={() => setTripType(type)}
+                  className={cn(
+                    "font-label rounded-lg px-2 py-2.5 text-center text-sm font-semibold transition",
+                    selected
+                      ? "bg-white text-ink shadow-sm ring-1 ring-ink/6"
+                      : "text-ink/50 hover:text-ink",
+                  )}
+                >
+                  {tripLabel(type)}
+                </button>
+              )
+            })}
+          </div>
+        </fieldset>
+
+        <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 sm:gap-4">
           <label className="block min-w-0">
-            <span className="font-label mb-1.5 block text-xs font-medium text-ink sm:mb-2">
+            <span className="font-label mb-1.5 block text-[0.7rem] font-semibold tracking-[0.14em] text-ink/45 uppercase">
               {t("pickup")}
             </span>
             <input
@@ -125,7 +152,7 @@ export const QuoteRequestForm = ({
           </label>
 
           <label className="block min-w-0">
-            <span className="font-label mb-1.5 block text-xs font-medium text-ink sm:mb-2">
+            <span className="font-label mb-1.5 block text-[0.7rem] font-semibold tracking-[0.14em] text-ink/45 uppercase">
               {t("destination")}
             </span>
             <input
@@ -138,12 +165,15 @@ export const QuoteRequestForm = ({
           </label>
 
           <label className="block min-w-0">
-            <span className="font-label mb-1.5 block text-xs font-medium text-ink sm:mb-2">
+            <span className="font-label mb-1.5 block text-[0.7rem] font-semibold tracking-[0.14em] text-ink/45 uppercase">
               {t("date")}
             </span>
             <input
               type="date"
-              className={isOverlay ? overlayFieldClass : fieldClass}
+              className={cn(
+                isOverlay ? overlayFieldClass : fieldClass,
+                "min-h-[3.25rem] sm:min-h-0",
+              )}
               value={date}
               onChange={(event) => setDate(event.target.value)}
               required
@@ -152,7 +182,7 @@ export const QuoteRequestForm = ({
           </label>
 
           <label className="block min-w-0">
-            <span className="font-label mb-1.5 block text-xs font-medium text-ink sm:mb-2">
+            <span className="font-label mb-1.5 block text-[0.7rem] font-semibold tracking-[0.14em] text-ink/45 uppercase">
               {t("passengers")}
             </span>
             <input
@@ -168,8 +198,8 @@ export const QuoteRequestForm = ({
             />
           </label>
 
-          <label className={cn("block min-w-0", !isOverlay && "sm:col-span-1 xl:col-span-2")}>
-            <span className="font-label mb-1.5 block text-xs font-medium text-ink sm:mb-2">
+          <label className="block min-w-0 sm:col-span-2">
+            <span className="font-label mb-1.5 block text-[0.7rem] font-semibold tracking-[0.14em] text-ink/45 uppercase">
               {t("phone")}
             </span>
             <input
@@ -186,29 +216,28 @@ export const QuoteRequestForm = ({
           </label>
         </div>
 
-        <div
-          className={cn(
-            "mt-4 flex flex-col gap-2.5 sm:mt-5 sm:flex-row sm:flex-wrap",
-            isOverlay && "sm:mt-8 sm:justify-end",
-          )}
-        >
+        <div className="flex flex-col gap-2.5 pt-1">
           <button
             type="submit"
             disabled={status === "submitting"}
-            className="font-label inline-flex w-full items-center justify-center rounded-full bg-ink px-6 py-3.5 text-sm font-semibold text-white transition hover:bg-orange focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange disabled:opacity-60 sm:w-auto"
+            className={cn(
+              "font-label inline-flex w-full items-center justify-center rounded-xl bg-ink px-7 py-3.5 text-sm font-semibold text-white transition hover:bg-orange focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange focus-visible:ring-offset-2 disabled:opacity-60",
+              isOverlay && "sm:ms-auto sm:w-auto sm:min-w-[10.5rem]",
+            )}
           >
             {status === "submitting" ? t("submitting") : t("submit")}
           </button>
-          <a
-            href={whatsappHref}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="font-label inline-flex w-full items-center justify-center gap-2 rounded-full border border-ink/10 bg-white px-5 py-3.5 text-sm font-semibold text-ink transition hover:border-orange hover:text-orange focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange sm:w-auto"
-            aria-label={t("whatsapp")}
-          >
-            <span aria-hidden className="size-2 rounded-full bg-whatsapp" />
-            {t("whatsapp")}
-          </a>
+
+          {status === "success" ? (
+            <p className="text-center text-sm text-orange sm:text-start" role="status">
+              {t("success")}
+            </p>
+          ) : null}
+          {status === "error" ? (
+            <p className="text-center text-sm text-red-600 sm:text-start" role="alert">
+              {t("error")}
+            </p>
+          ) : null}
         </div>
 
         <label className="sr-only" aria-hidden>
@@ -220,17 +249,6 @@ export const QuoteRequestForm = ({
             onChange={(event) => setHoneypot(event.target.value)}
           />
         </label>
-
-        {status === "success" ? (
-          <p className="mt-4 text-sm text-orange" role="status">
-            {t("success")}
-          </p>
-        ) : null}
-        {status === "error" ? (
-          <p className="mt-4 text-sm text-red-600" role="alert">
-            {t("error")}
-          </p>
-        ) : null}
       </form>
     </div>
   )

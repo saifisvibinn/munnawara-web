@@ -21,8 +21,7 @@ html:has(.dam-landing) body::-webkit-scrollbar {
 }
 /* Dam landing brings its own glass nav + corner AI control */
 html:has(.dam-landing) [data-site-header],
-html:has(.dam-landing) [data-floating-actions],
-html:has(.dam-landing) [data-floating-quote-chrome] {
+html:has(.dam-landing) [data-floating-actions] {
   display: none !important;
 }
 
@@ -1155,6 +1154,9 @@ body.is-page-transitioning {
   font-size: 0.73rem;
   font-weight: 500;
   letter-spacing: 0.035em;
+  font-family: inherit;
+  border: 0;
+  cursor: pointer;
 }
 
 .site-nav__links a {
@@ -1328,6 +1330,10 @@ body.is-page-transitioning {
   justify-content: center;
   background: linear-gradient(120deg, var(--brand-peach), var(--brand-orange));
   color: #251812 !important;
+  font-family: inherit;
+  border: 0;
+  cursor: pointer;
+  width: 100%;
 }
 
 body.is-landing-menu-open {

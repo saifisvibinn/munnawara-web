@@ -58,18 +58,10 @@ const CloseIcon = () => (
   </svg>
 )
 
-type FloatingQuoteCtaProps = {
-  whatsappNumber: string
-  whatsappPrefill: string
-}
-
 const getLenis = () =>
   (window as Window & { __lenis?: Lenis }).__lenis
 
-export const FloatingQuoteCta = ({
-  whatsappNumber,
-  whatsappPrefill,
-}: FloatingQuoteCtaProps) => {
+export const FloatingQuoteCta = () => {
   const t = useTranslations("common")
   const tQuote = useTranslations("quote")
   const locale = useLocale()
@@ -275,6 +267,11 @@ export const FloatingQuoteCta = ({
     if (!circle || !panel || !textWrap || !busIcon || !closeIcon) return
 
     overlayTlRef.current?.kill()
+
+    // External opens (nav / CTA band) may fire while the floating pill is hidden —
+    // seat it so the circle expansion has a real origin.
+    appearTlRef.current?.progress(1)
+    gsap.set(ctaRef.current, { opacity: 1, scale: 1, y: 0 })
 
     if (reduced) {
       gsap.set(panel, { display: "flex", opacity: 1 })
@@ -497,8 +494,6 @@ export const FloatingQuoteCta = ({
             <QuoteRequestForm
               variant="overlay"
               formId="quote-overlay"
-              whatsappNumber={whatsappNumber}
-              whatsappPrefill={whatsappPrefill}
             />
           </div>
         </div>

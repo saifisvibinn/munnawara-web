@@ -7,11 +7,10 @@ import { HowItWorks } from "@/components/sections/HowItWorks"
 import { NewsTeaser } from "@/components/sections/NewsTeaser"
 import { QuoteSection } from "@/components/sections/QuoteSection"
 import { Testimonials } from "@/components/sections/Testimonials"
-import { FloatingQuoteCta } from "@/components/layout/FloatingQuoteCta"
 import { DamLanding } from "@/components/landing/DamLanding"
-import { getHome, getSiteConfig } from "@/content"
+import { getHome } from "@/content"
 import type { AppLocale } from "@/content/types"
-import { getTranslations, setRequestLocale } from "next-intl/server"
+import { setRequestLocale } from "next-intl/server"
 
 type PageProps = {
   params: Promise<{ locale: string }>
@@ -20,9 +19,7 @@ type PageProps = {
 const HomePage = async ({ params }: PageProps) => {
   const { locale } = await params
   setRequestLocale(locale)
-  const config = getSiteConfig()
   const home = getHome(locale as AppLocale)
-  const tWhatsapp = await getTranslations()
 
   return (
     <>
@@ -36,10 +33,6 @@ const HomePage = async ({ params }: PageProps) => {
       <NewsTeaser />
       <HomeFaq />
       <CTABand />
-      <FloatingQuoteCta
-        whatsappNumber={config.whatsappNumber}
-        whatsappPrefill={tWhatsapp("whatsappPrefill")}
-      />
     </>
   )
 }
