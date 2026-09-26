@@ -104,14 +104,9 @@ export const HeroVideo = forwardRef<HeroVideoHandle, HeroVideoProps>(
       if (finishedRef.current || preferFinalFrameRef.current) return
       if (!startedRef.current && !playPendingRef.current) return
 
-      if (video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA) {
-        // Mobile often ignores preload until play is requested — keep trying.
+      // Not buffered enough to show — stay pending until canplaythrough
+      if (video.readyState < HTMLMediaElement.HAVE_FUTURE_DATA) {
         playPendingRef.current = true
-        try {
-          video.load()
-        } catch {
-          // ignore
-        }
         return
       }
 
@@ -127,11 +122,8 @@ export const HeroVideo = forwardRef<HeroVideoHandle, HeroVideoProps>(
 
       playPendingRef.current = false
       void video.play().then(
+        () => setReady(true),
         () => {
-          setReady(true)
-        },
-        () => {
-          // Autoplay blocked / not buffered yet — retry when more data arrives.
           playPendingRef.current = true
         },
       )
@@ -143,10 +135,6 @@ export const HeroVideo = forwardRef<HeroVideoHandle, HeroVideoProps>(
         container: containerRef.current,
         playOnce: () => {
           if (finishedRef.current || preferFinalFrameRef.current) return
-          if (startedRef.current) {
-            playForward()
-            return
-          }
           startedRef.current = true
           playPendingRef.current = true
           playForward()
@@ -160,20 +148,17 @@ export const HeroVideo = forwardRef<HeroVideoHandle, HeroVideoProps>(
       const video = videoRef.current
       if (!video) return
 
-      // Kick the network early — iOS/Android often won't fetch with preload alone.
       try {
+        video.muted = true
+        video.playsInline = true
         video.preload = "auto"
         video.load()
       } catch {
         // ignore
       }
 
-      const onLoadedMeta = () => {
-        // Poster / first decode available — don't leave a blank plate on mobile.
-        setReady(true)
-      }
-
-      const onLoadedData = () => {
+      const markPlayable = () => {
+        if (video.readyState < HTMLMediaElement.HAVE_FUTURE_DATA) return
         setReady(true)
         if (reducedMotion || preferFinalFrameRef.current) {
           freezeAtLastSecond()
@@ -182,17 +167,6 @@ export const HeroVideo = forwardRef<HeroVideoHandle, HeroVideoProps>(
         if (
           (startedRef.current || playPendingRef.current) &&
           !finishedRef.current
-        ) {
-          playForward()
-        }
-      }
-
-      const onCanPlay = () => {
-        setReady(true)
-        if (
-          (startedRef.current || playPendingRef.current) &&
-          !finishedRef.current &&
-          !reducedMotion
         ) {
           playForward()
         }
@@ -219,25 +193,23 @@ export const HeroVideo = forwardRef<HeroVideoHandle, HeroVideoProps>(
           video.pause()
           return
         }
-
         if (finishedRef.current || !startedRef.current) return
         playForward()
       }
 
-      video.addEventListener("loadedmetadata", onLoadedMeta)
-      video.addEventListener("loadeddata", onLoadedData)
-      video.addEventListener("canplay", onCanPlay)
+      video.addEventListener("loadeddata", markPlayable)
+      video.addEventListener("canplay", markPlayable)
+      video.addEventListener("canplaythrough", markPlayable)
       video.addEventListener("timeupdate", onTimeUpdate)
       video.addEventListener("ended", onEnded)
       document.addEventListener("visibilitychange", onVisibilityChange)
 
-      if (video.readyState >= HTMLMediaElement.HAVE_METADATA) onLoadedMeta()
-      if (video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) onLoadedData()
+      if (video.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA) markPlayable()
 
       return () => {
-        video.removeEventListener("loadedmetadata", onLoadedMeta)
-        video.removeEventListener("loadeddata", onLoadedData)
-        video.removeEventListener("canplay", onCanPlay)
+        video.removeEventListener("loadeddata", markPlayable)
+        video.removeEventListener("canplay", markPlayable)
+        video.removeEventListener("canplaythrough", markPlayable)
         video.removeEventListener("timeupdate", onTimeUpdate)
         video.removeEventListener("ended", onEnded)
         document.removeEventListener("visibilitychange", onVisibilityChange)
@@ -276,13 +248,6 @@ export const HeroVideo = forwardRef<HeroVideoHandle, HeroVideoProps>(
         className={`hero-video${ready ? " hero-video--ready" : ""}`}
         ref={containerRef}
         aria-hidden="true"
-        style={{
-          // Always paint the cover so mobile never shows an empty plate
-          // while the MP4 is still buffering.
-          backgroundImage: `url(${VIDEO_POSTER})`,
-          backgroundSize: "cover",
-          backgroundPosition: objectPosition,
-        }}
       >
         <video
           className="hero-video__media"

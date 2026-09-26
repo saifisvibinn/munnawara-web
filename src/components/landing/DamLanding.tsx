@@ -100,7 +100,9 @@ const forceHomeTop = () => {
   }
 }
 
-const ASSET_FAILSAFE_MS = 9000
+/** Hero video can take longer on mobile — don't abandon the veil early. */
+const VIDEO_READY_TIMEOUT_MS = 25000
+const INTRO_LOAD_FAILSAFE_MS = VIDEO_READY_TIMEOUT_MS + 8000
 
 /** First-scroll assets that sit outside the intro root but cause jank if cold. */
 const CRITICAL_PRELOAD_URLS = [
@@ -125,8 +127,8 @@ const waitForEvent = (
   })
 
 const waitForVideoReady = (video: HTMLVideoElement) => {
-  // Soft floor: metadata is enough to reveal the plate; full buffer can finish later.
-  if (video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
+  // Gate the site on a playable buffer — not metadata alone.
+  if (video.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA) {
     return Promise.resolve()
   }
 
@@ -134,8 +136,7 @@ const waitForVideoReady = (video: HTMLVideoElement) => {
     video.muted = true
     video.playsInline = true
     video.preload = "auto"
-    if (video.networkState === HTMLMediaElement.NETWORK_EMPTY) video.load()
-    else if (video.readyState < HTMLMediaElement.HAVE_METADATA) video.load()
+    video.load()
   } catch {
     // ignore
   }
@@ -147,36 +148,49 @@ const waitForVideoReady = (video: HTMLVideoElement) => {
       settled = true
       video.removeEventListener("canplaythrough", onReady)
       video.removeEventListener("canplay", onReady)
-      video.removeEventListener("loadeddata", onSoftReady)
-      video.removeEventListener("loadedmetadata", onMeta)
-      video.removeEventListener("error", onReady)
-      window.clearTimeout(softTimer)
+      video.removeEventListener("loadeddata", onData)
+      video.removeEventListener("error", onError)
+      window.clearInterval(pollId)
       window.clearTimeout(hardTimer)
       resolve()
     }
 
-    const onReady = () => finish()
-    let softTimer = 0
-    const onSoftReady = () => {
-      // First frame is in — brief beat then proceed so mobile intro isn't starved
-      softTimer = window.setTimeout(finish, 280)
+    const isPlayable = () =>
+      video.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA
+
+    const onReady = () => {
+      if (isPlayable()) finish()
     }
-    const onMeta = () => {
-      // Metadata alone is enough to continue — playback can catch up on mobile.
-      softTimer = window.setTimeout(finish, 120)
+    const onData = () => {
+      if (isPlayable()) finish()
     }
+    const onError = () => finish()
 
     video.addEventListener("canplaythrough", onReady)
     video.addEventListener("canplay", onReady)
-    video.addEventListener("loadeddata", onSoftReady)
-    video.addEventListener("loadedmetadata", onMeta)
-    video.addEventListener("error", onReady)
+    video.addEventListener("loadeddata", onData)
+    video.addEventListener("error", onError)
 
-    if (video.readyState >= HTMLMediaElement.HAVE_METADATA) onMeta()
-    if (video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) onSoftReady()
+    // iOS often won't buffer until play() is attempted (muted + playsInline).
+    void video
+      .play()
+      .then(() => {
+        video.pause()
+        if (video.currentTime > 0) video.currentTime = 0
+        if (isPlayable()) finish()
+      })
+      .catch(() => {
+        // Autoplay may be blocked until more data — keep listening.
+      })
 
-    // Mobile networks stall often — don't hold the whole intro hostage
-    const hardTimer = window.setTimeout(finish, 3500)
+    if (isPlayable()) finish()
+
+    const pollId = window.setInterval(() => {
+      if (isPlayable()) finish()
+    }, 200)
+
+    // Escape hatch only for hard failures — prefer waiting on real networks
+    const hardTimer = window.setTimeout(finish, VIDEO_READY_TIMEOUT_MS)
   })
 }
 
@@ -201,29 +215,26 @@ const preloadUrl = (src: string) =>
   })
 
 /**
- * Real warm-up for the home experience: fonts, hero media in the intro,
- * plus the next critical images users hit on first scroll.
- * Caps with a failsafe so a stalled asset never traps the loader.
+ * Hold the loading veil until the hero video can play, then warm secondary assets.
  */
-const waitForPageAssets = (root: HTMLElement) => {
+const waitForPageAssets = async (root: HTMLElement) => {
+  const videos = Array.from(root.querySelectorAll("video"))
+
+  // Site must not continue until the hero video is viewable.
+  await Promise.all(videos.map(waitForVideoReady))
+
   const fonts = document.fonts?.ready ?? Promise.resolve()
   const images = Array.from(root.querySelectorAll("img")).map(waitForImageReady)
-  const videos = Array.from(root.querySelectorAll("video")).map(waitForVideoReady)
   const preloads = CRITICAL_PRELOAD_URLS.map(preloadUrl)
 
-  const assets = Promise.allSettled([
-    fonts,
-    ...images,
-    ...videos,
-    ...preloads,
-  ]).then(() => undefined)
-
-  const failsafe = new Promise<void>((resolve) => {
-    window.setTimeout(resolve, ASSET_FAILSAFE_MS)
+  const secondary = Promise.allSettled([fonts, ...images, ...preloads]).then(
+    () => undefined,
+  )
+  const secondaryCap = new Promise<void>((resolve) => {
+    window.setTimeout(resolve, 2500)
   })
 
-  // Wait for real readiness — only the hard failsafe can cut it short
-  return Promise.race([assets, failsafe])
+  await Promise.race([secondary, secondaryCap])
 }
 
 const scrollToTarget = (
@@ -540,7 +551,7 @@ export const DamLanding = ({ copy }: DamLandingProps) => {
       if (!document.body.classList.contains("is-loading")) return
       forceHomeTop()
       completeIntroLoad()
-    }, ASSET_FAILSAFE_MS + motion.loader.minimumMs + 4000)
+    }, INTRO_LOAD_FAILSAFE_MS)
 
     return () => {
       cancelled = true
