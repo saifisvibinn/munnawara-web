@@ -43,7 +43,6 @@ export const AiChatButton = forwardRef<
           className="ai-chat-btn__icon logo-mark logo-mark--live"
           idPrefix="ai-chat"
         />
-        <span className="ai-chat-btn__brand">{t("brand")}</span>
       </div>
       <div className="ai-chat-btn__text">
         <span>{t("chatWith")}</span>

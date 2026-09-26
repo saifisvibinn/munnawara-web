@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Nunito+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Archivo:wght@500;600;700;800&family=Cairo:wght@600;700&family=Noto+Sans:wght@400;500;600;700&family=Noto+Sans+Arabic:wght@400;500;600;700&family=Noto+Serif:wght@500;600;700&family=Nunito+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap");
 
 html:has(.dam-landing) {
   background: #eaeae6;
@@ -34,6 +34,11 @@ html:has(.dam-landing) [data-floating-actions] {
   --ink: #f4f0e8;
   --paper: #201d1a;
   --muted: rgba(32, 29, 26, 0.62);
+  --font-latin: "Noto Sans", system-ui, sans-serif;
+  --font-arabic: "Noto Sans Arabic", "Cairo", sans-serif;
+  --font-display: "Noto Serif", "Archivo", Georgia, serif;
+  --font-display-ar: "Cairo", var(--font-arabic), sans-serif;
+  --font-numeral-ar: "Amiri", "Noto Serif", serif;
 }
 
 /* Inner-page chrome — same floating pill bar as the landing */
@@ -778,6 +783,12 @@ body.is-loading .loader-surface {
 }
 
 /* Floating action row — AI chat + WhatsApp side by side */
+.landing-fab-row,
+[data-floating-actions] {
+  --fab-size: 3.5rem;
+  --fab-gap: 0.75rem;
+}
+
 .landing-fab-row {
   position: fixed;
   inset-inline-end: max(14px, 1.6vw);
@@ -785,9 +796,14 @@ body.is-loading .loader-surface {
   z-index: 80;
   display: flex;
   flex-direction: row;
-  align-items: flex-end;
-  gap: 0.65rem;
+  align-items: center;
+  gap: var(--fab-gap);
   pointer-events: none;
+}
+
+[data-floating-actions] {
+  gap: var(--fab-gap) !important;
+  align-items: center !important;
 }
 
 /* Floating AI chat — dam-frontend mark (home + site chrome) */
@@ -798,8 +814,8 @@ body.is-loading .loader-surface {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 74px;
-  height: 74px;
+  width: var(--fab-size, 3.5rem);
+  height: var(--fab-size, 3.5rem);
   padding: 0;
   color: var(--paper);
   font-family: var(--font-body, inherit);
@@ -809,7 +825,7 @@ body.is-loading .loader-surface {
   overflow: hidden;
   background-color: var(--ink);
   border: 2px solid rgb(247, 91, 18);
-  border-radius: 16px;
+  border-radius: 14px;
   box-shadow: 3px 3px 0 rgba(32, 29, 26, 0.22);
   transition:
     background-color 0.28s cubic-bezier(0.25, 0.8, 0.25, 1),
@@ -850,8 +866,8 @@ body.is-loading .loader-surface {
 .ai-chat-btn:focus-visible {
   background-color: #faf6ef;
   border-color: rgb(26, 102, 190);
-  transform: translate(-3px, -3px) rotate(0.5deg);
-  box-shadow: 5px 5px 0 rgba(32, 29, 26, 0.2);
+  transform: translate(-2px, -2px);
+  box-shadow: 4px 4px 0 rgba(32, 29, 26, 0.2);
   outline: none;
 }
 
@@ -887,20 +903,9 @@ body.is-loading .loader-surface {
 }
 
 .ai-chat-btn__icon {
-  width: 38px;
-  height: 38px;
+  width: 1.75rem;
+  height: 1.75rem;
   display: block;
-  transition: all 0.28s cubic-bezier(0.25, 0.8, 0.25, 1);
-}
-
-.ai-chat-btn__brand {
-  font-size: 0.55rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: rgb(247, 91, 18);
-  opacity: 0;
-  max-height: 0;
-  overflow: hidden;
   transition: all 0.28s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
@@ -908,7 +913,7 @@ body.is-loading .loader-surface {
   display: flex;
   flex-direction: column;
   align-items: center;
-  line-height: 1.1;
+  line-height: 1.05;
   text-align: center;
   opacity: 0;
   max-height: 0;
@@ -918,36 +923,34 @@ body.is-loading .loader-surface {
 }
 
 .ai-chat-btn__text span:first-child {
-  font-size: 0.52rem;
+  font-size: 0.48rem;
   font-weight: 500;
   color: rgba(32, 29, 26, 0.7);
 }
 
 .ai-chat-btn__text span:last-child {
-  font-size: 0.7rem;
+  font-size: 0.62rem;
   font-weight: 700;
   color: rgb(26, 102, 190);
 }
 
 .ai-chat-btn:hover .ai-chat-btn__mark,
 .ai-chat-btn:focus-visible .ai-chat-btn__mark {
-  transform: translateY(-4px);
+  transform: translateY(-2px);
 }
 
 .ai-chat-btn:hover .ai-chat-btn__icon,
 .ai-chat-btn:focus-visible .ai-chat-btn__icon {
-  width: 26px;
-  height: 26px;
+  width: 1.15rem;
+  height: 1.15rem;
   animation: ai-pulse 2.8s cubic-bezier(0.25, 0.8, 0.25, 1) infinite;
 }
 
 .ai-chat-btn:hover .ai-chat-btn__text,
-.ai-chat-btn:hover .ai-chat-btn__brand,
-.ai-chat-btn:focus-visible .ai-chat-btn__text,
-.ai-chat-btn:focus-visible .ai-chat-btn__brand {
+.ai-chat-btn:focus-visible .ai-chat-btn__text {
   opacity: 1;
-  max-height: 36px;
-  margin-top: 2px;
+  max-height: 2rem;
+  margin-top: 1px;
 }
 
 @keyframes ai-pulse {
@@ -961,7 +964,6 @@ body.is-loading .loader-surface {
 }
 
 .ai-chat-btn:active .ai-chat-btn__icon,
-.ai-chat-btn:active .ai-chat-btn__brand,
 .ai-chat-btn:active .ai-chat-btn__text {
   transform: scale(0.95);
 }
@@ -973,21 +975,29 @@ body.is-loading .loader-surface {
   box-shadow: 3px 3px 0 rgba(32, 29, 26, 0.2);
 }
 
+.ai-chat-btn.is-open .ai-chat-btn__text span:first-child {
+  color: rgba(255, 247, 240, 0.85);
+}
+
+.ai-chat-btn.is-open .ai-chat-btn__text span:last-child {
+  color: #fff;
+}
+
 .ai-chat-btn__badge {
   position: absolute;
-  top: 4px;
-  inset-inline-end: 4px;
+  top: 3px;
+  inset-inline-end: 3px;
   z-index: 5;
-  min-width: 1.2rem;
-  height: 1.2rem;
-  padding: 0 4px;
+  min-width: 1.1rem;
+  height: 1.1rem;
+  padding: 0 3px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   border-radius: 999px;
   background: rgb(247, 91, 18);
   color: #fff;
-  font-size: 0.6rem;
+  font-size: 0.55rem;
   font-weight: 800;
   line-height: 1;
   box-shadow: 0 1px 3px rgba(32, 29, 26, 0.22);
@@ -1005,11 +1015,25 @@ body.is-loading .loader-surface {
   }
 }
 
+.whatsapp-fab,
+a[data-whatsapp-fab] {
+  box-sizing: border-box;
+  width: var(--fab-size, 3.5rem);
+  height: var(--fab-size, 3.5rem);
+  flex: 0 0 var(--fab-size, 3.5rem);
+  box-shadow: 3px 3px 0 rgba(32, 29, 26, 0.18);
+}
+
+.whatsapp-fab__icon {
+  width: 1.35rem;
+  height: 1.35rem;
+}
+
 /* —— Site chat panel (backend-connected) —— */
 .chat-panel {
   position: fixed;
   inset-inline-end: max(14px, 1.6vw);
-  bottom: calc(max(14px, 2vh) + 84px);
+  bottom: calc(max(14px, 2vh) + var(--fab-size, 3.5rem) + 0.75rem);
   z-index: 95;
   display: flex;
   flex-direction: column;
@@ -1412,7 +1436,7 @@ body.is-loading .loader-surface {
 @media (max-width: 520px) {
   .chat-panel {
     inset-inline: 10px;
-    bottom: calc(max(12px, 1.6vh) + 84px);
+    bottom: calc(max(12px, 1.6vh) + var(--fab-size, 3.5rem) + 0.75rem);
     width: auto;
     height: min(68svh, 520px);
   }
@@ -2205,7 +2229,7 @@ body.is-landing-menu-open .site-nav__bar {
   .landing-fab-row {
     inset-inline-end: max(12px, env(safe-area-inset-inline-end, 0px));
     bottom: max(12px, env(safe-area-inset-bottom, 0px));
-    gap: 0.55rem;
+    gap: var(--fab-gap);
   }
 }
 

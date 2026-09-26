@@ -1,14 +1,15 @@
 /**
- * Browser API base for the chat backend.
- * Empty in the browser → same-origin `/chat` via Next rewrites (avoids CORS).
- * Optional override: NEXT_PUBLIC_CHAT_API_URL
+ * Chat HTTP base.
+ * Browser always uses same-origin `/chat` via Next rewrites (avoids CORS).
+ * Server may call the upstream host directly via CHAT_API_URL.
+ * Sockets use NEXT_PUBLIC_CHAT_API_URL in socket.ts — not this module.
  */
 const API_BASE = (
   typeof window === "undefined"
     ? process.env.CHAT_API_URL ||
       process.env.NEXT_PUBLIC_CHAT_API_URL ||
       ""
-    : process.env.NEXT_PUBLIC_CHAT_API_URL || ""
+    : ""
 ).replace(/\/$/, "")
 
 export class ApiError extends Error {

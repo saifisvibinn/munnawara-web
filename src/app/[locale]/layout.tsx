@@ -6,13 +6,6 @@ import { SmoothScrollProvider } from "@/components/motion/SmoothScrollProvider"
 import { routing } from "@/i18n/routing"
 import { NextIntlClientProvider, hasLocale } from "next-intl"
 import { getMessages, setRequestLocale } from "next-intl/server"
-import {
-  Amiri,
-  Cairo,
-  Noto_Sans,
-  Noto_Sans_Arabic,
-  Noto_Serif,
-} from "next/font/google"
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import type { ReactNode } from "react"
@@ -28,44 +21,6 @@ export const metadata: Metadata = {
     apple: "/icon.png",
   },
 }
-
-const fontArabic = Noto_Sans_Arabic({
-  subsets: ["arabic"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-arabic",
-  display: "swap",
-})
-
-const fontLatin = Noto_Sans({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-latin",
-  display: "swap",
-})
-
-const fontDisplay = Noto_Serif({
-  subsets: ["latin"],
-  weight: ["500", "600", "700"],
-  variable: "--font-display",
-  display: "swap",
-  preload: false,
-})
-
-const fontDisplayAr = Cairo({
-  subsets: ["arabic", "latin"],
-  weight: ["600", "700"],
-  variable: "--font-display-ar",
-  display: "swap",
-  preload: false,
-})
-
-const fontNumeralAr = Amiri({
-  subsets: ["arabic", "latin"],
-  weight: ["700"],
-  variable: "--font-numeral-ar",
-  display: "swap",
-  preload: false,
-})
 
 type LocaleLayoutProps = {
   children: ReactNode
@@ -86,12 +41,7 @@ const LocaleLayout = async ({ children, params }: LocaleLayoutProps) => {
   const dir = locale === "ar" ? "rtl" : "ltr"
 
   return (
-    <html
-      lang={locale}
-      dir={dir}
-      suppressHydrationWarning
-      className={`${fontArabic.variable} ${fontLatin.variable} ${fontDisplay.variable} ${fontDisplayAr.variable} ${fontNumeralAr.variable}`}
-    >
+    <html lang={locale} dir={dir} suppressHydrationWarning>
       <body className="antialiased" suppressHydrationWarning>
         <script
           dangerouslySetInnerHTML={{
