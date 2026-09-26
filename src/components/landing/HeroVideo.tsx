@@ -12,8 +12,9 @@ import { animationConfig as motion } from "./animations/config"
 
 export type HeroVideoHandle = {
   container: HTMLDivElement | null
+  video: HTMLVideoElement | null
   playOnce: () => void
-  /** Skip playback and hold the settled end frame (return visits). */
+  /** Skip playback and hold the settled end frame (reduced motion). */
   showFinalFrame: () => void
 }
 
@@ -23,53 +24,79 @@ type HeroVideoProps = {
 
 const VIDEO_SRC = "/hero/backvid.mp4"
 
+/** Tiny offset so iOS never parks at t=0 (that snaps back to the poster). */
+export const HERO_VIDEO_START_HOLD = 0.05
+const START_WINDOW_SECONDS = 0.4
+
 type VideoWithFrameCallback = HTMLVideoElement & {
   requestVideoFrameCallback?: (callback: () => void) => number
 }
 
-const markFirstFrame = (
-  video: HTMLVideoElement,
-  onFrame: () => void,
-) => {
-  const painted =
-    !video.paused &&
-    video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA &&
-    video.currentTime > 0
-  if (painted) {
-    onFrame()
-    return () => undefined
-  }
-
-  let done = false
-  const finish = () => {
-    if (done) return
-    done = true
-    video.removeEventListener("playing", onTick)
-    video.removeEventListener("timeupdate", onTick)
-    onFrame()
-  }
-  const onTick = () => {
-    if (
-      !video.paused &&
-      video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA &&
-      video.currentTime > 0
-    ) {
-      finish()
+export const waitForHeroVideoFirstFrame = (video: HTMLVideoElement) =>
+  new Promise<void>((resolve) => {
+    let settled = false
+    const finish = () => {
+      if (settled) return
+      settled = true
+      video.removeEventListener("playing", onTick)
+      video.removeEventListener("timeupdate", onTick)
+      resolve()
     }
-  }
 
-  const rvfc = (video as VideoWithFrameCallback).requestVideoFrameCallback
-  if (typeof rvfc === "function") {
-    rvfc.call(video, finish)
-  }
-  video.addEventListener("playing", onTick)
-  video.addEventListener("timeupdate", onTick)
-  return () => {
-    done = true
-    video.removeEventListener("playing", onTick)
-    video.removeEventListener("timeupdate", onTick)
-  }
-}
+    const onTick = () => {
+      if (
+        !video.paused &&
+        video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA &&
+        video.currentTime > 0
+      ) {
+        finish()
+      }
+    }
+
+    onTick()
+    if (settled) return
+
+    const rvfc = (video as VideoWithFrameCallback).requestVideoFrameCallback
+    if (typeof rvfc === "function") {
+      rvfc.call(video, finish)
+    }
+    video.addEventListener("playing", onTick)
+    video.addEventListener("timeupdate", onTick)
+  })
+
+export const holdHeroVideoAtStart = (video: HTMLVideoElement) =>
+  new Promise<void>((resolve) => {
+    video.pause()
+
+    if (
+      video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA &&
+      video.currentTime > 0 &&
+      video.currentTime <= START_WINDOW_SECONDS
+    ) {
+      resolve()
+      return
+    }
+
+    const onSeeked = () => resolve()
+    video.addEventListener("seeked", onSeeked, { once: true })
+    try {
+      video.currentTime = HERO_VIDEO_START_HOLD
+    } catch {
+      video.removeEventListener("seeked", onSeeked)
+      resolve()
+    }
+  })
+
+export const isHeroVideoHeldAtStart = (video: HTMLVideoElement) =>
+  video.paused &&
+  video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA &&
+  video.currentTime > 0 &&
+  video.currentTime <= START_WINDOW_SECONDS
+
+const isNearEnd = (video: HTMLVideoElement) =>
+  Number.isFinite(video.duration) &&
+  video.duration > 0 &&
+  video.currentTime >= video.duration - motion.video.endFrameOffsetSeconds
 
 export const HeroVideo = forwardRef<HeroVideoHandle, HeroVideoProps>(
   function HeroVideo({ reducedMotion }, ref) {
@@ -145,38 +172,42 @@ export const HeroVideo = forwardRef<HeroVideoHandle, HeroVideoProps>(
     const playForward = useCallback(() => {
       const video = videoRef.current
       if (!video || reducedMotion || document.hidden) return
-      if (finishedRef.current || preferFinalFrameRef.current) return
+      if (preferFinalFrameRef.current) return
+      if (finishedRef.current && startedRef.current) return
 
-      if (
-        Number.isFinite(video.duration) &&
-        video.duration > 0 &&
-        video.currentTime >=
-          video.duration - motion.video.endFrameOffsetSeconds
-      ) {
-        freezeAtLastSecond()
+      const startFromHold = () => {
+        void video.play().then(
+          () => setReady(true),
+          () => undefined,
+        )
+      }
+
+      if (isNearEnd(video)) {
+        finishedRef.current = false
+        video.pause()
+        video.addEventListener("seeked", startFromHold, { once: true })
+        video.currentTime = HERO_VIDEO_START_HOLD
         return
       }
 
       if (!video.paused) {
-        markFirstFrame(video, () => setReady(true))
+        setReady(true)
         return
       }
 
-      void video.play().then(
-        () => {
-          markFirstFrame(video, () => setReady(true))
-        },
-        () => undefined,
-      )
-    }, [freezeAtLastSecond, reducedMotion])
+      startFromHold()
+    }, [reducedMotion])
 
     useImperativeHandle(
       ref,
       () => ({
         container: containerRef.current,
+        video: videoRef.current,
         playOnce: () => {
-          if (finishedRef.current || preferFinalFrameRef.current) return
+          if (preferFinalFrameRef.current) return
+          if (finishedRef.current && startedRef.current) return
           startedRef.current = true
+          finishedRef.current = false
           playForward()
         },
         showFinalFrame,
@@ -192,34 +223,53 @@ export const HeroVideo = forwardRef<HeroVideoHandle, HeroVideoProps>(
         video.muted = true
         video.defaultMuted = true
         video.playsInline = true
+        video.setAttribute("webkit-playsinline", "true")
         video.preload = "auto"
-        video.load()
       } catch {
         // ignore
       }
 
-      const revealWhenPainted = () => {
-        if (reducedMotion || preferFinalFrameRef.current) {
-          freezeAtLastSecond()
+      let cancelled = false
+
+      const primeAtStart = async () => {
+        if (cancelled || preferFinalFrameRef.current || reducedMotion) {
+          if (!cancelled && (preferFinalFrameRef.current || reducedMotion)) {
+            freezeAtLastSecond()
+            setReady(true)
+          }
+          return
+        }
+
+        if (isHeroVideoHeldAtStart(video)) {
           setReady(true)
           return
         }
-        markFirstFrame(video, () => setReady(true))
+
+        try {
+          await video.play()
+          await waitForHeroVideoFirstFrame(video)
+          if (cancelled || startedRef.current || preferFinalFrameRef.current) {
+            return
+          }
+          await holdHeroVideoAtStart(video)
+          if (!cancelled) setReady(true)
+        } catch {
+          // Low Power Mode / autoplay block — DamLanding retries on tap.
+        }
       }
 
       const onTimeUpdate = () => {
         if (!startedRef.current || finishedRef.current || reducedMotion) return
-        if (!Number.isFinite(video.duration) || video.duration <= 0) return
-
-        if (
-          video.currentTime >=
-          video.duration - motion.video.endFrameOffsetSeconds
-        ) {
-          freezeAtLastSecond()
-        }
+        if (isNearEnd(video)) freezeAtLastSecond()
       }
 
       const onEnded = () => {
+        if (!startedRef.current) {
+          void holdHeroVideoAtStart(video).then(() => {
+            if (!cancelled) setReady(true)
+          })
+          return
+        }
         freezeAtLastSecond()
       }
 
@@ -228,20 +278,17 @@ export const HeroVideo = forwardRef<HeroVideoHandle, HeroVideoProps>(
           video.pause()
           return
         }
-        if (finishedRef.current) return
+        if (!startedRef.current || finishedRef.current) return
         playForward()
       }
 
-      video.addEventListener("playing", revealWhenPainted)
       video.addEventListener("timeupdate", onTimeUpdate)
       video.addEventListener("ended", onEnded)
       document.addEventListener("visibilitychange", onVisibilityChange)
-
-      if (!video.paused) revealWhenPainted()
-      else void video.play().then(revealWhenPainted, () => undefined)
+      void primeAtStart()
 
       return () => {
-        video.removeEventListener("playing", revealWhenPainted)
+        cancelled = true
         video.removeEventListener("timeupdate", onTimeUpdate)
         video.removeEventListener("ended", onEnded)
         document.removeEventListener("visibilitychange", onVisibilityChange)
@@ -291,6 +338,7 @@ export const HeroVideo = forwardRef<HeroVideoHandle, HeroVideoProps>(
           playsInline
           preload="auto"
           loop={false}
+          {...{ "webkit-playsinline": "true" }}
           style={{
             objectPosition,
           }}

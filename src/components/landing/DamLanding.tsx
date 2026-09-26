@@ -20,7 +20,13 @@ import {
   type IntroElements,
 } from "./animations/introTimeline"
 import { ExploreButton } from "./ExploreButton"
-import { HeroVideo, type HeroVideoHandle } from "./HeroVideo"
+import {
+  HeroVideo,
+  holdHeroVideoAtStart,
+  isHeroVideoHeldAtStart,
+  waitForHeroVideoFirstFrame,
+  type HeroVideoHandle,
+} from "./HeroVideo"
 import { LandingLanguageSwitcher } from "./LandingLanguageSwitcher"
 import { LandingSiteNav } from "./LandingSiteNav"
 import { LogoMark } from "./LogoMark"
@@ -106,47 +112,6 @@ const CRITICAL_PRELOAD_URLS = [
   "/hero/landing-sky.jpg",
 ] as const
 
-type VideoWithFrameCallback = HTMLVideoElement & {
-  requestVideoFrameCallback?: (callback: () => void) => number
-}
-
-const waitForFirstPaintedFrame = (video: HTMLVideoElement) =>
-  new Promise<void>((resolve) => {
-    let settled = false
-    const finish = () => {
-      if (settled) return
-      settled = true
-      video.removeEventListener("playing", onTick)
-      video.removeEventListener("timeupdate", onTick)
-      resolve()
-    }
-
-    const onTick = () => {
-      if (
-        !video.paused &&
-        video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA &&
-        video.currentTime > 0
-      ) {
-        finish()
-      }
-    }
-
-    onTick()
-    if (settled) return
-
-    const rvfc = (video as VideoWithFrameCallback).requestVideoFrameCallback
-    if (typeof rvfc === "function") {
-      rvfc.call(video, finish)
-    }
-    video.addEventListener("playing", onTick)
-    video.addEventListener("timeupdate", onTick)
-  })
-
-const videoHasPaintedFrame = (video: HTMLVideoElement) =>
-  !video.paused &&
-  video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA &&
-  video.currentTime > 0
-
 const waitForEvent = (
   target: EventTarget,
   success: string,
@@ -163,12 +128,13 @@ const waitForEvent = (
   })
 
 const waitForVideoReady = (video: HTMLVideoElement) => {
-  if (videoHasPaintedFrame(video)) return Promise.resolve()
+  if (isHeroVideoHeldAtStart(video)) return Promise.resolve()
 
   try {
     video.muted = true
     video.defaultMuted = true
     video.playsInline = true
+    video.setAttribute("webkit-playsinline", "true")
     video.preload = "auto"
   } catch {
     // ignore
@@ -186,8 +152,11 @@ const waitForVideoReady = (video: HTMLVideoElement) => {
     const startPlayback = async () => {
       if (settled) return
       try {
-        await video.play()
-        await waitForFirstPaintedFrame(video)
+        if (!isHeroVideoHeldAtStart(video)) {
+          await video.play()
+          await waitForHeroVideoFirstFrame(video)
+          await holdHeroVideoAtStart(video)
+        }
         finish()
       } catch {
         // Low Power Mode / autoplay block — wait for a user tap.
@@ -400,14 +369,23 @@ export const DamLanding = ({ copy }: DamLandingProps) => {
       alreadySeen = false
     }
     if (alreadySeen) {
+      let cancelledSkip = false
       setIntroFinalState(elements, { animateFabs: true })
-      // Intro skip also skips playOnce — jump straight to the settled end frame
-      heroVideoRef.current?.showFinalFrame()
       setSkipIntroMorph(true)
       setLoaded(true)
       document.body.classList.remove("is-loading")
       const fabEntrance = playFabEntrance(elements)
+      const video = heroVideoRef.current?.video
+      if (video) {
+        void waitForVideoReady(video).then(() => {
+          if (cancelledSkip) return
+          heroVideoRef.current?.playOnce()
+        })
+      } else {
+        heroVideoRef.current?.playOnce()
+      }
       return () => {
+        cancelledSkip = true
         fabEntrance.kill()
       }
     }
