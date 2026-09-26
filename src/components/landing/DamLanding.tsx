@@ -381,6 +381,7 @@ export const DamLanding = ({ copy }: DamLandingProps) => {
     }
 
     let cancelled = false
+    let introFinished = false
     const startedAt = performance.now()
     const petalOrder = ["petal-4", "petal-2", "petal-1", "petal-3", "petal-5"]
       .map((id) => elements.logo.querySelector<SVGGElement>(`#${id}`))
@@ -389,12 +390,14 @@ export const DamLanding = ({ copy }: DamLandingProps) => {
     const loaderLetters = loaderLettersRef.current
     const brandWords = brandWordsRef.current
     let reveal: gsap.core.Timeline | undefined
+    let failsafeId = 0
 
     forceHomeTop()
     document.body.classList.add("is-loading")
-    // Browser can restore scroll after first paint — keep pinning during load.
+    // Only pin while the veil is up — never after the intro has finished.
     const keepTop = () => {
-      if (cancelled) return
+      if (cancelled || introFinished) return
+      if (!document.body.classList.contains("is-loading")) return
       if (window.scrollY !== 0 || document.documentElement.scrollTop !== 0) {
         forceHomeTop()
       }
@@ -402,6 +405,25 @@ export const DamLanding = ({ copy }: DamLandingProps) => {
     keepTop()
     window.addEventListener("scroll", keepTop, { passive: true })
     const topWatchId = window.setInterval(keepTop, 100)
+
+    const releaseScrollPin = () => {
+      introFinished = true
+      window.removeEventListener("scroll", keepTop)
+      window.clearInterval(topWatchId)
+      window.clearTimeout(failsafeId)
+    }
+
+    const completeIntroLoad = () => {
+      if (cancelled || introFinished) return
+      releaseScrollPin()
+      document.body.classList.remove("is-loading")
+      try {
+        sessionStorage.setItem(LOGO_INTRO_SEEN_KEY, "1")
+      } catch {
+        // ignore
+      }
+      setLoaded(true)
+    }
 
     gsap.set(petalOrder, {
       opacity: 0,
@@ -473,18 +495,7 @@ export const DamLanding = ({ copy }: DamLandingProps) => {
       loadingPulse.kill()
       gsap.set(elements.logo, { scale: 1 })
       reveal = gsap.timeline({
-        onComplete: () => {
-          window.removeEventListener("scroll", keepTop)
-          window.clearInterval(topWatchId)
-          forceHomeTop()
-          document.body.classList.remove("is-loading")
-          try {
-            sessionStorage.setItem(LOGO_INTRO_SEEN_KEY, "1")
-          } catch {
-            // ignore
-          }
-          setLoaded(true)
-        },
+        onComplete: completeIntroLoad,
       })
         .to(loaderLetters, {
           opacity: 0,
@@ -511,25 +522,17 @@ export const DamLanding = ({ copy }: DamLandingProps) => {
     void finishLoading()
 
     // Hard failsafe: never leave mobile stuck behind is-loading
-    const failsafeId = window.setTimeout(() => {
-      if (cancelled) return
-      window.removeEventListener("scroll", keepTop)
-      window.clearInterval(topWatchId)
+    failsafeId = window.setTimeout(() => {
+      if (cancelled || introFinished) return
+      // Only recover a stuck veil — do not yank scroll after a successful intro.
+      if (!document.body.classList.contains("is-loading")) return
       forceHomeTop()
-      document.body.classList.remove("is-loading")
-      setLoaded(true)
-      try {
-        sessionStorage.setItem(LOGO_INTRO_SEEN_KEY, "1")
-      } catch {
-        // ignore
-      }
+      completeIntroLoad()
     }, ASSET_FAILSAFE_MS + motion.loader.minimumMs + 4000)
 
     return () => {
       cancelled = true
-      window.removeEventListener("scroll", keepTop)
-      window.clearInterval(topWatchId)
-      window.clearTimeout(failsafeId)
+      releaseScrollPin()
       bloom.kill()
       breathing.kill()
       loadingPulse.kill()
