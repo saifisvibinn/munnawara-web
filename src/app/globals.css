@@ -90,7 +90,8 @@ body::-webkit-scrollbar {
   --font-display: var(--font-display);
   --font-display-ar: var(--font-display-ar);
   --font-numeral-ar: var(--font-numeral-ar);
-  --font-label: var(--font-label);
+  --font-label: var(--font-latin);
+  --font-label-ar: var(--font-arabic);
   --radius-sm: var(--brand-radius-sm);
   --radius-md: var(--brand-radius-md);
   --radius-lg: var(--brand-radius-lg);
@@ -138,8 +139,7 @@ html[lang="en"] .font-numeral {
 }
 
 .font-label {
-  font-family: var(--font-label-ar), var(--font-label), var(--font-arabic),
-    var(--font-latin), sans-serif;
+  font-family: var(--font-label-ar), var(--font-label), sans-serif;
 }
 
 body {

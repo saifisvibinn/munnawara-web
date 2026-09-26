@@ -778,11 +778,17 @@ body.is-transitioning {
   pointer-events: none;
 }
 
-.landing-ai-assistant {
+.ai-assistant-root {
+  position: relative;
   pointer-events: none;
 }
 
-/* Floating Chat-with-AI — brand flower squircle */
+.ai-assistant-root .ai-chat-btn,
+.ai-assistant-root [role="dialog"] {
+  pointer-events: auto;
+}
+
+/* Floating Chat-with-AI — brand flower squircle (home + site chrome) */
 .ai-chat-btn {
   position: relative;
   z-index: 1;
@@ -795,24 +801,22 @@ body.is-transitioning {
   text-decoration: none;
   cursor: pointer;
   overflow: visible;
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
   background: #f7f4ef;
   border: 2px solid rgb(247, 91, 18);
   border-radius: 16px;
   box-shadow: 0 4px 14px rgba(55, 67, 77, 0.12), 0 1px 3px rgba(55, 67, 77, 0.06);
   transition:
+    transform 220ms cubic-bezier(0.25, 0.8, 0.25, 1),
     background-color 220ms ease,
     box-shadow 220ms ease;
   will-change: transform, opacity;
 }
 
-.ai-chat-btn.is-revealed {
-  transition:
-    transform 220ms cubic-bezier(0.25, 0.8, 0.25, 1),
-    background-color 220ms ease,
-    box-shadow 220ms ease;
+/* Landing intro keeps the FAB hidden until the morph reveals it */
+.landing-fab-row .ai-chat-btn:not(.is-revealed) {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
 }
 
 .ai-chat-btn:hover,
@@ -821,7 +825,9 @@ body.is-transitioning {
 }
 
 .ai-chat-btn.is-revealed:hover,
-.ai-chat-btn.is-revealed:focus-visible {
+.ai-chat-btn.is-revealed:focus-visible,
+[data-floating-actions] .ai-chat-btn:hover,
+[data-floating-actions] .ai-chat-btn:focus-visible {
   transform: scale(1.05);
   box-shadow: 0 6px 18px rgba(55, 67, 77, 0.14), 0 2px 6px rgba(247, 91, 18, 0.2);
 }
@@ -831,7 +837,8 @@ body.is-transitioning {
   outline-offset: 3px;
 }
 
-.ai-chat-btn.is-revealed:active {
+.ai-chat-btn.is-revealed:active,
+[data-floating-actions] .ai-chat-btn:active {
   transform: scale(0.96);
 }
 

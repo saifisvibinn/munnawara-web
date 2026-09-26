@@ -6,7 +6,8 @@ import gsap from "gsap"
 import { useEffect, useLayoutEffect, useRef } from "react"
 import { LogoMark } from "./LogoMark"
 
-/** Session flag so home can skip the long first-load intro on return visits. */
+/** Session flag so home can skip the long first-load intro on soft return visits.
+ * Cleared on full page reload so the logo + hero bloom play again. */
 export const LOGO_INTRO_SEEN_KEY = "dmtc-logo-intro-seen"
 
 /** Deliberate page-switch timing — slowed so the bloom reads as intentional. */

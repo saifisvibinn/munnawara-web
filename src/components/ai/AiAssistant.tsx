@@ -185,7 +185,7 @@ export const AiAssistant = ({
     : { type: "spring" as const, stiffness: 420, damping: 30, mass: 0.75 }
 
   return (
-    <div className={cn("relative flex flex-col items-end gap-3", className)}>
+    <div className={cn("relative", className)}>
       <AnimatePresence>
         {open ? (
           <motion.div
@@ -207,7 +207,7 @@ export const AiAssistant = ({
             }
             transition={panelTransition}
             style={{ transformOrigin: origin }}
-            className="pointer-events-auto flex w-[min(calc(100vw-2rem),22rem)] flex-col overflow-hidden rounded-2xl border border-ink/10 bg-white shadow-md will-change-transform"
+            className="pointer-events-auto absolute bottom-[calc(100%+0.75rem)] end-0 z-10 flex w-[min(calc(100vw-2rem),22rem)] flex-col overflow-hidden rounded-2xl border border-ink/10 bg-white shadow-md will-change-transform"
           >
             <div className="flex items-start justify-between gap-3 border-b border-ink/10 bg-surface px-4 py-3.5">
               <div className="flex min-w-0 items-center gap-3">

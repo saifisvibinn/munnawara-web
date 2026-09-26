@@ -289,9 +289,15 @@ export const DamLanding = ({ copy }: DamLandingProps) => {
       return
     }
 
-    // Return visits / soft navigations: skip the long first-load bloom
+    // Soft navigations back to home skip the long bloom; full reload always replays.
     let alreadySeen = false
     try {
+      const nav = performance.getEntriesByType("navigation")[0] as
+        | PerformanceNavigationTiming
+        | undefined
+      if (nav?.type === "reload") {
+        sessionStorage.removeItem(LOGO_INTRO_SEEN_KEY)
+      }
       alreadySeen = sessionStorage.getItem(LOGO_INTRO_SEEN_KEY) === "1"
     } catch {
       alreadySeen = false

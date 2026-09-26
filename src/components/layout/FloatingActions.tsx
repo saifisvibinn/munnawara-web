@@ -1,15 +1,18 @@
 "use client"
 
-import { AiAssistant } from "@/components/ai/AiAssistant"
+import { AiChatButton } from "@/components/landing/AiChatButton"
 import { WhatsAppButton } from "@/components/layout/WhatsAppButton"
+import { useTranslations } from "next-intl"
 
 export const FloatingActions = () => {
+  const t = useTranslations("aiAssistant")
+
   return (
     <div
       data-floating-actions
-      className="fixed bottom-[max(1.25rem,env(safe-area-inset-bottom))] end-4 z-40 flex flex-row items-center gap-3 sm:end-6 sm:bottom-6"
+      className="fixed bottom-[max(1.25rem,env(safe-area-inset-bottom))] end-4 z-40 flex flex-row items-end gap-3 sm:end-6 sm:bottom-6"
     >
-      <AiAssistant />
+      <AiChatButton revealed chatAria={t("open")} />
       <WhatsAppButton />
     </div>
   )

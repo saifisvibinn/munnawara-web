@@ -9,8 +9,6 @@ import { getMessages, setRequestLocale } from "next-intl/server"
 import {
   Amiri,
   Cairo,
-  IBM_Plex_Sans,
-  IBM_Plex_Sans_Arabic,
   Noto_Sans,
   Noto_Sans_Arabic,
   Noto_Serif,
@@ -50,6 +48,7 @@ const fontDisplay = Noto_Serif({
   weight: ["500", "600", "700"],
   variable: "--font-display",
   display: "swap",
+  preload: false,
 })
 
 const fontDisplayAr = Cairo({
@@ -57,6 +56,7 @@ const fontDisplayAr = Cairo({
   weight: ["600", "700"],
   variable: "--font-display-ar",
   display: "swap",
+  preload: false,
 })
 
 const fontNumeralAr = Amiri({
@@ -64,20 +64,7 @@ const fontNumeralAr = Amiri({
   weight: ["700"],
   variable: "--font-numeral-ar",
   display: "swap",
-})
-
-const fontLabel = IBM_Plex_Sans({
-  subsets: ["latin"],
-  weight: ["500", "600"],
-  variable: "--font-label",
-  display: "swap",
-})
-
-const fontLabelAr = IBM_Plex_Sans_Arabic({
-  subsets: ["arabic"],
-  weight: ["500", "600"],
-  variable: "--font-label-ar",
-  display: "swap",
+  preload: false,
 })
 
 type LocaleLayoutProps = {
@@ -103,7 +90,7 @@ const LocaleLayout = async ({ children, params }: LocaleLayoutProps) => {
       lang={locale}
       dir={dir}
       suppressHydrationWarning
-      className={`${fontArabic.variable} ${fontLatin.variable} ${fontDisplay.variable} ${fontDisplayAr.variable} ${fontNumeralAr.variable} ${fontLabel.variable} ${fontLabelAr.variable}`}
+      className={`${fontArabic.variable} ${fontLatin.variable} ${fontDisplay.variable} ${fontDisplayAr.variable} ${fontNumeralAr.variable}`}
     >
       <body className="antialiased" suppressHydrationWarning>
         <NextIntlClientProvider messages={messages}>
