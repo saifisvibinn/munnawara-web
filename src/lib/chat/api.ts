@@ -1,7 +1,7 @@
 /**
  * Chat HTTP base.
- * Browser always uses same-origin `/chat` via Next rewrites (avoids CORS).
- * Server may call the upstream host directly via CHAT_API_URL.
+ * Browser always uses same-origin `/chat` via the Next route proxy
+ * (src/app/chat/[...path]/route.ts) so droplet CORS never blocks the UI.
  * Sockets use NEXT_PUBLIC_CHAT_API_URL in socket.ts — not this module.
  */
 const API_BASE = (
