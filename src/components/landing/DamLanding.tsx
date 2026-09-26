@@ -2,6 +2,7 @@
 
 import type { LandingHeroContent } from "@/content/types"
 import gsap from "gsap"
+import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { useLocale, useTranslations } from "next-intl"
 import {
   useLayoutEffect,
@@ -25,6 +26,8 @@ import { LandingSiteNav } from "./LandingSiteNav"
 import { LogoMark } from "./LogoMark"
 import { WhatsAppButton } from "@/components/layout/WhatsAppButton"
 import { LOGO_INTRO_SEEN_KEY } from "./LogoRouteTransition"
+
+gsap.registerPlugin(ScrollTrigger)
 
 type LenisLike = {
   stop: () => void
@@ -451,6 +454,187 @@ export const DamLanding = ({ copy }: DamLandingProps) => {
     if (!elements) return
     return createIntroTimeline(elements)
   }, [loaded, prefersReducedMotion, skipIntroMorph])
+
+  // After the hero leaves view, peel the corner mark petal-by-petal toward
+  // the start edge, then settle it there. Reverse when scrolling back.
+  useLayoutEffect(() => {
+    if (!loaded || prefersReducedMotion) return
+    const logo = cornerLogoRef.current
+    const hero = document.getElementById("home")
+    if (!logo || !hero) return
+
+    const petalOrder = [4, 2, 1, 3, 5]
+    const petals = petalOrder
+      .map((n) => logo.querySelector<SVGGElement>(`#corner-petal-${n}`))
+      .filter((petal): petal is SVGGElement => petal !== null)
+    if (petals.length !== 5) return
+
+    const rtl = document.documentElement.dir === "rtl"
+    const towardStart = rtl ? 1 : -1
+    let run: gsap.core.Timeline | null = null
+
+    const killRun = () => {
+      run?.kill()
+      run = null
+      logo.classList.remove("is-petal-flying")
+    }
+
+    const settlePastHero = () => {
+      killRun()
+      logo.classList.add("is-past-hero")
+      gsap.set(logo, { x: towardStart * 10, scale: 0.9, transformOrigin: "center center" })
+      gsap.set(petals, {
+        x: 0,
+        y: 0,
+        rotation: 0,
+        scale: 1,
+        opacity: 1,
+        transformOrigin: "427.5px 427.5px",
+      })
+    }
+
+    const settleInHero = () => {
+      killRun()
+      logo.classList.remove("is-past-hero", "is-petal-flying")
+      gsap.set(logo, { x: 0, scale: 1, clearProps: "transform" })
+      gsap.set(petals, {
+        x: 0,
+        y: 0,
+        rotation: 0,
+        scale: 1,
+        opacity: 1,
+        clearProps: "transform",
+      })
+    }
+
+    const flyPetalsToLeft = () => {
+      if (logo.classList.contains("is-past-hero") && !run) return
+      killRun()
+      logo.classList.add("is-past-hero", "is-petal-flying")
+
+      run = gsap.timeline({
+        defaults: { ease: "power3.inOut" },
+        onComplete: () => {
+          logo.classList.remove("is-petal-flying")
+          run = null
+        },
+      })
+
+      run.to(
+        logo,
+        { x: towardStart * 10, scale: 0.9, duration: 0.7, ease: "power2.out" },
+        0,
+      )
+
+      petals.forEach((petal, index) => {
+        const peel = (index % 2 === 0 ? 1 : -1) * 16
+        run!.fromTo(
+          petal,
+          { x: 0, y: 0, rotation: 0, scale: 1, opacity: 1 },
+          {
+            keyframes: [
+              {
+                x: towardStart * (8 + index * 4),
+                y: peel,
+                rotation: peel * 1.2,
+                scale: 1.12,
+                duration: 0.22,
+                ease: "power2.out",
+              },
+              {
+                x: towardStart * (48 + index * 16),
+                y: peel * 0.35,
+                rotation: peel * 2.4,
+                scale: 0.72,
+                opacity: 0.15,
+                duration: 0.38,
+                ease: "power2.in",
+              },
+              {
+                x: 0,
+                y: 0,
+                rotation: 0,
+                scale: 1,
+                opacity: 1,
+                duration: 0.34,
+                ease: "back.out(1.6)",
+              },
+            ],
+          },
+          0.04 + index * 0.07,
+        )
+      })
+    }
+
+    const flyPetalsHome = () => {
+      if (!logo.classList.contains("is-past-hero") && !run) return
+      killRun()
+      logo.classList.add("is-petal-flying")
+
+      run = gsap.timeline({
+        defaults: { ease: "power3.inOut" },
+        onComplete: () => {
+          logo.classList.remove("is-petal-flying")
+          settleInHero()
+        },
+      })
+
+      petals.forEach((petal, index) => {
+        const peel = (index % 2 === 0 ? 1 : -1) * 12
+        run!.fromTo(
+          petal,
+          { x: 0, y: 0, rotation: 0, scale: 1, opacity: 1 },
+          {
+            keyframes: [
+              {
+                x: towardStart * (36 + index * 12),
+                y: peel,
+                rotation: peel * 2,
+                scale: 0.8,
+                opacity: 0.35,
+                duration: 0.28,
+                ease: "power2.in",
+              },
+              {
+                x: 0,
+                y: 0,
+                rotation: 0,
+                scale: 1,
+                opacity: 1,
+                duration: 0.4,
+                ease: "back.out(1.7)",
+              },
+            ],
+          },
+          index * 0.06,
+        )
+      })
+
+      run.to(
+        logo,
+        { x: 0, scale: 1, duration: 0.55, ease: "power2.out" },
+        0.1,
+      )
+    }
+
+    const trigger = ScrollTrigger.create({
+      trigger: hero,
+      start: "bottom top+=56",
+      invalidateOnRefresh: true,
+      onEnter: flyPetalsToLeft,
+      onLeaveBack: flyPetalsHome,
+      onRefresh: (self) => {
+        if (self.progress > 0) settlePastHero()
+        else settleInHero()
+      },
+    })
+
+    return () => {
+      killRun()
+      trigger.kill()
+      settleInHero()
+    }
+  }, [loaded, prefersReducedMotion])
 
   const handleExplore = (event: MouseEvent<HTMLAnchorElement>) => {
     event.preventDefault()

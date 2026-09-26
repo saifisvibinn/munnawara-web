@@ -1026,6 +1026,14 @@ body.is-page-transitioning {
   overflow: visible;
 }
 
+.corner-logo.is-past-hero {
+  cursor: pointer;
+}
+
+.corner-logo.is-petal-flying .logo-mark--live .petal {
+  animation: none;
+}
+
 /* Gentle infinite petal dance ??? corner + chat marks */
 .logo-mark--live .petal {
   transform-box: view-box;
