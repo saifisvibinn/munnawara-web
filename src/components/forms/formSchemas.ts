@@ -4,6 +4,7 @@ export const tripTypes = [
   "individual",
   "group",
   "corporate",
+  "government",
   "school",
   "hajj_mission",
   "tourism",
@@ -13,26 +14,71 @@ export type TripType = (typeof tripTypes)[number]
 
 export const busClasses = ["standard", "vip", "city", "coach", "employee"] as const
 
-export const quoteRequestSchema = z.object({
-  tripType: z.enum(tripTypes),
-  customerName: z.string().trim().min(2).max(120),
-  organization: z.string().trim().max(160).optional().default(""),
-  email: z.string().trim().email().optional().or(z.literal("")),
-  phone: z.string().trim().min(8).max(40),
-  pickup: z.string().trim().min(2).max(120),
-  destination: z.string().trim().min(2).max(120),
-  date: z.string().trim().min(1).max(40),
-  returnDate: z.string().trim().max(40).optional().default(""),
-  passengers: z.coerce.number().int().min(1).max(500),
-  busClass: z.enum(busClasses).optional().default("standard"),
-  serviceType: z.string().trim().max(80).optional().default(""),
-  accessibilityNeeds: z.string().trim().max(300).optional().default(""),
-  luggageNotes: z.string().trim().max(300).optional().default(""),
-  specialRequirements: z.string().trim().max(500).optional().default(""),
-  consent: z.boolean().refine((v) => v === true, { message: "consent required" }),
-  language: z.enum(["ar", "en"]).optional().default("en"),
-  /** Honeypot — must stay empty */
-  companyWebsite: z.string().optional().default(""),
-})
+export type BusClass = (typeof busClasses)[number]
+
+/** Steps match info.md quote path (1–8 collect; 9 = result). */
+export const quoteSteps = [
+  "type",
+  "contact",
+  "passengers",
+  "route",
+  "timing",
+  "vehicles",
+  "requirements",
+  "consent",
+] as const
+
+export type QuoteStep = (typeof quoteSteps)[number]
+
+export const orgRequiredTypes: readonly TripType[] = [
+  "corporate",
+  "government",
+  "school",
+  "hajj_mission",
+  "tourism",
+  "group",
+]
+
+export const quoteRequestSchema = z
+  .object({
+    tripType: z.enum(tripTypes),
+    customerName: z.string().trim().min(2).max(120),
+    organization: z.string().trim().max(160).optional().default(""),
+    email: z.string().trim().email().optional().or(z.literal("")),
+    phone: z.string().trim().min(8).max(40),
+    pickup: z.string().trim().min(2).max(120),
+    destination: z.string().trim().min(2).max(120),
+    stops: z.string().trim().max(300).optional().default(""),
+    date: z.string().trim().min(1).max(40),
+    departureTime: z.string().trim().max(20).optional().default(""),
+    returnDate: z.string().trim().max(40).optional().default(""),
+    waitingHours: z.coerce.number().min(0).max(168).optional().nullable(),
+    passengers: z.coerce.number().int().min(1).max(500),
+    busCount: z.coerce.number().int().min(1).max(50).optional().default(1),
+    busClass: z.enum(busClasses).optional().default("standard"),
+    accessibilityNeeds: z.string().trim().max(300).optional().default(""),
+    luggageNotes: z.string().trim().max(300).optional().default(""),
+    specialRequirements: z.string().trim().max(500).optional().default(""),
+    needsSupervisors: z.boolean().optional().default(false),
+    needsTracking: z.boolean().optional().default(false),
+    needsBranding: z.boolean().optional().default(false),
+    needsAirportReception: z.boolean().optional().default(false),
+    consent: z.boolean().refine((v) => v === true, { message: "consent required" }),
+    language: z.enum(["ar", "en"]).optional().default("en"),
+    /** Honeypot — must stay empty */
+    companyWebsite: z.string().optional().default(""),
+  })
+  .superRefine((data, ctx) => {
+    if (
+      orgRequiredTypes.includes(data.tripType) &&
+      !data.organization.trim()
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "organization required",
+        path: ["organization"],
+      })
+    }
+  })
 
 export type QuoteRequestInput = z.infer<typeof quoteRequestSchema>

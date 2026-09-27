@@ -8,6 +8,8 @@ import {
 export type QuoteActionState = {
   ok: boolean
   messageKey: "success" | "error"
+  leadId?: string
+  quoteSlaHours?: number
 }
 
 function backendBaseUrl() {
@@ -28,13 +30,24 @@ export const submitQuoteRequest = async (
     return { ok: false, messageKey: "error" }
   }
 
-  // Spam honeypot filled
   if (parsed.data.companyWebsite) {
-    return { ok: true, messageKey: "success" }
+    return { ok: true, messageKey: "success", leadId: "DM-PREVIEW" }
   }
 
   const data = parsed.data
   const base = backendBaseUrl()
+  let leadId: string | undefined
+  let quoteSlaHours = 24
+
+  const extras = [
+    data.needsSupervisors ? "Supervisors" : "",
+    data.needsTracking ? "Tracking" : "",
+    data.needsBranding ? "Bus branding" : "",
+    data.needsAirportReception ? "Airport reception" : "",
+    data.specialRequirements,
+  ]
+    .filter(Boolean)
+    .join("; ")
 
   if (base) {
     try {
@@ -54,19 +67,34 @@ export const submitQuoteRequest = async (
           vehicleType: data.busClass || "standard",
           busClass: data.busClass || "standard",
           passengers: data.passengers,
+          busCount: data.busCount || 1,
           channel: "web",
           language: data.language,
           customerType: data.tripType,
           tripType: data.tripType,
           organization: data.organization || undefined,
-          serviceType: data.serviceType || data.tripType,
+          serviceType: data.tripType,
+          originCity: data.pickup,
+          destinationCity: data.destination,
+          stops: data.stops || undefined,
+          departureTime: data.departureTime || undefined,
+          waitingHours: data.waitingHours ?? undefined,
           accessibilityNeeds: data.accessibilityNeeds || undefined,
           luggageNotes: data.luggageNotes || undefined,
-          specialRequirements: data.specialRequirements || undefined,
+          specialRequirements: extras || undefined,
+          needsSupervisors: data.needsSupervisors,
+          needsTracking: data.needsTracking,
+          needsBranding: data.needsBranding,
+          needsAirportReception: data.needsAirportReception,
           preferredContactChannel: "whatsapp",
           consent: data.consent,
           notes: [
-            data.specialRequirements,
+            data.stops ? `Stops: ${data.stops}` : "",
+            data.departureTime ? `Time: ${data.departureTime}` : "",
+            data.waitingHours != null
+              ? `Waiting hours: ${data.waitingHours}`
+              : "",
+            extras ? `Requirements: ${extras}` : "",
             data.accessibilityNeeds
               ? `Accessibility: ${data.accessibilityNeeds}`
               : "",
@@ -81,22 +109,28 @@ export const submitQuoteRequest = async (
         console.error("[quote] backend failed", await response.text())
         return { ok: false, messageKey: "error" }
       }
+
+      const body = (await response.json()) as {
+        leadId?: string
+        quoteSlaHours?: number
+        quote?: { _id?: string; leadId?: string }
+      }
+      leadId = body.leadId || body.quote?.leadId
+      if (body.quoteSlaHours) quoteSlaHours = body.quoteSlaHours
     } catch (error) {
       console.error("[quote] backend submit failed", error)
       return { ok: false, messageKey: "error" }
     }
   } else {
+    leadId = `DM-LOCAL-${Date.now().toString(36).toUpperCase()}`
     console.info("[quote] preview submission (no CHAT_API_URL)", {
+      leadId,
       tripType: data.tripType,
       pickup: data.pickup,
       destination: data.destination,
-      date: data.date,
-      passengers: data.passengers,
-      phone: data.phone,
     })
   }
 
-  // Optional email side-channel
   const apiKey = process.env.RESEND_API_KEY
   const inbox = process.env.CONTACT_INBOX_EMAIL
   if (apiKey && inbox) {
@@ -110,20 +144,21 @@ export const submitQuoteRequest = async (
         body: JSON.stringify({
           from: "DMTC Website <onboarding@resend.dev>",
           to: [inbox],
-          subject: `[Quote] ${data.tripType} — ${data.pickup} → ${data.destination}`,
+          subject: `[Quote ${leadId || ""}] ${data.tripType} — ${data.pickup} → ${data.destination}`,
           text: [
+            `Lead: ${leadId || "—"}`,
             `Name: ${data.customerName}`,
             `Org: ${data.organization || "—"}`,
-            `Trip type: ${data.tripType}`,
+            `Type: ${data.tripType}`,
             `Pickup: ${data.pickup}`,
             `Destination: ${data.destination}`,
-            `Date: ${data.date}`,
+            `Stops: ${data.stops || "—"}`,
+            `Date: ${data.date} ${data.departureTime || ""}`,
             `Return: ${data.returnDate || "—"}`,
             `Passengers: ${data.passengers}`,
-            `Bus class: ${data.busClass}`,
+            `Buses: ${data.busCount} × ${data.busClass}`,
             `Phone: ${data.phone}`,
-            `Email: ${data.email || "—"}`,
-            `Consent: ${data.consent}`,
+            `Requirements: ${extras || "—"}`,
           ].join("\n"),
         }),
       })
@@ -132,5 +167,10 @@ export const submitQuoteRequest = async (
     }
   }
 
-  return { ok: true, messageKey: "success" }
+  return {
+    ok: true,
+    messageKey: "success",
+    leadId,
+    quoteSlaHours,
+  }
 }

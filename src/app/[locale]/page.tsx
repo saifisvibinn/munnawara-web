@@ -1,6 +1,5 @@
 import { AboutPreview } from "@/components/sections/AboutPreview"
 import { BusPassby } from "@/components/sections/BusPassby"
-import { CareReveal } from "@/components/sections/CareReveal"
 import { CTABand } from "@/components/sections/CTABand"
 import { HomeFaq } from "@/components/sections/HomeFaq"
 import { HowItWorks } from "@/components/sections/HowItWorks"
@@ -24,7 +23,6 @@ const HomePage = async ({ params }: PageProps) => {
   return (
     <>
       <DamLanding copy={home.landingHero} />
-      <CareReveal />
       <BusPassby />
       <HowItWorks />
       <AboutPreview />
