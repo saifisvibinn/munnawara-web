@@ -22,7 +22,6 @@ type HeroVideoProps = {
 }
 
 const VIDEO_SRC = "/hero/backvid.mp4"
-const VIDEO_POSTER = "/hero/cover.png"
 
 export const HeroVideo = forwardRef<HeroVideoHandle, HeroVideoProps>(
   function HeroVideo({ reducedMotion }, ref) {
@@ -276,13 +275,6 @@ export const HeroVideo = forwardRef<HeroVideoHandle, HeroVideoProps>(
         className={`hero-video${ready ? " hero-video--ready" : ""}`}
         ref={containerRef}
         aria-hidden="true"
-        style={{
-          // Always paint the cover so mobile never shows an empty plate
-          // while the MP4 is still buffering.
-          backgroundImage: `url(${VIDEO_POSTER})`,
-          backgroundSize: "cover",
-          backgroundPosition: objectPosition,
-        }}
       >
         <video
           className="hero-video__media"
@@ -290,7 +282,6 @@ export const HeroVideo = forwardRef<HeroVideoHandle, HeroVideoProps>(
           muted
           playsInline
           preload="auto"
-          poster={VIDEO_POSTER}
           loop={false}
           style={{
             objectPosition,

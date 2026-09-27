@@ -106,7 +106,6 @@ const ASSET_FAILSAFE_MS = 9000
 const CRITICAL_PRELOAD_URLS = [
   "/motion/bus-top.png",
   "/hero/landing-sky.jpg",
-  "/hero/cover.png",
 ] as const
 
 const waitForEvent = (
