@@ -5,13 +5,14 @@ export const companies: readonly Company[] = [
     slug: "transport",
     name: "Durrah Al-Munawwara Transport for Pilgrims",
     summary:
-      "A modern fleet for Hajj and Umrah pilgrims, staff, and students — including airport reception, intercity transport, and Holy Sites journeys.",
+      "A modern fleet for Hajj and Umrah pilgrims, staff, and students — including airport reception, intercity transport, Holy Sites journeys, and international routes to Yemen (Marib, Mukalla, Aden). Hajj-season pilgrim transport is contracted via the responsible mission and the electronic path.",
     services: [
       "Airport reception",
       "Intercity transport",
       "Holy Sites journey",
-      "International transport",
+      "International transport (Yemen: Marib, Mukalla, Aden)",
       "Staff and student transport",
+      "Hajj mission contracting via electronic path",
     ],
     logo: "/brand/company-group.png",
     heroImage: "/fleet/coach-2025-2026/cover.webp",
@@ -34,12 +35,18 @@ export const companies: readonly Company[] = [
   {
     slug: "tourism",
     name: "Durrah Al-Munawwara Tourism Services",
-    // TODO(content): Tourism subsidiary — blocked until client provides real services copy
-    summary: null,
-    services: [],
+    summary:
+      "Group tourism, conferences, events, and private hire — with reception plans, spare buses, and VIP airport options by capacity.",
+    services: [
+      "Tourist group transport",
+      "Conferences and events",
+      "Private occasions and weddings",
+      "VIP airport transfers",
+      "Multi-bus event fleets",
+    ],
     logo: "/brand/company-tourism.png",
     heroImage: "/hero/cover.png",
-    contentReady: false,
+    contentReady: true,
   },
   {
     slug: "hospitality-catering",

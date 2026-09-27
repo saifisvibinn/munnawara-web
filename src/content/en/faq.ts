@@ -2,22 +2,39 @@ import type { FaqItem } from "../types"
 
 export const faq: readonly FaqItem[] = [
   {
-    id: "group-size",
-    question: "What is the minimum group size?",
+    id: "hajj-contract",
+    question: "How is Hajj transport booked?",
     answer:
-      // TODO(content): confirm commercial minimums with client
-      "It depends on the service type and season. Contact us via the form or WhatsApp for details.",
+      "During Hajj season, pilgrim transport is contracted through the responsible mission and registered on the electronic path — not as a direct pilgrim-to-company booking. Payment for those contracts goes through that path.",
+  },
+  {
+    id: "yemen",
+    question: "Do you operate international routes?",
+    answer:
+      "Yes. International services currently include Yemen destinations: Marib, Mukalla, and Aden. Share origin, date, and passenger count for availability.",
   },
   {
     id: "fleet-types",
     question: "Which bus types are available?",
     answer:
-      "Our fleet includes Premium VIP, VIP, Coach, City, Labour, and Mini Bus categories from the exhibition catalog.",
+      "Catalog classes include coach, VIP, city, and employee buses in multiple capacities. Brochure seat counts may differ from operational assignment — we confirm the bus for your date in the offer.",
+  },
+  {
+    id: "quote",
+    question: "What do you need for a quote?",
+    answer:
+      "Name, contact, passenger count, origin and destination, date and time, bus class if known, and any accessibility or luggage notes. A request number is not a confirmed booking until an official offer is issued.",
+  },
+  {
+    id: "baggage",
+    question: "What is the baggage policy?",
+    answer:
+      "Allowance varies by route, ticket, and bus type. We confirm the current policy with your booking before payment — we do not invent fixed weights in chat.",
   },
   {
     id: "safety",
     question: "What safety standards do you follow?",
     answer:
-      "Buses include safety features, GPS, and advanced braking systems according to each category’s specifications.",
+      "Inspections, periodic maintenance, GPS tracking, driver monitoring, and emergency response procedures under regulatory requirements.",
   },
 ] as const

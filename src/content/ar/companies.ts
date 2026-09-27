@@ -5,13 +5,14 @@ export const companies: readonly Company[] = [
     slug: "transport",
     name: "شركة درة المنورة لنقل الحجاج والمعتمرين",
     summary:
-      "أسطول حديث لنقل الحجاج والمعتمرين والموظفين والطلاب، مع خدمات الاستقبال من المطار والنقل بين المدن ورحلة المشاعر.",
+      "أسطول حديث لنقل الحجاج والمعتمرين والموظفين والطلاب، مع الاستقبال من المطار والنقل بين المدن ورحلة المشاعر والنقل الدولي إلى اليمن (مأرب والمكلا وعدن). تعاقد نقل الحجاج في موسم الحج يتم عبر البعثة والمسار الإلكتروني.",
     services: [
       "الاستقبال من المطار",
       "النقل بين المدن",
       "رحلة المشاعر المقدسة",
-      "النقل الدولي",
+      "النقل الدولي (اليمن: مأرب، المكلا، عدن)",
       "نقل الموظفين والطلاب",
+      "تعاقد بعثات الحج عبر المسار الإلكتروني",
     ],
     logo: "/brand/company-group.png",
     heroImage: "/fleet/coach-2025-2026/cover.webp",
@@ -34,12 +35,18 @@ export const companies: readonly Company[] = [
   {
     slug: "tourism",
     name: "شركة درة المنورة للخدمات السياحية",
-    // TODO(content): Tourism subsidiary — blocked until client provides real services copy
-    summary: null,
-    services: [],
+    summary:
+      "نقل المجموعات السياحية والمؤتمرات والفعاليات والحجوزات الخاصة، مع خطط استقبال وحافلات احتياط وخيارات VIP للمطار حسب السعة.",
+    services: [
+      "نقل المجموعات السياحية",
+      "المؤتمرات والفعاليات",
+      "المناسبات والحفلات الخاصة",
+      "نقل مطار VIP",
+      "أسطول متعدد الحافلات للفعاليات",
+    ],
     logo: "/brand/company-tourism.png",
     heroImage: "/hero/cover.png",
-    contentReady: false,
+    contentReady: true,
   },
   {
     slug: "hospitality-catering",

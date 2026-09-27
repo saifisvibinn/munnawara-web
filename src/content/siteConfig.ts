@@ -7,8 +7,8 @@ export const siteConfig: SiteConfig = {
   brandShort: "DMTC",
   email: "info@munawwara.com",
   phones: ["+966504352314", "+966596610097"],
-  // TODO(content): confirm which brochure number is the official WhatsApp line
-  whatsappNumber: "966504352314",
+  // KB / ops WhatsApp from info.md — confirm in admin Settings before launch
+  whatsappNumber: "966556616713",
   address: {
     ar: "المملكة العربية السعودية، جدة — طريق المدينة المنورة، مبنى الوصال، الدور الرابع، مكتب 408",
     en: "KSA, Jeddah — Almadinah Almunawarah Rd, Al Wessal Building, 4th floor, Office 408",

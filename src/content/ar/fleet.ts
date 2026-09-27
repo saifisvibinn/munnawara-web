@@ -1,5 +1,10 @@
 import type { FleetCategory } from "../types"
 
+/**
+ * تسميات المقاعد من كتيب المعرض.
+ * قاعدة معرفة البوت (س60) تذكر سعات ~49 / 32 VIP / 19 / 45 سيتي / 60 و48 موظفين —
+ * لا تُستبدل أرقام الكتيب حتى يعتمد العميل أي مصدر هو المعتمد.
+ */
 export const fleet: readonly FleetCategory[] = [
   {
     id: "premium-vip-2026",

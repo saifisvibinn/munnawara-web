@@ -2,12 +2,13 @@
 
 import { submitQuoteRequest } from "@/app/actions/quote"
 import {
+  busClasses,
   quoteRequestSchema,
   tripTypes,
   type TripType,
 } from "@/components/forms/formSchemas"
 import { cn } from "@/lib/cn"
-import { useTranslations } from "next-intl"
+import { useLocale, useTranslations } from "next-intl"
 import { useState, type FormEvent } from "react"
 
 type QuoteRequestFormProps = {
@@ -28,17 +29,47 @@ export const QuoteRequestForm = ({
   formId = "quote",
 }: QuoteRequestFormProps) => {
   const t = useTranslations("quote")
+  const locale = useLocale()
   const isOverlay = variant === "overlay"
+  const inputClass = isOverlay ? overlayFieldClass : fieldClass
+
   const [tripType, setTripType] = useState<TripType>("individual")
+  const [customerName, setCustomerName] = useState("")
+  const [organization, setOrganization] = useState("")
+  const [email, setEmail] = useState("")
   const [pickup, setPickup] = useState("")
   const [destination, setDestination] = useState("")
   const [date, setDate] = useState("")
+  const [returnDate, setReturnDate] = useState("")
   const [passengers, setPassengers] = useState("1")
+  const [busClass, setBusClass] = useState<(typeof busClasses)[number]>("standard")
+  const [accessibilityNeeds, setAccessibilityNeeds] = useState("")
+  const [luggageNotes, setLuggageNotes] = useState("")
   const [phone, setPhone] = useState("")
+  const [consent, setConsent] = useState(false)
   const [honeypot, setHoneypot] = useState("")
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">(
     "idle",
   )
+
+  const tripLabel = (type: TripType) => {
+    switch (type) {
+      case "individual":
+        return t("tripIndividual")
+      case "group":
+        return t("tripGroup")
+      case "corporate":
+        return t("tripCorporate")
+      case "school":
+        return t("tripSchool")
+      case "hajj_mission":
+        return t("tripHajj")
+      case "tourism":
+        return t("tripTourism")
+      default:
+        return type
+    }
+  }
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -46,11 +77,20 @@ export const QuoteRequestForm = ({
 
     const payload = {
       tripType,
+      customerName,
+      organization,
+      email,
       pickup,
       destination,
       date,
+      returnDate,
       passengers: Number(passengers),
+      busClass,
+      accessibilityNeeds,
+      luggageNotes,
       phone,
+      consent,
+      language: locale === "ar" ? ("ar" as const) : ("en" as const),
       companyWebsite: honeypot,
     }
 
@@ -63,13 +103,6 @@ export const QuoteRequestForm = ({
     const result = await submitQuoteRequest(parsed.data)
     setStatus(result.ok ? "success" : "error")
   }
-
-  const tripLabel = (type: TripType) =>
-    type === "individual"
-      ? t("tripIndividual")
-      : type === "group"
-        ? t("tripGroup")
-        : t("tripCorporate")
 
   return (
     <div
@@ -86,15 +119,10 @@ export const QuoteRequestForm = ({
           <legend className="font-label mb-2 block text-[0.7rem] font-semibold tracking-[0.14em] text-ink/45 uppercase sm:mb-2.5">
             {t("tripType")}
           </legend>
-
-          {/* Native select on small screens — 3 long labels crush in a row */}
-          <label className="block sm:hidden">
+          <label className="block">
             <span className="sr-only">{t("tripType")}</span>
             <select
-              className={cn(fieldClass, "appearance-none bg-[length:1rem] bg-[right_0.85rem_center] bg-no-repeat pr-10")}
-              style={{
-                backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' viewBox='0 0 24 24'%3E%3Cpath stroke='%235c5666' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m6 9 6 6 6-6'/%3E%3C/svg%3E")`,
-              }}
+              className={cn(inputClass, "appearance-none")}
               value={tripType}
               onChange={(event) => setTripType(event.target.value as TripType)}
               required
@@ -107,42 +135,57 @@ export const QuoteRequestForm = ({
               ))}
             </select>
           </label>
-
-          <div
-            role="radiogroup"
-            aria-label={t("tripType")}
-            className="hidden grid-cols-3 gap-1 rounded-xl bg-ink/[0.04] p-1 sm:grid"
-          >
-            {tripTypes.map((type) => {
-              const selected = tripType === type
-              return (
-                <button
-                  key={type}
-                  type="button"
-                  role="radio"
-                  aria-checked={selected}
-                  onClick={() => setTripType(type)}
-                  className={cn(
-                    "font-label rounded-lg px-2 py-2.5 text-center text-sm font-semibold transition",
-                    selected
-                      ? "bg-white text-ink shadow-sm ring-1 ring-ink/6"
-                      : "text-ink/50 hover:text-ink",
-                  )}
-                >
-                  {tripLabel(type)}
-                </button>
-              )
-            })}
-          </div>
         </fieldset>
 
         <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 sm:gap-4">
+          <label className="block min-w-0 sm:col-span-2">
+            <span className="font-label mb-1.5 block text-[0.7rem] font-semibold tracking-[0.14em] text-ink/45 uppercase">
+              {t("name")}
+            </span>
+            <input
+              className={inputClass}
+              value={customerName}
+              onChange={(event) => setCustomerName(event.target.value)}
+              required
+              autoComplete="name"
+              aria-label={t("name")}
+            />
+          </label>
+
+          <label className="block min-w-0">
+            <span className="font-label mb-1.5 block text-[0.7rem] font-semibold tracking-[0.14em] text-ink/45 uppercase">
+              {t("organization")}
+            </span>
+            <input
+              className={inputClass}
+              value={organization}
+              onChange={(event) => setOrganization(event.target.value)}
+              autoComplete="organization"
+              aria-label={t("organization")}
+            />
+          </label>
+
+          <label className="block min-w-0">
+            <span className="font-label mb-1.5 block text-[0.7rem] font-semibold tracking-[0.14em] text-ink/45 uppercase">
+              {t("email")}
+            </span>
+            <input
+              type="email"
+              className={inputClass}
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              autoComplete="email"
+              dir="ltr"
+              aria-label={t("email")}
+            />
+          </label>
+
           <label className="block min-w-0">
             <span className="font-label mb-1.5 block text-[0.7rem] font-semibold tracking-[0.14em] text-ink/45 uppercase">
               {t("pickup")}
             </span>
             <input
-              className={isOverlay ? overlayFieldClass : fieldClass}
+              className={inputClass}
               value={pickup}
               onChange={(event) => setPickup(event.target.value)}
               required
@@ -156,7 +199,7 @@ export const QuoteRequestForm = ({
               {t("destination")}
             </span>
             <input
-              className={isOverlay ? overlayFieldClass : fieldClass}
+              className={inputClass}
               value={destination}
               onChange={(event) => setDestination(event.target.value)}
               required
@@ -170,14 +213,24 @@ export const QuoteRequestForm = ({
             </span>
             <input
               type="date"
-              className={cn(
-                isOverlay ? overlayFieldClass : fieldClass,
-                "min-h-[3.25rem] sm:min-h-0",
-              )}
+              className={cn(inputClass, "min-h-[3.25rem] sm:min-h-0")}
               value={date}
               onChange={(event) => setDate(event.target.value)}
               required
               aria-label={t("date")}
+            />
+          </label>
+
+          <label className="block min-w-0">
+            <span className="font-label mb-1.5 block text-[0.7rem] font-semibold tracking-[0.14em] text-ink/45 uppercase">
+              {t("returnDate")}
+            </span>
+            <input
+              type="date"
+              className={cn(inputClass, "min-h-[3.25rem] sm:min-h-0")}
+              value={returnDate}
+              onChange={(event) => setReturnDate(event.target.value)}
+              aria-label={t("returnDate")}
             />
           </label>
 
@@ -190,12 +243,32 @@ export const QuoteRequestForm = ({
               min={1}
               max={500}
               inputMode="numeric"
-              className={isOverlay ? overlayFieldClass : fieldClass}
+              className={inputClass}
               value={passengers}
               onChange={(event) => setPassengers(event.target.value)}
               required
               aria-label={t("passengers")}
             />
+          </label>
+
+          <label className="block min-w-0">
+            <span className="font-label mb-1.5 block text-[0.7rem] font-semibold tracking-[0.14em] text-ink/45 uppercase">
+              {t("busClass")}
+            </span>
+            <select
+              className={cn(inputClass, "appearance-none")}
+              value={busClass}
+              onChange={(event) =>
+                setBusClass(event.target.value as (typeof busClasses)[number])
+              }
+              aria-label={t("busClass")}
+            >
+              {busClasses.map((c) => (
+                <option key={c} value={c}>
+                  {t(`bus_${c}`)}
+                </option>
+              ))}
+            </select>
           </label>
 
           <label className="block min-w-0 sm:col-span-2">
@@ -204,7 +277,7 @@ export const QuoteRequestForm = ({
             </span>
             <input
               type="tel"
-              className={isOverlay ? overlayFieldClass : fieldClass}
+              className={inputClass}
               value={phone}
               onChange={(event) => setPhone(event.target.value)}
               required
@@ -214,7 +287,42 @@ export const QuoteRequestForm = ({
               aria-label={t("phone")}
             />
           </label>
+
+          <label className="block min-w-0">
+            <span className="font-label mb-1.5 block text-[0.7rem] font-semibold tracking-[0.14em] text-ink/45 uppercase">
+              {t("accessibility")}
+            </span>
+            <input
+              className={inputClass}
+              value={accessibilityNeeds}
+              onChange={(event) => setAccessibilityNeeds(event.target.value)}
+              aria-label={t("accessibility")}
+            />
+          </label>
+
+          <label className="block min-w-0">
+            <span className="font-label mb-1.5 block text-[0.7rem] font-semibold tracking-[0.14em] text-ink/45 uppercase">
+              {t("luggage")}
+            </span>
+            <input
+              className={inputClass}
+              value={luggageNotes}
+              onChange={(event) => setLuggageNotes(event.target.value)}
+              aria-label={t("luggage")}
+            />
+          </label>
         </div>
+
+        <label className="flex items-start gap-3 text-sm text-ink/70">
+          <input
+            type="checkbox"
+            className="mt-1 size-4 rounded border-ink/20"
+            checked={consent}
+            onChange={(event) => setConsent(event.target.checked)}
+            required
+          />
+          <span>{t("consent")}</span>
+        </label>
 
         <div className="flex flex-col gap-2.5 pt-1">
           <button

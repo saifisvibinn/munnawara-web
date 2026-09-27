@@ -1,5 +1,10 @@
 import type { FleetCategory } from "../types"
 
+/**
+ * Brochure seat labels (exhibition catalog).
+ * Bot/KB catalog (info.md Q60) lists ~49 / 32 VIP / 19 / 45 city / 60+48 employee —
+ * do not silently overwrite brochure figures until the client confirms which set wins.
+ */
 export const fleet: readonly FleetCategory[] = [
   {
     id: "premium-vip-2026",
