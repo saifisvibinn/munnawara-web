@@ -1,7 +1,6 @@
 import { z } from "zod"
 
 export const tripTypes = [
-  "individual",
   "group",
   "corporate",
   "government",

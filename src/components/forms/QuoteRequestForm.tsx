@@ -13,7 +13,12 @@ import {
 } from "@/components/forms/formSchemas"
 import { cn } from "@/lib/cn"
 import { useLocale, useTranslations } from "next-intl"
-import { useMemo, useState, type FormEvent } from "react"
+import {
+  useMemo,
+  useState,
+  type FormEvent,
+  type ReactNode,
+} from "react"
 
 type QuoteRequestFormProps = {
   className?: string
@@ -21,17 +26,73 @@ type QuoteRequestFormProps = {
   formId?: string
 }
 
+type FieldKey =
+  | "customerName"
+  | "organization"
+  | "phone"
+  | "email"
+  | "passengers"
+  | "pickup"
+  | "destination"
+  | "date"
+  | "busCount"
+  | "consent"
+
 const fieldClass =
   "w-full min-w-0 rounded-xl border-0 bg-ink/[0.04] px-3.5 py-3.5 text-base text-ink outline-none transition placeholder:text-ink/35 focus:bg-white focus:ring-2 focus:ring-orange/25 sm:py-3 sm:text-[0.9375rem]"
 
 const overlayFieldClass =
   "w-full min-w-0 rounded-xl border-0 bg-ink/[0.04] px-4 py-3.5 text-base text-ink outline-none transition placeholder:text-ink/35 focus:bg-white focus:ring-2 focus:ring-orange/25 sm:text-[0.9375rem]"
 
+const fieldErrorRing =
+  "ring-2 ring-red-400/50 focus:ring-red-400/60 bg-red-50/60"
+
 const btnPrimary =
   "font-label inline-flex items-center justify-center rounded-xl bg-ink px-6 py-3 text-sm font-semibold text-white transition hover:bg-orange focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange focus-visible:ring-offset-2 disabled:opacity-60"
 
 const btnGhost =
   "font-label inline-flex items-center justify-center rounded-xl px-5 py-3 text-sm font-semibold text-ink/60 transition hover:bg-ink/[0.06] hover:text-ink"
+
+function Field({
+  label,
+  children,
+  className,
+  error,
+  htmlFor,
+}: {
+  label: string
+  children: ReactNode
+  className?: string
+  error?: string
+  htmlFor?: string
+}) {
+  return (
+    <div className={cn("block min-w-0", className)}>
+      <label
+        htmlFor={htmlFor}
+        className="font-label mb-1.5 block text-[0.7rem] font-semibold tracking-[0.14em] text-ink/45 uppercase"
+      >
+        {label}
+      </label>
+      {children}
+      {error ? (
+        <p
+          id={htmlFor ? `${htmlFor}-error` : undefined}
+          className="mt-1.5 flex items-start gap-1.5 text-sm leading-snug text-red-700"
+          role="alert"
+        >
+          <span
+            aria-hidden
+            className="mt-0.5 inline-flex size-4 shrink-0 items-center justify-center rounded-full bg-red-100 text-[0.65rem] font-bold text-red-600"
+          >
+            !
+          </span>
+          <span>{error}</span>
+        </p>
+      ) : null}
+    </div>
+  )
+}
 
 export const QuoteRequestForm = ({
   className,
@@ -46,7 +107,7 @@ export const QuoteRequestForm = ({
   const [stepIndex, setStepIndex] = useState(0)
   const step = quoteSteps[stepIndex]
 
-  const [tripType, setTripType] = useState<TripType>("individual")
+  const [tripType, setTripType] = useState<TripType>("group")
   const [customerName, setCustomerName] = useState("")
   const [organization, setOrganization] = useState("")
   const [email, setEmail] = useState("")
@@ -75,7 +136,10 @@ export const QuoteRequestForm = ({
   )
   const [leadId, setLeadId] = useState<string | null>(null)
   const [slaHours, setSlaHours] = useState(24)
-  const [stepError, setStepError] = useState<string | null>(null)
+  const [fieldErrors, setFieldErrors] = useState<Partial<Record<FieldKey, string>>>(
+    {},
+  )
+  const [formError, setFormError] = useState<string | null>(null)
 
   const needsOrg = orgRequiredTypes.includes(tripType)
   const showWaiting =
@@ -83,20 +147,30 @@ export const QuoteRequestForm = ({
     tripType === "government" ||
     tripType === "tourism" ||
     tripType === "group"
-  const showExtras =
-    tripType !== "individual" ||
-    needsSupervisors ||
-    needsTracking ||
-    needsBranding ||
-    needsAirportReception
 
-  const tripLabel = (type: TripType) => t(`trip_${type}` as "trip_individual")
-  const tripHint = (type: TripType) => t(`hint_${type}` as "hint_individual")
+  const tripLabel = (type: TripType) => t(`trip_${type}` as "trip_group")
+  const tripHint = (type: TripType) => t(`hint_${type}` as "hint_group")
 
   const progress = useMemo(
     () => ((stepIndex + 1) / quoteSteps.length) * 100,
     [stepIndex],
   )
+
+  const clearError = (key: FieldKey) => {
+    setFieldErrors((prev) => {
+      if (!prev[key]) return prev
+      const next = { ...prev }
+      delete next[key]
+      return next
+    })
+  }
+
+  const inputProps = (key: FieldKey, id: string) => ({
+    id,
+    className: cn(inputClass, fieldErrors[key] && fieldErrorRing),
+    "aria-invalid": Boolean(fieldErrors[key]) || undefined,
+    "aria-describedby": fieldErrors[key] ? `${id}-error` : undefined,
+  })
 
   const buildPayload = () => ({
     tripType,
@@ -127,59 +201,46 @@ export const QuoteRequestForm = ({
   })
 
   const validateStep = (current: QuoteStep): boolean => {
-    setStepError(null)
+    const next: Partial<Record<FieldKey, string>> = {}
+    setFormError(null)
+
     switch (current) {
       case "type":
-        return true
+        break
       case "contact":
-        if (customerName.trim().length < 2) {
-          setStepError(t("errName"))
-          return false
+        if (customerName.trim().length < 2) next.customerName = t("errName")
+        if (phone.trim().length < 8) next.phone = t("errPhone")
+        if (needsOrg && !organization.trim()) next.organization = t("errOrg")
+        if (email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+          next.email = t("errEmail")
         }
-        if (phone.trim().length < 8) {
-          setStepError(t("errPhone"))
-          return false
-        }
-        if (needsOrg && !organization.trim()) {
-          setStepError(t("errOrg"))
-          return false
-        }
-        return true
+        break
       case "passengers":
         if (!Number(passengers) || Number(passengers) < 1) {
-          setStepError(t("errPassengers"))
-          return false
+          next.passengers = t("errPassengers")
         }
-        return true
+        break
       case "route":
-        if (pickup.trim().length < 2 || destination.trim().length < 2) {
-          setStepError(t("errRoute"))
-          return false
-        }
-        return true
+        if (pickup.trim().length < 2) next.pickup = t("errPickup")
+        if (destination.trim().length < 2) next.destination = t("errDestination")
+        break
       case "timing":
-        if (!date) {
-          setStepError(t("errDate"))
-          return false
-        }
-        return true
+        if (!date) next.date = t("errDate")
+        break
       case "vehicles":
-        if (!Number(busCount) || Number(busCount) < 1) {
-          setStepError(t("errBuses"))
-          return false
-        }
-        return true
+        if (!Number(busCount) || Number(busCount) < 1) next.busCount = t("errBuses")
+        break
       case "requirements":
-        return true
+        break
       case "consent":
-        if (!consent) {
-          setStepError(t("errConsent"))
-          return false
-        }
-        return true
+        if (!consent) next.consent = t("errConsent")
+        break
       default:
-        return true
+        break
     }
+
+    setFieldErrors(next)
+    return Object.keys(next).length === 0
   }
 
   const goNext = () => {
@@ -188,7 +249,8 @@ export const QuoteRequestForm = ({
   }
 
   const goBack = () => {
-    setStepError(null)
+    setFieldErrors({})
+    setFormError(null)
     setStepIndex((i) => Math.max(i - 1, 0))
   }
 
@@ -201,10 +263,11 @@ export const QuoteRequestForm = ({
     if (!validateStep("consent")) return
 
     setStatus("submitting")
+    setFormError(null)
     const parsed = quoteRequestSchema.safeParse(buildPayload())
     if (!parsed.success) {
       setStatus("error")
-      setStepError(t("error"))
+      setFormError(t("error"))
       return
     }
 
@@ -215,25 +278,9 @@ export const QuoteRequestForm = ({
       setStatus("success")
     } else {
       setStatus("error")
+      setFormError(t("error"))
     }
   }
-
-  const Field = ({
-    label,
-    children,
-    className: fieldWrapClass,
-  }: {
-    label: string
-    children: React.ReactNode
-    className?: string
-  }) => (
-    <label className={cn("block min-w-0", fieldWrapClass)}>
-      <span className="font-label mb-1.5 block text-[0.7rem] font-semibold tracking-[0.14em] text-ink/45 uppercase">
-        {label}
-      </span>
-      {children}
-    </label>
-  )
 
   if (status === "success") {
     return (
@@ -270,6 +317,8 @@ export const QuoteRequestForm = ({
             setStepIndex(0)
             setConsent(false)
             setLeadId(null)
+            setFieldErrors({})
+            setFormError(null)
           }}
         >
           {t("newRequest")}
@@ -333,7 +382,9 @@ export const QuoteRequestForm = ({
                         : "bg-ink/[0.04] text-ink hover:bg-ink/[0.07]",
                     )}
                   >
-                    <span className="block text-sm font-semibold">{tripLabel(type)}</span>
+                    <span className="block text-sm font-semibold">
+                      {tripLabel(type)}
+                    </span>
                     <span
                       className={cn(
                         "mt-1 block text-xs leading-snug",
@@ -351,51 +402,71 @@ export const QuoteRequestForm = ({
 
         {step === "contact" ? (
           <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2">
-            <Field label={t("name")} className="sm:col-span-2">
+            <Field
+              label={t("name")}
+              className="sm:col-span-2"
+              htmlFor="quote-name"
+              error={fieldErrors.customerName}
+            >
               <input
-                className={inputClass}
+                {...inputProps("customerName", "quote-name")}
                 value={customerName}
-                onChange={(e) => setCustomerName(e.target.value)}
+                onChange={(e) => {
+                  setCustomerName(e.target.value)
+                  clearError("customerName")
+                }}
                 autoComplete="name"
                 required
               />
             </Field>
-            {needsOrg ? (
-              <Field label={t("organization")} className="sm:col-span-2">
-                <input
-                  className={inputClass}
-                  value={organization}
-                  onChange={(e) => setOrganization(e.target.value)}
-                  autoComplete="organization"
-                  required
-                />
-              </Field>
-            ) : (
-              <Field label={t("organizationOptional")} className="sm:col-span-2">
-                <input
-                  className={inputClass}
-                  value={organization}
-                  onChange={(e) => setOrganization(e.target.value)}
-                />
-              </Field>
-            )}
-            <Field label={t("phone")}>
+            <Field
+              label={needsOrg ? t("organization") : t("organizationOptional")}
+              className="sm:col-span-2"
+              htmlFor="quote-org"
+              error={fieldErrors.organization}
+            >
               <input
+                {...inputProps("organization", "quote-org")}
+                value={organization}
+                onChange={(e) => {
+                  setOrganization(e.target.value)
+                  clearError("organization")
+                }}
+                autoComplete="organization"
+                required={needsOrg}
+              />
+            </Field>
+            <Field
+              label={t("phone")}
+              htmlFor="quote-phone"
+              error={fieldErrors.phone}
+            >
+              <input
+                {...inputProps("phone", "quote-phone")}
                 type="tel"
-                className={inputClass}
                 value={phone}
-                onChange={(e) => setPhone(e.target.value)}
+                onChange={(e) => {
+                  setPhone(e.target.value)
+                  clearError("phone")
+                }}
                 dir="ltr"
                 autoComplete="tel"
                 required
               />
             </Field>
-            <Field label={t("email")}>
+            <Field
+              label={t("email")}
+              htmlFor="quote-email"
+              error={fieldErrors.email}
+            >
               <input
+                {...inputProps("email", "quote-email")}
                 type="email"
-                className={inputClass}
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => {
+                  setEmail(e.target.value)
+                  clearError("email")
+                }}
                 dir="ltr"
                 autoComplete="email"
               />
@@ -413,27 +484,38 @@ export const QuoteRequestForm = ({
                     ? t("passengersHajj")
                     : t("passengers")
               }
+              htmlFor="quote-passengers"
+              error={fieldErrors.passengers}
             >
               <input
+                {...inputProps("passengers", "quote-passengers")}
                 type="number"
                 min={1}
                 max={500}
-                className={inputClass}
                 value={passengers}
-                onChange={(e) => setPassengers(e.target.value)}
+                onChange={(e) => {
+                  setPassengers(e.target.value)
+                  clearError("passengers")
+                }}
                 required
               />
             </Field>
-            <Field label={t("accessibility")}>
+            <Field label={t("accessibility")} htmlFor="quote-access">
               <input
+                id="quote-access"
                 className={inputClass}
                 value={accessibilityNeeds}
                 onChange={(e) => setAccessibilityNeeds(e.target.value)}
                 placeholder={t("accessibilityPh")}
               />
             </Field>
-            <Field label={t("luggage")} className="sm:col-span-2">
+            <Field
+              label={t("luggage")}
+              className="sm:col-span-2"
+              htmlFor="quote-luggage"
+            >
               <input
+                id="quote-luggage"
                 className={inputClass}
                 value={luggageNotes}
                 onChange={(e) => setLuggageNotes(e.target.value)}
@@ -445,19 +527,33 @@ export const QuoteRequestForm = ({
 
         {step === "route" ? (
           <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2">
-            <Field label={t("pickup")}>
+            <Field
+              label={t("pickup")}
+              htmlFor="quote-pickup"
+              error={fieldErrors.pickup}
+            >
               <input
-                className={inputClass}
+                {...inputProps("pickup", "quote-pickup")}
                 value={pickup}
-                onChange={(e) => setPickup(e.target.value)}
+                onChange={(e) => {
+                  setPickup(e.target.value)
+                  clearError("pickup")
+                }}
                 required
               />
             </Field>
-            <Field label={t("destination")}>
+            <Field
+              label={t("destination")}
+              htmlFor="quote-destination"
+              error={fieldErrors.destination}
+            >
               <input
-                className={inputClass}
+                {...inputProps("destination", "quote-destination")}
                 value={destination}
-                onChange={(e) => setDestination(e.target.value)}
+                onChange={(e) => {
+                  setDestination(e.target.value)
+                  clearError("destination")
+                }}
                 required
               />
             </Field>
@@ -470,8 +566,10 @@ export const QuoteRequestForm = ({
                     : t("stops")
               }
               className="sm:col-span-2"
+              htmlFor="quote-stops"
             >
               <input
+                id="quote-stops"
                 className={inputClass}
                 value={stops}
                 onChange={(e) => setStops(e.target.value)}
@@ -483,25 +581,35 @@ export const QuoteRequestForm = ({
 
         {step === "timing" ? (
           <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2">
-            <Field label={t("date")}>
+            <Field label={t("date")} htmlFor="quote-date" error={fieldErrors.date}>
               <input
+                {...inputProps("date", "quote-date")}
                 type="date"
-                className={cn(inputClass, "min-h-[3.25rem] sm:min-h-0")}
+                className={cn(
+                  inputClass,
+                  "min-h-[3.25rem] sm:min-h-0",
+                  fieldErrors.date && fieldErrorRing,
+                )}
                 value={date}
-                onChange={(e) => setDate(e.target.value)}
+                onChange={(e) => {
+                  setDate(e.target.value)
+                  clearError("date")
+                }}
                 required
               />
             </Field>
-            <Field label={t("departureTime")}>
+            <Field label={t("departureTime")} htmlFor="quote-time">
               <input
+                id="quote-time"
                 type="time"
                 className={cn(inputClass, "min-h-[3.25rem] sm:min-h-0")}
                 value={departureTime}
                 onChange={(e) => setDepartureTime(e.target.value)}
               />
             </Field>
-            <Field label={t("returnDate")}>
+            <Field label={t("returnDate")} htmlFor="quote-return">
               <input
+                id="quote-return"
                 type="date"
                 className={cn(inputClass, "min-h-[3.25rem] sm:min-h-0")}
                 value={returnDate}
@@ -509,8 +617,9 @@ export const QuoteRequestForm = ({
               />
             </Field>
             {showWaiting ? (
-              <Field label={t("waitingHours")}>
+              <Field label={t("waitingHours")} htmlFor="quote-waiting">
                 <input
+                  id="quote-waiting"
                   type="number"
                   min={0}
                   max={168}
@@ -526,19 +635,27 @@ export const QuoteRequestForm = ({
 
         {step === "vehicles" ? (
           <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2">
-            <Field label={t("busCount")}>
+            <Field
+              label={t("busCount")}
+              htmlFor="quote-buses"
+              error={fieldErrors.busCount}
+            >
               <input
+                {...inputProps("busCount", "quote-buses")}
                 type="number"
                 min={1}
                 max={50}
-                className={inputClass}
                 value={busCount}
-                onChange={(e) => setBusCount(e.target.value)}
+                onChange={(e) => {
+                  setBusCount(e.target.value)
+                  clearError("busCount")
+                }}
                 required
               />
             </Field>
-            <Field label={t("busClass")}>
+            <Field label={t("busClass")} htmlFor="quote-bus-class">
               <select
+                id="quote-bus-class"
                 className={cn(inputClass, "appearance-none")}
                 value={busClass}
                 onChange={(e) => setBusClass(e.target.value as BusClass)}
@@ -555,37 +672,39 @@ export const QuoteRequestForm = ({
 
         {step === "requirements" ? (
           <div className="space-y-4">
-            {showExtras ? (
-              <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
-                {(
+            <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+              {(
+                [
+                  ["needsSupervisors", needsSupervisors, setNeedsSupervisors],
+                  ["needsTracking", needsTracking, setNeedsTracking],
+                  ["needsBranding", needsBranding, setNeedsBranding],
                   [
-                    ["needsSupervisors", needsSupervisors, setNeedsSupervisors],
-                    ["needsTracking", needsTracking, setNeedsTracking],
-                    ["needsBranding", needsBranding, setNeedsBranding],
-                    [
-                      "needsAirportReception",
-                      needsAirportReception,
-                      setNeedsAirportReception,
-                    ],
-                  ] as const
-                ).map(([key, value, setter]) => (
-                  <label
-                    key={key}
-                    className="flex cursor-pointer items-center gap-3 rounded-xl bg-ink/[0.04] px-3.5 py-3 text-sm text-ink/80"
-                  >
-                    <input
-                      type="checkbox"
-                      className="size-4 rounded border-ink/20"
-                      checked={value}
-                      onChange={(e) => setter(e.target.checked)}
-                    />
-                    {t(key)}
-                  </label>
-                ))}
-              </div>
-            ) : null}
-            <Field label={t("specialRequirements")}>
+                    "needsAirportReception",
+                    needsAirportReception,
+                    setNeedsAirportReception,
+                  ],
+                ] as const
+              ).map(([key, value, setter]) => (
+                <label
+                  key={key}
+                  className="flex cursor-pointer items-center gap-3 rounded-xl bg-ink/[0.04] px-3.5 py-3 text-sm text-ink/80"
+                >
+                  <input
+                    type="checkbox"
+                    className="size-4 rounded border-ink/20"
+                    checked={value}
+                    onChange={(e) => setter(e.target.checked)}
+                  />
+                  {t(key)}
+                </label>
+              ))}
+            </div>
+            <Field
+              label={t("specialRequirements")}
+              htmlFor="quote-special"
+            >
               <textarea
+                id="quote-special"
                 className={cn(inputClass, "min-h-[5.5rem] resize-y")}
                 value={specialRequirements}
                 onChange={(e) => setSpecialRequirements(e.target.value)}
@@ -608,30 +727,68 @@ export const QuoteRequestForm = ({
                 {departureTime ? ` ${departureTime}` : ""} · {passengers}{" "}
                 {t("passengersShort")} · {busCount}× {t(`bus_${busClass}`)}
               </p>
-              <p className="mt-1">{customerName} · {phone}</p>
+              <p className="mt-1">
+                {customerName} · {phone}
+              </p>
             </div>
-            <label className="flex items-start gap-3 text-sm text-ink/70">
-              <input
-                type="checkbox"
-                className="mt-1 size-4 rounded border-ink/20"
-                checked={consent}
-                onChange={(e) => setConsent(e.target.checked)}
-                required
-              />
-              <span>{t("consent")}</span>
-            </label>
+            <div>
+              <label
+                className={cn(
+                  "flex items-start gap-3 rounded-xl px-3.5 py-3 text-sm text-ink/70 transition",
+                  fieldErrors.consent
+                    ? "bg-red-50 ring-2 ring-red-400/40"
+                    : "bg-ink/[0.03]",
+                )}
+              >
+                <input
+                  id="quote-consent"
+                  type="checkbox"
+                  className="mt-1 size-4 rounded border-ink/20"
+                  checked={consent}
+                  onChange={(e) => {
+                    setConsent(e.target.checked)
+                    clearError("consent")
+                  }}
+                  aria-invalid={Boolean(fieldErrors.consent) || undefined}
+                  aria-describedby={
+                    fieldErrors.consent ? "quote-consent-error" : undefined
+                  }
+                  required
+                />
+                <span>{t("consent")}</span>
+              </label>
+              {fieldErrors.consent ? (
+                <p
+                  id="quote-consent-error"
+                  className="mt-1.5 flex items-start gap-1.5 px-1 text-sm leading-snug text-red-700"
+                  role="alert"
+                >
+                  <span
+                    aria-hidden
+                    className="mt-0.5 inline-flex size-4 shrink-0 items-center justify-center rounded-full bg-red-100 text-[0.65rem] font-bold text-red-600"
+                  >
+                    !
+                  </span>
+                  <span>{fieldErrors.consent}</span>
+                </p>
+              ) : null}
+            </div>
           </div>
         ) : null}
 
-        {stepError ? (
-          <p className="text-sm text-red-600" role="alert">
-            {stepError}
-          </p>
-        ) : null}
-        {status === "error" ? (
-          <p className="text-sm text-red-600" role="alert">
-            {t("error")}
-          </p>
+        {formError || status === "error" ? (
+          <div
+            className="flex items-start gap-2.5 rounded-xl bg-red-50 px-3.5 py-3 text-sm text-red-800 ring-1 ring-red-200/80"
+            role="alert"
+          >
+            <span
+              aria-hidden
+              className="mt-0.5 inline-flex size-5 shrink-0 items-center justify-center rounded-full bg-red-100 text-xs font-bold text-red-600"
+            >
+              !
+            </span>
+            <span>{formError || t("error")}</span>
+          </div>
         ) : null}
 
         <div className="flex flex-wrap items-center gap-2 pt-1">
@@ -641,7 +798,11 @@ export const QuoteRequestForm = ({
             </button>
           ) : null}
           {step !== "consent" ? (
-            <button type="button" className={cn(btnPrimary, "ms-auto")} onClick={goNext}>
+            <button
+              type="button"
+              className={cn(btnPrimary, "ms-auto")}
+              onClick={goNext}
+            >
               {t("next")}
             </button>
           ) : (
