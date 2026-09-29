@@ -6,7 +6,7 @@ export const home: HomeContent = {
     lines: ["ننقلك", "إلى\u00A0الأمام"],
     sub: "رحلات راقية، تُقاد بعناية في كل ميل.",
     cta: "استكشف خدماتنا",
-    brandWords: ["DURRAH", "AL", "MUNAWWARA", "TRANSPORTATION"],
+    brandWords: ["درة", "ال", "منورة", "للنقل"],
     backTop: "درة المنورة — العودة للأعلى",
     chatAria: "محادثة مع درة المنورة",
   },

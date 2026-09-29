@@ -131,7 +131,7 @@ export const SocialFollowButton = ({
         className={cn(
           "font-label inline-flex cursor-pointer items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2",
           isLight
-            ? "border border-white/40 bg-transparent text-white hover:border-white hover:bg-white/10 focus-visible:ring-white"
+            ? "border border-white/40 bg-transparent text-white hover:border-white hover:bg-surface-elevated/10 focus-visible:ring-white"
             : "border border-ink/15 bg-transparent text-ink hover:border-orange hover:text-orange focus-visible:ring-orange",
         )}
       >
@@ -148,7 +148,7 @@ export const SocialFollowButton = ({
           aria-label={t("followUs")}
           className={cn(
             "absolute left-1/2 z-20 mt-3 flex -translate-x-1/2 items-center gap-2 rounded-full border px-2 py-2 shadow-lg backdrop-blur-md",
-            isLight ? "border-white/20 bg-ink/80" : "border-ink/10 bg-white",
+            isLight ? "border-white/20 bg-black/85" : "border-ink/10 bg-surface-elevated",
           )}
         >
           {platforms.map(({ id, href, label: platformLabel, Icon }) => (

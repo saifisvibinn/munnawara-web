@@ -86,7 +86,7 @@ export const NewsTeaserClient = ({
     <section
       ref={sectionRef}
       data-news-teaser
-      className="relative overflow-x-clip bg-white px-4 py-20 sm:px-6 sm:py-28 md:px-10 md:py-36"
+      className="relative overflow-x-clip bg-surface-elevated px-4 py-20 sm:px-6 sm:py-28 md:px-10 md:py-36"
       aria-labelledby="news-teaser-heading"
     >
       <div className="mx-auto max-w-[80rem]">

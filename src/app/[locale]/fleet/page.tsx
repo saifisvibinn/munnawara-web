@@ -97,7 +97,7 @@ const FleetPage = async ({ params }: PageProps) => {
         className="mx-auto mt-16 max-w-[80rem] px-4 pb-8 md:mt-24 md:px-10"
         aria-labelledby="fleet-clients-heading"
       >
-        <div className="rounded-[1.75rem] bg-ink px-6 py-12 text-white sm:px-10 sm:py-14 md:px-14">
+        <div className="rounded-[1.75rem] bg-black px-6 py-12 text-white sm:px-10 sm:py-14 md:px-14">
           <h2
             id="fleet-clients-heading"
             className="font-display text-3xl font-semibold tracking-tight sm:text-4xl"

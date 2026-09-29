@@ -93,7 +93,7 @@ export const BusPassbyClient = ({
   return (
     <section
       ref={rootRef}
-      className="relative h-[140vh] bg-white md:h-[160vh]"
+      className="relative h-[140vh] bg-surface-elevated md:h-[160vh]"
       aria-label={`${title}. ${titleAfter}`}
     >
       <div className="sticky top-0 h-dvh overflow-hidden">

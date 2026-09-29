@@ -87,7 +87,7 @@ export const AboutPreviewClient = ({
     <section
       ref={sectionRef}
       data-about-preview
-      className="relative isolate min-h-[100dvh] overflow-hidden bg-ink text-white"
+      className="relative isolate min-h-[100dvh] overflow-hidden bg-black text-white"
       aria-labelledby="about-preview-heading"
     >
       <div
@@ -121,7 +121,7 @@ export const AboutPreviewClient = ({
         aria-hidden
         style={{
           background:
-            "linear-gradient(to bottom, transparent 0%, rgb(250 247 244 / 0.35) 55%, var(--brand-surface) 100%)",
+            "linear-gradient(to bottom, transparent 0%, color-mix(in srgb, var(--brand-surface) 55%, transparent) 55%, var(--brand-surface) 100%)",
         }}
       />
 
@@ -153,7 +153,7 @@ export const AboutPreviewClient = ({
         <div className="mt-8 flex flex-wrap items-center justify-center gap-3 sm:mt-10 sm:gap-4">
           <Link
             href="/about"
-            className="font-label inline-flex cursor-pointer items-center justify-center rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-ink transition hover:bg-orange hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange"
+            className="font-label inline-flex cursor-pointer items-center justify-center rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-black transition hover:bg-orange hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange"
           >
             {primaryCta}
           </Link>

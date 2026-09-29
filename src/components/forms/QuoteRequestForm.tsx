@@ -39,19 +39,19 @@ type FieldKey =
   | "consent"
 
 const fieldClass =
-  "w-full min-w-0 rounded-xl border-0 bg-ink/[0.04] px-3.5 py-3.5 text-base text-ink outline-none transition placeholder:text-ink/35 focus:bg-white focus:ring-2 focus:ring-orange/25 sm:py-3 sm:text-[0.9375rem]"
+  "w-full min-w-0 rounded-xl border border-border bg-surface-muted px-3.5 py-3.5 text-base text-ink outline-none transition placeholder:text-ink-muted focus:border-orange/40 focus:bg-surface-elevated focus:ring-2 focus:ring-orange/25 sm:py-3 sm:text-[0.9375rem]"
 
 const overlayFieldClass =
-  "w-full min-w-0 rounded-xl border-0 bg-ink/[0.04] px-4 py-3.5 text-base text-ink outline-none transition placeholder:text-ink/35 focus:bg-white focus:ring-2 focus:ring-orange/25 sm:text-[0.9375rem]"
+  "w-full min-w-0 rounded-xl border border-border bg-surface-muted px-4 py-3.5 text-base text-ink outline-none transition placeholder:text-ink-muted focus:border-orange/40 focus:bg-surface-elevated focus:ring-2 focus:ring-orange/25 sm:text-[0.9375rem]"
 
 const fieldErrorRing =
-  "ring-2 ring-red-400/50 focus:ring-red-400/60 bg-red-50/60"
+  "ring-2 ring-red-400/50 focus:ring-red-400/60 bg-red-50/60 dark:bg-red-950/40"
 
 const btnPrimary =
-  "font-label inline-flex items-center justify-center rounded-xl bg-ink px-6 py-3 text-sm font-semibold text-white transition hover:bg-orange focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange focus-visible:ring-offset-2 disabled:opacity-60"
+  "font-label inline-flex items-center justify-center rounded-xl bg-black px-6 py-3 text-sm font-semibold text-white transition hover:bg-orange focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange focus-visible:ring-offset-2 focus-visible:ring-offset-surface-elevated disabled:opacity-60"
 
 const btnGhost =
-  "font-label inline-flex items-center justify-center rounded-xl px-5 py-3 text-sm font-semibold text-ink/60 transition hover:bg-ink/[0.06] hover:text-ink"
+  "font-label inline-flex items-center justify-center rounded-xl px-5 py-3 text-sm font-semibold text-ink-muted transition hover:bg-surface-muted hover:text-ink"
 
 function Field({
   label,
@@ -70,7 +70,7 @@ function Field({
     <div className={cn("block min-w-0", className)}>
       <label
         htmlFor={htmlFor}
-        className="font-label mb-1.5 block text-[0.7rem] font-semibold tracking-[0.14em] text-ink/45 uppercase"
+        className="font-label mb-1.5 block text-[0.7rem] font-semibold tracking-[0.14em] text-ink-muted uppercase"
       >
         {label}
       </label>
@@ -289,7 +289,7 @@ export const QuoteRequestForm = ({
         className={cn(
           isOverlay
             ? "bg-transparent p-0 text-start"
-            : "rounded-2xl bg-white/90 p-4 text-start ring-1 ring-ink/6 backdrop-blur-md sm:p-6 md:p-8",
+            : "rounded-2xl bg-surface-elevated/90 p-4 text-start ring-1 ring-border backdrop-blur-md sm:p-6 md:p-8",
           className,
         )}
         role="status"
@@ -301,7 +301,7 @@ export const QuoteRequestForm = ({
           {t("resultTitle")}
         </h3>
         {leadId ? (
-          <p className="mt-3 rounded-xl bg-ink/[0.04] px-4 py-3 font-mono text-sm text-ink">
+          <p className="mt-3 rounded-xl bg-surface-muted px-4 py-3 font-mono text-sm text-ink">
             {t("resultLeadId", { id: leadId })}
           </p>
         ) : null}
@@ -333,7 +333,7 @@ export const QuoteRequestForm = ({
       className={cn(
         isOverlay
           ? "bg-transparent p-0 text-start shadow-none"
-          : "rounded-2xl bg-white/90 p-4 text-start ring-1 ring-ink/6 backdrop-blur-md sm:p-6 md:p-8",
+          : "rounded-2xl bg-surface-elevated/90 p-4 text-start ring-1 ring-border backdrop-blur-md sm:p-6 md:p-8",
         className,
       )}
     >
@@ -347,7 +347,7 @@ export const QuoteRequestForm = ({
           </span>
           <span>{t(`step_${step}` as "step_type")}</span>
         </div>
-        <div className="mt-2 h-1 overflow-hidden rounded-full bg-ink/[0.08]">
+        <div className="mt-2 h-1 overflow-hidden rounded-full bg-surface-muted">
           <div
             className="h-full rounded-full bg-orange transition-[width] duration-300"
             style={{ width: `${progress}%` }}
@@ -364,7 +364,7 @@ export const QuoteRequestForm = ({
       <form onSubmit={handleSubmit} noValidate className="space-y-5">
         {step === "type" ? (
           <fieldset>
-            <legend className="font-label mb-3 block text-[0.7rem] font-semibold tracking-[0.14em] text-ink/45 uppercase">
+            <legend className="font-label mb-3 block text-[0.7rem] font-semibold tracking-[0.14em] text-ink-muted uppercase">
               {t("tripType")}
             </legend>
             <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
@@ -378,8 +378,8 @@ export const QuoteRequestForm = ({
                     className={cn(
                       "rounded-xl px-4 py-3.5 text-start transition",
                       selected
-                        ? "bg-ink text-white shadow-sm"
-                        : "bg-ink/[0.04] text-ink hover:bg-ink/[0.07]",
+                        ? "bg-black text-white shadow-sm"
+                        : "bg-surface-muted text-ink hover:bg-surface-container",
                     )}
                   >
                     <span className="block text-sm font-semibold">
@@ -687,7 +687,7 @@ export const QuoteRequestForm = ({
               ).map(([key, value, setter]) => (
                 <label
                   key={key}
-                  className="flex cursor-pointer items-center gap-3 rounded-xl bg-ink/[0.04] px-3.5 py-3 text-sm text-ink/80"
+                  className="flex cursor-pointer items-center gap-3 rounded-xl bg-surface-muted px-3.5 py-3 text-sm text-ink/80"
                 >
                   <input
                     type="checkbox"
@@ -716,7 +716,7 @@ export const QuoteRequestForm = ({
 
         {step === "consent" ? (
           <div className="space-y-4">
-            <div className="rounded-xl bg-ink/[0.04] px-4 py-3 text-sm text-ink/70">
+            <div className="rounded-xl bg-surface-muted px-4 py-3 text-sm text-ink/70">
               <p>
                 <span className="font-semibold text-ink">{tripLabel(tripType)}</span>
                 {" · "}
@@ -737,7 +737,7 @@ export const QuoteRequestForm = ({
                   "flex items-start gap-3 rounded-xl px-3.5 py-3 text-sm text-ink/70 transition",
                   fieldErrors.consent
                     ? "bg-red-50 ring-2 ring-red-400/40"
-                    : "bg-ink/[0.03]",
+                    : "bg-surface-muted/60",
                 )}
               >
                 <input

@@ -1,4 +1,5 @@
 // DMTC logo design language — orange primary, blue accent, purple wordmark.
+// Dark tokens: warm espresso hospitality (Stitch "DMTC Dark Hospitality").
 
 export const brand = {
   primary: "#F37021",
@@ -26,6 +27,36 @@ export const brand = {
   surfaceElevated: "#FFFFFF",
   border: "#EADFD5",
   black: "#1A1210",
+  white: "#FFFFFF",
+  whatsapp: "#25D366",
+} as const
+
+export const brandDark = {
+  primary: "#F37021",
+  primaryDeep: "#F9A066",
+  primarySoft: "#C45A12",
+  onPrimary: "#FFFFFF",
+  gold: "#F37021",
+  goldSoft: "#F9A066",
+  goldDeep: "#F9A066",
+  secondary: "#F9A066",
+  secondaryContainer: "#3A2418",
+  wordmark: "#B794D4",
+  wordmarkDeep: "#9B6FC0",
+  orange: "#F37021",
+  orangeSoft: "#F9A066",
+  blue: "#4EC4F5",
+  blueSoft: "#7DD3F5",
+  ink: "#F5EFE8",
+  inkMuted: "#A89F96",
+  silver: "#8A8494",
+  surface: "#140F0C",
+  surfaceMint: "#1C1614",
+  surfaceMuted: "#1C1614",
+  surfaceContainer: "#2A211C",
+  surfaceElevated: "#24201C",
+  border: "#3A322C",
+  black: "#0C0A09",
   white: "#FFFFFF",
   whatsapp: "#25D366",
 } as const

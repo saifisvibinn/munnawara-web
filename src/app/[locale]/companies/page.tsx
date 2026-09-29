@@ -25,9 +25,9 @@ const CompaniesPage = async ({ params }: PageProps) => {
         {companies.map((company) => (
           <article
             key={company.slug}
-            className="overflow-hidden rounded-2xl bg-white ring-1 ring-ink/6"
+            className="overflow-hidden rounded-2xl bg-surface-elevated ring-1 ring-ink/6"
           >
-            <div className="relative flex aspect-[16/11] items-center justify-center bg-white px-8 py-10">
+            <div className="relative flex aspect-[16/11] items-center justify-center bg-surface-elevated px-8 py-10">
               <Image
                 src={company.logo}
                 alt=""

@@ -9,7 +9,7 @@ export const ValueProposition = async () => {
   const home = getHome(locale)
 
   return (
-    <AnimatedSection className="bg-white pt-14 pb-16 sm:pt-20 sm:pb-20 md:pt-28 md:pb-28">
+    <AnimatedSection className="bg-surface-elevated pt-14 pb-16 sm:pt-20 sm:pb-20 md:pt-28 md:pb-28">
       <div className="mx-auto grid max-w-[80rem] items-center gap-10 px-4 md:grid-cols-2 md:gap-20 md:px-10">
         <div className="min-w-0">
           <h2 className="text-3xl font-semibold tracking-tight break-words text-ink sm:text-4xl md:text-5xl">

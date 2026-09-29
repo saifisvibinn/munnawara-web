@@ -21,6 +21,7 @@ import {
 } from "./animations/introTimeline"
 import { ExploreButton } from "./ExploreButton"
 import { HeroVideo, type HeroVideoHandle } from "./HeroVideo"
+import { ThemeToggle } from "@/components/theme/ThemeToggle"
 import { LandingLanguageSwitcher } from "./LandingLanguageSwitcher"
 import { LandingSiteNav } from "./LandingSiteNav"
 import { LogoMark } from "./LogoMark"
@@ -276,6 +277,7 @@ export const DamLanding = ({ copy }: DamLandingProps) => {
   const navBarRef = useRef<HTMLDivElement>(null)
   const navItemsRef = useRef<HTMLElement[]>([])
   const langSwitchRef = useRef<HTMLAnchorElement>(null)
+  const themeToggleRef = useRef<HTMLButtonElement>(null)
   const heroLinesRef = useRef<HTMLElement[]>([])
   const heroVideoRef = useRef<HeroVideoHandle>(null)
   const heroCardRef = useRef<HTMLDivElement>(null)
@@ -305,6 +307,7 @@ export const DamLanding = ({ copy }: DamLandingProps) => {
       !navRef.current ||
       !navBarRef.current ||
       !langSwitchRef.current ||
+      !themeToggleRef.current ||
       !heroVideoRef.current?.container ||
       !heroCardRef.current ||
       !videoStageRef.current ||
@@ -327,6 +330,7 @@ export const DamLanding = ({ copy }: DamLandingProps) => {
       navBar: navBarRef.current,
       navItems: navItemsRef.current,
       langSwitch: langSwitchRef.current,
+      themeToggle: themeToggleRef.current,
       heroLines: heroLinesRef.current,
       videoLayer: heroVideoRef.current.container,
       videoStage: videoStageRef.current,
@@ -394,9 +398,19 @@ export const DamLanding = ({ copy }: DamLandingProps) => {
     let cancelled = false
     let introFinished = false
     const startedAt = performance.now()
-    const petalOrder = ["petal-4", "petal-2", "petal-1", "petal-3", "petal-5"]
-      .map((id) => elements.logo.querySelector<SVGGElement>(`#${id}`))
-      .filter((petal): petal is SVGGElement => petal !== null)
+    const petalFlights = elements.petalFlights.filter(Boolean)
+    // Distance past the viewport edge so each petal is fully off-screen at start.
+    const markSize = Math.min(window.innerWidth * 0.4, window.innerHeight * 0.4)
+    const clearX = window.innerWidth * 0.5 + markSize * 0.75
+    const clearY = window.innerHeight * 0.5 + markSize * 0.75
+    // Matches visiblePetal order in the flight marks: 4, 2, 1, 3, 5
+    const flightOrigins = [
+      { x: -clearX, y: clearY * 0.92, rotation: -16 }, // bottom-left
+      { x: -clearX, y: -clearY * 0.28, rotation: -22 }, // mid-left
+      { x: 0, y: -clearY, rotation: -6 }, // top
+      { x: clearX, y: -clearY * 0.28, rotation: 22 }, // mid-right
+      { x: clearX, y: clearY * 0.92, rotation: 16 }, // bottom-right
+    ]
     const loaderStatus = loaderStatusRef.current
     const loaderLetters = loaderLettersRef.current
     const brandWords = brandWordsRef.current
@@ -436,54 +450,98 @@ export const DamLanding = ({ copy }: DamLandingProps) => {
       setLoaded(true)
     }
 
-    gsap.set(petalOrder, {
-      opacity: 0,
-      scale: 0.12,
-      rotation: (index) => (index % 2 ? -1 : 1) * motion.loader.bloomRotation,
-      transformOrigin: "427.5px 427.5px",
-    })
+    // Nothing on screen yet — full mark CSS-hidden; flights parked off-canvas.
     gsap.set(elements.logo, {
-      rotation: -150,
-      scale: 0.7,
+      opacity: 0,
+      scale: 1,
+      rotation: 0,
+      x: 0,
+      y: 0,
       transformOrigin: "center center",
     })
-    gsap.set(loaderStatus, { opacity: 1, visibility: "visible" })
+    gsap.set(petalFlights, {
+      visibility: "visible",
+      opacity: 0,
+      scale: motion.loader.assembleScaleFrom,
+      x: (index) => flightOrigins[index]?.x ?? 0,
+      y: (index) => flightOrigins[index]?.y ?? 0,
+      rotation: (index) => flightOrigins[index]?.rotation ?? 0,
+      transformOrigin: "center center",
+    })
+    gsap.set(loaderStatus, { opacity: 0, visibility: "hidden" })
     gsap.set(loaderLetters, { opacity: 1, y: 0 })
     gsap.set(elements.brandName, { opacity: 0, visibility: "visible" })
     gsap.set(brandWords, { opacity: 0, y: 18 })
 
-    const bloom = gsap
-      .timeline()
-      .to(elements.logo, {
-        rotation: 0,
+    const handoffAssemble = () => {
+      gsap.set(elements.logo, { opacity: 1 })
+      gsap.set(petalFlights, {
+        opacity: 0,
+        visibility: "hidden",
+        x: 0,
+        y: 0,
         scale: 1,
-        duration: motion.loader.spinDuration,
-        ease: "expo.out",
+        rotation: 0,
+      })
+    }
+
+    let resolveAssemble!: () => void
+    const assembleDone = new Promise<void>((resolve) => {
+      resolveAssemble = resolve
+    })
+
+    const assemble = gsap
+      .timeline({
+        onComplete: () => {
+          handoffAssemble()
+          resolveAssemble()
+        },
       })
       .to(
-        petalOrder,
+        petalFlights,
+        {
+          x: 0,
+          y: 0,
+          rotation: 0,
+          scale: 1,
+          opacity: 1,
+          duration: motion.loader.assembleDuration,
+          stagger: motion.loader.assembleStagger,
+          ease: "power3.out",
+        },
+        motion.loader.assembleDelay,
+      )
+      .to(
+        loaderStatus,
         {
           opacity: 1,
-          scale: 1,
-          rotation: 0,
-          duration: motion.loader.bloomDuration,
-          stagger: motion.loader.bloomStagger,
+          visibility: "visible",
+          duration: 0.35,
           ease: motion.ease.soft,
         },
-        0.12,
+        motion.loader.assembleDelay + motion.loader.assembleDuration * 0.45,
       )
+
+    const assembleSettleAt =
+      motion.loader.assembleDelay +
+      motion.loader.assembleDuration +
+      motion.loader.assembleStagger * Math.max(0, petalFlights.length - 1)
 
     const breathing = gsap.to(elements.logo, {
       scale: motion.loader.breatheScale,
       duration: motion.loader.breatheDuration,
-      delay: motion.loader.spinDuration,
+      delay: assembleSettleAt,
       repeat: -1,
       yoyo: true,
       ease: motion.ease.inOut,
     })
 
     const loadingPulse = gsap
-      .timeline({ repeat: -1, yoyo: true })
+      .timeline({
+        repeat: -1,
+        yoyo: true,
+        delay: motion.loader.assembleDelay + motion.loader.assembleDuration * 0.45,
+      })
       .to(loaderLetters, {
         opacity: 0.28,
         y: -2,
@@ -501,10 +559,14 @@ export const DamLanding = ({ copy }: DamLandingProps) => {
       await new Promise((resolve) => window.setTimeout(resolve, remaining))
       if (cancelled) return
 
-      bloom.kill()
+      await assembleDone
+      if (cancelled) return
+
+      assemble.kill()
       breathing.kill()
       loadingPulse.kill()
-      gsap.set(elements.logo, { scale: 1 })
+      handoffAssemble()
+      gsap.set(elements.logo, { opacity: 1, scale: 1, rotation: 0, x: 0, y: 0 })
       reveal = gsap.timeline({
         onComplete: completeIntroLoad,
       })
@@ -543,8 +605,9 @@ export const DamLanding = ({ copy }: DamLandingProps) => {
 
     return () => {
       cancelled = true
+      resolveAssemble()
       releaseScrollPin()
-      bloom.kill()
+      assemble.kill()
       breathing.kill()
       loadingPulse.kill()
       reveal?.kill()
@@ -851,7 +914,13 @@ export const DamLanding = ({ copy }: DamLandingProps) => {
             </span>
           ))}
         </div>
-        <div className="loader-brand" ref={brandNameRef} aria-hidden="true">
+        <div
+          className={`loader-brand${locale === "ar" ? " loader-brand--ar" : ""}`}
+          ref={brandNameRef}
+          aria-hidden="true"
+          lang={locale}
+          dir={locale === "ar" ? "rtl" : "ltr"}
+        >
           {copy.brandWords.map((word) => (
             <span
               key={word}
@@ -880,6 +949,7 @@ export const DamLanding = ({ copy }: DamLandingProps) => {
           collectNavItem={collectNavItem}
           scrollTo={scrollToTarget}
         />
+        <ThemeToggle ref={themeToggleRef} />
         <LandingLanguageSwitcher ref={langSwitchRef} />
 
         <div className="landing-fab-row">

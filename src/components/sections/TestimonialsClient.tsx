@@ -196,7 +196,7 @@ export const TestimonialsClient = ({
 }
 
 const TestimonialCard = ({ item }: { item: TestimonialItem }) => (
-  <figure className="rounded-2xl bg-white px-6 py-7 sm:px-7 sm:py-8">
+  <figure className="rounded-2xl bg-surface-elevated px-6 py-7 sm:px-7 sm:py-8">
     <blockquote>
       <p className="text-base leading-relaxed text-ink sm:text-lg">
         “{item.quote}”
@@ -228,7 +228,7 @@ const TestimonialCard = ({ item }: { item: TestimonialItem }) => (
 )
 
 const ClientCard = ({ client }: { client: ClientItem }) => (
-  <article className="rounded-2xl bg-white px-6 py-7 sm:px-7 sm:py-8">
+  <article className="rounded-2xl bg-surface-elevated px-6 py-7 sm:px-7 sm:py-8">
     <h3 className="font-display text-xl font-semibold tracking-tight text-ink sm:text-2xl">
       {client.label}
     </h3>

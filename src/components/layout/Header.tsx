@@ -3,6 +3,7 @@
 import { LandingLanguageSwitcher } from "@/components/landing/LandingLanguageSwitcher"
 import { LogoMark } from "@/components/landing/LogoMark"
 import { OPEN_QUOTE_EVENT } from "@/components/layout/FloatingQuoteCta"
+import { ThemeToggle } from "@/components/theme/ThemeToggle"
 import { Link, usePathname } from "@/i18n/navigation"
 import { useLocale, useTranslations } from "next-intl"
 import {
@@ -173,6 +174,7 @@ export const Header = () => {
         </div>
       </nav>
 
+      <ThemeToggle />
       <LandingLanguageSwitcher />
 
       {menuOpen ? (

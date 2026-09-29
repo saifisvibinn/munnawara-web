@@ -20,6 +20,10 @@
     "closeMenu": "إغلاق القائمة",
     "switchLanguage": "English"
   },
+  "theme": {
+    "switchToDark": "التبديل إلى الوضع الداكن",
+    "switchToLight": "التبديل إلى الوضع الفاتح"
+  },
   "common": {
     "learnMore": "اعرف المزيد",
     "requestQuote": "اطلب عرض سعر",
@@ -233,6 +237,17 @@
     "previousBus": "الحافلة السابقة",
     "nextBus": "الحافلة التالية",
     "close": "إغلاق",
-    "scrollHint": "اسحب لتصفح الأسطول، أو استخدم الأسهم. اضغط على الحافلة الأمامية لفتحها."
+    "scrollHint": "اسحب المعرض للتصفح. اضغط على الحافلة لقلبها وعرض التفاصيل، واضغط مرة أخرى للعودة.",
+    "flipHint": "اضغط أو اسحب للقلب",
+    "flipBackHint": "اضغط مرة أخرى للعودة",
+    "detailsLabel": "تفاصيل الحافلة",
+    "detailClimate": "تكييف مريح على مدار العام",
+    "detailSafety": "حزمة أمان تشمل ABS وGPS وكاميرات",
+    "detailConnectivity": "واي فاي ومنافذ USB للشحن",
+    "detailComfort": "مقاعد فاخرة وتشطيب مقصورة أنيق",
+    "showMore": "المزيد",
+    "moreImagesTitle": "المزيد من الصور",
+    "moreImagesSubtitle": "صور مؤقتة حتى اعتماد الأصول النهائية",
+    "imagePlaceholder": "الصورة قريباً"
   }
 }

@@ -35,7 +35,7 @@ export const FleetGallery = ({ categories }: FleetGalleryProps) => {
             "rounded-md px-3 py-2 text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange",
             active === "all"
               ? "bg-orange text-white"
-              : "bg-white text-ink-muted ring-1 ring-ink/10 hover:text-ink",
+              : "bg-surface-elevated text-ink-muted ring-1 ring-ink/10 hover:text-ink",
           )}
           onClick={() => setActive("all")}
         >
@@ -51,7 +51,7 @@ export const FleetGallery = ({ categories }: FleetGalleryProps) => {
               "rounded-md px-3 py-2 text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange",
               active === category.id
                 ? "bg-orange text-white"
-                : "bg-white text-ink-muted ring-1 ring-ink/10 hover:text-ink",
+                : "bg-surface-elevated text-ink-muted ring-1 ring-ink/10 hover:text-ink",
             )}
             onClick={() => setActive(category.id)}
           >

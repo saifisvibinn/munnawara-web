@@ -40,7 +40,7 @@ export const Modal = ({
       ref={dialogRef}
       aria-labelledby={titleId}
       className={cn(
-        "fixed inset-0 z-50 m-auto w-[min(92vw,32rem)] rounded-lg bg-white p-0 text-ink shadow-md open:flex open:flex-col",
+        "fixed inset-0 z-50 m-auto w-[min(92vw,32rem)] rounded-lg bg-surface-elevated p-0 text-ink shadow-md open:flex open:flex-col",
         className,
       )}
       onClose={onClose}

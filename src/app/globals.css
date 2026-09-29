@@ -1,4 +1,8 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
 
 /* Hide native scrollbar sitewide (same as home / dam-landing). */
 html {
@@ -55,6 +59,112 @@ body::-webkit-scrollbar {
     0 1px 3px rgb(26 18 16 / 0.04);
   --brand-shadow-md: 0 12px 32px -8px rgb(243 112 33 / 0.16),
     0 4px 12px -4px rgb(26 18 16 / 0.08);
+  --landing-plate: #eaeae6;
+  --landing-panel: #f7f4ef;
+  --landing-elevated: #ffffff;
+  color-scheme: light;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --radius: 0.625rem;
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+}
+
+/* Warm espresso dark — brand orange retained; surfaces never cold blue-black */
+.dark {
+  --brand-primary: #f37021;
+  --brand-primary-deep: #f9a066;
+  --brand-primary-soft: #c45a12;
+  --brand-on-primary: #ffffff;
+  --brand-gold: #f37021;
+  --brand-gold-soft: #f9a066;
+  --brand-gold-deep: #f9a066;
+  --brand-secondary: #f9a066;
+  --brand-secondary-container: #3a2418;
+  --brand-blue: #4ec4f5;
+  --brand-blue-soft: #7dd3f5;
+  --brand-wordmark: #b794d4;
+  --brand-wordmark-deep: #9b6fc0;
+  --brand-orange: #f37021;
+  --brand-orange-soft: #f9a066;
+  --brand-ink: #f5efe8;
+  --brand-ink-muted: #a89f96;
+  --brand-silver: #8a8494;
+  --brand-surface: #140f0c;
+  --brand-surface-mint: #1c1614;
+  --brand-surface-muted: #1c1614;
+  --brand-surface-container: #2a211c;
+  --brand-surface-elevated: #24201c;
+  --brand-border: #3a322c;
+  --brand-black: #0c0a09;
+  --brand-white: #ffffff;
+  --brand-whatsapp: #25d366;
+  --brand-shadow-sm: 0 2px 12px -2px rgb(243 112 33 / 0.18),
+    0 1px 3px rgb(0 0 0 / 0.35);
+  --brand-shadow-md: 0 12px 32px -8px rgb(243 112 33 / 0.22),
+    0 4px 12px -4px rgb(0 0 0 / 0.45);
+  --landing-plate: #161210;
+  --landing-panel: #1c1614;
+  --landing-elevated: #24201c;
+  color-scheme: dark;
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.556 0 0);
 }
 
 @theme inline {
@@ -99,6 +209,38 @@ body::-webkit-scrollbar {
   --radius-xl: var(--brand-radius-xl);
   --shadow-sm: var(--brand-shadow-sm);
   --shadow-md: var(--brand-shadow-md);
+  --font-heading: var(--font-sans);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
 }
 
 /* Native CSS smooth scroll fights Lenis; Lenis owns wheel inertia.
@@ -144,7 +286,7 @@ html[lang="en"] .font-numeral {
 }
 
 body {
-  background: #ffffff;
+  background: var(--brand-surface-elevated);
   color: var(--brand-ink);
   min-height: 100dvh;
   letter-spacing: -0.01em;
@@ -210,11 +352,23 @@ body {
   }
 }
 
-/* Homepage: match locked-off studio video plate */
+/* Homepage shell follows theme; hero (.dam-landing) pins its own light plate */
 html:has(.dam-landing) {
-  background: #eaeae6;
+  background: var(--brand-surface);
 }
 
 html:has(.dam-landing) body {
-  background: #eaeae6;
+  background: var(--brand-surface);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
 }
