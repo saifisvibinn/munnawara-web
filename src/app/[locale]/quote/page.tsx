@@ -23,7 +23,7 @@ const QuotePage = async ({ params }: PageProps) => {
         subtitle={home.quoteBody}
         align="start"
       />
-      <div className="mx-auto mt-10 w-full max-w-2xl px-4 sm:mt-14 sm:px-6">
+      <div className="qpage-in mx-auto mt-10 w-full max-w-2xl px-4 sm:mt-14 sm:px-6">
         <QuoteWizard />
       </div>
     </AnimatedSection>

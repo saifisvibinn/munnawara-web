@@ -3,7 +3,8 @@
 import TearTicket from "@/components/ui/TearTicket"
 import { Link, useRouter } from "@/i18n/navigation"
 import { useLocale } from "next-intl"
-import { useState, useSyncExternalStore } from "react"
+import { skipNextRouteTransition } from "@/components/landing/LogoRouteTransition"
+import { useEffect, useRef, useState, useSyncExternalStore } from "react"
 
 const COPY = {
   en: {
@@ -54,6 +55,15 @@ export function QuoteTicket() {
   const c = COPY[isAr ? "ar" : "en"]
   const router = useRouter()
   const [opening, setOpening] = useState(false)
+  const timer = useRef<number | null>(null)
+
+  // Warm the quote page so the hand-off is instant once the stub is gone.
+  useEffect(() => {
+    router.prefetch("/quote")
+    return () => {
+      if (timer.current !== null) window.clearTimeout(timer.current)
+    }
+  }, [router])
   const narrow = useSyncExternalStore(
     subscribe,
     () => window.matchMedia(query).matches,
@@ -65,13 +75,25 @@ export function QuoteTicket() {
     ? { width: 330, height: 430, stubSize: 120 }
     : { width: 540, height: 270, stubSize: 150 }
 
+  // Ticket glides up and fades (CSS), then we navigate without the logo bloom.
   const handleTear = () => {
     setOpening(true)
-    router.push("/quote")
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    timer.current = window.setTimeout(
+      () => {
+        skipNextRouteTransition()
+        router.push("/quote")
+      },
+      reduced ? 0 : 420,
+    )
   }
 
   return (
-    <div className="flex w-full flex-col items-center gap-5" dir={isAr ? "rtl" : "ltr"}>
+    <div
+      className="qticket flex w-full flex-col items-center gap-5"
+      data-leaving={opening ? "" : undefined}
+      dir={isAr ? "rtl" : "ltr"}
+    >
       <TearTicket
         key={vertical ? "v" : "h"}
         orientation={vertical ? "vertical" : "horizontal"}
@@ -152,6 +174,8 @@ export function QuoteTicket() {
         )}
         <Link
           href="/quote"
+          data-no-route-transition
+          onClick={() => skipNextRouteTransition()}
           className="mt-3 inline-block text-xs font-semibold text-orange underline-offset-4 hover:underline"
         >
           {c.skip}

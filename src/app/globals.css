@@ -416,3 +416,9 @@ html:has(.dam-landing) body {
   background: var(--brand-orange) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m4.5 10.5 3.5 3.5 7.5-8'/%3E%3C/svg%3E") center / 80% no-repeat;
   border-color: var(--brand-orange);
 }
+/* Quote ticket hand-off: exit on home, entrance on /quote */
+.qticket { transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.42s cubic-bezier(0.4, 0, 0.2, 1); will-change: opacity, transform; }
+.qticket[data-leaving] { opacity: 0; transform: translateY(-26px) scale(0.965); pointer-events: none; }
+.qpage-in { animation: qpage-in 0.55s cubic-bezier(0.16, 1, 0.3, 1) 0.08s both; }
+@keyframes qpage-in { from { opacity: 0; transform: translateY(22px) scale(0.985); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .qticket { transition: none; } .qpage-in { animation: none; } }

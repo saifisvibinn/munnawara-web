@@ -29,6 +29,22 @@ const SAFETY_MS = 12000
 const PAGE_READY_MS = 6500
 const TARGET_WAIT_MS = 1400
 
+/**
+ * One-shot opt-out: call right before a programmatic navigation that brings its
+ * own animation (e.g. the quote ticket tear) so the logo bloom is skipped.
+ * Expires on its own if the navigation never happens.
+ */
+let skipNext = false
+let skipTimer: number | null = null
+export const skipNextRouteTransition = () => {
+  skipNext = true
+  if (skipTimer !== null) window.clearTimeout(skipTimer)
+  skipTimer = window.setTimeout(() => {
+    skipNext = false
+    skipTimer = null
+  }, 4000)
+}
+
 const markSeen = () => {
   try {
     sessionStorage.setItem(LOGO_INTRO_SEEN_KEY, "1")
@@ -181,6 +197,7 @@ const isInternalNavClick = (event: MouseEvent, currentPath: string) => {
   const anchor = (event.target as Element | null)?.closest?.("a[href]")
   if (!(anchor instanceof HTMLAnchorElement)) return false
   if (anchor.hasAttribute("download") || anchor.target === "_blank") return false
+  if (anchor.hasAttribute("data-no-route-transition")) return false
 
   const href = anchor.getAttribute("href")
   if (!href || href.startsWith("#") || href.startsWith("mailto:") || href.startsWith("tel:")) {
@@ -561,6 +578,14 @@ export const LogoRouteTransition = () => {
   useLayoutEffect(() => {
     if (isFirstPath.current) {
       isFirstPath.current = false
+      return
+    }
+
+    if (skipNext) {
+      skipNext = false
+      if (skipTimer !== null) window.clearTimeout(skipTimer)
+      skipTimer = null
+      markSeen()
       return
     }
 
