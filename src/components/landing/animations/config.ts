@@ -1,11 +1,13 @@
 export const animationConfig = {
   loader: {
     /** Short brand beat only — real wait is asset readiness, not padding. */
-    minimumMs: 900,
-    bloomDuration: 0.65,
-    bloomStagger: 0.09,
-    bloomRotation: 18,
-    spinDuration: 0.95,
+    minimumMs: 2400,
+    /** Empty dark beat before petals enter from off-screen. */
+    assembleDelay: 0.4,
+    /** Petals fly in from outside the viewport and lock in the center. */
+    assembleDuration: 1.7,
+    assembleStagger: 0.14,
+    assembleScaleFrom: 0.94,
     loadingPulseDuration: 0.5,
     companyRevealDuration: 0.45,
     companyWordStagger: 0.055,

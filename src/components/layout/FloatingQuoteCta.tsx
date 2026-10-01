@@ -61,6 +61,18 @@ const CloseIcon = () => (
 const getLenis = () =>
   (window as Window & { __lenis?: Lenis }).__lenis
 
+const getCssVar = (name: string, fallback: string) => {
+  if (typeof window === "undefined") return fallback
+  const value = getComputedStyle(document.documentElement)
+    .getPropertyValue(name)
+    .trim()
+  return value || fallback
+}
+
+const getSurfaceElevated = () => getCssVar("--brand-surface-elevated", "#ffffff")
+const getSurfaceMuted = () => getCssVar("--brand-surface-muted", "rgba(244,244,245,0.8)")
+const getBorderSubtle = () => getCssVar("--brand-border", "rgba(26,18,16,0.12)")
+
 export const FloatingQuoteCta = () => {
   const t = useTranslations("common")
   const tQuote = useTranslations("quote")
@@ -273,6 +285,9 @@ export const FloatingQuoteCta = () => {
     appearTlRef.current?.progress(1)
     gsap.set(ctaRef.current, { opacity: 1, scale: 1, y: 0 })
 
+    const elevated = getSurfaceElevated()
+    const border = getBorderSubtle()
+
     if (reduced) {
       gsap.set(panel, { display: "flex", opacity: 1 })
       gsap.set(circle, { display: "none" })
@@ -283,7 +298,7 @@ export const FloatingQuoteCta = () => {
         opacity: 1,
         scale: 1,
         y: 0,
-        backgroundColor: "rgb(255,255,255)",
+        backgroundColor: elevated,
       })
       return
     }
@@ -302,8 +317,8 @@ export const FloatingQuoteCta = () => {
     tl.to(
       ctaRef.current,
       {
-        backgroundColor: "rgb(255,255,255)",
-        borderColor: "rgba(26,18,16,0.12)",
+        backgroundColor: elevated,
+        borderColor: border,
         paddingLeft: 0,
         paddingRight: 0,
         duration: 0.25,
@@ -412,7 +427,7 @@ export const FloatingQuoteCta = () => {
     tl.to(
       cta,
       {
-        backgroundColor: "rgba(244,244,245,0.8)",
+        backgroundColor: getSurfaceMuted(),
         duration: 0.25,
       },
       0.35,
@@ -472,7 +487,7 @@ export const FloatingQuoteCta = () => {
       <div
         ref={circleRef}
         aria-hidden
-        className="pointer-events-none fixed z-[48] hidden bg-white"
+        className="pointer-events-none fixed z-[48] hidden bg-surface-elevated"
       />
 
       <div
@@ -480,7 +495,7 @@ export const FloatingQuoteCta = () => {
         role="dialog"
         aria-modal="true"
         aria-labelledby="quote-overlay-heading"
-        className="fixed inset-0 z-[49] hidden overflow-y-auto bg-white"
+        className="fixed inset-0 z-[49] hidden overflow-y-auto bg-surface-elevated"
         style={{ opacity: 0 }}
       >
         <div className="mx-auto flex min-h-full w-full max-w-[52rem] flex-col justify-center px-5 py-24 sm:px-8 md:px-10 md:py-28">
@@ -513,9 +528,9 @@ export const FloatingQuoteCta = () => {
           className={cn(
             "font-label pointer-events-auto inline-flex h-14 origin-bottom cursor-pointer items-center overflow-hidden rounded-full border border-ink/10 text-sm font-medium text-ink transition-[border-color,background-color,box-shadow,padding] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange",
             open
-              ? "bg-white p-0 shadow-sm hover:border-ink/20"
+              ? "bg-surface-elevated p-0 shadow-sm hover:border-ink/20"
               : cn(
-                  "bg-zinc-100/80 shadow-md backdrop-blur-md hover:border-orange/40 hover:bg-white",
+                  "bg-surface-muted/80 shadow-md backdrop-blur-md hover:border-orange/40 hover:bg-surface-elevated",
                   isRtl ? "flex-row-reverse pe-0.5 ps-1" : "ps-0.5 pe-1",
                 ),
             !chromeVisible && "pointer-events-none",
@@ -539,7 +554,7 @@ export const FloatingQuoteCta = () => {
           <span
             className={cn(
               "relative inline-flex size-[3.35rem] shrink-0 items-center justify-center rounded-full",
-              open ? "bg-transparent text-ink" : "bg-ink text-white",
+              open ? "bg-transparent text-ink" : "bg-black text-white",
             )}
           >
             <span

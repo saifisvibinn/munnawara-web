@@ -3,6 +3,7 @@ import { FloatingActions } from "@/components/layout/FloatingActions"
 import { FloatingQuoteCta } from "@/components/layout/FloatingQuoteCta"
 import { Header } from "@/components/layout/Header"
 import { SmoothScrollProvider } from "@/components/motion/SmoothScrollProvider"
+import { ThemeProvider } from "@/components/theme/ThemeProvider"
 import { routing } from "@/i18n/routing"
 import { NextIntlClientProvider, hasLocale } from "next-intl"
 import { getMessages, setRequestLocale } from "next-intl/server"
@@ -30,6 +31,8 @@ type LocaleLayoutProps = {
 export const generateStaticParams = () =>
   routing.locales.map((locale) => ({ locale }))
 
+const THEME_BOOT_SCRIPT = `(function(){try{var d=document.documentElement;var t=localStorage.getItem("theme");if(t==="dark"||t==="light"){d.classList.add(t);d.style.colorScheme=t}else if(window.matchMedia("(prefers-color-scheme: dark)").matches){d.classList.add("dark");d.style.colorScheme="dark"}else{d.classList.add("light");d.style.colorScheme="light"}}catch(e){}})();`
+
 const LocaleLayout = async ({ children, params }: LocaleLayoutProps) => {
   const { locale } = await params
   if (!hasLocale(routing.locales, locale)) {
@@ -43,21 +46,24 @@ const LocaleLayout = async ({ children, params }: LocaleLayoutProps) => {
   return (
     <html lang={locale} dir={dir} suppressHydrationWarning>
       <body className="antialiased" suppressHydrationWarning>
+        <script dangerouslySetInnerHTML={{ __html: THEME_BOOT_SCRIPT }} />
         <script
           dangerouslySetInnerHTML={{
             __html: `(function(){try{var p=location.pathname.replace(/\\/+$/,"")||"/";if(p==="/"||p==="/en"||p==="/ar"){if("scrollRestoration"in history)history.scrollRestoration="manual";window.scrollTo(0,0);document.documentElement.scrollTop=0;document.body.scrollTop=0;}}catch(e){}})();`,
           }}
         />
-        <NextIntlClientProvider messages={messages}>
-          <SmoothScrollProvider>
-            <Header />
-            <main id="main" className="min-h-[60dvh]">{children}</main>
-            <Footer />
-            <FloatingActions />
-            <FloatingQuoteCta />
-            <LogoRouteTransition />
-          </SmoothScrollProvider>
-        </NextIntlClientProvider>
+        <ThemeProvider>
+          <NextIntlClientProvider messages={messages}>
+            <SmoothScrollProvider>
+              <Header />
+              <main id="main" className="min-h-[60dvh]">{children}</main>
+              <Footer />
+              <FloatingActions />
+              <FloatingQuoteCta />
+              <LogoRouteTransition />
+            </SmoothScrollProvider>
+          </NextIntlClientProvider>
+        </ThemeProvider>
       </body>
     </html>
   )

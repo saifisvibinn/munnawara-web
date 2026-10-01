@@ -229,12 +229,12 @@ const COPY = {
 }
 
 const fieldClass =
-  "w-full min-w-0 rounded-xl border-0 bg-ink/[0.04] px-4 py-3.5 text-base text-ink outline-none transition placeholder:text-ink/35 focus:bg-white focus:ring-2 focus:ring-orange/25 sm:text-[0.9375rem]"
-const fieldErrorRing = "ring-2 ring-red-400/50 focus:ring-red-400/60 bg-red-50/60"
+  "w-full min-w-0 rounded-xl border border-border bg-surface-muted px-4 py-3.5 text-base text-ink outline-none transition placeholder:text-ink-muted focus:border-orange/40 focus:bg-surface-elevated focus:ring-2 focus:ring-orange/25 sm:text-[0.9375rem]"
+const fieldErrorRing = "ring-2 ring-red-400/50 focus:ring-red-400/60 bg-red-50/60 dark:bg-red-950/40"
 const btnPrimary =
-  "font-label inline-flex items-center justify-center rounded-xl bg-ink px-6 py-3 text-sm font-semibold text-white transition hover:bg-orange focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange focus-visible:ring-offset-2 disabled:opacity-60"
+  "font-label inline-flex items-center justify-center rounded-xl bg-black px-6 py-3 text-sm font-semibold text-white transition hover:bg-orange focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange focus-visible:ring-offset-2 disabled:opacity-60"
 const btnGhost =
-  "font-label inline-flex items-center justify-center rounded-xl px-5 py-3 text-sm font-semibold text-ink/60 transition hover:bg-ink/[0.06] hover:text-ink"
+  "font-label inline-flex items-center justify-center rounded-xl px-5 py-3 text-sm font-semibold text-ink-muted transition hover:bg-surface-muted hover:text-ink"
 
 function Field({
   label,
@@ -253,7 +253,7 @@ function Field({
     <div className={cn("block min-w-0", className)}>
       <label
         htmlFor={htmlFor}
-        className="font-label mb-1.5 block text-[0.7rem] font-semibold tracking-[0.14em] text-ink/45 uppercase"
+        className="font-label mb-1.5 block text-[0.7rem] font-semibold tracking-[0.14em] text-ink-muted uppercase"
       >
         {label}
       </label>
@@ -300,8 +300,8 @@ function Choices({
             className={cn(
               "rounded-xl px-4 py-3.5 text-start transition",
               selected
-                ? "bg-ink text-white shadow-sm"
-                : "bg-ink/[0.04] text-ink hover:bg-ink/[0.07]",
+                ? "bg-black text-white shadow-sm"
+                : "bg-surface-muted text-ink hover:bg-surface-container",
             )}
           >
             <span className="block text-sm font-semibold">{pick(o.label, locale)}</span>
@@ -660,7 +660,7 @@ export const QuoteWizard = ({
       className={cn(
         isOverlay
           ? "bg-transparent p-0 text-start"
-          : "rounded-2xl bg-white/90 p-4 text-start ring-1 ring-ink/6 backdrop-blur-md sm:p-6 md:p-8",
+          : "rounded-2xl bg-surface-elevated/90 p-4 text-start ring-1 ring-border backdrop-blur-md sm:p-6 md:p-8",
         className,
       )}
     >
@@ -734,7 +734,7 @@ export const QuoteWizard = ({
           {tx(COPY.done.title)}
         </h3>
         {result.leadId ? (
-          <p className="mt-3 rounded-xl bg-ink/[0.04] px-4 py-3 text-sm text-ink">
+          <p className="mt-3 rounded-xl bg-surface-muted px-4 py-3 text-sm text-ink">
             {tx(COPY.done.number)}:{" "}
             <span className="font-mono font-semibold" dir="ltr">
               {result.leadId}
@@ -744,10 +744,10 @@ export const QuoteWizard = ({
         <p className="mt-3 text-sm leading-relaxed text-ink/65">
           {tx(COPY.done.eta(result.sla))}
         </p>
-        <dl className="mt-4 space-y-1.5 rounded-xl bg-ink/[0.03] px-4 py-3 text-sm">
+        <dl className="mt-4 space-y-1.5 rounded-xl bg-surface-muted/60 px-4 py-3 text-sm">
           {summaryRows().map((row) => (
             <div key={row.id + row.value} className="flex flex-wrap gap-x-2">
-              <dt className="text-ink/45">{tx(row.label)}:</dt>
+              <dt className="text-ink-muted">{tx(row.label)}:</dt>
               <dd className="text-ink/80">{row.value}</dd>
             </div>
           ))}
@@ -850,7 +850,7 @@ export const QuoteWizard = ({
             </div>
             {state.dawraLength === "long" ? (
               <fieldset>
-                <legend className="font-label mb-2 block text-[0.7rem] font-semibold tracking-[0.14em] text-ink/45 uppercase">
+                <legend className="font-label mb-2 block text-[0.7rem] font-semibold tracking-[0.14em] text-ink-muted uppercase">
                   {tx(COPY.mazaratTitle)}
                 </legend>
                 <div className="flex flex-wrap gap-2">
@@ -871,8 +871,8 @@ export const QuoteWizard = ({
                         className={cn(
                           "rounded-full px-3.5 py-2 text-sm transition",
                           on
-                            ? "bg-ink text-white"
-                            : "bg-ink/[0.04] text-ink hover:bg-ink/[0.07]",
+                            ? "bg-black text-white"
+                            : "bg-surface-muted text-ink hover:bg-surface-container",
                         )}
                       >
                         {tx(o.label)}
@@ -1083,7 +1083,7 @@ export const QuoteWizard = ({
               {extraOptions.map((o) => (
                 <label
                   key={o.id}
-                  className="flex cursor-pointer items-center gap-3 rounded-xl bg-ink/[0.04] px-3.5 py-3 text-sm text-ink/80"
+                  className="flex cursor-pointer items-center gap-3 rounded-xl bg-surface-muted px-3.5 py-3 text-sm text-ink/80"
                 >
                   <input
                     type="checkbox"
@@ -1167,14 +1167,14 @@ export const QuoteWizard = ({
       case "review":
         return (
           <div className="space-y-4">
-            <dl className="divide-y divide-ink/[0.06] rounded-xl bg-ink/[0.03] text-sm">
+            <dl className="divide-y divide-border rounded-xl bg-surface-muted/60 text-sm">
               {summaryRows().map((row) => (
                 <div
                   key={row.id + row.value}
                   className="flex items-start justify-between gap-3 px-4 py-2.5"
                 >
                   <div className="min-w-0">
-                    <dt className="text-xs text-ink/45">{tx(row.label)}</dt>
+                    <dt className="text-xs text-ink-muted">{tx(row.label)}</dt>
                     <dd className="text-ink/85">{row.value}</dd>
                   </div>
                   <button
@@ -1190,7 +1190,7 @@ export const QuoteWizard = ({
             <label
               className={cn(
                 "flex items-start gap-3 rounded-xl px-3.5 py-3 text-sm text-ink/70",
-                errors.consent ? "bg-red-50 ring-2 ring-red-400/40" : "bg-ink/[0.03]",
+                errors.consent ? "bg-red-50 ring-2 ring-red-400/40" : "bg-surface-muted/60",
               )}
             >
               <input
@@ -1233,12 +1233,12 @@ export const QuoteWizard = ({
   return shell(
     <>
       <div className="mb-5">
-        <div className="flex items-center justify-between gap-3 text-xs text-ink/45">
+        <div className="flex items-center justify-between gap-3 text-xs text-ink-muted">
           <span className="font-label tracking-[0.12em] uppercase">
             {tx(COPY.stepOf(stepIndexSafe + 1, steps.length))}
           </span>
         </div>
-        <div className="mt-2 h-1 overflow-hidden rounded-full bg-ink/[0.08]">
+        <div className="mt-2 h-1 overflow-hidden rounded-full bg-surface-muted">
           <div
             className="h-full rounded-full bg-orange transition-[width] duration-300"
             style={{ width: `${progress}%` }}
@@ -1258,7 +1258,7 @@ export const QuoteWizard = ({
           </div>
 
           {showRoute ? (
-            <div className="mx-auto w-full max-w-md rounded-xl bg-ink/[0.03] p-3 text-ink/70">
+            <div className="mx-auto w-full max-w-md rounded-xl bg-surface-muted/60 p-3 text-ink/70">
               <RouteVisual route={visualRoute} locale={locale} className="h-auto w-full" />
             </div>
           ) : null}

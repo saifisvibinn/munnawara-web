@@ -80,12 +80,12 @@ export const CTABandClient = ({
           className="object-cover object-center"
           sizes="100vw"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-white/55 via-white/70 to-white/90" />
+        <div className="absolute inset-0 bg-gradient-to-b from-white/55 via-white/70 to-white/90 dark:from-black/72 dark:via-black/82 dark:to-black/92" />
       </div>
 
       <div className="mx-auto max-w-3xl">
         <div data-cta-copy>
-          <p className="font-label text-sm font-medium tracking-wide text-ink/50 sm:text-base">
+          <p className="font-label text-sm font-medium tracking-wide text-ink-muted sm:text-base">
             {eyebrow}
           </p>
           <h2
@@ -94,7 +94,7 @@ export const CTABandClient = ({
           >
             {title}
           </h2>
-          <p className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-ink/55 sm:text-lg">
+          <p className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-ink-muted sm:text-lg">
             {subtitle}
           </p>
         </div>
@@ -103,7 +103,7 @@ export const CTABandClient = ({
           <button
             type="button"
             onClick={handleOpenQuote}
-            className="font-label inline-flex cursor-pointer items-center justify-center rounded-full bg-ink px-8 py-3.5 text-sm font-semibold text-white transition hover:bg-orange focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange"
+            className="font-label inline-flex cursor-pointer items-center justify-center rounded-full bg-black px-8 py-3.5 text-sm font-semibold text-white transition hover:bg-orange focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange dark:bg-white dark:text-black dark:hover:bg-orange dark:hover:text-white"
           >
             {ctaLabel}
           </button>

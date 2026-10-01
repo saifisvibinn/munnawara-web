@@ -14,6 +14,7 @@ export type IntroElements = {
   navBar: HTMLElement
   navItems: HTMLElement[]
   langSwitch: HTMLElement
+  themeToggle: HTMLElement
   heroLines: HTMLElement[]
   videoLayer: HTMLElement
   videoStage: HTMLElement
@@ -51,7 +52,10 @@ export function setIntroFinalState(
   gsap.set(elements.nav, { visibility: 'visible' })
   gsap.set(elements.navBar, { scaleX: 1, opacity: 1 })
   gsap.set(elements.navItems, { x: 0, opacity: 1 })
-  gsap.set(elements.langSwitch, { opacity: 1, visibility: 'visible', y: 0 })
+  gsap.set(
+    [elements.langSwitch, elements.themeToggle],
+    { opacity: 1, visibility: 'visible', y: 0 },
+  )
   gsap.set(elements.heroLines, { yPercent: 0, opacity: 1 })
   gsap.set(elements.videoLayer, { opacity: 1 })
   gsap.set(elements.videoStage, {
@@ -197,7 +201,10 @@ export function createIntroTimeline(elements: IntroElements) {
   gsap.set(elements.nav, { visibility: 'visible' })
   gsap.set(elements.navBar, { scaleX: 0, opacity: 0, transformOrigin: navOrigin })
   gsap.set(elements.navItems, { x: navItemFrom, opacity: 0 })
-  gsap.set(elements.langSwitch, { opacity: 0, visibility: 'visible', y: -10 })
+  gsap.set(
+    [elements.langSwitch, elements.themeToggle],
+    { opacity: 0, visibility: 'visible', y: -10 },
+  )
   gsap.set(elements.heroLines, { yPercent: 115, opacity: 0 })
   gsap.set(elements.videoLayer, { opacity: 0 })
   gsap.set(elements.videoStage, {
@@ -351,12 +358,13 @@ export function createIntroTimeline(elements: IntroElements) {
       motion.intro.navStart + 0.08,
     )
     .to(
-      elements.langSwitch,
+      [elements.langSwitch, elements.themeToggle],
       {
         opacity: 1,
         y: 0,
         duration: motion.intro.navDuration,
         ease: motion.ease.soft,
+        stagger: 0.04,
       },
       motion.intro.navStart + 0.12,
     )

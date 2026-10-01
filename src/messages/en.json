@@ -20,6 +20,10 @@
     "closeMenu": "Close menu",
     "switchLanguage": "العربية"
   },
+  "theme": {
+    "switchToDark": "Switch to dark mode",
+    "switchToLight": "Switch to light mode"
+  },
   "common": {
     "learnMore": "Learn more",
     "requestQuote": "Request a quote",
@@ -231,6 +235,17 @@
     "previousBus": "Previous bus",
     "nextBus": "Next bus",
     "close": "Close",
-    "scrollHint": "Drag to browse the fleet, or use the arrows. Click the front bus to open it."
+    "scrollHint": "Drag the carousel to browse. Click a bus to flip it for details, click again to flip back.",
+    "flipHint": "Click or drag to flip",
+    "flipBackHint": "Click again to flip back",
+    "detailsLabel": "Bus details",
+    "detailClimate": "Climate control for year-round comfort",
+    "detailSafety": "Safety suite with ABS, GPS, and CCTV",
+    "detailConnectivity": "Wi‑Fi and USB charging on board",
+    "detailComfort": "Premium seating with refined cabin finish",
+    "showMore": "Show more",
+    "moreImagesTitle": "More photos",
+    "moreImagesSubtitle": "Gallery placeholders until final assets are ready",
+    "imagePlaceholder": "Photo coming soon"
   }
 }

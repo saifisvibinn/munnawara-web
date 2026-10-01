@@ -107,7 +107,7 @@ export const HowItWorksClient = ({
       ref={rootRef}
       id="how-it-works"
       data-how-it-works
-      className="relative overflow-x-clip bg-white px-4 py-16 sm:px-6 sm:py-20 md:px-10 md:py-24 lg:py-28"
+      className="relative overflow-x-clip bg-surface-elevated px-4 py-16 sm:px-6 sm:py-20 md:px-10 md:py-24 lg:py-28"
       aria-labelledby="how-it-works-heading"
     >
       <div className="mx-auto max-w-[80rem]">
@@ -178,14 +178,14 @@ export const HowItWorksClient = ({
                     step.ctaHref.startsWith("#") ? (
                       <a
                         href={step.ctaHref}
-                        className="font-label mt-7 inline-flex items-center justify-center rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-orange focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange sm:mt-8"
+                        className="font-label mt-7 inline-flex items-center justify-center rounded-full bg-black px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-orange focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange sm:mt-8"
                       >
                         {step.ctaLabel}
                       </a>
                     ) : (
                       <Link
                         href={step.ctaHref}
-                        className="font-label mt-7 inline-flex items-center justify-center rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-orange focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange sm:mt-8"
+                        className="font-label mt-7 inline-flex items-center justify-center rounded-full bg-black px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-orange focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange sm:mt-8"
                       >
                         {step.ctaLabel}
                       </Link>

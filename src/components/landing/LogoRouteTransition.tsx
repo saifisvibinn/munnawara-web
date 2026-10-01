@@ -414,18 +414,24 @@ export const LogoRouteTransition = () => {
       document.querySelectorAll<HTMLElement>(".site-nav__links a, .site-nav__quote"),
     )
     const langSwitch = document.querySelector<HTMLElement>(".lang-switch")
+    const themeToggle = document.querySelector<HTMLElement>(".theme-toggle")
     const siteLogo = document.querySelector<HTMLElement>("[data-site-logo]")
     const siteHeader = document.querySelector<HTMLElement>("[data-site-header]")
     const rtl = document.documentElement.dir === "rtl"
     const navOrigin = rtl ? "right center" : "left center"
     const settledLogo = isHome ? cornerLogo : siteLogo
+    const chromeControls = [langSwitch, themeToggle].filter(
+      (el): el is HTMLElement => Boolean(el),
+    )
 
     if (isHome) {
       if (cornerLogo) gsap.set(cornerLogo, { opacity: 0, visibility: "visible" })
       if (nav) gsap.set(nav, { visibility: "visible" })
       if (navBar) gsap.set(navBar, { scaleX: 0, opacity: 0, transformOrigin: navOrigin })
       if (navItems.length) gsap.set(navItems, { x: rtl ? 10 : -10, opacity: 0 })
-      if (langSwitch) gsap.set(langSwitch, { opacity: 0, visibility: "visible", y: -8 })
+      if (chromeControls.length) {
+        gsap.set(chromeControls, { opacity: 0, visibility: "visible", y: -8 })
+      }
     } else {
       if (siteHeader) {
         gsap.set(siteHeader, { opacity: 1, visibility: "visible", pointerEvents: "auto" })
@@ -436,8 +442,8 @@ export const LogoRouteTransition = () => {
         gsap.set(navBar, { scaleX: 1, opacity: 1, clearProps: "transform" })
       }
       if (navItems.length) gsap.set(navItems, { x: 0, opacity: 1 })
-      if (langSwitch) {
-        gsap.set(langSwitch, { opacity: 1, visibility: "visible", y: 0 })
+      if (chromeControls.length) {
+        gsap.set(chromeControls, { opacity: 1, visibility: "visible", y: 0 })
       }
     }
 
@@ -517,8 +523,14 @@ export const LogoRouteTransition = () => {
         }
         tweenIf(
           timeline,
-          langSwitch,
-          { opacity: 1, y: 0, duration: TIMING.nav, ease: "power3.out" },
+          chromeControls.length ? chromeControls : null,
+          {
+            opacity: 1,
+            y: 0,
+            duration: TIMING.nav,
+            ease: "power3.out",
+            stagger: 0.04,
+          },
           "<0.08",
         )
       }

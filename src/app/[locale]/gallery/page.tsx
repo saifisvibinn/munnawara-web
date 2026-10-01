@@ -22,7 +22,7 @@ const GalleryPage = async ({ params }: PageProps) => {
         {fleet.map((item) => (
           <div
             key={item.id}
-            className="relative aspect-[4/3] overflow-hidden rounded-xl bg-white"
+            className="relative aspect-[4/3] overflow-hidden rounded-xl bg-surface-elevated"
           >
             <Image
               src={item.coverImage}

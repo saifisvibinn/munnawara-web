@@ -71,7 +71,7 @@ export const HomeFaqClient = ({
     <section
       ref={sectionRef}
       data-home-faq
-      className="relative overflow-x-clip bg-white px-4 py-20 sm:px-6 sm:py-28 md:px-10 md:py-36"
+      className="relative overflow-x-clip bg-surface-elevated px-4 py-20 sm:px-6 sm:py-28 md:px-10 md:py-36"
       aria-labelledby="home-faq-heading"
     >
       <div className="mx-auto grid max-w-[80rem] gap-12 md:grid-cols-[minmax(14rem,0.85fr)_minmax(0,1.15fr)] md:items-start md:gap-14 lg:gap-20">

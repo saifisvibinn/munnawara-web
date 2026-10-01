@@ -88,7 +88,7 @@ export const QuoteSectionClient = ({
           >
             {headline}
           </h2>
-          <p className="mx-auto mt-3 max-w-[34ch] text-[0.95rem] leading-relaxed text-ink/50 sm:mt-4 sm:max-w-none sm:text-[1.05rem] md:mx-0">
+          <p className="mx-auto mt-3 max-w-[34ch] text-[0.95rem] leading-relaxed text-ink-muted sm:mt-4 sm:max-w-none sm:text-[1.05rem] md:mx-0">
             {body}
           </p>
         </div>
