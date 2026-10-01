@@ -1,8 +1,9 @@
 import { z } from "zod"
 
+/** Customer types (step 1 of the quote wizard). Mirrors dam-backend Quote.customerType. */
 export const tripTypes = [
-  "group",
-  "corporate",
+  "individual",
+  "company",
   "government",
   "school",
   "hajj_mission",
@@ -15,32 +16,19 @@ export const busClasses = ["standard", "vip", "city", "coach", "employee"] as co
 
 export type BusClass = (typeof busClasses)[number]
 
-/** Steps match info.md quote path (1–8 collect; 9 = result). */
-export const quoteSteps = [
-  "type",
-  "contact",
-  "passengers",
-  "route",
-  "timing",
-  "vehicles",
-  "requirements",
-  "consent",
-] as const
-
-export type QuoteStep = (typeof quoteSteps)[number]
-
 export const orgRequiredTypes: readonly TripType[] = [
-  "corporate",
+  "company",
   "government",
   "school",
   "hajj_mission",
   "tourism",
-  "group",
 ]
 
 export const quoteRequestSchema = z
   .object({
     tripType: z.enum(tripTypes),
+    /** e.g. umrah_dawra_short, umrah_maktaa_twoway, charter, company_workers */
+    serviceType: z.string().trim().max(80).optional().default(""),
     customerName: z.string().trim().min(2).max(120),
     organization: z.string().trim().max(160).optional().default(""),
     email: z.string().trim().email().optional().or(z.literal("")),

@@ -1078,6 +1078,12 @@ a[data-whatsapp-fab] {
   color: var(--paper);
 }
 
+.chat-panel__avatar {
+  width: 1.9rem;
+  height: 1.9rem;
+  flex: none;
+}
+
 .chat-panel__title-row {
   display: flex;
   align-items: center;

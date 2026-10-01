@@ -17,6 +17,7 @@ import {
   type VisitorIdentity,
 } from "@/lib/chat"
 import { useLocale, useTranslations } from "next-intl"
+import { RobotAvatar } from "./RobotAvatar"
 import {
   useCallback,
   useEffect,
@@ -50,7 +51,7 @@ const mapSocketSender = (sender: string): Role => {
   return "assistant"
 }
 
-const emptyIdentity = (): VisitorIdentity => ({ name: "", email: "", phone: "" })
+const emptyIdentity = (): VisitorIdentity => ({ name: "", phone: "" })
 
 export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => {
   const t = useTranslations("chat")
@@ -256,10 +257,9 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
     event.preventDefault()
     const next = {
       name: identity.name.trim(),
-      email: identity.email.trim(),
       phone: identity.phone.trim(),
     }
-    if (!next.name || !next.email || !next.phone) return
+    if (!next.name || !next.phone) return
     setIdentity(next)
     try {
       await beginSession(next)
@@ -403,7 +403,7 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
   }
 
   const canSubmitIdentity =
-    identity.name.trim() && identity.email.trim() && identity.phone.trim()
+    identity.name.trim() && identity.phone.trim()
 
   const statusLabel = claimed
     ? t("claimed")
@@ -422,6 +422,7 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
       <header className="chat-panel__header">
         <div className="chat-panel__heading">
           <div className="chat-panel__title-row">
+            <RobotAvatar className="chat-panel__avatar" />
             <span className="chat-panel__live" aria-hidden />
             <h2 id={titleId}>{t("title")}</h2>
           </div>
@@ -478,23 +479,6 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
               placeholder={t("identityNamePh")}
               onChange={(e) =>
                 setIdentity((s) => ({ ...s, name: e.target.value }))
-              }
-            />
-          </label>
-          <label>
-            <span>{t("identityEmail")}</span>
-            <input
-              type="email"
-              name="email"
-              autoComplete="email"
-              inputMode="email"
-              autoCapitalize="off"
-              autoCorrect="off"
-              required
-              value={identity.email}
-              placeholder={t("identityEmailPh")}
-              onChange={(e) =>
-                setIdentity((s) => ({ ...s, email: e.target.value }))
               }
             />
           </label>

@@ -1,6 +1,6 @@
 "use client"
 
-import { LogoMark } from "@/components/landing/LogoMark"
+import { RobotAvatar } from "./RobotAvatar"
 import { cn } from "@/lib/cn"
 import { useTranslations } from "next-intl"
 import {
@@ -39,10 +39,7 @@ export const AiChatButton = forwardRef<
     <>
       {badge}
       <div className="ai-chat-btn__mark">
-        <LogoMark
-          className="ai-chat-btn__icon logo-mark logo-mark--live"
-          idPrefix="ai-chat"
-        />
+        <RobotAvatar className="ai-chat-btn__icon" />
       </div>
       <div className="ai-chat-btn__text">
         <span>{t("chatWith")}</span>

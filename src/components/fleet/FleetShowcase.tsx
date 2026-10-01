@@ -1,6 +1,7 @@
 "use client"
 
 import { FleetViewer } from "@/components/fleet/FleetViewer"
+import { fleetVideos } from "@/content/fleetVideos"
 import type { FleetCategory } from "@/content/types"
 import { useReducedMotion } from "@/hooks/useReducedMotion"
 import { cn } from "@/lib/cn"
@@ -253,6 +254,19 @@ export const FleetShowcase = ({ categories }: FleetShowcaseProps) => {
                   draggable={false}
                   priority={isActive}
                 />
+                {isActive && fleetVideos[bus.id] && !reduced ? (
+                  <video
+                    className="pointer-events-none absolute inset-0 h-full w-full object-cover"
+                    src={fleetVideos[bus.id]}
+                    poster={bus.coverImage}
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    preload="metadata"
+                    aria-hidden="true"
+                  />
+                ) : null}
                 <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
                 <div className="pointer-events-none absolute inset-x-0 bottom-0 p-5 text-white">
                   <p className="text-xs font-medium tracking-wide text-white/60">
@@ -271,6 +285,19 @@ export const FleetShowcase = ({ categories }: FleetShowcaseProps) => {
       </div>
 
       <div className="mx-auto flex max-w-3xl flex-col items-center gap-4 px-4 text-center md:px-6">
+        <ul className="flex flex-wrap justify-center gap-2" aria-label={active.name}>
+          <li className="rounded-full bg-ink px-3 py-1 text-xs font-semibold text-white">
+            {tCommon("seats")}: {active.seatsLabel}
+          </li>
+          {active.amenities.slice(0, 5).map((item) => (
+            <li
+              key={item}
+              className="rounded-full bg-ink/[0.05] px-3 py-1 text-xs text-ink/70"
+            >
+              {item}
+            </li>
+          ))}
+        </ul>
         <p className="text-sm leading-relaxed break-words text-ink-muted">{active.summary}</p>
         <div className="flex flex-wrap justify-center gap-3">
           <button

@@ -1,6 +1,6 @@
 "use client"
 
-import { QuoteRequestForm } from "@/components/forms/QuoteRequestForm"
+import { QuoteWizard } from "@/components/forms/QuoteWizard"
 import { useReducedMotion } from "@/hooks/useReducedMotion"
 import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
@@ -94,7 +94,7 @@ export const QuoteSectionClient = ({
         </div>
 
         <div data-quote-form className="min-w-0 w-full">
-          <QuoteRequestForm />
+          <QuoteWizard />
         </div>
       </div>
     </section>

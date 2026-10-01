@@ -1,5 +1,7 @@
 import { AnimatedSection } from "@/components/motion/AnimatedSection"
+import { PartnerLogoGrid } from "@/components/sections/PartnerLogoGrid"
 import { getClients } from "@/content"
+import { partners } from "@/content/partners"
 import type { AppLocale } from "@/content/types"
 import { getLocale, getTranslations } from "next-intl/server"
 
@@ -14,16 +16,20 @@ export const ClientStrip = async () => {
         <h2 className="font-display text-2xl font-semibold tracking-tight text-ink md:text-3xl">
           {t("clientsTitle")}
         </h2>
-        <div className="mt-10 flex flex-wrap justify-center gap-3">
-          {clients.map((client) => (
-            <p
-              key={client.id}
-              className="font-label rounded-full border border-border bg-surface-muted px-4 py-2 text-sm text-ink-muted"
-            >
-              {client.label}
-            </p>
-          ))}
-        </div>
+        {partners.length > 0 ? (
+          <PartnerLogoGrid className="mt-10" />
+        ) : (
+          <div className="mt-10 flex flex-wrap justify-center gap-3">
+            {clients.map((client) => (
+              <p
+                key={client.id}
+                className="font-label rounded-full border border-border bg-surface-muted px-4 py-2 text-sm text-ink-muted"
+              >
+                {client.label}
+              </p>
+            ))}
+          </div>
+        )}
       </div>
     </AnimatedSection>
   )

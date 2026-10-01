@@ -218,3 +218,14 @@ html:has(.dam-landing) {
 html:has(.dam-landing) body {
   background: #eaeae6;
 }
+
+/* Quote wizard step transition (direction-aware, respects RTL + reduced motion) */
+.qw-step { animation: qw-in-fwd 0.32s cubic-bezier(0.25, 0.8, 0.25, 1) both; }
+.qw-step--back { animation-name: qw-in-back; }
+[dir="rtl"] .qw-step { animation-name: qw-in-fwd-rtl; }
+[dir="rtl"] .qw-step--back { animation-name: qw-in-back-rtl; }
+@keyframes qw-in-fwd { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: none; } }
+@keyframes qw-in-back { from { opacity: 0; transform: translateX(-24px); } to { opacity: 1; transform: none; } }
+@keyframes qw-in-fwd-rtl { from { opacity: 0; transform: translateX(-24px); } to { opacity: 1; transform: none; } }
+@keyframes qw-in-back-rtl { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .qw-step { animation: none; } }

@@ -1,4 +1,5 @@
 import { AnimatedSection } from "@/components/motion/AnimatedSection"
+import { PartnerLogoGrid } from "@/components/sections/PartnerLogoGrid"
 import { PageIntro } from "@/components/ui/PageIntro"
 import { getClients } from "@/content"
 import type { AppLocale } from "@/content/types"
@@ -18,6 +19,7 @@ const ClientsPage = async ({ params }: PageProps) => {
   return (
     <AnimatedSection className="pb-28 pt-20">
       <PageIntro title={t("clients")} subtitle={tHome("clientsTitle")} align="start" />
+      <PartnerLogoGrid className="mx-auto mt-16 max-w-4xl px-6" />
       <div className="mx-auto mt-16 max-w-2xl px-6">
         {clients.map((client) => (
           <article key={client.id} className="border-b border-ink/8 py-10">

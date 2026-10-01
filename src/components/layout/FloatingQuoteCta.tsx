@@ -1,6 +1,6 @@
 "use client"
 
-import { QuoteRequestForm } from "@/components/forms/QuoteRequestForm"
+import { QuoteWizard } from "@/components/forms/QuoteWizard"
 import { useReducedMotion } from "@/hooks/useReducedMotion"
 import { cn } from "@/lib/cn"
 import { gsap } from "gsap"
@@ -491,7 +491,7 @@ export const FloatingQuoteCta = () => {
             {tQuote("title")}
           </h2>
           <div className="mt-8 sm:mt-10">
-            <QuoteRequestForm
+            <QuoteWizard
               variant="overlay"
               formId="quote-overlay"
             />

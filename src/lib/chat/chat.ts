@@ -21,7 +21,6 @@ export type GuidedWelcome = {
 
 export type VisitorIdentity = {
   name: string
-  email: string
   phone: string
 }
 
@@ -45,10 +44,9 @@ export const loadIdentity = (): VisitorIdentity | null => {
     const stored = localStorage.getItem(IDENTITY_KEY)
     if (!stored) return null
     const parsed = JSON.parse(stored) as VisitorIdentity
-    if (parsed?.name?.trim() && parsed?.email?.trim() && parsed?.phone?.trim()) {
+    if (parsed?.name?.trim() && parsed?.phone?.trim()) {
       return {
         name: parsed.name.trim(),
-        email: parsed.email.trim().toLowerCase(),
         phone: parsed.phone.trim(),
       }
     }
@@ -64,7 +62,6 @@ export const saveIdentity = (identity: VisitorIdentity) => {
       IDENTITY_KEY,
       JSON.stringify({
         name: identity.name.trim(),
-        email: identity.email.trim().toLowerCase(),
         phone: identity.phone.trim(),
       }),
     )
@@ -105,7 +102,6 @@ export const startChatSession = (identity: VisitorIdentity) =>
     method: "POST",
     json: {
       name: identity.name.trim(),
-      email: identity.email.trim().toLowerCase(),
       phone: identity.phone.trim(),
     },
   })

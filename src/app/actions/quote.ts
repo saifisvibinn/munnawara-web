@@ -71,9 +71,9 @@ export const submitQuoteRequest = async (
           channel: "web",
           language: data.language,
           customerType: data.tripType,
-          tripType: data.tripType,
+          tripType: data.serviceType || data.tripType,
           organization: data.organization || undefined,
-          serviceType: data.tripType,
+          serviceType: data.serviceType || data.tripType,
           originCity: data.pickup,
           destinationCity: data.destination,
           stops: data.stops || undefined,
@@ -89,6 +89,7 @@ export const submitQuoteRequest = async (
           preferredContactChannel: "whatsapp",
           consent: data.consent,
           notes: [
+            data.serviceType ? `Service: ${data.serviceType}` : "",
             data.stops ? `Stops: ${data.stops}` : "",
             data.departureTime ? `Time: ${data.departureTime}` : "",
             data.waitingHours != null
