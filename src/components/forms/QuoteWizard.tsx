@@ -53,6 +53,10 @@ type WizardProps = {
   className?: string
   variant?: "card" | "overlay"
   formId?: string
+  /** "split" = map pane + form panel that fits the viewport (used by /quote). */
+  layout?: "stack" | "split"
+  /** Title chip drawn over the map in split layout. */
+  heading?: { eyebrow?: string; title: string }
 }
 
 type StepId =
@@ -300,8 +304,8 @@ function Choices({
   return (
     <div
       className={cn(
-        "grid grid-cols-1 gap-2",
-        columns === 2 && "sm:grid-cols-2",
+        "grid gap-2",
+        columns === 2 && "grid-cols-2",
       )}
       role="radiogroup"
     >
@@ -315,7 +319,7 @@ function Choices({
             aria-checked={selected}
             onClick={() => onPick(o.id)}
             className={cn(
-              "rounded-xl px-4 py-3.5 text-start transition",
+              "rounded-xl px-3 py-3 text-start transition sm:px-4 sm:py-3.5",
               selected
                 ? "bg-black text-white shadow-sm"
                 : "bg-surface-muted text-ink hover:bg-surface-container",
@@ -372,11 +376,14 @@ export const QuoteWizard = ({
   className,
   variant = "card",
   formId = "quote",
+  layout = "stack",
+  heading,
 }: WizardProps) => {
   const locale = useLocale()
   const isAr = locale === "ar"
   const tx = (text: L10n) => pick(text, locale)
   const isOverlay = variant === "overlay"
+  const split = layout === "split"
   const reducedMotion = useReducedMotion()
 
   const [state, setState] = useState<WizardState>(initialState)
@@ -692,22 +699,57 @@ export const QuoteWizard = ({
 
   /* ---- layout bits ---- */
 
-  const shell = (children: ReactNode) => (
-    <div
-      id={formId}
-      ref={topRef}
-      dir={isAr ? "rtl" : "ltr"}
-      className={cn(
-        isOverlay
-          ? "bg-transparent p-0 text-start"
-          : "rounded-2xl bg-surface-elevated/90 p-4 text-start ring-1 ring-border backdrop-blur-md sm:p-6 md:p-8",
-        className,
-      )}
-    >
-      {children}
-    </div>
-  )
-
+  const shell = (children: ReactNode, mv?: { stops: MapStop[]; context: MapStop[] }) => {
+    if (split) {
+      const view = mv ?? mapView()
+      return (
+        <div
+          id={formId}
+          ref={topRef}
+          dir={isAr ? "rtl" : "ltr"}
+          className={cn("qw-split text-start", className)}
+        >
+          <aside className="qw-split__map" aria-label={isAr ? "الخريطة" : "Route map"}>
+            <QuoteMap
+              stops={view.stops}
+              context={view.context}
+              locale={locale}
+              still={reducedMotion}
+              className="qmap qmap--fill"
+            />
+            {heading ? (
+              <div className="qw-split__chip">
+                {heading.eyebrow ? (
+                  <p className="font-label hidden text-[0.62rem] font-semibold tracking-[0.18em] text-orange uppercase sm:block">
+                    {heading.eyebrow}
+                  </p>
+                ) : null}
+                <p className="font-display text-base leading-tight font-semibold text-ink sm:text-xl">
+                  {heading.title}
+                </p>
+              </div>
+            ) : null}
+          </aside>
+          <section className="qw-split__panel">{children}</section>
+        </div>
+      )
+    }
+    return (
+      <div
+        id={formId}
+        ref={topRef}
+        dir={isAr ? "rtl" : "ltr"}
+        className={cn(
+          isOverlay
+            ? "bg-transparent p-0 text-start"
+            : "rounded-2xl bg-surface-elevated/90 p-4 text-start ring-1 ring-border backdrop-blur-md sm:p-6 md:p-8",
+          className,
+        )}
+      >
+        {children}
+      </div>
+    )
+  }
   const summaryRows = (): { id: StepId; label: L10n; value: string }[] => {
     const route = routeParts(locale)
     const customer = findOption(customerOptions, state.customer)
@@ -759,8 +801,8 @@ export const QuoteWizard = ({
 
   if (status === "done" && result) {
     return shell(
-      <div className="qw-step qw-step--fwd" role="status">
-        {finalStops().length > 1 ? (
+      <div className={cn("qw-step qw-step--fwd", split && "min-h-0 flex-1 overflow-y-auto overscroll-contain")} role="status">
+        {!split && finalStops().length > 1 ? (
           <QuoteMap stops={finalStops()} locale={locale} className="qmap mb-4" />
         ) : null}
         <p className="font-label text-[0.7rem] font-semibold tracking-[0.14em] text-orange uppercase">
@@ -793,6 +835,7 @@ export const QuoteWizard = ({
           {tx(COPY.done.another)}
         </button>
       </div>,
+      { stops: finalStops(), context: [] },
     )
   }
 
@@ -807,7 +850,7 @@ export const QuoteWizard = ({
     step === "dawraRoute" ||
     step === "maktaaRoute"
 
-  const mapData = showRoute ? mapView() : null
+  const mapData = showRoute && !split ? mapView() : null
 
   const body = (() => {
     switch (step) {
@@ -859,7 +902,7 @@ export const QuoteWizard = ({
       case "dawraRoute":
         return (
           <div className="space-y-4">
-            <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-3.5 @lg:grid-cols-2">
               <Field label={tx(COPY.fields.arrival)} htmlFor="qw-arrival">
                 <PlaceSelect
                   id="qw-arrival"
@@ -952,7 +995,7 @@ export const QuoteWizard = ({
               locale={locale}
               onPick={(id) => patch({ direction: id })}
             />
-            <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-3.5 @lg:grid-cols-2">
               <Field label={tx(COPY.fields.from)} htmlFor="qw-from" error={errors.from}>
                 <PlaceSelect
                   id="qw-from"
@@ -980,7 +1023,7 @@ export const QuoteWizard = ({
         )
       case "charterRoute":
         return (
-          <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-3.5 @lg:grid-cols-2">
             <Field label={tx(COPY.fields.pickup)} htmlFor="qw-pickup" error={errors.pickup}>
               <input
                 id="qw-pickup"
@@ -1004,7 +1047,7 @@ export const QuoteWizard = ({
             <Field
               label={tx(COPY.fields.stops)}
               htmlFor="qw-stops"
-              className="sm:col-span-2"
+              className="@lg:col-span-2"
             >
               <input
                 id="qw-stops"
@@ -1018,7 +1061,7 @@ export const QuoteWizard = ({
       case "when": {
         const returnRequired = state.umrahKind === "maktaa" && twoWay
         return (
-          <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-3.5 @lg:grid-cols-2">
             <Field label={tx(COPY.fields.date)} htmlFor="qw-date" error={errors.date}>
               <DatePicker
                 id="qw-date"
@@ -1072,7 +1115,7 @@ export const QuoteWizard = ({
       }
       case "passengers":
         return (
-          <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-3.5 @lg:grid-cols-2">
             <Field
               label={tx(COPY.fields.passengers)}
               htmlFor="qw-pax"
@@ -1100,7 +1143,7 @@ export const QuoteWizard = ({
             <Field
               label={tx(COPY.fields.accessibility)}
               htmlFor="qw-access"
-              className="sm:col-span-2"
+              className="@lg:col-span-2"
             >
               <input
                 id="qw-access"
@@ -1140,7 +1183,7 @@ export const QuoteWizard = ({
       case "extras":
         return (
           <div className="space-y-4">
-            <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-2.5 @lg:grid-cols-2">
               {extraOptions.map((o) => (
                 <label
                   key={o.id}
@@ -1170,12 +1213,12 @@ export const QuoteWizard = ({
         )
       case "contact":
         return (
-          <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-3.5 @lg:grid-cols-2">
             <Field
               label={tx(COPY.fields.name)}
               htmlFor="qw-name"
               error={errors.name}
-              className="sm:col-span-2"
+              className="@lg:col-span-2"
             >
               <input
                 id="qw-name"
@@ -1190,7 +1233,7 @@ export const QuoteWizard = ({
                 label={tx(COPY.fields.organization)}
                 htmlFor="qw-org"
                 error={errors.organization}
-                className="sm:col-span-2"
+                className="@lg:col-span-2"
               >
                 <input
                   id="qw-org"
@@ -1293,7 +1336,7 @@ export const QuoteWizard = ({
 
   return shell(
     <>
-      <div className="mb-5">
+      <div className={split ? "mb-3 shrink-0" : "mb-5"}>
         <div className="flex items-center justify-between gap-3 text-xs text-ink-muted">
           <span className="font-label tracking-[0.12em] uppercase">
             {tx(COPY.stepOf(stepIndexSafe + 1, steps.length))}
@@ -1307,7 +1350,12 @@ export const QuoteWizard = ({
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} noValidate className="space-y-5">
+      <form
+        onSubmit={handleSubmit}
+        noValidate
+        className={split ? "flex min-h-0 flex-1 flex-col gap-3" : "space-y-5"}
+      >
+        <div className={split ? "qw-scroll @container min-h-0 flex-1 overflow-y-auto overscroll-contain" : "@container space-y-5"}>
         <div key={step} className={cn("qw-step space-y-4", dir === "fwd" ? "qw-step--fwd" : "qw-step--back")}>
           <div className="flex items-center gap-3">
             {showGlobe ? (
@@ -1350,14 +1398,15 @@ export const QuoteWizard = ({
 
         {status === "error" ? (
           <div
-            className="rounded-xl bg-red-50 px-3.5 py-3 text-sm text-red-800 ring-1 ring-red-200/80"
+            className="mt-4 rounded-xl bg-red-50 px-3.5 py-3 text-sm text-red-800 ring-1 ring-red-200/80"
             role="alert"
           >
             {tx(COPY.error)}
           </div>
         ) : null}
+        </div>
 
-        <div className="flex flex-wrap items-center gap-2 pt-1">
+        <div className={split ? "flex shrink-0 flex-wrap items-center gap-2 border-t border-border pt-3" : "flex flex-wrap items-center gap-2 pt-1"}>
           {stepIndexSafe > 0 ? (
             <button type="button" className={btnGhost} onClick={goBack}>
               {tx(COPY.back)}

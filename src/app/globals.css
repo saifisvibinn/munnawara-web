@@ -422,3 +422,79 @@ html:has(.dam-landing) body {
 .qpage-in { animation: qpage-in 0.55s cubic-bezier(0.16, 1, 0.3, 1) 0.08s both; }
 @keyframes qpage-in { from { opacity: 0; transform: translateY(22px) scale(0.985); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) { .qticket { transition: none; } .qpage-in { animation: none; } }
+/* ===== /quote: fit-to-screen split layout (map + wizard) ===== */
+.qpage {
+  /* The site header already reserves this much space above <main> (.site-chrome__spacer). */
+  --qp-top: calc(clamp(54px, 5vw, 64px) + 22px);
+  --qp-gap: 0.75rem;
+  box-sizing: border-box;
+  height: calc(100dvh - var(--qp-top) - var(--qp-gap));
+  min-height: 30rem;
+  margin-bottom: var(--qp-gap);
+  padding-inline: var(--qp-gap);
+}
+@media (min-width: 981px) { .qpage { --qp-top: calc(clamp(54px, 5vw, 64px) + 28px); } }
+@media (min-width: 640px) { .qpage { --qp-gap: 1rem; } }
+@media (min-width: 1024px) { .qpage { --qp-gap: 1.25rem; } }
+
+.qw-split {
+  display: grid;
+  gap: var(--qp-gap);
+  height: 100%;
+  /* phones & portrait tablets: map on top, wizard below */
+  grid-template-rows: clamp(9rem, 30%, 20rem) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr);
+}
+/* desktop, tablets landscape, and short landscape phones: map left, wizard right */
+@media (min-width: 1024px), (orientation: landscape) and (max-height: 560px) and (min-width: 560px) {
+  .qw-split {
+    grid-template-rows: minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr);
+  }
+}
+@media (min-width: 1280px) { .qw-split { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); } }
+@media (max-height: 560px) and (orientation: landscape) { .qpage { min-height: 0; --qp-gap: 0.5rem; } .qw-split__panel { padding: 0.7rem 0.9rem; } }
+
+.qw-split__map {
+  position: relative;
+  isolation: isolate;
+  min-height: 0;
+  overflow: hidden;
+  border-radius: 1rem;
+  border: 1px solid var(--brand-border);
+  box-shadow: 0 10px 30px -18px rgb(0 0 0 / 0.45);
+}
+.qmap--fill { height: 100% !important; border-radius: 0; }
+.qw-split__chip {
+  position: absolute;
+  z-index: 1000;
+  inset-block-start: 0.75rem;
+  inset-inline-start: 0.75rem;
+  max-width: calc(100% - 1.5rem);
+  padding: 0.5rem 0.8rem;
+  border-radius: 0.85rem;
+  background: color-mix(in srgb, var(--brand-surface-elevated) 94%, transparent);
+  border: 1px solid var(--brand-border);
+  box-shadow: 0 8px 24px -12px rgb(0 0 0 / 0.5);
+  backdrop-filter: blur(8px);
+  pointer-events: none;
+}
+
+.qw-split__panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding: 0.9rem;
+  border-radius: 1rem;
+  background: color-mix(in srgb, var(--brand-surface-elevated) 94%, transparent);
+  border: 1px solid var(--brand-border);
+  box-shadow: 0 10px 30px -18px rgb(0 0 0 / 0.45);
+}
+@media (min-width: 640px) { .qw-split__panel { padding: 1.25rem; } }
+@media (min-width: 1024px) { .qw-split__panel { padding: 1.5rem 1.75rem; } }
+
+/* thin scrollbar inside the wizard body */
+.qw-scroll { scrollbar-width: thin; scrollbar-color: var(--brand-border) transparent; padding-inline-end: 0.15rem; }
+
+/* Chat / WhatsApp buttons would sit on the wizard's Continue button here */
+body:has([data-quote-page]) [data-floating-actions] { display: none; }

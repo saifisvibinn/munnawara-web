@@ -93,12 +93,13 @@ export default function QuoteMap({ stops, context = [], locale, className, still
   const mapRef = useRef<L.Map | null>(null)
   const layerRef = useRef<L.LayerGroup | null>(null)
   const frameRef = useRef<number>(0)
+  const boundsRef = useRef<L.LatLngBounds | null>(null)
 
   // Create the map once.
   useEffect(() => {
     if (!hostRef.current || mapRef.current) return
     const map = L.map(hostRef.current, {
-      zoomControl: true,
+      zoomControl: false,
       scrollWheelZoom: false,
       attributionControl: true,
       worldCopyJump: false,
@@ -107,11 +108,24 @@ export default function QuoteMap({ stops, context = [], locale, className, still
       maxZoom: 18,
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
     }).addTo(map)
+    L.control.zoom({ position: "bottomright" }).addTo(map)
     layerRef.current = L.layerGroup().addTo(map)
     mapRef.current = map
+    // Re-fit when the container changes size (split layout, rotation, resize).
+    let raf = 0
+    const ro = new ResizeObserver(() => {
+      cancelAnimationFrame(raf)
+      raf = requestAnimationFrame(() => {
+        map.invalidateSize()
+        if (boundsRef.current) map.fitBounds(boundsRef.current, { padding: [36, 36], maxZoom: 12 })
+      })
+    })
+    ro.observe(hostRef.current)
     const resize = window.setTimeout(() => map.invalidateSize(), 120)
     return () => {
       window.clearTimeout(resize)
+      ro.disconnect()
+      cancelAnimationFrame(raf)
       cancelAnimationFrame(frameRef.current)
       map.remove()
       mapRef.current = null
@@ -166,10 +180,8 @@ export default function QuoteMap({ stops, context = [], locale, className, still
 
     const all = [...stops, ...context]
     if (all.length) {
-      map.fitBounds(L.latLngBounds(all.map((s) => [s.lat, s.lng] as LatLng)), {
-        padding: [36, 36],
-        maxZoom: 12,
-      })
+      boundsRef.current = L.latLngBounds(all.map((s) => [s.lat, s.lng] as LatLng))
+      map.fitBounds(boundsRef.current, { padding: [36, 36], maxZoom: 12 })
     }
 
     if (stops.length < 2) return () => controller.abort()
