@@ -2,6 +2,7 @@
 
 import { submitQuoteRequest } from "@/app/actions/quote"
 import { quoteRequestSchema, type BusClass, type TripType } from "@/components/forms/formSchemas"
+import { useReducedMotion } from "@/hooks/useReducedMotion"
 import { cn } from "@/lib/cn"
 import { useLocale } from "next-intl"
 import {
@@ -14,14 +15,17 @@ import {
 } from "react"
 import {
   airports,
+  allHubStops,
+  buildDawraStops,
+  buildTransferStops,
   busClassOptions,
   charterService,
   corporateServices,
   customerOptions,
   dawraLengths,
+  defaultZiyarat,
   extraOptions,
   findOption,
-  mazaratOptions,
   orgRequired,
   pick,
   placeLabel,
@@ -29,12 +33,20 @@ import {
   tripDirections,
   umrahKinds,
   umrahService,
+  ziyaratOptions,
   type ExtraId,
   type L10n,
+  type MapStop,
   type Option,
   type PlaceId,
 } from "./quoteWizardConfig"
-import { GlobeVisual, RouteVisual } from "./QuoteVisuals"
+import dynamic from "next/dynamic"
+import { GlobeVisual } from "./QuoteVisuals"
+
+const QuoteMap = dynamic(() => import("./QuoteMap"), {
+  ssr: false,
+  loading: () => <div className="qmap animate-pulse bg-surface-muted" aria-hidden="true" />,
+})
 
 type WizardProps = {
   className?: string
@@ -134,9 +146,9 @@ const COPY = {
   titles: {
     customer: { en: "Who is this request for?", ar: "لمن هذا الطلب؟" },
     service: { en: "What do you need?", ar: "ماذا تحتاج؟" },
-    umrahKind: { en: "Dawra or Makta3?", ar: "دورة أم مقطع؟" },
-    dawraLength: { en: "How long is the Dawra?", ar: "ما مدة الدورة؟" },
-    dawraRoute: { en: "Your Dawra route", ar: "مسار الدورة" },
+    umrahKind: { en: "Circuit (Dawra) or Transfer (Maqta')?", ar: "دورة أم مقطع؟" },
+    dawraLength: { en: "Short or long circuit?", ar: "دورة قصيرة أم طويلة؟" },
+    dawraRoute: { en: "Your circuit route", ar: "مسار الدورة" },
     maktaaRoute: { en: "Where to where?", ar: "من أين إلى أين؟" },
     charterRoute: { en: "Where is the trip?", ar: "أين الرحلة؟" },
     when: { en: "When?", ar: "متى؟" },
@@ -181,7 +193,11 @@ const COPY = {
     busCount: { en: "Number of buses", ar: "عدد الحافلات" },
     notes: { en: "Anything else we should know?", ar: "هل هناك ملاحظات أخرى؟" },
   },
-  mazaratTitle: { en: "Mazarat to include", ar: "المزارات المطلوبة" },
+  ziyaratTitle: { en: "Holy sites to visit (Ziyarat)", ar: "المزارات المطلوبة" },
+  selectAll: { en: "Select all", ar: "تحديد الكل" },
+  selectNone: { en: "Clear", ar: "مسح" },
+  cityMakkah: { en: "In Makkah", ar: "في مكة المكرمة" },
+  cityMadinah: { en: "In Madinah", ar: "في المدينة المنورة" },
   consent: {
     en: "I agree to share my details with the sales team under the privacy policy. A request is not a confirmed booking until an official offer is issued.",
     ar: "أوافق على مشاركة بياناتي مع فريق المبيعات وفق سياسة الخصوصية. الطلب ليس حجزاً مؤكداً حتى يصدر عرض رسمي.",
@@ -365,6 +381,7 @@ export const QuoteWizard = ({
   const isAr = locale === "ar"
   const tx = (text: L10n) => pick(text, locale)
   const isOverlay = variant === "overlay"
+  const reducedMotion = useReducedMotion()
 
   const [state, setState] = useState<WizardState>(initialState)
   const [stepIndex, setStepIndex] = useState(0)
@@ -405,15 +422,43 @@ export const QuoteWizard = ({
 
   /* ---- derived trip data ---- */
 
-  const dawraRoute: PlaceId[] = [state.arrival, "makkah", "madinah", state.departure]
   const twoWay = state.direction === "twoway"
+  const isLongDawra = state.dawraLength === "long"
 
-  const routeIds: PlaceId[] =
-    state.umrahKind === "dawra" && state.service === "umrah"
-      ? dawraRoute
-      : state.umrahKind === "maktaa" && state.from && state.to
-        ? [state.from, state.to]
+  /** Stops drawn on the map for the current step, plus faint context markers. */
+  const mapView = (): { stops: MapStop[]; context: MapStop[] } => {
+    if (step === "dawraLength") {
+      return { stops: buildDawraStops(state.arrival, state.departure, [], false), context: [] }
+    }
+    if (step === "dawraRoute") {
+      const stops = buildDawraStops(state.arrival, state.departure, state.mazarat, isLongDawra)
+      const context: MapStop[] = isLongDawra
+        ? ziyaratOptions
+            .filter((z) => !state.mazarat.includes(z.id))
+            .map((z) => ({ id: z.id, lat: z.lat, lng: z.lng, label: z.label, kind: "ziyarat" as const }))
         : []
+      return { stops, context }
+    }
+    if (step === "maktaaRoute") {
+      const chosen = [state.from, state.to].filter(Boolean) as PlaceId[]
+      return {
+        stops: buildTransferStops(chosen),
+        context: chosen.length < 2 ? allHubStops().filter((h) => !chosen.includes(h.id as PlaceId)) : [],
+      }
+    }
+    return { stops: [], context: allHubStops() }
+  }
+
+  /** Final route for the confirmation map. */
+  const finalStops = (): MapStop[] => {
+    if (state.umrahKind === "dawra") {
+      return buildDawraStops(state.arrival, state.departure, state.mazarat, isLongDawra)
+    }
+    if (state.umrahKind === "maktaa" && state.from && state.to) {
+      return buildTransferStops([state.from, state.to])
+    }
+    return []
+  }
 
   const serviceType =
     state.service === "umrah"
@@ -445,14 +490,9 @@ export const QuoteWizard = ({
   /** Route text in the language given (English for the sales payload). */
   const routeParts = (loc: string) => {
     if (state.service === "umrah" && state.umrahKind === "dawra") {
-      const mazarat =
-        state.dawraLength === "long"
-          ? state.mazarat
-              .map((id) => findOption(mazaratOptions, id))
-              .filter((o): o is Option => Boolean(o))
-              .map((o) => pick(o.label, loc))
-          : []
-      const mid = [placeLabel("makkah", loc), ...mazarat, placeLabel("madinah", loc)]
+      const mid = buildDawraStops(state.arrival, state.departure, state.mazarat, isLongDawra)
+        .slice(1, -1)
+        .map((s) => pick(s.label, loc))
       return {
         pickup: placeLabel(state.arrival, loc),
         destination: placeLabel(state.departure, loc),
@@ -720,13 +760,9 @@ export const QuoteWizard = ({
   if (status === "done" && result) {
     return shell(
       <div className="qw-step qw-step--fwd" role="status">
-        <div className="mx-auto mb-4 w-full max-w-sm text-ink/70">
-          <RouteVisual
-            route={routeIds.length ? routeIds : ["jed_airport", "makkah", "madinah"]}
-            locale={locale}
-            className="h-auto w-full"
-          />
-        </div>
+        {finalStops().length > 1 ? (
+          <QuoteMap stops={finalStops()} locale={locale} className="qmap mb-4" />
+        ) : null}
         <p className="font-label text-[0.7rem] font-semibold tracking-[0.14em] text-orange uppercase">
           {tx(COPY.done.eyebrow)}
         </p>
@@ -771,12 +807,7 @@ export const QuoteWizard = ({
     step === "dawraRoute" ||
     step === "maktaaRoute"
 
-  const visualRoute: PlaceId[] =
-    step === "dawraRoute" || step === "dawraLength"
-      ? dawraRoute
-      : step === "maktaaRoute"
-        ? ([state.from, state.to].filter(Boolean) as PlaceId[])
-        : ["jed_airport", "makkah", "madinah"]
+  const mapData = showRoute ? mapView() : null
 
   const body = (() => {
     switch (step) {
@@ -820,7 +851,9 @@ export const QuoteWizard = ({
             options={dawraLengths}
             value={state.dawraLength}
             locale={locale}
-            onPick={(id) => choose({ dawraLength: id })}
+            onPick={(id) =>
+              choose({ dawraLength: id, mazarat: id === "long" ? defaultZiyarat() : [] })
+            }
           />
         )
       case "dawraRoute":
@@ -848,40 +881,66 @@ export const QuoteWizard = ({
                 />
               </Field>
             </div>
-            {state.dawraLength === "long" ? (
-              <fieldset>
-                <legend className="font-label mb-2 block text-[0.7rem] font-semibold tracking-[0.14em] text-ink-muted uppercase">
-                  {tx(COPY.mazaratTitle)}
-                </legend>
-                <div className="flex flex-wrap gap-2">
-                  {mazaratOptions.map((o) => {
-                    const on = state.mazarat.includes(o.id)
-                    return (
-                      <button
-                        key={o.id}
-                        type="button"
-                        aria-pressed={on}
-                        onClick={() =>
-                          patch({
-                            mazarat: on
-                              ? state.mazarat.filter((m) => m !== o.id)
-                              : [...state.mazarat, o.id],
-                          })
-                        }
-                        className={cn(
-                          "rounded-full px-3.5 py-2 text-sm transition",
-                          on
-                            ? "bg-black text-white"
-                            : "bg-surface-muted text-ink hover:bg-surface-container",
-                        )}
-                      >
-                        {tx(o.label)}
-                      </button>
-                    )
-                  })}
+            {isLongDawra ? (
+              <fieldset className="space-y-4">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <legend className="font-label text-[0.7rem] font-semibold tracking-[0.14em] text-ink-muted uppercase">
+                    {tx(COPY.ziyaratTitle)}
+                  </legend>
+                  <div className="flex gap-1 text-xs font-semibold text-orange">
+                    <button
+                      type="button"
+                      className="rounded-md px-2 py-1 hover:underline"
+                      onClick={() => patch({ mazarat: ziyaratOptions.map((z) => z.id) })}
+                    >
+                      {tx(COPY.selectAll)}
+                    </button>
+                    <button
+                      type="button"
+                      className="rounded-md px-2 py-1 hover:underline"
+                      onClick={() => patch({ mazarat: [] })}
+                    >
+                      {tx(COPY.selectNone)}
+                    </button>
+                  </div>
                 </div>
-              </fieldset>
-            ) : null}
+                {(["makkah", "madinah"] as const).map((city) => (
+                  <div key={city}>
+                    <p className="mb-2 text-sm font-semibold text-ink">
+                      {tx(city === "makkah" ? COPY.cityMakkah : COPY.cityMadinah)}
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {ziyaratOptions
+                        .filter((z) => z.city === city)
+                        .map((o) => {
+                          const on = state.mazarat.includes(o.id)
+                          return (
+                            <button
+                              key={o.id}
+                              type="button"
+                              aria-pressed={on}
+                              onClick={() =>
+                                patch({
+                                  mazarat: on
+                                    ? state.mazarat.filter((m) => m !== o.id)
+                                    : [...state.mazarat, o.id],
+                                })
+                              }
+                              className={cn(
+                                "rounded-full px-3.5 py-2 text-sm transition",
+                                on
+                                  ? "bg-black text-white"
+                                  : "bg-surface-muted text-ink hover:bg-surface-container",
+                              )}
+                            >
+                              {tx(o.label)}
+                            </button>
+                          )
+                        })}
+                    </div>
+                  </div>
+                ))}
+              </fieldset>            ) : null}
           </div>
         )
       case "maktaaRoute":
@@ -1257,10 +1316,14 @@ export const QuoteWizard = ({
             </h3>
           </div>
 
-          {showRoute ? (
-            <div className="mx-auto w-full max-w-md rounded-xl bg-surface-muted/60 p-3 text-ink/70">
-              <RouteVisual route={visualRoute} locale={locale} className="h-auto w-full" />
-            </div>
+          {mapData ? (
+            <QuoteMap
+              stops={mapData.stops}
+              context={mapData.context}
+              locale={locale}
+              still={reducedMotion}
+              className="qmap"
+            />
           ) : null}
 
           {body}

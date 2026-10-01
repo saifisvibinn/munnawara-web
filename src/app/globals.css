@@ -382,3 +382,20 @@ html:has(.dam-landing) body {
     @apply font-sans;
   }
 }
+
+/* Quote wizard map (Leaflet) */
+.qmap { height: 21rem; width: 100%; border-radius: 0.75rem; overflow: hidden; z-index: 0; }
+.qmap .leaflet-container { font-family: inherit; }
+.qmap-pin-wrap { background: none; border: 0; }
+.qmap-pin {
+  display: grid; place-items: center; width: 26px; height: 26px; border-radius: 9999px;
+  color: #fff; font-size: 12px; font-weight: 700; border: 2px solid #fff;
+  box-shadow: 0 2px 6px rgb(0 0 0 / 0.35);
+}
+.qmap-pin--hub { background: #e8702a; }
+.qmap-pin--ziyarat { background: #4a3a8c; width: 22px; height: 22px; font-size: 11px; margin: 2px; }
+.qmap-bus-wrap { background: none; border: 0; }
+.qmap-bus { font-size: 24px; line-height: 30px; display: block; text-align: center; filter: drop-shadow(0 2px 3px rgb(0 0 0 / 0.4)); }
+.qmap-tip { font-size: 11px; font-weight: 600; padding: 2px 6px; border-radius: 6px; }
+.dark .qmap .leaflet-tile-pane { filter: invert(1) hue-rotate(180deg) brightness(0.95) contrast(0.9); }
+.dark .qmap .leaflet-control-attribution { background: rgb(20 20 20 / 0.7); color: #aaa; }
