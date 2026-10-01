@@ -1760,11 +1760,11 @@ body.is-page-transitioning {
   min-height: 48px;
   padding-block: 5px;
   padding-inline: 38px 6px;
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.75);
   border-radius: 100px;
   background:
-    linear-gradient(145deg, rgba(255, 255, 255, 0.34), rgba(214, 226, 236, 0.12)),
-    rgba(236, 242, 247, 0.16);
+    linear-gradient(145deg, rgba(255, 255, 255, 0.92), rgba(238, 243, 248, 0.86)),
+    rgba(246, 243, 239, 0.84);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.78),
     inset 0 -1px 0 rgba(81, 103, 120, 0.08),
@@ -1838,8 +1838,8 @@ body.is-page-transitioning {
 html.dark .site-nav__bar {
   border-color: rgba(245, 239, 232, 0.16);
   background:
-    linear-gradient(145deg, rgba(48, 40, 35, 0.96), rgba(22, 17, 14, 0.94)),
-    rgba(28, 22, 20, 0.94);
+    linear-gradient(145deg, rgba(48, 40, 35, 0.99), rgba(22, 17, 14, 0.98)),
+    rgba(28, 22, 20, 0.98);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.08),
     0 14px 40px rgba(0, 0, 0, 0.5);
@@ -1869,8 +1869,8 @@ html.dark .site-nav__quote {
 html.dark .lang-switch {
   border-color: rgba(245, 239, 232, 0.16);
   background:
-    linear-gradient(145deg, rgba(48, 40, 35, 0.96), rgba(22, 17, 14, 0.94)),
-    rgba(28, 22, 20, 0.94);
+    linear-gradient(145deg, rgba(48, 40, 35, 0.99), rgba(22, 17, 14, 0.98)),
+    rgba(28, 22, 20, 0.98);
   color: rgba(245, 239, 232, 0.88);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.08),
@@ -1884,11 +1884,11 @@ html.dark .lang-switch {
   z-index: 55;
   min-width: 5.2rem;
   padding: 10px 16px;
-  border: 1px solid rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.75);
   border-radius: 100px;
   background:
-    linear-gradient(145deg, rgba(255, 255, 255, 0.42), rgba(214, 226, 236, 0.14)),
-    rgba(236, 242, 247, 0.22);
+    linear-gradient(145deg, rgba(255, 255, 255, 0.92), rgba(238, 243, 248, 0.86)),
+    rgba(246, 243, 239, 0.84);
   color: rgba(32, 29, 26, 0.88);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.78),
@@ -1916,11 +1916,11 @@ html.dark .lang-switch {
   width: 44px;
   height: 44px;
   padding: 0;
-  border: 1px solid rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.75);
   border-radius: 100px;
   background:
-    linear-gradient(145deg, rgba(255, 255, 255, 0.42), rgba(214, 226, 236, 0.14)),
-    rgba(236, 242, 247, 0.22);
+    linear-gradient(145deg, rgba(255, 255, 255, 0.92), rgba(238, 243, 248, 0.86)),
+    rgba(246, 243, 239, 0.84);
   color: rgba(32, 29, 26, 0.88);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.78),
