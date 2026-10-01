@@ -41,6 +41,7 @@ import {
   type PlaceId,
 } from "./quoteWizardConfig"
 import dynamic from "next/dynamic"
+import { DatePicker, Dropdown, NumberStepper, TimePicker } from "./QuoteFields"
 import { GlobeVisual } from "./QuoteVisuals"
 
 const QuoteMap = dynamic(() => import("./QuoteMap"), {
@@ -356,22 +357,17 @@ function PlaceSelect({
   error?: string
 }) {
   return (
-    <select
+    <Dropdown
       id={id}
-      className={cn(fieldClass, "appearance-none", error && fieldErrorRing)}
       value={value}
-      onChange={(e) => onChange(e.target.value as PlaceId | "")}
-    >
-      <option value="">{placeholder}</option>
-      {options.map((o) => (
-        <option key={o.id} value={o.id}>
-          {pick(o.label, locale)}
-        </option>
-      ))}
-    </select>
+      locale={locale}
+      placeholder={placeholder}
+      error={error}
+      options={options.map((o) => ({ id: o.id, label: pick(o.label, locale) }))}
+      onChange={(v) => onChange(v as PlaceId | "")}
+    />
   )
 }
-
 export const QuoteWizard = ({
   className,
   variant = "card",
@@ -422,6 +418,10 @@ export const QuoteWizard = ({
 
   /* ---- derived trip data ---- */
 
+  const todayISO = (() => {
+    const d = new Date()
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`
+  })()
   const twoWay = state.direction === "twoway"
   const isLongDawra = state.dawraLength === "long"
 
@@ -1020,21 +1020,22 @@ export const QuoteWizard = ({
         return (
           <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2">
             <Field label={tx(COPY.fields.date)} htmlFor="qw-date" error={errors.date}>
-              <input
+              <DatePicker
                 id="qw-date"
-                type="date"
-                className={cn(fieldClass, "min-h-[3.25rem]", inputErr("date"))}
+                locale={locale}
                 value={state.date}
-                onChange={(e) => patch({ date: e.target.value })}
+                min={todayISO}
+                error={errors.date}
+                onChange={(v) => patch({ date: v })}
               />
             </Field>
             <Field label={tx(COPY.fields.time)} htmlFor="qw-time" error={errors.time}>
-              <input
+              <TimePicker
                 id="qw-time"
-                type="time"
-                className={cn(fieldClass, "min-h-[3.25rem]", inputErr("time"))}
+                locale={locale}
                 value={state.time}
-                onChange={(e) => patch({ time: e.target.value })}
+                error={errors.time}
+                onChange={(v) => patch({ time: v })}
               />
             </Field>
             <Field
@@ -1044,25 +1045,25 @@ export const QuoteWizard = ({
               htmlFor="qw-return"
               error={errors.returnDate}
             >
-              <input
+              <DatePicker
                 id="qw-return"
-                type="date"
-                className={cn(fieldClass, "min-h-[3.25rem]", inputErr("returnDate"))}
+                locale={locale}
                 value={state.returnDate}
-                min={state.date || undefined}
-                onChange={(e) => patch({ returnDate: e.target.value })}
+                min={state.date || todayISO}
+                error={errors.returnDate}
+                onChange={(v) => patch({ returnDate: v })}
               />
             </Field>
             {state.service !== "umrah" ? (
               <Field label={tx(COPY.fields.waiting)} htmlFor="qw-waiting">
-                <input
+                <NumberStepper
                   id="qw-waiting"
-                  type="number"
+                  locale={locale}
                   min={0}
                   max={168}
-                  className={fieldClass}
+                  placeholder="0"
                   value={state.waitingHours}
-                  onChange={(e) => patch({ waitingHours: e.target.value })}
+                  onChange={(v) => patch({ waitingHours: v })}
                 />
               </Field>
             ) : null}
@@ -1077,14 +1078,15 @@ export const QuoteWizard = ({
               htmlFor="qw-pax"
               error={errors.passengers}
             >
-              <input
+              <NumberStepper
                 id="qw-pax"
-                type="number"
+                locale={locale}
                 min={1}
                 max={500}
-                className={cn(fieldClass, inputErr("passengers"))}
+                step={1}
+                error={errors.passengers}
                 value={state.passengers}
-                onChange={(e) => patch({ passengers: e.target.value })}
+                onChange={(v) => patch({ passengers: v })}
               />
             </Field>
             <Field label={tx(COPY.fields.luggage)} htmlFor="qw-luggage">
@@ -1117,14 +1119,14 @@ export const QuoteWizard = ({
               htmlFor="qw-buses"
               error={errors.busCount}
             >
-              <input
+              <NumberStepper
                 id="qw-buses"
-                type="number"
+                locale={locale}
                 min={1}
                 max={50}
-                className={cn(fieldClass, inputErr("busCount"))}
+                error={errors.busCount}
                 value={state.busCount}
-                onChange={(e) => patch({ busCount: e.target.value })}
+                onChange={(v) => patch({ busCount: v })}
               />
             </Field>
             <Choices
@@ -1146,7 +1148,7 @@ export const QuoteWizard = ({
                 >
                   <input
                     type="checkbox"
-                    className="size-4 rounded border-ink/20"
+                    className="qw-check"
                     checked={state.extras[o.id]}
                     onChange={(e) =>
                       patch({ extras: { ...state.extras, [o.id]: e.target.checked } })
@@ -1159,7 +1161,7 @@ export const QuoteWizard = ({
             <Field label={tx(COPY.fields.notes)} htmlFor="qw-notes">
               <textarea
                 id="qw-notes"
-                className={cn(fieldClass, "min-h-[5.5rem] resize-y")}
+                className={cn(fieldClass, "min-h-[5.5rem] resize-none")}
                 value={state.notes}
                 onChange={(e) => patch({ notes: e.target.value })}
               />
@@ -1254,7 +1256,7 @@ export const QuoteWizard = ({
             >
               <input
                 type="checkbox"
-                className="mt-1 size-4 rounded border-ink/20"
+                className="qw-check mt-0.5"
                 checked={state.consent}
                 onChange={(e) => patch({ consent: e.target.checked })}
               />
