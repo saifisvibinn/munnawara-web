@@ -1,12 +1,17 @@
 import { api } from "./api"
 
-export type ChatOption = { id: string; label: string }
+/** `href` options are links (e.g. the quote form); the rest are sent back as `choiceId`. */
+export type ChatOption = { id: string; label: string; href?: string }
+
+export type ChatLang = "en" | "ar"
 
 export type ChatReply = {
   conversationId: string
   status: string
   escalated: boolean
   answer: string | null
+  /** Server id of Durri's reply — used to de-duplicate HTTP + socket copies. */
+  messageId?: string | null
   reason: string | null
   systemMessage: string | null
   options?: ChatOption[]
@@ -95,21 +100,41 @@ export const saveConversationId = (id: string | null) => {
   }
 }
 
-export const fetchGuidedWelcome = () => api<GuidedWelcome>("/chat/guided")
+export const fetchGuidedWelcome = (lang: ChatLang) =>
+  api<GuidedWelcome>(`/chat/guided?lang=${lang}`)
 
-export const startChatSession = (identity: VisitorIdentity) =>
+export const startChatSession = (identity: VisitorIdentity, lang: ChatLang) =>
   api<ChatSession>("/chat/session", {
     method: "POST",
     json: {
       name: identity.name.trim(),
       phone: identity.phone.trim(),
+      lang,
     },
   })
+
+export type ChatHistory =
+  | { resumable: false }
+  | {
+      resumable: true
+      conversationId: string
+      status: string
+      language: ChatLang
+      messages: { id: string; sender: string; text: string; createdAt?: string }[]
+      options: ChatOption[]
+    }
+
+/** Ask the server to restore an open chat after a page reload. */
+export const fetchChatHistory = (conversationId: string, phone: string) =>
+  api<ChatHistory>(
+    `/chat/history?conversationId=${encodeURIComponent(conversationId)}&phone=${encodeURIComponent(phone)}`,
+  )
 
 export const sendChatMessage = (input: {
   text?: string
   choiceId?: string
   conversationId?: string | null
+  lang?: ChatLang
 }) => {
   if (!input.conversationId) {
     return Promise.reject(new Error("Start a chat session first"))
@@ -120,6 +145,7 @@ export const sendChatMessage = (input: {
       text: input.text,
       choiceId: input.choiceId,
       conversationId: input.conversationId,
+      lang: input.lang,
     },
   })
 }

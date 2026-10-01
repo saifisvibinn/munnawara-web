@@ -51,7 +51,6 @@ const QuoteMap = dynamic(() => import("./QuoteMap"), {
 
 type WizardProps = {
   className?: string
-  variant?: "card" | "overlay"
   formId?: string
   /** "split" = map pane + form panel that fits the viewport (used by /quote). */
   layout?: "stack" | "split"
@@ -374,7 +373,6 @@ function PlaceSelect({
 }
 export const QuoteWizard = ({
   className,
-  variant = "card",
   formId = "quote",
   layout = "stack",
   heading,
@@ -382,7 +380,6 @@ export const QuoteWizard = ({
   const locale = useLocale()
   const isAr = locale === "ar"
   const tx = (text: L10n) => pick(text, locale)
-  const isOverlay = variant === "overlay"
   const split = layout === "split"
   const reducedMotion = useReducedMotion()
 
@@ -740,9 +737,7 @@ export const QuoteWizard = ({
         ref={topRef}
         dir={isAr ? "rtl" : "ltr"}
         className={cn(
-          isOverlay
-            ? "bg-transparent p-0 text-start"
-            : "rounded-2xl bg-surface-elevated/90 p-4 text-start ring-1 ring-border backdrop-blur-md sm:p-6 md:p-8",
+          "rounded-2xl bg-surface-elevated/90 p-4 text-start ring-1 ring-border backdrop-blur-md sm:p-6 md:p-8",
           className,
         )}
       >

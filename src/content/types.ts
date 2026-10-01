@@ -126,7 +126,8 @@ export type LandingHeroContent = {
   lines: readonly string[]
   sub: string
   cta: string
-  brandWords: readonly [string, string, string, string]
+  /** Words of the intro brand line; first is orange, last is blue. Arabic uses 3 (درة المنورة للنقل). */
+  brandWords: readonly string[]
   backTop: string
   chatAria: string
 }

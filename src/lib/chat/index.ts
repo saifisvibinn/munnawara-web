@@ -1,5 +1,6 @@
 export {
   clearIdentity,
+  fetchChatHistory,
   fetchGuidedWelcome,
   loadConversationId,
   loadIdentity,
@@ -7,6 +8,8 @@ export {
   saveIdentity,
   sendChatMessage,
   startChatSession,
+  type ChatHistory,
+  type ChatLang,
   type ChatOption,
   type ChatReply,
   type ChatSession,

@@ -2720,3 +2720,20 @@ html.is-locale-in .landing-fab-row {
 
 
 
+
+/* Durri chat: avatar bubbles, link buttons, long menus */
+.chat-bubble:has(> .chat-bubble__avatar) { flex-direction: row; align-items: flex-start; gap: 8px; }
+.chat-bubble__avatar { flex: none; width: 1.7rem; height: 1.7rem; margin-top: 2px; }
+.chat-bubble__body { display: flex; min-width: 0; flex-direction: column; gap: 3px; }
+.chat-bubble p a { color: inherit; text-decoration: underline; text-underline-offset: 2px; word-break: break-all; }
+.chat-panel__options { max-height: 8.5rem; overflow-y: auto; scrollbar-width: thin; }
+.chat-panel__option-link {
+  display: inline-flex; align-items: center; padding: 7px 12px; border-radius: 999px;
+  background: linear-gradient(120deg, var(--brand-peach), var(--brand-orange)); color: #251812;
+  font-size: 0.72rem; font-weight: 700; text-decoration: none;
+  box-shadow: 0 4px 12px rgba(247, 91, 18, 0.25);
+  animation: chat-bubble-in 360ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+.chat-panel__option-link:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(247, 91, 18, 0.35); }
+html[dir='rtl'] .chat-panel__option-link { direction: rtl; }.chat-panel__options .chat-panel__more { border-style: dashed; color: var(--brand-orange); background: transparent; }

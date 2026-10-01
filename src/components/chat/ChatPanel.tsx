@@ -1,24 +1,29 @@
 "use client"
 
+import { Link } from "@/i18n/navigation"
 import {
   ApiError,
   clearIdentity,
   connectCustomerSocket,
   disconnectCustomerSocket,
+  fetchChatHistory,
   fetchGuidedWelcome,
   joinConversation,
+  loadConversationId,
   loadIdentity,
   playChatNotifySound,
   saveConversationId,
   saveIdentity,
   sendChatMessage,
   startChatSession,
+  type ChatLang,
   type ChatOption,
   type VisitorIdentity,
 } from "@/lib/chat"
 import { useLocale, useTranslations } from "next-intl"
 import { RobotAvatar } from "./RobotAvatar"
 import {
+  Fragment,
   useCallback,
   useEffect,
   useId,
@@ -53,9 +58,28 @@ const mapSocketSender = (sender: string): Role => {
 
 const emptyIdentity = (): VisitorIdentity => ({ name: "", phone: "" })
 
+/** Turn bare https:// links in a message into real links. */
+const RichText = ({ text }: { text: string }) => {
+  const parts = text.split(/(https?:\/\/[^\s)]+)/g)
+  return (
+    <>
+      {parts.map((part, i) =>
+        /^https?:\/\//.test(part) ? (
+          <a key={i} href={part} target="_blank" rel="noopener noreferrer">
+            {part}
+          </a>
+        ) : (
+          <Fragment key={i}>{part}</Fragment>
+        ),
+      )}
+    </>
+  )
+}
+
 export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => {
   const t = useTranslations("chat")
   const locale = useLocale()
+  const lang: ChatLang = locale === "ar" ? "ar" : "en"
   const titleId = useId()
   const listRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
@@ -76,6 +100,7 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
   const [claimed, setClaimed] = useState(false)
   const [bootError, setBootError] = useState<string | null>(null)
   const [booted, setBooted] = useState(false)
+  const [moreTopics, setMoreTopics] = useState(false)
 
   openRef.current = open
 
@@ -98,6 +123,22 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
     if (open) setUnread(0)
   }, [open, setUnread])
 
+  // Escape closes the panel.
+  useEffect(() => {
+    if (!open) return
+    const onKey = (e: globalThis.KeyboardEvent) => {
+      if (e.key === "Escape") onClose()
+    }
+    window.addEventListener("keydown", onKey)
+    return () => window.removeEventListener("keydown", onKey)
+  }, [open, onClose])
+
+  /** De-duplicates by server message id, then by identical consecutive text. */
+  // A fresh set of buttons starts collapsed again once the chat is under way.
+  useEffect(() => {
+    setMoreTopics(false)
+  }, [options])
+
   const appendMessage = useCallback((message: UiMessage) => {
     if (seenIdsRef.current.has(message.id)) return
     seenIdsRef.current.add(message.id)
@@ -117,10 +158,17 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
   }, [])
 
   useEffect(() => {
+    if (open && identified) scrollToEnd()
+  }, [open, identified, messages, options, busy, scrollToEnd])
+
+  // Focus the composer when the panel opens — but only with a mouse/keyboard,
+  // so phones don't pop the on-screen keyboard over the answers.
+  useEffect(() => {
     if (!open || !identified) return
-    scrollToEnd()
-    window.setTimeout(() => inputRef.current?.focus(), 80)
-  }, [open, identified, messages, options, scrollToEnd])
+    if (!window.matchMedia("(pointer: fine)").matches) return
+    const timer = window.setTimeout(() => inputRef.current?.focus(), 120)
+    return () => window.clearTimeout(timer)
+  }, [open, identified])
 
   useEffect(() => {
     if (!conversationId) return
@@ -201,14 +249,49 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
     return () => disconnectCustomerSocket()
   }, [])
 
+  /**
+   * Open the chat: restore the stored conversation if the server still has it open,
+   * otherwise start a fresh session with the welcome menu.
+   */
   const beginSession = useCallback(
     async (visitor: VisitorIdentity) => {
       setBusy(true)
       setBootError(null)
       try {
         saveIdentity(visitor)
-        const session = await startChatSession(visitor)
-        const welcome = await fetchGuidedWelcome()
+
+        const storedId = loadConversationId()
+        if (storedId) {
+          try {
+            const history = await fetchChatHistory(storedId, visitor.phone)
+            if (history.resumable && history.messages.length > 0) {
+              seenIdsRef.current.clear()
+              history.messages.forEach((m) => seenIdsRef.current.add(m.id))
+              setMessages(
+                history.messages.map((m) => ({
+                  id: m.id,
+                  role: mapSocketSender(m.sender),
+                  text: m.text,
+                })),
+              )
+              setOptions(history.options ?? [])
+              setConversationId(history.conversationId)
+              joinConversation(history.conversationId)
+              setEscalated(history.status === "needs_human" || history.status === "claimed")
+              setClaimed(history.status === "claimed")
+              setIdentified(true)
+              setBooted(true)
+              setUnread(0)
+              return
+            }
+          } catch {
+            /* stale or unreachable history — fall through to a fresh chat */
+          }
+          saveConversationId(null)
+        }
+
+        const session = await startChatSession(visitor, lang)
+        const welcome = await fetchGuidedWelcome(lang)
 
         const welcomeMsg = {
           id: uid(),
@@ -234,7 +317,7 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
         setBusy(false)
       }
     },
-    [t, setUnread],
+    [t, setUnread, lang],
   )
 
   useEffect(() => {
@@ -277,6 +360,7 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
 
       setBusy(true)
       setBootError(null)
+      const previousOptions = options
       const optimistic = payload.label || text || ""
       if (optimistic) {
         appendMessage({ id: uid(), role: "user", text: optimistic })
@@ -285,33 +369,12 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
       setOptions([])
 
       try {
-        let activeConversationId = conversationId
-        let reply = await sendChatMessage({
+        const reply = await sendChatMessage({
           text: text || undefined,
           choiceId,
-          conversationId: activeConversationId,
+          conversationId,
+          lang,
         })
-
-        if (
-          reply.reason === "already_escalated" &&
-          !reply.answer &&
-          activeConversationId
-        ) {
-          const visitor = loadIdentity()
-          if (visitor) {
-            const session = await startChatSession(visitor)
-            activeConversationId = session.conversationId
-            setConversationId(activeConversationId)
-            saveConversationId(activeConversationId)
-            setEscalated(false)
-            setClaimed(false)
-            reply = await sendChatMessage({
-              text: text || undefined,
-              choiceId,
-              conversationId: activeConversationId,
-            })
-          }
-        }
 
         setConversationId(reply.conversationId)
         saveConversationId(reply.conversationId)
@@ -329,24 +392,29 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
 
         if (reply.escalated && reply.systemMessage) {
           appendMessage({
-            id: uid(),
+            id: reply.messageId || uid(),
             role: "system",
             text: reply.systemMessage,
           })
         } else if (reply.answer?.trim()) {
           appendMessage({
-            id: uid(),
+            id: reply.messageId || uid(),
             role: "assistant",
             text: reply.answer.trim(),
           })
+        } else if (reply.reason === "already_escalated" && reply.systemMessage) {
+          appendMessage({ id: uid(), role: "system", text: reply.systemMessage })
         }
       } catch (err) {
+        // Give the customer their words and buttons back so nothing is lost.
+        setDraft(text ?? "")
+        setOptions(previousOptions)
         setBootError(err instanceof ApiError ? err.message : t("error"))
       } finally {
         setBusy(false)
       }
     },
-    [appendMessage, busy, conversationId, t],
+    [appendMessage, busy, conversationId, lang, options, t],
   )
 
   const handleSubmit = (event: FormEvent) => {
@@ -355,7 +423,7 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
   }
 
   const handleKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
-    if (event.key === "Enter" && !event.shiftKey) {
+    if (event.key === "Enter" && !event.shiftKey && !event.nativeEvent.isComposing) {
       event.preventDefault()
       void send({ text: draft })
     }
@@ -404,6 +472,12 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
 
   const canSubmitIdentity =
     identity.name.trim() && identity.phone.trim()
+
+  const COMPACT_TOPICS = 6
+  const topics = options.filter((o) => !o.href)
+  const compactMenu = messages.length > 2 && !moreTopics && topics.length > COMPACT_TOPICS
+  const visibleTopics = compactMenu ? topics.slice(0, COMPACT_TOPICS) : topics
+  const hiddenCount = topics.length - COMPACT_TOPICS
 
   const statusLabel = claimed
     ? t("claimed")
@@ -487,6 +561,7 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
             <input
               type="tel"
               name="phone"
+              dir="ltr"
               autoComplete="tel"
               inputMode="tel"
               required
@@ -504,7 +579,13 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
         </form>
       ) : (
         <>
-          <div className="chat-panel__messages" ref={listRef}>
+          <div
+            className="chat-panel__messages"
+            ref={listRef}
+            role="log"
+            aria-live="polite"
+            aria-relevant="additions"
+          >
             {messages.length === 0 && !busy && !bootError ? (
               <p className="chat-panel__hint">{t("empty")}</p>
             ) : null}
@@ -515,13 +596,20 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
                 className={`chat-bubble chat-bubble--${message.role}`}
                 style={{ animationDelay: `${Math.min(index, 8) * 28}ms` }}
               >
-                <span className="chat-bubble__who">{whoLabel(message.role)}</span>
-                <p>{message.text}</p>
+                {message.role === "assistant" ? (
+                  <RobotAvatar className="chat-bubble__avatar" />
+                ) : null}
+                <div className="chat-bubble__body">
+                  <span className="chat-bubble__who">{whoLabel(message.role)}</span>
+                  <p dir="auto">
+                    <RichText text={message.text} />
+                  </p>
+                </div>
               </div>
             ))}
 
             {busy ? (
-              <div className="chat-typing" aria-live="polite">
+              <div className="chat-typing" role="status" aria-label={t("typing")}>
                 <span />
                 <span />
                 <span />
@@ -532,7 +620,20 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
 
           {options.length > 0 && !escalated ? (
             <div className="chat-panel__options">
-              {options.map((option, i) => (
+              {options
+                .filter((o) => o.href)
+                .map((option, i) => (
+                  <Link
+                    key={option.id}
+                    href={option.href!}
+                    className="chat-panel__option-link"
+                    style={{ animationDelay: `${i * 40}ms` }}
+                    onClick={onClose}
+                  >
+                    {option.label} →
+                  </Link>
+                ))}
+              {visibleTopics.map((option, i) => (
                 <button
                   key={option.id}
                   type="button"
@@ -545,13 +646,24 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
                   {option.label}
                 </button>
               ))}
+              {topics.length > COMPACT_TOPICS && messages.length > 2 ? (
+                <button
+                  type="button"
+                  className="chat-panel__more"
+                  aria-expanded={moreTopics}
+                  onClick={() => setMoreTopics((v) => !v)}
+                >
+                  {moreTopics ? t("fewerTopics") : `${t("moreTopics")} (${hiddenCount})`}
+                </button>
+              ) : null}
             </div>
           ) : null}
-
           <form className="chat-panel__composer" onSubmit={handleSubmit}>
             <textarea
               ref={inputRef}
               rows={2}
+              dir="auto"
+              maxLength={1000}
               value={draft}
               disabled={busy || !conversationId}
               placeholder={t("placeholder")}
