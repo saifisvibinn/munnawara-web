@@ -45,7 +45,8 @@ export const SmoothScrollProvider = ({
       const locked =
         document.body.classList.contains("is-loading") ||
         document.body.classList.contains("is-transitioning") ||
-        document.body.classList.contains("is-page-transitioning")
+        document.body.classList.contains("is-page-transitioning") ||
+        document.body.classList.contains("is-quote-page")
       if (locked) lenis.stop()
       else lenis.start()
     }

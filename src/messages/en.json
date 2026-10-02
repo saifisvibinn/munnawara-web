@@ -103,7 +103,8 @@
     "nextTestimonial": "Next testimonial"
   },
   "quote": {
-    "title": "Request a quote"
+    "title": "Request a quote",
+    "backToTicket": "Back to ticket"
   },
   "whatsappPrefill": "Hello, I would like to inquire about Durrah Al-Munawwara services",
   "chat": {

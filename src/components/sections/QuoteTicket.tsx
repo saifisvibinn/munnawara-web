@@ -17,7 +17,6 @@ const COPY = {
     stubTitle: "Get a quote",
     stubSub: "Pull the stub",
     hint: "Pull the orange stub to tear it off — your quote starts right after.",
-    key: "Keyboard: focus the stub and press Enter.",
     opening: "Opening your quote…",
     skip: "Prefer a plain form?",
     aria: "Tear off the stub to start your quote",
@@ -33,7 +32,6 @@ const COPY = {
     stubTitle: "اطلب عرض سعر",
     stubSub: "اسحب القسيمة",
     hint: "اسحب القسيمة البرتقالية لتمزيقها — وسيبدأ طلب العرض مباشرة.",
-    key: "بلوحة المفاتيح: ركّز على القسيمة واضغط Enter.",
     opening: "جارٍ فتح طلب العرض…",
     skip: "تفضّل نموذجاً عادياً؟",
     aria: "مزّق القسيمة لبدء طلب العرض",
@@ -57,9 +55,11 @@ export function QuoteTicket() {
   const [opening, setOpening] = useState(false)
   const timer = useRef<number | null>(null)
 
-  // Warm the quote page so the hand-off is instant once the stub is gone.
+  // Warm the quote route + heavy client chunks while the ticket is on screen.
   useEffect(() => {
     router.prefetch("/quote")
+    void import("@/components/forms/QuoteWizard")
+    void import("@/components/forms/QuoteMap")
     return () => {
       if (timer.current !== null) window.clearTimeout(timer.current)
     }
@@ -75,17 +75,18 @@ export function QuoteTicket() {
     ? { width: 330, height: 430, stubSize: 120 }
     : { width: 540, height: 270, stubSize: 150 }
 
-  // Ticket glides up and fades (CSS), then we navigate without the logo bloom.
+  // Exit anim runs in parallel with navigation — don't wait for the fade to finish.
   const handleTear = () => {
     setOpening(true)
+    skipNextRouteTransition()
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    timer.current = window.setTimeout(
-      () => {
-        skipNextRouteTransition()
-        router.push("/quote")
-      },
-      reduced ? 0 : 420,
-    )
+    if (reduced) {
+      router.push("/quote")
+      return
+    }
+    timer.current = window.setTimeout(() => {
+      router.push("/quote")
+    }, 120)
   }
 
   return (
@@ -98,7 +99,7 @@ export function QuoteTicket() {
         key={vertical ? "v" : "h"}
         orientation={vertical ? "vertical" : "horizontal"}
         {...size}
-        image="/hero/cover.png"
+        image="/hero/quote-ticket-bus.jpg"
         imageAlt=""
         imageRadius={10}
         radius={18}
@@ -169,7 +170,6 @@ export function QuoteTicket() {
         ) : (
           <>
             <p>{c.hint}</p>
-            <p className="mt-1 text-xs opacity-80">{c.key}</p>
           </>
         )}
         <Link

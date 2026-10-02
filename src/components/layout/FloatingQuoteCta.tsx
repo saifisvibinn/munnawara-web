@@ -2,6 +2,7 @@
 
 import { useReducedMotion } from "@/hooks/useReducedMotion"
 import { Link, useRouter } from "@/i18n/navigation"
+import { skipNextRouteTransition } from "@/components/landing/LogoRouteTransition"
 import { cn } from "@/lib/cn"
 import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
@@ -50,9 +51,18 @@ export const FloatingQuoteCta = () => {
 
   // Nav / CTA band buttons dispatch this event — take the visitor to the quote page.
   useEffect(() => {
-    const go = () => router.push("/quote")
+    const go = () => {
+      skipNextRouteTransition()
+      router.prefetch("/quote")
+      router.push("/quote")
+    }
     window.addEventListener(OPEN_QUOTE_EVENT, go)
     return () => window.removeEventListener(OPEN_QUOTE_EVENT, go)
+  }, [router])
+
+  useEffect(() => {
+    router.prefetch("/quote")
+    void import("@/components/forms/QuoteWizard")
   }, [router])
 
   useEffect(() => {
@@ -176,8 +186,10 @@ export const FloatingQuoteCta = () => {
       <Link
         ref={ctaRef}
         href="/quote"
+        data-no-route-transition
         tabIndex={visible ? 0 : -1}
         aria-label={t("requestQuote")}
+        onClick={() => skipNextRouteTransition()}
         className={cn(
           "font-label pointer-events-auto inline-flex h-14 origin-bottom cursor-pointer items-center overflow-hidden rounded-full border border-ink/10 bg-surface-muted/80 text-sm font-medium text-ink shadow-md backdrop-blur-md transition-[border-color,background-color,box-shadow] hover:border-orange/40 hover:bg-surface-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange",
           isRtl ? "flex-row-reverse pe-0.5 ps-1" : "ps-0.5 pe-1",

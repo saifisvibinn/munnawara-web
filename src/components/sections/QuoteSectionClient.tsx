@@ -1,5 +1,9 @@
 "use client"
 
+import {
+  isReturningToTicket,
+  QuoteTicketReturnScroll,
+} from "@/components/forms/QuotePageChrome"
 import { QuoteTicket } from "@/components/sections/QuoteTicket"
 import { useReducedMotion } from "@/hooks/useReducedMotion"
 import { gsap } from "gsap"
@@ -30,8 +34,9 @@ export const QuoteSectionClient = ({
 
     const copy = section.querySelector<HTMLElement>("[data-quote-copy]")
     const form = section.querySelector<HTMLElement>("[data-quote-form]")
+    const returning = isReturningToTicket()
 
-    if (reduced) {
+    if (reduced || returning) {
       gsap.set([copy, form].filter(Boolean), { opacity: 1, y: 0 })
       return
     }
@@ -69,9 +74,10 @@ export const QuoteSectionClient = ({
       className="relative isolate overflow-x-clip bg-surface-muted px-4 py-16 sm:px-6 sm:py-24 md:px-10 md:py-32"
       aria-label={ariaLabel}
     >
+      <QuoteTicketReturnScroll />
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-64 bg-[radial-gradient(ellipse_at_top,rgba(247,91,18,0.08),transparent_60%)]"
+        className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-64 bg-[radial-gradient(ellipse_at_top,rgb(247,91,18,0.08),transparent_60%)]"
       />
 
       <div className="mx-auto grid max-w-[72rem] gap-8 sm:gap-10 md:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] md:items-center md:gap-14 lg:gap-16">

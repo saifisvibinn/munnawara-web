@@ -6,7 +6,6 @@ import { useReducedMotion } from "@/hooks/useReducedMotion"
 import { cn } from "@/lib/cn"
 import { useLocale } from "next-intl"
 import {
-  useEffect,
   useMemo,
   useRef,
   useState,
@@ -42,6 +41,7 @@ import {
 } from "./quoteWizardConfig"
 import dynamic from "next/dynamic"
 import { DatePicker, Dropdown, NumberStepper, TimePicker } from "./QuoteFields"
+import { CheckBadge, choiceIcon } from "./QuoteChoiceIcons"
 import { GlobeVisual } from "./QuoteVisuals"
 
 const QuoteMap = dynamic(() => import("./QuoteMap"), {
@@ -56,6 +56,8 @@ type WizardProps = {
   layout?: "stack" | "split"
   /** Title chip drawn over the map in split layout. */
   heading?: { eyebrow?: string; title: string }
+  /** Optional chrome above the step progress (e.g. back link). */
+  toolbar?: ReactNode
 }
 
 type StepId =
@@ -143,10 +145,25 @@ const initialState: WizardState = {
 }
 
 const COPY = {
-  stepOf: (c: number, t: number): L10n => ({
-    en: `Step ${c} of ${t}`,
-    ar: `الخطوة ${c} من ${t}`,
+  stepOf: (c: number, t: number, name: string): L10n => ({
+    en: `Step ${c}: ${name}`,
+    ar: `الخطوة ${c}: ${name}`,
   }),
+  stepNames: {
+    customer: { en: "Audience", ar: "الجهة" },
+    service: { en: "Service", ar: "الخدمة" },
+    umrahKind: { en: "Trip type", ar: "نوع الرحلة" },
+    dawraLength: { en: "Circuit", ar: "الدورة" },
+    dawraRoute: { en: "Route", ar: "المسار" },
+    maktaaRoute: { en: "Route", ar: "المسار" },
+    charterRoute: { en: "Route", ar: "المسار" },
+    when: { en: "When", ar: "الموعد" },
+    passengers: { en: "Travellers", ar: "المسافرون" },
+    vehicle: { en: "Fleet", ar: "الأسطول" },
+    extras: { en: "Extras", ar: "إضافات" },
+    contact: { en: "Contact", ar: "التواصل" },
+    review: { en: "Review", ar: "المراجعة" },
+  } satisfies Record<StepId, L10n>,
   titles: {
     customer: { en: "Who is this request for?", ar: "لمن هذا الطلب؟" },
     service: { en: "What do you need?", ar: "ماذا تحتاج؟" },
@@ -252,9 +269,9 @@ const fieldClass =
   "w-full min-w-0 rounded-xl border border-border bg-surface-muted px-4 py-3.5 text-base text-ink outline-none transition placeholder:text-ink-muted focus:border-orange/40 focus:bg-surface-elevated focus:ring-2 focus:ring-orange/25 sm:text-[0.9375rem]"
 const fieldErrorRing = "ring-2 ring-red-400/50 focus:ring-red-400/60 bg-red-50/60 dark:bg-red-950/40"
 const btnPrimary =
-  "font-label inline-flex items-center justify-center rounded-xl bg-black px-6 py-3 text-sm font-semibold text-white transition hover:bg-orange focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange focus-visible:ring-offset-2 disabled:opacity-60"
+  "font-label inline-flex min-w-[9.5rem] items-center justify-center rounded-full bg-gradient-to-b from-orange-soft to-orange px-8 py-3 text-sm font-semibold text-white shadow-[0_12px_28px_-10px_rgb(243,112,33,0.9)] transition hover:brightness-[1.03] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange focus-visible:ring-offset-2 disabled:opacity-60"
 const btnGhost =
-  "font-label inline-flex items-center justify-center rounded-xl px-5 py-3 text-sm font-semibold text-ink-muted transition hover:bg-surface-muted hover:text-ink"
+  "font-label inline-flex items-center justify-center rounded-full px-5 py-3 text-sm font-semibold text-ink-muted transition hover:bg-surface-muted hover:text-ink"
 
 function Field({
   label,
@@ -303,8 +320,8 @@ function Choices({
   return (
     <div
       className={cn(
-        "grid gap-2",
-        columns === 2 && "grid-cols-2",
+        "grid gap-2.5",
+        columns === 2 && "grid-cols-1 @sm:grid-cols-2",
       )}
       role="radiogroup"
     >
@@ -318,26 +335,87 @@ function Choices({
             aria-checked={selected}
             onClick={() => onPick(o.id)}
             className={cn(
-              "rounded-xl px-3 py-3 text-start transition sm:px-4 sm:py-3.5",
+              "relative flex items-start gap-3 rounded-2xl border px-3.5 py-3.5 text-start transition sm:px-4",
               selected
-                ? "bg-black text-white shadow-sm"
-                : "bg-surface-muted text-ink hover:bg-surface-container",
+                ? "border-orange bg-orange/5 shadow-[0_0_0_3px_rgb(243,112,33,0.14)]"
+                : "border-transparent bg-surface-muted text-ink hover:border-border hover:bg-surface-container",
             )}
           >
-            <span className="block text-sm font-semibold">{pick(o.label, locale)}</span>
-            {o.hint ? (
-              <span
-                className={cn(
-                  "mt-1 block text-xs leading-snug",
-                  selected ? "text-white/70" : "text-ink/50",
-                )}
-              >
-                {pick(o.hint, locale)}
+            {selected ? <CheckBadge /> : null}
+            <span
+              className={cn(
+                "mt-0.5 inline-flex size-9 shrink-0 items-center justify-center rounded-full",
+                selected
+                  ? "bg-orange/15 text-orange"
+                  : "bg-surface-elevated text-ink-muted ring-1 ring-border",
+              )}
+            >
+              {choiceIcon(o.id)}
+            </span>
+            <span className="min-w-0 pe-5">
+              <span className="block text-sm font-semibold text-ink">
+                {pick(o.label, locale)}
               </span>
-            ) : null}
+              {o.hint ? (
+                <span className="mt-0.5 block text-xs leading-snug text-ink-muted">
+                  {pick(o.hint, locale)}
+                </span>
+              ) : null}
+            </span>
           </button>
         )
       })}
+    </div>
+  )
+}
+
+function StepRail({
+  current,
+  total,
+  label,
+}: {
+  current: number
+  total: number
+  label: string
+}) {
+  const maxDots = Math.min(total, 8)
+  const active = Math.min(current, maxDots)
+  return (
+    <div className="space-y-2.5">
+      <p className="font-label text-[0.7rem] font-semibold tracking-[0.12em] text-ink-muted uppercase">
+        {label}
+      </p>
+      <ol className="flex items-center gap-1.5" aria-hidden="true">
+        {Array.from({ length: maxDots }, (_, index) => {
+          const n = index + 1
+          const done = n < active
+          const here = n === active
+          return (
+            <li key={n} className="flex flex-1 items-center gap-1.5 last:flex-none">
+              <span
+                className={cn(
+                  "inline-flex size-6 shrink-0 items-center justify-center rounded-full text-[0.65rem] font-bold transition",
+                  here
+                    ? "bg-orange text-white"
+                    : done
+                      ? "bg-ink text-white"
+                      : "bg-surface-muted text-ink-muted ring-1 ring-border",
+                )}
+              >
+                {n}
+              </span>
+              {n < maxDots ? (
+                <span
+                  className={cn(
+                    "h-0.5 w-full rounded-full",
+                    done || here ? "bg-orange/70" : "bg-border",
+                  )}
+                />
+              ) : null}
+            </li>
+          )
+        })}
+      </ol>
     </div>
   )
 }
@@ -376,6 +454,7 @@ export const QuoteWizard = ({
   formId = "quote",
   layout = "stack",
   heading,
+  toolbar,
 }: WizardProps) => {
   const locale = useLocale()
   const isAr = locale === "ar"
@@ -613,19 +692,8 @@ export const QuoteWizard = ({
     if (i >= 0) goTo(i, "back")
   }
 
-  // Choice steps advance by themselves once a value is picked.
-  const nextRef = useRef(goNext)
-  nextRef.current = goNext
-  const [autoTick, setAutoTick] = useState(0)
-  useEffect(() => {
-    if (autoTick === 0) return
-    const timer = window.setTimeout(() => nextRef.current(), 230)
-    return () => window.clearTimeout(timer)
-  }, [autoTick])
-
   const choose = (p: Partial<WizardState>) => {
     patch(p)
-    setAutoTick((n) => n + 1)
   }
 
   /* ---- submit ---- */
@@ -1325,23 +1393,21 @@ export const QuoteWizard = ({
           : step === "dawraLength"
             ? state.dawraLength
             : ""
-  // Choice steps auto-advance on pick; once a value exists (e.g. after Back) offer Continue.
   const showContinue = !isChoiceStep || Boolean(choiceValue)
   const progress = ((stepIndexSafe + 1) / steps.length) * 100
+  const stepName = tx(COPY.stepNames[step])
 
   return shell(
     <>
       <div className={split ? "mb-3 shrink-0" : "mb-5"}>
-        <div className="flex items-center justify-between gap-3 text-xs text-ink-muted">
-          <span className="font-label tracking-[0.12em] uppercase">
-            {tx(COPY.stepOf(stepIndexSafe + 1, steps.length))}
-          </span>
-        </div>
-        <div className="mt-2 h-1 overflow-hidden rounded-full bg-surface-muted">
-          <div
-            className="h-full rounded-full bg-orange transition-[width] duration-300"
-            style={{ width: `${progress}%` }}
-          />
+        {toolbar ? <div className="mb-3">{toolbar}</div> : null}
+        <StepRail
+          current={stepIndexSafe + 1}
+          total={steps.length}
+          label={tx(COPY.stepOf(stepIndexSafe + 1, steps.length, stepName))}
+        />
+        <div className="sr-only" aria-live="polite">
+          {Math.round(progress)}%
         </div>
       </div>
 

@@ -85,6 +85,47 @@ export type CareerRole = {
   summary: string
 }
 
+export type AboutFilmFeature = {
+  id: string
+  line: string
+}
+
+export type AboutFilmCompanyBeat = {
+  id: string
+  name: string
+  logo: string
+}
+
+export type AboutFilmContent = {
+  brandName: string
+  journeyHeadline: string
+  journeySupport: string
+  worldHeadline: string
+  worldBody: string
+  problemHeadline: string
+  problemLines: readonly string[]
+  connectionHeadline: string
+  connectionBody: string
+  fleetHeadline: string
+  fleetBody: string
+  fleetBeats: readonly AboutFilmFeature[]
+  sidesLeft: string
+  sidesRight: string
+  sidesMerge: string
+  detailsHeadline: string
+  details: readonly AboutFilmFeature[]
+  humanLine1: string
+  humanLine2: string
+  brandLine: string
+  futureHeadline: string
+  futureBody: string
+  ctaHeadline: string
+  ctaBody: string
+  ctaLabel: string
+  ctaHref: string
+  companies: readonly AboutFilmCompanyBeat[]
+}
+
 export type AboutContent = {
   title: string
   intro: string
@@ -94,6 +135,8 @@ export type AboutContent = {
   mission: string
   /** Omit fabricated CR — null until client provides */
   licensingNote: string | null
+  /** Cinematic About film narrative */
+  film: AboutFilmContent
 }
 
 export type Testimonial = {

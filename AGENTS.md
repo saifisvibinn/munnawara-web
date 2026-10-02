@@ -6,6 +6,7 @@
 - `next-intl` with default locale `ar` (RTL) and secondary `en` (LTR)
 - Local typed content in `src/content/{ar,en}/` via accessor functions in `src/content/index.ts`
 - Motion (Framer), GSAP + ScrollTrigger, Lenis for animation
+- Shipped brand tokens are orange / blue / purple from `theme.ts` (not the green/gold draft in `DESIGN.md`)
 
 ## Hard rules
 - Never hardcode user-facing strings in components — use `messages/*.json` for UI chrome and `content/` for page copy
@@ -14,6 +15,13 @@
 - Never invent company facts (CR numbers, licenses, Tourism services, named clients). Use `TODO(content):` comments and `ContentPlaceholder` instead
 - Respect `prefers-reduced-motion` via `useReducedMotion`
 - Above-the-fold CTAs must not be gated behind scroll-triggered animation
+- Brand petal mark: use `LogoMark` (site chrome). Do not revive `public/dmtc-logo.svg` (deleted lockup)
+
+## About film
+- Route: `src/app/[locale]/about/page.tsx` → `AboutFilm`
+- Story copy lives in `AboutContent.film` (EN/AR). Keep Durrah Al-Munawwara group narrative; do not pivot this page to Munawwara Care product marketing unless the user asks.
+- Motion is GSAP + ScrollTrigger only (no Three.js / R3F on About). Prefer one scrubbed timeline per scene; clip decorative nodes inside the stage.
+- Full-bleed opening: keep `html:has([data-about-film])` spacer suppression so the hero is not pushed down by `.site-chrome__spacer`
 
 ## Locales
 - URL: `/ar/...` and `/en/...`; `/` redirects to `/ar`
