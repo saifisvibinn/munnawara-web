@@ -103,7 +103,7 @@ export const QuoteBackLink = ({ className }: { className?: string }) => {
       onClick={handleClick}
       className={
         className ??
-        "font-label inline-flex items-center gap-1.5 text-sm font-semibold text-ink-muted transition hover:text-orange focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange"
+        "font-label inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-ink-muted transition hover:text-orange focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange"
       }
       aria-label={t("backToTicket")}
     >

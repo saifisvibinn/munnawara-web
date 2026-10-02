@@ -1,15 +1,12 @@
 "use client"
 
 import { useReducedMotion } from "@/hooks/useReducedMotion"
-import { Link, useRouter } from "@/i18n/navigation"
+import { Link, usePathname, useRouter } from "@/i18n/navigation"
 import { skipNextRouteTransition } from "@/components/landing/LogoRouteTransition"
 import { cn } from "@/lib/cn"
 import { gsap } from "gsap"
-import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { useLocale, useTranslations } from "next-intl"
 import { useEffect, useLayoutEffect, useRef, useState } from "react"
-
-gsap.registerPlugin(ScrollTrigger)
 
 /**
  * Fired by the nav and CTA band "Get a quote" buttons. The quote flow now lives
@@ -29,13 +26,14 @@ const BusIcon = () => (
   </svg>
 )
 
-/** Floating "Get a quote" pill: appears after the About block, hides over the ticket section. */
+/** Floating "Request a quote" pill: shows near the end of a page, never on /quote or beside another quote CTA. */
 export const FloatingQuoteCta = () => {
   const t = useTranslations("common")
   const locale = useLocale()
   const isRtl = locale === "ar"
   const reduced = useReducedMotion()
   const router = useRouter()
+  const pathname = usePathname()
   const [visible, setVisible] = useState(false)
 
   const ctaRef = useRef<HTMLAnchorElement>(null)
@@ -61,67 +59,83 @@ export const FloatingQuoteCta = () => {
   }, [router])
 
   useEffect(() => {
-    router.prefetch("/quote")
-    void import("@/components/forms/QuoteWizard")
+    // Warm the quote route only once the current page has settled.
+    const warm = () => {
+      router.prefetch("/quote")
+      void import("@/components/forms/QuoteWizard")
+    }
+    if ("requestIdleCallback" in window) {
+      const id = window.requestIdleCallback(warm, { timeout: 4000 })
+      return () => window.cancelIdleCallback(id)
+    }
+    const id = setTimeout(warm, 2500)
+    return () => clearTimeout(id)
   }, [router])
 
   useEffect(() => {
-    // Appear only after the AboutPreview headlines block, and hide while the
-    // quote ticket section is on screen.
-    const aboutGate =
-      document.querySelector("[data-about-preview]") ??
-      document.getElementById("about-preview-heading")?.closest("section")
-    const quote = document.querySelector("[data-quote-section]")
-    let pastAbout = false
-    let overQuote = false
-
-    const sync = () => setVisible(pastAbout && !overQuote)
-    const triggers: ScrollTrigger[] = []
-
-    if (aboutGate) {
-      triggers.push(
-        ScrollTrigger.create({
-          trigger: aboutGate,
-          start: "bottom top+=48",
-          onEnter: () => {
-            pastAbout = true
-            sync()
-          },
-          onLeaveBack: () => {
-            pastAbout = false
-            sync()
-          },
-          onRefresh: (self) => {
-            pastAbout = self.scroll() >= self.start
-            sync()
-          },
-        }),
-      )
+    if (pathname === "/quote" || pathname.startsWith("/quote/")) {
+      setVisible(false)
+      return
     }
 
-    if (quote) {
-      triggers.push(
-        ScrollTrigger.create({
-          trigger: quote,
-          start: "top bottom",
-          end: "bottom top",
-          onUpdate: (self) => {
-            if (self.isActive === overQuote) return
-            overQuote = self.isActive
-            sync()
-          },
-          onRefresh: (self) => {
-            overQuote = self.isActive
-            sync()
-          },
-        }),
-      )
+    let frame = 0
+    const inView = (el: Element) => {
+      const box = el.getBoundingClientRect()
+      return box.width > 0 && box.bottom > 0 && box.top < window.innerHeight
     }
 
-    sync()
-    ScrollTrigger.refresh()
-    return () => triggers.forEach((trigger) => trigger.kill())
-  }, [])
+    // Re-read the live DOM every time — the page under this component changes on navigation.
+    const evaluate = () => {
+      frame = 0
+      const body = document.body.classList
+      if (
+        body.contains("is-loading") ||
+        body.contains("is-transitioning") ||
+        body.contains("is-page-transitioning")
+      ) {
+        setVisible(false)
+        return
+      }
+
+      const doc = document.documentElement
+      const remaining = doc.scrollHeight - (window.scrollY + window.innerHeight)
+      const footer = document.querySelector("footer")
+      const nearEnd =
+        remaining <= window.innerHeight * 0.6 || (footer ? inView(footer) : false)
+
+      const main = document.querySelector("main")
+      const quoteCtaOnScreen =
+        !!main &&
+        [
+          ...main.querySelectorAll('a[href$="/quote"], [data-quote-section]'),
+        ].some(inView)
+
+      setVisible(nearEnd && !quoteCtaOnScreen)
+    }
+
+    const schedule = () => {
+      if (!frame) frame = requestAnimationFrame(evaluate)
+    }
+
+    setVisible(false)
+    // Let the new route paint and settle (images, pinned sections) before measuring.
+    const settle = window.setTimeout(schedule, 400)
+    window.addEventListener("scroll", schedule, { passive: true })
+    window.addEventListener("resize", schedule)
+    const bodyObserver = new MutationObserver(schedule)
+    bodyObserver.observe(document.body, { attributes: true, attributeFilter: ["class"] })
+    const sizeObserver = new ResizeObserver(schedule)
+    sizeObserver.observe(document.documentElement)
+
+    return () => {
+      window.clearTimeout(settle)
+      cancelAnimationFrame(frame)
+      window.removeEventListener("scroll", schedule)
+      window.removeEventListener("resize", schedule)
+      bodyObserver.disconnect()
+      sizeObserver.disconnect()
+    }
+  }, [pathname])
 
   useLayoutEffect(() => {
     const cta = ctaRef.current

@@ -176,7 +176,7 @@ export function QuoteTicket() {
           href="/quote"
           data-no-route-transition
           onClick={() => skipNextRouteTransition()}
-          className="mt-3 inline-block text-xs font-semibold text-orange underline-offset-4 hover:underline"
+          className="mt-1 inline-flex min-h-11 items-center text-sm font-semibold text-orange underline-offset-4 hover:underline"
         >
           {c.skip}
         </Link>

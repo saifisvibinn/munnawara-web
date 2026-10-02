@@ -24,6 +24,11 @@
     "switchToDark": "Switch to dark mode",
     "switchToLight": "Switch to light mode"
   },
+  "notFound": {
+    "title": "We couldn't find that page.",
+    "body": "The link may be outdated, or the page may have moved. Let's get you back on your journey.",
+    "home": "Back to home"
+  },
   "common": {
     "learnMore": "Learn more",
     "requestQuote": "Request a quote",
@@ -38,6 +43,7 @@
     "seats": "Seats",
     "amenities": "Amenities",
     "backToCompanies": "Back to our companies",
+    "backToNews": "Back to news",
     "readMore": "Read more",
     "noOpenRoles": "No open roles at the moment",
     "noNews": "No news posts yet",
@@ -45,7 +51,6 @@
     "phone": "Phone",
     "email": "Email",
     "workingHours": "Working hours",
-    "mapPending": "Map embed coming in a later milestone",
     "followUs": "Follow us on social media",
     "socialTwitter": "X (Twitter)",
     "socialFacebook": "Facebook",

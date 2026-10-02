@@ -34,7 +34,7 @@ const CorporatePage = async ({ params }: PageProps) => {
         ))}
       </ul>
       <div className="mt-12 text-center">
-        <TextLink href="/contact">{tCommon("requestQuote")}</TextLink>
+        <TextLink href="/quote">{tCommon("requestQuote")}</TextLink>
       </div>
     </AnimatedSection>
   )

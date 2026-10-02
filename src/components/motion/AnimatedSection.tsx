@@ -27,7 +27,8 @@ export const AnimatedSection = ({
       className={cn(className)}
       initial={{ opacity: 0, y: 16 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.18 }}
+      // "some" + margin works for sections taller than the viewport; a ratio can never be met there.
+      viewport={{ once: true, amount: "some", margin: "0px 0px -12% 0px" }}
       transition={{ duration: 0.7, delay, ease: [0.16, 1, 0.3, 1] }}
     >
       {children}

@@ -163,7 +163,7 @@ export default function QuoteMap({ stops, context = [], locale, className, still
     const tooltipDir: L.Direction = "top"
 
     context.forEach((s) => {
-      L.marker([s.lat, s.lng], { icon: pinIcon("ziyarat"), interactive: false, opacity: 0.55 })
+      L.marker([s.lat, s.lng], { icon: pinIcon("ziyarat"), interactive: false, keyboard: false, opacity: 0.55 })
         .bindTooltip(pick(s.label, locale), { direction: tooltipDir, className: "qmap-tip" })
         .addTo(layer)
     })

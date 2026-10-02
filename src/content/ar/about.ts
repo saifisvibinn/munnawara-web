@@ -43,6 +43,7 @@ export const about: AboutContent = {
     sidesRight: "المشغّلون والمؤسسات",
     sidesMerge: "مجموعة واحدة. معيار واحد من العناية.",
     detailsHeadline: "ما نحمله مع كل رحلة",
+    detailsImageNote: "صور توضيحية مؤقتة.",
     details: [
       { id: "airport", line: "استقبال المطار، جاهز." },
       { id: "holy", line: "رحلات المشاعر، مرتبة." },

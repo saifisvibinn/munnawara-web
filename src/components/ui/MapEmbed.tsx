@@ -1,19 +1,18 @@
-import { getTranslations } from "next-intl/server"
+import { cn } from "@/lib/cn"
 
 type MapEmbedProps = {
-  address: string
+  query: string
+  title: string
   className?: string
 }
 
-export const MapEmbed = async ({ address, className }: MapEmbedProps) => {
-  const t = await getTranslations("common")
-
-  return (
-    <div className={className} role="img" aria-label={address}>
-      <div className="flex min-h-80 flex-col items-center justify-center gap-3 rounded-xl bg-surface-elevated px-8 py-16 text-center">
-        <p className="text-lg font-medium tracking-tight text-ink">{address}</p>
-        <p className="text-sm text-ink-muted">{t("mapPending")}</p>
-      </div>
-    </div>
-  )
-}
+export const MapEmbed = ({ query, title, className }: MapEmbedProps) => (
+  <iframe
+    src={`https://www.google.com/maps?q=${encodeURIComponent(query)}&output=embed`}
+    title={title}
+    loading="lazy"
+    referrerPolicy="no-referrer-when-downgrade"
+    sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"
+    className={cn("block w-full border-0", className)}
+  />
+)

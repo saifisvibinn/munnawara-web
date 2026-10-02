@@ -1,6 +1,7 @@
 "use client"
 
 import { useReducedMotion } from "@/hooks/useReducedMotion"
+import { usePathname } from "@/i18n/navigation"
 import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import Lenis from "lenis"
@@ -17,15 +18,17 @@ export const SmoothScrollProvider = ({
   children: React.ReactNode
 }) => {
   const reduced = useReducedMotion()
+  // The About film is a slow scroll-driven story; give it a gentler wheel.
+  const slowScroll = usePathname() === "/about"
 
   useEffect(() => {
     if (reduced) return
 
     const lenis = new Lenis({
       // Lower lerp = more glide / inertia
-      lerp: 0.085,
+      lerp: slowScroll ? 0.07 : 0.085,
       smoothWheel: true,
-      wheelMultiplier: 0.9,
+      wheelMultiplier: slowScroll ? 0.55 : 0.9,
       touchMultiplier: 1.1,
       autoRaf: false,
     })
@@ -65,7 +68,7 @@ export const SmoothScrollProvider = ({
       if (w.__lenis === lenis) delete w.__lenis
       lenis.destroy()
     }
-  }, [reduced])
+  }, [reduced, slowScroll])
 
   return <>{children}</>
 }

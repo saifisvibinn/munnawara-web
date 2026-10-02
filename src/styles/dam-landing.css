@@ -1552,11 +1552,12 @@ a[data-whatsapp-fab] {
 .loader-brand {
   top: calc(50% + min(17vh, 115px));
   display: flex;
-  gap: 0.42em;
+  flex-wrap: wrap;
+  gap: 0.2em 0.42em;
   justify-content: center;
-  width: min(92vw, 680px);
+  width: min(92vw, 960px);
   color: #f5efe8;
-  font-size: clamp(0.68rem, 1.15vw, 0.86rem);
+  font-size: clamp(1.125rem, 2.4vw, 1.75rem);
   font-weight: 600;
   letter-spacing: 0.15em;
   line-height: 1.5;
@@ -1577,7 +1578,7 @@ a[data-whatsapp-fab] {
   gap: 0.28em;
   letter-spacing: 0;
   font-family: var(--font-arabic);
-  font-size: clamp(0.82rem, 1.4vw, 1.05rem);
+  font-size: clamp(1.4rem, 3vw, 2.1rem);
   font-weight: 700;
 }
 
@@ -1654,7 +1655,7 @@ body.is-page-transitioning {
   padding: 0;
   border: 0;
   background: transparent;
-  cursor: default;
+  cursor: var(--site-cursor, default);
   opacity: 0;
   visibility: hidden;
 }
@@ -2189,8 +2190,9 @@ body.is-landing-menu-open .site-nav__bar {
   }
 
   .theme-toggle {
-    top: 14px;
-    inset-inline-end: var(--page-pad);
+    /* Centered on the 52px menu pill, sitting just before it (pill = 44px + 32px padding) */
+    top: 20px;
+    inset-inline-end: calc(var(--page-pad) + 76px + 8px);
     width: 40px;
     height: 40px;
   }

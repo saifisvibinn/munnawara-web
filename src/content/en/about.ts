@@ -43,6 +43,7 @@ export const about: AboutContent = {
     sidesRight: "Operators & institutions",
     sidesMerge: "One group. One standard of care.",
     detailsHeadline: "What we carry with every trip",
+    detailsImageNote: "Illustrative photography. Temporary placeholders.",
     details: [
       { id: "airport", line: "Airport reception, ready." },
       { id: "holy", line: "Holy Sites journeys, arranged." },

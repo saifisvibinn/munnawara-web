@@ -31,7 +31,8 @@ type LocaleLayoutProps = {
 export const generateStaticParams = () =>
   routing.locales.map((locale) => ({ locale }))
 
-const THEME_BOOT_SCRIPT = `(function(){try{var d=document.documentElement;var t=localStorage.getItem("theme");if(t==="dark"||t==="light"){d.classList.add(t);d.style.colorScheme=t}else if(window.matchMedia("(prefers-color-scheme: dark)").matches){d.classList.add("dark");d.style.colorScheme="dark"}else{d.classList.add("light");d.style.colorScheme="light"}}catch(e){}})();`
+// Light is the default; only an explicit saved "dark" choice switches theme.
+const THEME_BOOT_SCRIPT = `(function(){try{var d=document.documentElement;var t=localStorage.getItem("theme")==="dark"?"dark":"light";d.classList.add(t);d.style.colorScheme=t}catch(e){}})();`
 
 const LocaleLayout = async ({ children, params }: LocaleLayoutProps) => {
   const { locale } = await params

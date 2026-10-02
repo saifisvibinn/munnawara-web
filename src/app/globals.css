@@ -4,6 +4,39 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@media (hover: hover) and (pointer: fine) and (forced-colors: none) {
+  @layer base {
+    html {
+      --site-cursor: url("/brand/cursor-text.svg") 5 4, auto;
+      --site-cursor-action: url("/brand/cursor-link.svg") 14 4, pointer;
+      cursor: var(--site-cursor);
+    }
+
+    @supports (cursor: image-set(url("/brand/cursor-text.svg") 1x) 5 4, auto) {
+      html {
+        --site-cursor: image-set(url("/brand/cursor-text.svg") 1x, url("/brand/cursor-text-4x.svg") 4x) 5 4, auto;
+        --site-cursor-action: image-set(url("/brand/cursor-link.svg") 1x, url("/brand/cursor-link-4x.svg") 4x) 14 4, pointer;
+      }
+    }
+
+    :where(input, textarea, select, [contenteditable]:not([contenteditable="false"]), iframe, video[controls], audio[controls], [data-native-cursor]) {
+      cursor: auto;
+    }
+
+    :where(:disabled, [aria-disabled="true"]) {
+      cursor: not-allowed;
+    }
+
+    :where([draggable="true"]) {
+      cursor: grab;
+    }
+  }
+
+  html body :is(a[href], button, summary, [role="button"], label[for], .cursor-pointer):not(:where(:disabled, [aria-disabled="true"], [aria-busy="true"], [draggable="true"], [data-draggable], [data-dragging], [data-disabled], [class*="cursor-grab"], [data-native-cursor], [data-native-cursor] *, .leaflet-container *, .is-loading *, .is-transitioning *, .is-page-transitioning *)) {
+    cursor: var(--site-cursor-action);
+  }
+}
+
 /* Hide native scrollbar sitewide (same as home / dam-landing). */
 html {
   scrollbar-width: none;
@@ -423,17 +456,23 @@ html:has(.dam-landing) body {
 @keyframes qpage-in { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) { .qticket { transition: none; } .qpage-in { animation: none; } }
 /* ===== /quote: fit-to-screen split layout (map + wizard) ===== */
+/* :has() applies the lock on first paint; the JS class covers browsers without it. */
 body.is-quote-page,
-html:has(body.is-quote-page) {
+body:has([data-quote-page]),
+html:has(body.is-quote-page),
+html:has([data-quote-page]) {
   overflow: hidden;
   overscroll-behavior: none;
   height: 100%;
 }
 body.is-quote-page footer,
-body.is-quote-page [data-floating-quote-chrome] {
+body:has([data-quote-page]) footer,
+body.is-quote-page [data-floating-quote-chrome],
+body:has([data-quote-page]) [data-floating-quote-chrome] {
   display: none !important;
 }
-body.is-quote-page main#main {
+body.is-quote-page main#main,
+body:has([data-quote-page]) main#main {
   display: flex;
   flex-direction: column;
   min-height: 0;
@@ -441,7 +480,8 @@ body.is-quote-page main#main {
   overflow: hidden;
 }
 @media (max-width: 980px) {
-  body.is-quote-page main#main {
+  body.is-quote-page main#main,
+  body:has([data-quote-page]) main#main {
     --quote-chrome-top: calc(clamp(54px, 5vw, 64px) + 22px);
   }
 }
@@ -479,7 +519,9 @@ body.is-quote-page main#main {
 @media (min-width: 1280px) { .qw-split { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); } }
 @media (max-height: 560px) and (orientation: landscape) {
   .qpage { --qp-gap: 0.5rem; }
-  .qw-split__panel { padding: 0.7rem 0.9rem; }
+  .qw-split { grid-template-columns: minmax(0, 0.7fr) minmax(0, 1fr); }
+  .qw-split__panel { padding: 0.6rem 1rem 0.75rem; }
+  .qw-split__chip { padding: 0.35rem 0.65rem; }
 }
 
 .qw-split__map {

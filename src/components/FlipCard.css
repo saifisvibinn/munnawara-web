@@ -15,7 +15,7 @@
   height: var(--fc-h);
   border-radius: var(--fc-radius);
   outline: none;
-  cursor: pointer;
+  cursor: var(--site-cursor-action, pointer);
   user-select: none;
   -webkit-user-select: none;
   -webkit-touch-callout: none;
@@ -36,7 +36,7 @@
 }
 
 .flip-card[data-disabled] {
-  cursor: default;
+  cursor: var(--site-cursor, default);
   opacity: 0.6;
 }
 

@@ -5,6 +5,7 @@ import type {
   CareerRole,
   ClientCategory,
   Company,
+  ContactContent,
   CompanySlug,
   FaqItem,
   FleetCategory,
@@ -27,6 +28,8 @@ import { clients as clientsAr } from "./ar/clients"
 import { clients as clientsEn } from "./en/clients"
 import { companies as companiesAr } from "./ar/companies"
 import { companies as companiesEn } from "./en/companies"
+import { contact as contactAr } from "./ar/contact"
+import { contact as contactEn } from "./en/contact"
 import { faq as faqAr } from "./ar/faq"
 import { faq as faqEn } from "./en/faq"
 import { fleet as fleetAr } from "./ar/fleet"
@@ -49,6 +52,9 @@ export const getAbout = (locale: AppLocale): AboutContent =>
 
 export const getCareReveal = (locale: AppLocale): CareRevealContent =>
   isAr(locale) ? careRevealAr : careRevealEn
+
+export const getContact = (locale: AppLocale): ContactContent =>
+  isAr(locale) ? contactAr : contactEn
 
 export const getHome = (locale: AppLocale): HomeContent =>
   isAr(locale) ? homeAr : homeEn

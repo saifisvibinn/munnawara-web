@@ -146,8 +146,12 @@ const initialState: WizardState = {
 
 const COPY = {
   stepOf: (c: number, t: number, name: string): L10n => ({
-    en: `Step ${c}: ${name}`,
-    ar: `الخطوة ${c}: ${name}`,
+    en: `Step ${c} of ${t}: ${name}`,
+    ar: `الخطوة ${c} من ${t}: ${name}`,
+  }),
+  stepCount: (c: number, t: number): L10n => ({
+    en: `${c} of ${t}`,
+    ar: `${c} من ${t}`,
   }),
   stepNames: {
     customer: { en: "Audience", ar: "الجهة" },
@@ -217,6 +221,9 @@ const COPY = {
   ziyaratTitle: { en: "Holy sites to visit (Ziyarat)", ar: "المزارات المطلوبة" },
   selectAll: { en: "Select all", ar: "تحديد الكل" },
   selectNone: { en: "Clear", ar: "مسح" },
+  pickPlace: { en: "Choose a location", ar: "اختر الموقع" },
+  pickDate: { en: "Choose a date", ar: "اختر التاريخ" },
+  pickTime: { en: "Choose a time", ar: "اختر الوقت" },
   cityMakkah: { en: "In Makkah", ar: "في مكة المكرمة" },
   cityMadinah: { en: "In Madinah", ar: "في المدينة المنورة" },
   consent: {
@@ -269,7 +276,7 @@ const fieldClass =
   "w-full min-w-0 rounded-xl border border-border bg-surface-muted px-4 py-3.5 text-base text-ink outline-none transition placeholder:text-ink-muted focus:border-orange/40 focus:bg-surface-elevated focus:ring-2 focus:ring-orange/25 sm:text-[0.9375rem]"
 const fieldErrorRing = "ring-2 ring-red-400/50 focus:ring-red-400/60 bg-red-50/60 dark:bg-red-950/40"
 const btnPrimary =
-  "font-label inline-flex min-w-[9.5rem] items-center justify-center rounded-full bg-gradient-to-b from-orange-soft to-orange px-8 py-3 text-sm font-semibold text-white shadow-[0_12px_28px_-10px_rgb(243,112,33,0.9)] transition hover:brightness-[1.03] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange focus-visible:ring-offset-2 disabled:opacity-60"
+  "font-label inline-flex min-w-[9.5rem] items-center justify-center rounded-full bg-gradient-to-b from-orange-soft to-orange px-8 py-3 text-sm font-semibold text-white shadow-[0_12px_28px_-10px_rgb(243,112,33,0.9)] transition hover:brightness-[1.03] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-45 disabled:shadow-none disabled:hover:brightness-100"
 const btnGhost =
   "font-label inline-flex items-center justify-center rounded-full px-5 py-3 text-sm font-semibold text-ink-muted transition hover:bg-surface-muted hover:text-ink"
 
@@ -369,53 +376,47 @@ function Choices({
   )
 }
 
-function StepRail({
+function StepProgress({
   current,
   total,
+  name,
+  counter,
   label,
+  toolbar,
 }: {
   current: number
   total: number
+  name: string
+  counter: string
   label: string
+  toolbar?: ReactNode
 }) {
-  const maxDots = Math.min(total, 8)
-  const active = Math.min(current, maxDots)
   return (
     <div className="space-y-2.5">
-      <p className="font-label text-[0.7rem] font-semibold tracking-[0.12em] text-ink-muted uppercase">
-        {label}
-      </p>
-      <ol className="flex items-center gap-1.5" aria-hidden="true">
-        {Array.from({ length: maxDots }, (_, index) => {
-          const n = index + 1
-          const done = n < active
-          const here = n === active
-          return (
-            <li key={n} className="flex flex-1 items-center gap-1.5 last:flex-none">
-              <span
-                className={cn(
-                  "inline-flex size-6 shrink-0 items-center justify-center rounded-full text-[0.65rem] font-bold transition",
-                  here
-                    ? "bg-orange text-white"
-                    : done
-                      ? "bg-ink text-white"
-                      : "bg-surface-muted text-ink-muted ring-1 ring-border",
-                )}
-              >
-                {n}
-              </span>
-              {n < maxDots ? (
-                <span
-                  className={cn(
-                    "h-0.5 w-full rounded-full",
-                    done || here ? "bg-orange/70" : "bg-border",
-                  )}
-                />
-              ) : null}
-            </li>
-          )
-        })}
-      </ol>
+      <div className="flex min-h-11 items-center justify-between gap-3">
+        {toolbar ?? <span />}
+        <p className="font-label shrink-0 text-xs font-semibold text-ink-muted tabular-nums">
+          {counter}
+        </p>
+      </div>
+      <div className="flex items-center gap-3">
+        <p className="font-label shrink-0 text-[0.7rem] font-semibold tracking-[0.12em] text-orange uppercase rtl:tracking-normal">
+          {name}
+        </p>
+        <div
+          className="h-1 flex-1 overflow-hidden rounded-full bg-surface-muted"
+          role="progressbar"
+          aria-label={label}
+          aria-valuemin={1}
+          aria-valuemax={total}
+          aria-valuenow={current}
+        >
+          <div
+            className="h-full rounded-full bg-orange transition-[width] duration-500 ease-out motion-reduce:transition-none"
+            style={{ width: `${(current / total) * 100}%` }}
+          />
+        </div>
+      </div>
     </div>
   )
 }
@@ -789,9 +790,9 @@ export const QuoteWizard = ({
                     {heading.eyebrow}
                   </p>
                 ) : null}
-                <p className="font-display text-base leading-tight font-semibold text-ink sm:text-xl">
+                <h1 className="font-display text-base leading-tight font-semibold text-ink sm:text-xl">
                   {heading.title}
-                </p>
+                </h1>
               </div>
             ) : null}
           </aside>
@@ -1065,7 +1066,7 @@ export const QuoteWizard = ({
                   value={state.from}
                   options={places}
                   locale={locale}
-                  placeholder="—"
+                  placeholder={tx(COPY.pickPlace)}
                   error={errors.from}
                   onChange={(v) => patch({ from: v })}
                 />
@@ -1076,7 +1077,7 @@ export const QuoteWizard = ({
                   value={state.to}
                   options={places}
                   locale={locale}
-                  placeholder="—"
+                  placeholder={tx(COPY.pickPlace)}
                   error={errors.to}
                   onChange={(v) => patch({ to: v })}
                 />
@@ -1131,6 +1132,7 @@ export const QuoteWizard = ({
                 locale={locale}
                 value={state.date}
                 min={todayISO}
+                placeholder={tx(COPY.pickDate)}
                 error={errors.date}
                 onChange={(v) => patch({ date: v })}
               />
@@ -1140,6 +1142,7 @@ export const QuoteWizard = ({
                 id="qw-time"
                 locale={locale}
                 value={state.time}
+                placeholder={tx(COPY.pickTime)}
                 error={errors.time}
                 onChange={(v) => patch({ time: v })}
               />
@@ -1156,6 +1159,7 @@ export const QuoteWizard = ({
                 locale={locale}
                 value={state.returnDate}
                 min={state.date || todayISO}
+                placeholder={tx(COPY.pickDate)}
                 error={errors.returnDate}
                 onChange={(v) => patch({ returnDate: v })}
               />
@@ -1394,20 +1398,22 @@ export const QuoteWizard = ({
             ? state.dawraLength
             : ""
   const showContinue = !isChoiceStep || Boolean(choiceValue)
-  const progress = ((stepIndexSafe + 1) / steps.length) * 100
   const stepName = tx(COPY.stepNames[step])
+  const stepLabel = tx(COPY.stepOf(stepIndexSafe + 1, steps.length, stepName))
 
   return shell(
     <>
-      <div className={split ? "mb-3 shrink-0" : "mb-5"}>
-        {toolbar ? <div className="mb-3">{toolbar}</div> : null}
-        <StepRail
+      <div className={split ? "mb-4 shrink-0" : "mb-5"}>
+        <StepProgress
           current={stepIndexSafe + 1}
           total={steps.length}
-          label={tx(COPY.stepOf(stepIndexSafe + 1, steps.length, stepName))}
+          name={stepName}
+          counter={tx(COPY.stepCount(stepIndexSafe + 1, steps.length))}
+          label={stepLabel}
+          toolbar={toolbar}
         />
         <div className="sr-only" aria-live="polite">
-          {Math.round(progress)}%
+          {stepLabel}
         </div>
       </div>
 
@@ -1420,11 +1426,11 @@ export const QuoteWizard = ({
         <div key={step} className={cn("qw-step space-y-4", dir === "fwd" ? "qw-step--fwd" : "qw-step--back")}>
           <div className="flex items-center gap-3">
             {showGlobe ? (
-              <GlobeVisual className="size-14 shrink-0" />
+              <GlobeVisual className="size-11 shrink-0 sm:size-12" />
             ) : null}
-            <h3 className="text-lg font-semibold text-ink sm:text-xl">
+            <h2 className="font-display text-xl leading-snug font-semibold text-balance text-ink sm:text-2xl">
               {tx(COPY.titles[step])}
-            </h3>
+            </h2>
           </div>
 
           {mapData ? (
@@ -1477,11 +1483,15 @@ export const QuoteWizard = ({
             <button type="submit" className={cn(btnPrimary, "ms-auto")} disabled={status === "submitting"}>
               {status === "submitting" ? tx(COPY.sending) : tx(COPY.submit)}
             </button>
-          ) : showContinue ? (
-            <button type="submit" className={cn(btnPrimary, "ms-auto")}>
+          ) : (
+            <button
+              type="submit"
+              className={cn(btnPrimary, "ms-auto")}
+              disabled={!showContinue}
+            >
               {tx(COPY.next)}
             </button>
-          ) : null}
+          )}
         </div>
       </form>
     </>,

@@ -113,6 +113,7 @@ export type AboutFilmContent = {
   sidesRight: string
   sidesMerge: string
   detailsHeadline: string
+  detailsImageNote: string
   details: readonly AboutFilmFeature[]
   humanLine1: string
   humanLine2: string
@@ -225,6 +226,23 @@ export type CareRevealContent = {
   headingLines: readonly [string, string]
   body: string
   benefits: readonly CareRevealBenefit[]
+}
+
+export type ContactContent = {
+  headline: string
+  intro: string
+  heroImageAlt: string
+  whatsappCta: string
+  channelsTitle: string
+  whatsappNote: string
+  phoneLabel: string
+  emailNote: string
+  officeTitle: string
+  mapTitle: string
+  mapsLink: string
+  quoteTitle: string
+  quoteBody: string
+  quoteHref: string
 }
 
 export type SiteConfig = {

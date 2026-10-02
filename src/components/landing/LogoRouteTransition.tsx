@@ -10,23 +10,23 @@ import { LogoMark } from "./LogoMark"
  * Cleared on full page reload so the logo + hero bloom play again. */
 export const LOGO_INTRO_SEEN_KEY = "dmtc-logo-intro-seen"
 
-/** Deliberate page-switch timing — slowed so the bloom reads as intentional. */
+/** Page-switch timing — bloom covers the fetch; the land back into the bar stays brisk. */
 const TIMING = {
   spin: 0.72,
   bloom: 0.52,
   stagger: 0.055,
   rotation: 16,
   /** Beat at center after bloom / while destination warms */
-  hold: 0.28,
-  travel: 1.05,
-  nav: 0.48,
-  fade: 0.4,
+  hold: 0.1,
+  travel: 0.62,
+  nav: 0.32,
+  fade: 0.26,
   breathe: 1.65,
 } as const
 
 /** Must exceed bloom + wait + travel + handoff on slow networks. */
 const SAFETY_MS = 12000
-const PAGE_READY_MS = 6500
+const PAGE_READY_MS = 2500
 const TARGET_WAIT_MS = 1400
 
 /**
@@ -123,11 +123,16 @@ const waitForDestinationReady = async (preferHome: boolean) => {
 
   const fonts = document.fonts?.ready ?? Promise.resolve()
   const main = document.querySelector("main")
+  // Lazy / below-the-fold images never load while the cover is up — only wait for what's on screen.
+  const onScreen = (el: Element) => {
+    const box = el.getBoundingClientRect()
+    return box.bottom > 0 && box.top < window.innerHeight && box.width > 0
+  }
   const images = main
-    ? Array.from(main.querySelectorAll("img")).map(waitForImage)
+    ? Array.from(main.querySelectorAll("img")).filter(onScreen).map(waitForImage)
     : []
   const videos = main
-    ? Array.from(main.querySelectorAll("video")).map((video) => {
+    ? Array.from(main.querySelectorAll("video")).filter(onScreen).map((video) => {
         if (video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
           return Promise.resolve()
         }

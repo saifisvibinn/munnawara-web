@@ -24,20 +24,20 @@ const CompanyDetailPage = async ({
 
   return (
     <AnimatedSection className="pb-28 pt-16">
-      <div className="mx-auto max-w-6xl px-6">
-        <TextLink href="/companies">{tCommon("backToCompanies")}</TextLink>
-      </div>
+      <div className="mx-auto max-w-6xl px-4 sm:px-6">
+        <TextLink href="/companies" back>{tCommon("backToCompanies")}</TextLink>
 
-      <div className="relative mx-auto mt-8 flex min-h-[min(52vw,28rem)] max-w-6xl items-center justify-center overflow-hidden rounded-2xl bg-surface-elevated ring-1 ring-ink/6 px-8 py-14 sm:px-14">
-        <Image
-          src={company.logo}
-          alt={company.name}
-          width={900}
-          height={600}
-          className="h-auto max-h-[22rem] w-full max-w-xl object-contain"
-          sizes="(max-width:768px) 90vw, 36rem"
-          priority
-        />
+        <div className="relative mt-6 flex min-h-[min(52vw,28rem)] items-center justify-center overflow-hidden rounded-2xl bg-surface-elevated px-8 py-14 ring-1 ring-ink/6 sm:px-14">
+          <Image
+            src={company.logo}
+            alt={company.name}
+            width={900}
+            height={600}
+            className="h-auto max-h-[22rem] w-full max-w-xl object-contain"
+            sizes="(max-width:768px) 90vw, 36rem"
+            priority
+          />
+        </div>
       </div>
 
       <div className="mx-auto mt-14 max-w-3xl px-6 text-center">

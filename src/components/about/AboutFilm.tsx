@@ -6,6 +6,7 @@ import { useReducedMotion } from "@/hooks/useReducedMotion"
 import { Link } from "@/i18n/navigation"
 import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
+import { ArrowUpRight } from "lucide-react"
 import Image from "next/image"
 import { useLayoutEffect, useRef } from "react"
 import "@/styles/about-film.css"
@@ -25,10 +26,10 @@ const FLEET_FRAMES = [
 ] as const
 
 const DETAIL_FRAMES = [
-  "/fleet/premium-vip-2026/exterior/pv-out-1.webp",
-  "/fleet/premium-vip-2026/exterior/pv-out-3.webp",
+  "/about/placeholders/airport.jpg",
+  "/about/placeholders/holy-sites.jpg",
   "/hero/quote-ticket-bus.jpg",
-  "/fleet/coach-2025-2026/cover.webp",
+  "/about/placeholders/events.jpg",
 ] as const
 
 export const AboutFilm = ({ film, pageTitle }: AboutFilmProps) => {
@@ -47,26 +48,23 @@ export const AboutFilm = ({ film, pageTitle }: AboutFilmProps) => {
           isDesktop: "(min-width: 768px)",
           isMobile: "(max-width: 767px)",
           reduceMotion: "(prefers-reduced-motion: reduce)",
+          shortViewport: "(max-height: 460px)",
         },
         (context) => {
-          const { isDesktop, reduceMotion } = context.conditions ?? {}
-          if (reduceMotion) return
+          const { isDesktop, reduceMotion, shortViewport } = context.conditions ?? {}
+          if (reduceMotion || shortViewport) return
 
-          const scrub = isDesktop ? 0.28 : 0.18
+          const scrub = isDesktop ? 0.8 : 0.65
           const depth = isDesktop ? 1 : 0.45
 
           /* —— Scene 01: Journey —— */
           const journey = root.querySelector<HTMLElement>("[data-af-journey]")
           if (journey) {
-            const logo = journey.querySelector("[data-af-journey-logo]")
-            const headline = journey.querySelector("[data-af-journey-headline]")
-            const support = journey.querySelector("[data-af-journey-support]")
+            const content = journey.querySelector(".about-film__content")
             const sky = journey.querySelector("[data-af-journey-sky]")
 
             // First viewport stays readable — motion only evolves on scroll.
-            gsap.set(logo, { opacity: 1, y: 0, scale: 1 })
-            gsap.set(headline, { opacity: 1, y: 0 })
-            gsap.set(support, { opacity: 0.9, y: 0 })
+            gsap.set(content, { y: 0 })
             gsap.set(sky, { scale: 1.08, yPercent: -2 })
 
             const tl = gsap.timeline({
@@ -79,10 +77,8 @@ export const AboutFilm = ({ film, pageTitle }: AboutFilmProps) => {
               },
             })
 
-            tl.to(sky, { scale: 1, yPercent: 4, duration: 1 }, 0)
-              .to(logo, { opacity: 0.55, scale: 0.94, y: -8, duration: 0.35 }, 0.4)
-              .to(headline, { y: -28 * depth, opacity: 0.55, duration: 0.4 }, 0.45)
-              .to(support, { opacity: 0.2, y: -16, duration: 0.25 }, 0.5)
+            tl.to(sky, { scale: 1.02, yPercent: 0, duration: 1 }, 0)
+              .to(content, { y: -16 * depth, duration: 0.4 }, 0.45)
           }
 
           /* —— Scene 02: World —— */
@@ -93,7 +89,7 @@ export const AboutFilm = ({ film, pageTitle }: AboutFilmProps) => {
             const title = world.querySelector("[data-af-world-title]")
             const body = world.querySelector("[data-af-world-body]")
 
-            gsap.set(media, { scale: 1.18, filter: "blur(8px)", opacity: 0.55 })
+            gsap.set(media, { scale: 1.06, opacity: 0.85 })
             gsap.set([title, body].filter(Boolean), { opacity: 0, y: 36 })
 
             const tl = gsap.timeline({
@@ -105,11 +101,11 @@ export const AboutFilm = ({ film, pageTitle }: AboutFilmProps) => {
               },
             })
 
-            tl.to(media, { scale: 1, filter: "blur(0px)", opacity: 1, duration: 0.45 }, 0)
+            tl.to(media, { scale: 1, opacity: 1, duration: 0.45 }, 0)
               .to(title, { opacity: 1, y: 0, duration: 0.2 }, 0.18)
               .to(body, { opacity: 1, y: 0, duration: 0.18 }, 0.28)
               .to(copy, { y: -18 * depth, duration: 0.35 }, 0.55)
-              .to(media, { scale: 1.04, opacity: 0.55, duration: 0.3 }, 0.72)
+              .to(media, { scale: 1.03, duration: 0.3 }, 0.72)
           }
 
           /* —— Scene 03: Problem —— */
@@ -119,7 +115,7 @@ export const AboutFilm = ({ film, pageTitle }: AboutFilmProps) => {
             const lines = gsap.utils.toArray<HTMLElement>("[data-af-problem-line]", problem)
 
             gsap.set(head, { opacity: 0, y: 24 })
-            gsap.set(lines, { opacity: 0, y: 48, filter: "blur(6px)" })
+            gsap.set(lines, { opacity: 0, y: 24 })
 
             const tl = gsap.timeline({
               scrollTrigger: {
@@ -130,33 +126,29 @@ export const AboutFilm = ({ film, pageTitle }: AboutFilmProps) => {
               },
             })
 
-            tl.to(head, { opacity: 1, y: 0, duration: 0.12 }, 0)
-              .to(head, { opacity: 0.2, y: -28, duration: 0.12 }, 0.18)
+            // Headline holds, then each question gets its own long beat on screen.
+            tl.to(head, { opacity: 1, y: 0, duration: 0.06 }, 0)
+              .to(head, { opacity: 0, y: -24, duration: 0.05 }, 0.18)
 
             lines.forEach((line, index) => {
-              const start = 0.2 + index * 0.17
-              tl.to(
-                line,
-                { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.12 },
-                start,
-              )
+              const start = 0.26 + index * 0.18
+              tl.to(line, { opacity: 1, y: 0, duration: 0.05 }, start)
               if (index < lines.length - 1) {
                 tl.to(
                   line,
-                  { opacity: 0, y: -28 * depth, filter: "blur(3px)", duration: 0.1 },
-                  start + 0.14,
+                  { opacity: 0, y: -24 * depth, duration: 0.05 },
+                  start + 0.13,
                 )
-              } else {
-                tl.to(line, { opacity: 1, scale: 1, duration: 0.1 }, start + 0.12)
               }
             })
+            tl.to({}, { duration: 0.12 })
           }
 
           /* —— Scene 04: Connection —— */
           const connection = root.querySelector<HTMLElement>("[data-af-connection]")
           if (connection) {
             const nodes = gsap.utils.toArray<HTMLElement>("[data-af-node]", connection)
-            const lines = gsap.utils.toArray<HTMLElement>("[data-af-node-line]", connection)
+            const field = connection.querySelector<HTMLElement>(".about-film__nodes")
             const title = connection.querySelector("[data-af-connection-title]")
             const body = connection.querySelector("[data-af-connection-body]")
             const companies = gsap.utils.toArray<HTMLElement>(
@@ -164,34 +156,14 @@ export const AboutFilm = ({ film, pageTitle }: AboutFilmProps) => {
               connection,
             )
 
-            gsap.set(nodes, { opacity: 0, scale: 0.5 })
-            gsap.set(lines, { scaleX: 0, opacity: 0 })
+            gsap.set(nodes, { opacity: 0, scale: 0.9 })
             gsap.set([title, body].filter(Boolean), { opacity: 0, y: 28 })
             gsap.set(companies, { opacity: 0, y: 24 })
 
-            // Keep dots inside the stage — never stranded in page corners.
-            const positions = isDesktop
-              ? [
-                  { x: "-18%", y: "-22%" },
-                  { x: "20%", y: "-18%" },
-                  { x: "-22%", y: "20%" },
-                  { x: "18%", y: "22%" },
-                  { x: "0%", y: "-26%" },
-                  { x: "0%", y: "24%" },
-                ]
-              : [
-                  { x: "-16%", y: "-18%" },
-                  { x: "16%", y: "-16%" },
-                  { x: "-14%", y: "18%" },
-                  { x: "14%", y: "16%" },
-                  { x: "0%", y: "-20%" },
-                  { x: "0%", y: "20%" },
-                ]
-
-            nodes.forEach((node, index) => {
-              const pos = positions[index % positions.length]
-              gsap.set(node, { x: pos.x, y: pos.y })
-            })
+            const positions = [
+              [-0.38, -0.3], [0.34, -0.25], [-0.3, 0.28],
+              [0.38, 0.32], [-0.08, -0.4], [0.06, 0.4],
+            ]
 
             const tl = gsap.timeline({
               scrollTrigger: {
@@ -199,168 +171,52 @@ export const AboutFilm = ({ film, pageTitle }: AboutFilmProps) => {
                 start: "top top",
                 end: "bottom bottom",
                 scrub,
+                invalidateOnRefresh: true,
               },
             })
 
-            tl.to(nodes, { opacity: 0.75, scale: 1, duration: 0.12, stagger: 0.02 }, 0)
-              .to(
+            tl.fromTo(
                 nodes,
-                { x: 0, y: 0, duration: 0.32, stagger: 0.02, ease: "none" },
-                0.12,
-              )
-              .to(lines, { scaleX: 1, opacity: 0.45, duration: 0.18, stagger: 0.03 }, 0.28)
-              .to(title, { opacity: 1, y: 0, duration: 0.14 }, 0.38)
-              .to(body, { opacity: 1, y: 0, duration: 0.14 }, 0.44)
-              .to(lines, { opacity: 0, duration: 0.12 }, 0.46)
-              .to(nodes, { opacity: 0, scale: 0.4, duration: 0.14 }, 0.48)
-              .to(companies, { opacity: 1, y: 0, duration: 0.16, stagger: 0.03 }, 0.52)
-          }
-
-          /* —— Scene 05: Fleet —— */
-          const fleet = root.querySelector<HTMLElement>("[data-af-fleet]")
-          if (fleet) {
-            const frame = fleet.querySelector("[data-af-fleet-frame]")
-            const images = gsap.utils.toArray<HTMLElement>("[data-af-fleet-img]", fleet)
-            const captions = gsap.utils.toArray<HTMLElement>(
-              "[data-af-fleet-caption]",
-              fleet,
-            )
-            const title = fleet.querySelector("[data-af-fleet-title]")
-            const body = fleet.querySelector("[data-af-fleet-body]")
-
-            gsap.set(frame, {
-              rotateY: -8 * depth,
-              rotateX: 4 * depth,
-              y: 40,
-              opacity: 0.4,
-            })
-            gsap.set(images, { opacity: 0 })
-            gsap.set(images[0], { opacity: 1 })
-            gsap.set(captions, { opacity: 0, y: 12 })
-            gsap.set(captions[0], { opacity: 1, y: 0 })
-            gsap.set([title, body].filter(Boolean), { opacity: 0, y: 24 })
-
-            const tl = gsap.timeline({
-              scrollTrigger: {
-                trigger: fleet,
-                start: "top top",
-                end: "bottom bottom",
-                scrub,
-              },
-            })
-
-            tl.to(title, { opacity: 1, y: 0, duration: 0.12 }, 0)
-              .to(body, { opacity: 1, y: 0, duration: 0.12 }, 0.08)
-              .to(
-                frame,
                 {
-                  opacity: 1,
-                  y: 0,
-                  rotateY: 0,
-                  rotateX: 0,
-                  duration: 0.35,
+                  x: (index) => positions[index][0] * (field?.clientWidth ?? 0),
+                  y: (index) => positions[index][1] * (field?.clientHeight ?? 0),
+                },
+                {
+                  x: (index) => Math.cos(index * Math.PI / 3) * 32,
+                  y: (index) => Math.sin(index * Math.PI / 3) * 32,
+                  duration: 0.38,
+                  ease: "power2.inOut",
                 },
                 0.1,
               )
-
-            images.forEach((img, index) => {
-              if (index === 0) return
-              const at = 0.28 + (index - 1) * 0.16
-              tl.to(images[index - 1], { opacity: 0, duration: 0.1 }, at)
-                .to(img, { opacity: 1, duration: 0.1 }, at)
-                .to(captions[index - 1], { opacity: 0, y: -10, duration: 0.08 }, at)
-                .to(captions[index], { opacity: 1, y: 0, duration: 0.08 }, at + 0.02)
-            })
-
-            tl.to(
-              frame,
-              { rotateY: 8 * depth, rotateX: -3 * depth, scale: 0.96, duration: 0.25 },
-              0.82,
-            )
+              .to(nodes, { opacity: 1, scale: 1, duration: 0.1, stagger: 0.01 }, 0)
+              .to(nodes, { opacity: 0, scale: 0.9, duration: 0.12 }, 0.5)
+              .to(title, { opacity: 1, y: 0, duration: 0.14 }, 0.62)
+              .to(body, { opacity: 1, y: 0, duration: 0.14 }, 0.68)
+              .to(companies, { opacity: 1, y: 0, duration: 0.16, stagger: 0.03 }, 0.74)
           }
 
-          /* —— Scene 06: Two sides —— */
-          const sides = root.querySelector<HTMLElement>("[data-af-sides]")
-          if (sides) {
-            const left = sides.querySelector("[data-af-side-left]")
-            const right = sides.querySelector("[data-af-side-right]")
-            const merge = sides.querySelector("[data-af-sides-merge]")
+          root.querySelectorAll<HTMLElement>("[data-af-gallery]").forEach((scene) => {
+            const track = scene.querySelector<HTMLElement>("[data-af-track]")
+            if (!track) return
+            const direction = getComputedStyle(scene).direction === "rtl" ? 1 : -1
 
-            gsap.set(left, { xPercent: isDesktop ? -28 : 0, y: isDesktop ? 0 : -40, opacity: 0.35 })
-            gsap.set(right, { xPercent: isDesktop ? 28 : 0, y: isDesktop ? 0 : 40, opacity: 0.35 })
-            gsap.set(merge, { opacity: 0, scale: 0.94 })
-
-            const tl = gsap.timeline({
+            gsap.timeline({
               scrollTrigger: {
-                trigger: sides,
+                trigger: scene,
                 start: "top top",
                 end: "bottom bottom",
                 scrub,
+                invalidateOnRefresh: true,
               },
             })
-
-            tl.to([left, right], { opacity: 1, duration: 0.15 }, 0)
-              .to(
-                left,
-                { xPercent: 0, y: 0, duration: 0.4 },
-                0.2,
-              )
-              .to(
-                right,
-                { xPercent: 0, y: 0, duration: 0.4 },
-                0.2,
-              )
-              .to([left, right], { opacity: 0.25, scale: 0.94, duration: 0.2 }, 0.58)
-              .to(merge, { opacity: 1, scale: 1, duration: 0.22 }, 0.62)
-          }
-
-          /* —— Scene 07: Details —— */
-          const details = root.querySelector<HTMLElement>("[data-af-details]")
-          if (details) {
-            const frame = details.querySelector("[data-af-details-frame]")
-            const images = gsap.utils.toArray<HTMLElement>("[data-af-details-img]", details)
-            const lines = gsap.utils.toArray<HTMLElement>("[data-af-details-line]", details)
-            const head = details.querySelector("[data-af-details-head]")
-
-            gsap.set(head, { opacity: 0, y: 20 })
-            gsap.set(frame, { scale: 1.08, opacity: 0.5 })
-            gsap.set(images, { opacity: 0 })
-            gsap.set(images[0], { opacity: 1 })
-            gsap.set(lines, { opacity: 0, y: 30, filter: "blur(5px)" })
-
-            const tl = gsap.timeline({
-              scrollTrigger: {
-                trigger: details,
-                start: "top top",
-                end: "bottom bottom",
-                scrub,
-              },
-            })
-
-            tl.to(head, { opacity: 1, y: 0, duration: 0.1 }, 0)
-              .to(frame, { scale: 1, opacity: 1, duration: 0.25 }, 0.05)
-              .to(head, { opacity: 0.25, duration: 0.12 }, 0.18)
-
-            lines.forEach((line, index) => {
-              const at = 0.18 + index * 0.18
-              if (index > 0) {
-                tl.to(images[index - 1], { opacity: 0, duration: 0.1 }, at)
-                  .to(images[index], { opacity: 1, duration: 0.1 }, at)
-              }
-              tl.to(
-                line,
-                { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.12 },
-                at,
-              )
-              if (index < lines.length - 1) {
-                tl.to(
-                  line,
-                  { opacity: 0, y: -18, filter: "blur(3px)", duration: 0.1 },
-                  at + 0.15,
-                )
-              }
-            })
-          }
+              .fromTo(track, { x: 0 }, {
+                x: () => direction * Math.max(0, track.scrollWidth - track.clientWidth),
+                ease: "none",
+                duration: 0.8,
+              }, 0.1)
+              .to({}, { duration: 0.1 })
+          })
 
           /* —— Scene 08: Human —— */
           const human = root.querySelector<HTMLElement>("[data-af-human]")
@@ -391,21 +247,21 @@ export const AboutFilm = ({ film, pageTitle }: AboutFilmProps) => {
             const mark = brand.querySelector("[data-af-brand-mark]")
             const line = brand.querySelector("[data-af-brand-line]")
 
-            gsap.set(mark, { scale: 0.45, opacity: 0.3, filter: "blur(4px)" })
+            gsap.set(mark, { scale: 0.94, opacity: 0.3 })
             gsap.set(line, { opacity: 0, y: 24 })
 
             const tl = gsap.timeline({
               scrollTrigger: {
                 trigger: brand,
-                start: "top top",
-                end: "bottom bottom",
+                start: "top 85%",
+                end: "center center",
                 scrub,
               },
             })
 
             tl.to(
               mark,
-              { scale: 1.05, opacity: 1, filter: "blur(0px)", duration: 0.55 },
+              { scale: 1.05, opacity: 1, duration: 0.55 },
               0,
             )
               .to(line, { opacity: 1, y: 0, duration: 0.2 }, 0.32)
@@ -451,9 +307,14 @@ export const AboutFilm = ({ film, pageTitle }: AboutFilmProps) => {
       )
 
       // Lenis / late layout: refresh so pin distances match the real page.
-      requestAnimationFrame(() => {
+      const refreshFrame = requestAnimationFrame(() => {
         ScrollTrigger.refresh()
       })
+
+      return () => {
+        cancelAnimationFrame(refreshFrame)
+        mm.revert()
+      }
     }, root)
 
     return () => ctx.revert()
@@ -492,29 +353,35 @@ export const AboutFilm = ({ film, pageTitle }: AboutFilmProps) => {
               data-af-journey-headline
               className="about-film__display about-film__display--xl"
             >
-              {film.journeyHeadline}
+              {film.brandName}
             </h1>
+            <p className="about-film__lead">{film.journeyHeadline}</p>
             <p data-af-journey-support className="about-film__body">
               {film.journeySupport}
             </p>
+            <Link href={film.ctaHref} className="about-film__cta-btn">
+              {film.ctaLabel}
+              <ArrowUpRight aria-hidden className="about-film__cta-arrow" size={18} />
+            </Link>
           </div>
         </div>
       </section>
 
       {/* 02 — World */}
       <section className="about-film__scene about-film__pin" data-af-world>
-        <div className="about-film__sticky">
+        <div className="about-film__sticky about-film__sticky--sky">
           <div className="about-film__sky" aria-hidden>
             <Image
               data-af-world-media
-              src="/fleet/coach-2025-2026/cover.webp"
+              src="/about/placeholders/holy-sites-wide.jpg"
               alt=""
               fill
               sizes="100vw"
-              className="object-cover"
+              quality={80}
+              className="about-film__sky-photo object-cover"
             />
           </div>
-          <div className="about-film__veil" aria-hidden />
+          <div className="about-film__veil about-film__veil--sky" aria-hidden />
           <div className="about-film__content" data-af-world-copy>
             <h2
               data-af-world-title
@@ -531,7 +398,7 @@ export const AboutFilm = ({ film, pageTitle }: AboutFilmProps) => {
 
       {/* 03 — Problem */}
       <section
-        className="about-film__scene about-film__pin about-film__pin--tall"
+        className="about-film__scene about-film__pin about-film__pin--problem"
         data-af-problem
       >
         <div className="about-film__sticky bg-surface">
@@ -542,7 +409,7 @@ export const AboutFilm = ({ film, pageTitle }: AboutFilmProps) => {
             >
               {film.problemHeadline}
             </h2>
-            <div className="about-film__problem-stack absolute inset-0">
+            <div className="about-film__problem-stack">
               {film.problemLines.map((line) => (
                 <p
                   key={line}
@@ -567,19 +434,6 @@ export const AboutFilm = ({ film, pageTitle }: AboutFilmProps) => {
             <div className="about-film__nodes" aria-hidden>
               {Array.from({ length: 6 }, (_, index) => (
                 <span key={index} data-af-node className="about-film__node" />
-              ))}
-              {Array.from({ length: 4 }, (_, index) => (
-                <span
-                  key={`line-${index}`}
-                  data-af-node-line
-                  className="about-film__node-line"
-                  style={{
-                    top: `${42 + index * 4}%`,
-                    insetInlineStart: "28%",
-                    width: "44%",
-                    rotate: `${(index - 1.5) * 8}deg`,
-                  }}
-                />
               ))}
             </div>
             <div className="about-film__content">
@@ -617,12 +471,13 @@ export const AboutFilm = ({ film, pageTitle }: AboutFilmProps) => {
 
       {/* 05 — Fleet */}
       <section
-        className="about-film__scene about-film__pin about-film__pin--tall"
+        className="about-film__scene about-film__pin about-film__pin--gallery"
         data-af-fleet
+        data-af-gallery
       >
         <div className="about-film__sticky bg-surface">
-          <div className="about-film__stage gap-8">
-            <div className="about-film__content mb-2">
+          <div className="about-film__stage about-film__stage--gallery">
+            <div className="about-film__content">
               <h2
                 data-af-fleet-title
                 className="about-film__display about-film__display--md"
@@ -633,38 +488,27 @@ export const AboutFilm = ({ film, pageTitle }: AboutFilmProps) => {
                 {film.fleetBody}
               </p>
             </div>
-            <div data-af-fleet-frame className="about-film__fleet-frame">
-              {FLEET_FRAMES.map((src, index) => (
-                <Image
-                  key={src}
-                  data-af-fleet-img
-                  src={src}
-                  alt=""
-                  fill
-                  sizes="(max-width: 768px) 92vw, 36rem"
-                  className="object-cover"
-                  style={{ opacity: index === 0 ? 1 : 0 }}
-                />
-              ))}
-              {film.fleetBeats.map((beat, index) => (
-                <p
-                  key={beat.id}
-                  data-af-fleet-caption
-                  className="about-film__fleet-caption"
-                  style={{ opacity: index === 0 ? 1 : 0 }}
-                >
-                  {beat.line}
-                </p>
-              ))}
+            <div className="about-film__gallery-window">
+              <div data-af-track className="about-film__gallery-track">
+                {film.fleetBeats.map((beat, index) => (
+                  <figure key={beat.id} className="about-film__gallery-item">
+                    <div className="about-film__gallery-image">
+                      <Image src={FLEET_FRAMES[index]} alt="" fill
+                        sizes="(max-width: 767px) 85vw, 36rem" className="object-cover" />
+                    </div>
+                    <figcaption className="about-film__gallery-caption">{beat.line}</figcaption>
+                  </figure>
+                ))}
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* 06 — Two sides */}
-      <section className="about-film__scene about-film__pin" data-af-sides>
-        <div className="about-film__sticky bg-surface-muted">
-          <div className="about-film__stage">
+      <section className="about-film__scene about-film__sides-band" data-af-sides>
+        <div className="about-film__sides-content">
+          <div className="about-film__content">
             <div className="about-film__split">
               <div data-af-side-left className="about-film__side">
                 <Image
@@ -696,42 +540,32 @@ export const AboutFilm = ({ film, pageTitle }: AboutFilmProps) => {
 
       {/* 07 — Details */}
       <section
-        className="about-film__scene about-film__pin about-film__pin--tall"
+        className="about-film__scene about-film__pin about-film__pin--gallery"
         data-af-details
+        data-af-gallery
       >
         <div className="about-film__sticky bg-surface">
-          <div className="about-film__stage">
+          <div className="about-film__stage about-film__stage--gallery">
             <h2
               data-af-details-head
-              className="about-film__display about-film__display--md absolute top-[18%] text-center"
+              className="about-film__display about-film__display--md text-center"
             >
               {film.detailsHeadline}
             </h2>
-            <div data-af-details-frame className="about-film__fleet-frame">
-              {DETAIL_FRAMES.map((src, index) => (
-                <Image
-                  key={src}
-                  data-af-details-img
-                  src={src}
-                  alt=""
-                  fill
-                  sizes="(max-width: 768px) 92vw, 36rem"
-                  className="object-cover"
-                  style={{ opacity: index === 0 ? 1 : 0 }}
-                />
-              ))}
+            <div className="about-film__gallery-window">
+              <div data-af-track className="about-film__gallery-track">
+                {film.details.map((detail, index) => (
+                  <figure key={detail.id} className="about-film__gallery-item">
+                    <div className="about-film__gallery-image">
+                      <Image src={DETAIL_FRAMES[index]} alt="" fill
+                        sizes="(max-width: 767px) 85vw, 36rem" className="object-cover" />
+                    </div>
+                    <figcaption className="about-film__gallery-caption">{detail.line}</figcaption>
+                  </figure>
+                ))}
+              </div>
             </div>
-            <div className="about-film__detail-stack absolute inset-x-0 top-0 bottom-0">
-              {film.details.map((detail) => (
-                <p
-                  key={detail.id}
-                  data-af-details-line
-                  className="about-film__detail-line about-film__display"
-                >
-                  {detail.line}
-                </p>
-              ))}
-            </div>
+            <p className="about-film__image-note">{film.detailsImageNote}</p>
           </div>
         </div>
       </section>
@@ -752,9 +586,9 @@ export const AboutFilm = ({ film, pageTitle }: AboutFilmProps) => {
       </section>
 
       {/* 09 — Brand */}
-      <section className="about-film__scene about-film__pin about-film__pin--short" data-af-brand>
-        <div className="about-film__sticky bg-surface">
-          <div className="about-film__stage">
+      <section className="about-film__scene about-film__brand-band" data-af-brand>
+        <div className="about-film__sides-content">
+          <div className="about-film__stage about-film__stage--brand">
             <LogoMark
               data-af-brand-mark
               title={film.brandName}
@@ -763,7 +597,7 @@ export const AboutFilm = ({ film, pageTitle }: AboutFilmProps) => {
             />
             <p
               data-af-brand-line
-              className="about-film__display about-film__display--md mt-8 text-wordmark"
+              className="about-film__display about-film__display--md text-wordmark"
             >
               {film.brandLine}
             </p>
@@ -805,11 +639,11 @@ export const AboutFilm = ({ film, pageTitle }: AboutFilmProps) => {
             {film.ctaBody}
           </p>
           <Link
-            data-af-cta-reveal
             href={film.ctaHref}
             className="about-film__cta-btn"
           >
             {film.ctaLabel}
+            <ArrowUpRight aria-hidden className="about-film__cta-arrow" size={18} />
           </Link>
         </div>
       </section>
