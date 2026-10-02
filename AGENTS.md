@@ -9,7 +9,7 @@
 - Shipped brand tokens are orange / blue / purple from `theme.ts` (not the green/gold draft in `DESIGN.md`)
 
 ## Hard rules
-- Never hardcode user-facing strings in components — use `messages/*.json` for UI chrome and `content/` for page copy
+- Never hardcode user-facing strings in components — use `src/messages/{ar,en}.json` for UI chrome and `src/content/{ar,en}/` for page copy
 - Never hardcode hex colors in components — use theme CSS variables / Tailwind tokens (`bg-orange`, `text-wordmark`, etc.)
 - Use logical CSS (`ms-`, `me-`, `ps-`, `pe-`, `start`, `end`) — never physical `left`/`right` for layout that must flip
 - Never invent company facts (CR numbers, licenses, Tourism services, named clients). Use `TODO(content):` comments and `ContentPlaceholder` instead
@@ -42,3 +42,9 @@ Project skills live in `.agents/skills/` (mirrored locally at `.cursor/skills/` 
 Also installed (use only if relevant): `animate-expo`, `apple-design`, `mobile-native`, `write-swift`.
 
 Do not invent brand tokens — follow `src/lib/theme.ts`, `DESIGN.md`, and existing page patterns.
+
+## Documentation & MCP (handover)
+
+- **Repo handover:** read `HANDOVER.md` when onboarding or switching machines.
+- **Library docs:** use **Context7 MCP** (`resolve-library-id` → `query-docs`) per `context7-mcp` skill — not Three.js DevTools (this repo has no Three.js).
+- **Page debugging:** Chrome DevTools MCP for `/about`, `/quote`, layout, and scroll issues.

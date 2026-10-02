@@ -44,7 +44,9 @@ Narrative beats: Journey → World → Challenge → Connection (group companies
 
 ### Quote (`/ar/quote`, `/en/quote`)
 
-Fit-to-screen split map + wizard. Option cards use icons; Continue is manual (no auto-advance). Back returns to the home ticket section (`#quote`) with a seamless handoff.
+Fit-to-screen split map + wizard. Option cards use icons; Continue is manual (no auto-advance). Back returns to the home ticket section (`#quote`) via `QuotePageChrome` + `QuoteSectionClient`.
+
+**Handover:** see `HANDOVER.md` for clone setup, MCP on a new PC, and recent work.
 
 ## Brand assets
 
