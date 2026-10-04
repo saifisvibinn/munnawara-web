@@ -3,6 +3,7 @@ import { QuoteWizard } from "@/components/forms/QuoteWizard"
 import { getHome } from "@/content"
 import type { AppLocale } from "@/content/types"
 import { getTranslations, setRequestLocale } from "next-intl/server"
+import { buildPageMetadata } from "@/lib/seo"
 
 type PageProps = {
   params: Promise<{ locale: string }>
@@ -27,5 +28,8 @@ const QuotePage = async ({ params }: PageProps) => {
     </div>
   )
 }
+
+export const generateMetadata = async ({ params }: PageProps) =>
+  buildPageMetadata((await params).locale, "quote")
 
 export default QuotePage

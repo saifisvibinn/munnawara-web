@@ -3,6 +3,7 @@ import { PageIntro } from "@/components/ui/PageIntro"
 import { getFleet, getFleetPage } from "@/content"
 import type { AppLocale } from "@/content/types"
 import { setRequestLocale } from "next-intl/server"
+import { buildPageMetadata } from "@/lib/seo"
 
 type PageProps = {
   params: Promise<{ locale: string }>
@@ -123,5 +124,8 @@ const FleetPage = async ({ params }: PageProps) => {
     </div>
   )
 }
+
+export const generateMetadata = async ({ params }: PageProps) =>
+  buildPageMetadata((await params).locale, "fleet")
 
 export default FleetPage

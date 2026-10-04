@@ -3,10 +3,29 @@ import { TextLink } from "@/components/ui/TextLink"
 import { getNewsPost } from "@/content"
 import type { AppLocale } from "@/content/types"
 import { getTranslations, setRequestLocale } from "next-intl/server"
+import { languageAlternates, localizedPath } from "@/lib/seo"
+import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 
 type PageProps = {
   params: Promise<{ locale: string; slug: string }>
+}
+
+export const generateMetadata = async ({
+  params,
+}: PageProps): Promise<Metadata> => {
+  const { locale, slug } = await params
+  const post = getNewsPost(locale as AppLocale, slug)
+  if (!post) return { title: "404", robots: { index: false } }
+
+  const path = `/news/${slug}`
+  return {
+    title: post.title,
+    alternates: {
+      canonical: localizedPath(locale, path),
+      languages: languageAlternates(path),
+    },
+  }
 }
 
 const NewsPostPage = async ({ params }: PageProps) => {

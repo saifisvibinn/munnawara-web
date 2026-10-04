@@ -9,10 +9,24 @@ import { Testimonials } from "@/components/sections/Testimonials"
 import { DamLanding } from "@/components/landing/DamLanding"
 import { getHome } from "@/content"
 import type { AppLocale } from "@/content/types"
+import { languageAlternates, localizedPath } from "@/lib/seo"
+import type { Metadata } from "next"
 import { setRequestLocale } from "next-intl/server"
 
 type PageProps = {
   params: Promise<{ locale: string }>
+}
+
+export const generateMetadata = async ({
+  params,
+}: PageProps): Promise<Metadata> => {
+  const { locale } = await params
+  return {
+    alternates: {
+      canonical: localizedPath(locale, "/"),
+      languages: languageAlternates("/"),
+    },
+  }
 }
 
 const HomePage = async ({ params }: PageProps) => {

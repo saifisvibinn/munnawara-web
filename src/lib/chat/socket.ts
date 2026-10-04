@@ -1,4 +1,5 @@
 import { io, type Socket } from "socket.io-client"
+import { DEFAULT_CHAT_API_URL } from "./upstream"
 
 /**
  * Socket server URL.
@@ -8,7 +9,7 @@ const socketServerUrl = () =>
   (
     process.env.NEXT_PUBLIC_CHAT_API_URL ||
     process.env.NEXT_PUBLIC_CHAT_SOCKET_URL ||
-    "https://164-92-131-93.sslip.io"
+    DEFAULT_CHAT_API_URL
   ).replace(/\/$/, "")
 
 let socket: Socket | null = null

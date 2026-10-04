@@ -4,6 +4,7 @@ import { PageIntro } from "@/components/ui/PageIntro"
 import { getClients } from "@/content"
 import type { AppLocale } from "@/content/types"
 import { getTranslations, setRequestLocale } from "next-intl/server"
+import { buildPageMetadata } from "@/lib/seo"
 
 type PageProps = {
   params: Promise<{ locale: string }>
@@ -33,5 +34,8 @@ const ClientsPage = async ({ params }: PageProps) => {
     </AnimatedSection>
   )
 }
+
+export const generateMetadata = async ({ params }: PageProps) =>
+  buildPageMetadata((await params).locale, "clients")
 
 export default ClientsPage

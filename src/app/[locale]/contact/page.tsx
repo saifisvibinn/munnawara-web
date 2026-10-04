@@ -8,6 +8,7 @@ import { ArrowUpRight, Clock, Mail, MapPin, Phone } from "lucide-react"
 import Image from "next/image"
 import { getTranslations, setRequestLocale } from "next-intl/server"
 import type { ComponentType } from "react"
+import { buildPageMetadata } from "@/lib/seo"
 
 type PageProps = {
   params: Promise<{ locale: string }>
@@ -215,5 +216,8 @@ const ContactPage = async ({ params }: PageProps) => {
     </div>
   )
 }
+
+export const generateMetadata = async ({ params }: PageProps) =>
+  buildPageMetadata((await params).locale, "contact")
 
 export default ContactPage

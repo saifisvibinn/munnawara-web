@@ -2,6 +2,7 @@ import { AnimatedSection } from "@/components/motion/AnimatedSection"
 import { PageIntro } from "@/components/ui/PageIntro"
 import { TextLink } from "@/components/ui/TextLink"
 import { getTranslations, setRequestLocale } from "next-intl/server"
+import { buildPageMetadata } from "@/lib/seo"
 
 type PageProps = {
   params: Promise<{ locale: string }>
@@ -39,5 +40,8 @@ const CorporatePage = async ({ params }: PageProps) => {
     </AnimatedSection>
   )
 }
+
+export const generateMetadata = async ({ params }: PageProps) =>
+  buildPageMetadata((await params).locale, "corporate")
 
 export default CorporatePage

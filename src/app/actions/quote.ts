@@ -12,6 +12,13 @@ export type QuoteActionState = {
   quoteSlaHours?: number
 }
 
+const BACKEND_TIMEOUT_MS = 15_000
+const EMAIL_TIMEOUT_MS = 10_000
+const DEFAULT_EMAIL_FROM = "DMTC Website <onboarding@resend.dev>"
+
+/** Collapse CR/LF so user text cannot inject headers into an email subject. */
+const singleLine = (value: string) => value.replace(/[\r\n]+/g, " ").trim()
+
 function backendBaseUrl() {
   return (
     process.env.CHAT_API_URL ||
@@ -54,6 +61,7 @@ export const submitQuoteRequest = async (
       const response = await fetch(`${base}/quotes`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        signal: AbortSignal.timeout(BACKEND_TIMEOUT_MS),
         body: JSON.stringify({
           customerName: data.customerName,
           customerContact: data.phone,
@@ -142,10 +150,13 @@ export const submitQuoteRequest = async (
           Authorization: `Bearer ${apiKey}`,
           "Content-Type": "application/json",
         },
+        signal: AbortSignal.timeout(EMAIL_TIMEOUT_MS),
         body: JSON.stringify({
-          from: "DMTC Website <onboarding@resend.dev>",
+          from: process.env.RESEND_FROM_EMAIL || DEFAULT_EMAIL_FROM,
           to: [inbox],
-          subject: `[Quote ${leadId || ""}] ${data.tripType} — ${data.pickup} → ${data.destination}`,
+          subject: singleLine(
+            `[Quote ${leadId || ""}] ${data.tripType} — ${data.pickup} → ${data.destination}`,
+          ),
           text: [
             `Lead: ${leadId || "—"}`,
             `Name: ${data.customerName}`,

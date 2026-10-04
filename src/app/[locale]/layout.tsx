@@ -6,26 +6,53 @@ import { SmoothScrollProvider } from "@/components/motion/SmoothScrollProvider"
 import { ThemeProvider } from "@/components/theme/ThemeProvider"
 import { routing } from "@/i18n/routing"
 import { NextIntlClientProvider, hasLocale } from "next-intl"
-import { getMessages, setRequestLocale } from "next-intl/server"
+import { getMessages, getTranslations, setRequestLocale } from "next-intl/server"
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import type { ReactNode } from "react"
 import { LogoRouteTransition } from "@/components/landing/LogoRouteTransition"
+import { buildOrganizationSchema, serializeJsonLd } from "@/lib/schema"
+import { siteOrigin } from "@/lib/seo"
 import "../globals.css"
 import "@/styles/dam-landing.css"
-
-export const metadata: Metadata = {
-  title: "DMTC | Durrah Al-Munawwara",
-  description: "Durrah Al-Munawwara Group — transport and pilgrimage services",
-  icons: {
-    icon: "/icon.png",
-    apple: "/icon.png",
-  },
-}
 
 type LocaleLayoutProps = {
   children: ReactNode
   params: Promise<{ locale: string }>
+}
+
+export const generateMetadata = async ({
+  params,
+}: Pick<LocaleLayoutProps, "params">): Promise<Metadata> => {
+  const { locale } = await params
+  if (!hasLocale(routing.locales, locale)) return {}
+
+  const [tMeta, tSeo] = await Promise.all([
+    getTranslations({ locale, namespace: "meta" }),
+    getTranslations({ locale, namespace: "seo" }),
+  ])
+  const siteName = tMeta("siteName")
+  const description = tSeo("site")
+
+  return {
+    metadataBase: new URL(siteOrigin()),
+    title: {
+      default: `${tMeta("siteNameEn")} | ${siteName}`,
+      template: `%s | ${siteName}`,
+    },
+    description,
+    applicationName: siteName,
+    icons: {
+      icon: "/icon.png",
+      apple: "/icon.png",
+    },
+    openGraph: {
+      type: "website",
+      siteName,
+      locale: locale === "ar" ? "ar_SA" : "en_US",
+      description,
+    },
+  }
 }
 
 export const generateStaticParams = () =>
@@ -51,6 +78,12 @@ const LocaleLayout = async ({ children, params }: LocaleLayoutProps) => {
         <script
           dangerouslySetInnerHTML={{
             __html: `(function(){try{var p=location.pathname.replace(/\\/+$/,"")||"/";if(p==="/"||p==="/en"||p==="/ar"){if("scrollRestoration"in history)history.scrollRestoration="manual";window.scrollTo(0,0);document.documentElement.scrollTop=0;document.body.scrollTop=0;}}catch(e){}})();`,
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: serializeJsonLd(buildOrganizationSchema()),
           }}
         />
         <ThemeProvider>

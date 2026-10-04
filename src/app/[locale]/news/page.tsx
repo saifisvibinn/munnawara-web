@@ -4,6 +4,7 @@ import { getNews } from "@/content"
 import type { AppLocale } from "@/content/types"
 import { Link } from "@/i18n/navigation"
 import { getTranslations, setRequestLocale } from "next-intl/server"
+import { buildPageMetadata } from "@/lib/seo"
 
 type PageProps = {
   params: Promise<{ locale: string }>
@@ -41,5 +42,8 @@ const NewsPage = async ({ params }: PageProps) => {
     </AnimatedSection>
   )
 }
+
+export const generateMetadata = async ({ params }: PageProps) =>
+  buildPageMetadata((await params).locale, "news")
 
 export default NewsPage
