@@ -98,8 +98,9 @@ export const AboutPreviewClient = ({
         <Image
           src="/hero/landing-sky.jpg"
           alt=""
-          fill
-          className="object-cover object-center"
+          width={1024}
+          height={576}
+          className="absolute inset-0 size-full object-cover object-center"
           sizes="130vw"
           priority={false}
         />

@@ -72,6 +72,8 @@ body::-webkit-scrollbar {
   --brand-wordmark-deep: #4a1f6b;
   --brand-orange: #f37021;
   --brand-orange-soft: #f9a066;
+  /* AA-safe orange for small text (>=4.5:1 on white, surface and landing plate) */
+  --brand-orange-text: #a8420a;
   --brand-ink: #1a1520;
   --brand-ink-muted: #5c5666;
   --brand-silver: #8a8494;
@@ -147,6 +149,7 @@ body::-webkit-scrollbar {
   --brand-wordmark-deep: #9b6fc0;
   --brand-orange: #f37021;
   --brand-orange-soft: #f9a066;
+  --brand-orange-text: #f9a066;
   --brand-ink: #f5efe8;
   --brand-ink-muted: #a89f96;
   --brand-silver: #8a8494;
@@ -212,6 +215,7 @@ body::-webkit-scrollbar {
   --color-secondary-container: var(--brand-secondary-container);
   --color-orange: var(--brand-orange);
   --color-orange-soft: var(--brand-orange-soft);
+  --color-orange-text: var(--brand-orange-text);
   --color-blue: var(--brand-blue);
   --color-blue-soft: var(--brand-blue-soft);
   --color-wordmark: var(--brand-wordmark);

@@ -139,7 +139,7 @@ export const SocialLinksRow = ({
             target="_blank"
             rel="noopener noreferrer"
             aria-label={`${label} ${links.handle}`}
-            className="inline-flex size-10 cursor-pointer items-center justify-center rounded-full text-ink/55 transition hover:bg-surface-muted hover:text-orange focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange"
+            className="inline-flex size-10 cursor-pointer items-center justify-center rounded-full text-ink/70 transition hover:bg-surface-muted hover:text-orange focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange"
           >
             <Icon />
           </a>

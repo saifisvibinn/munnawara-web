@@ -124,7 +124,6 @@ export const SocialFollowButton = ({
         aria-expanded={open}
         aria-controls={menuId}
         aria-haspopup="menu"
-        aria-label={`${t("followUs")}: ${links.handle}`}
         tabIndex={0}
         onClick={() => setOpen((current) => !current)}
         onKeyDown={handleToggleKeyDown}
@@ -147,7 +146,7 @@ export const SocialFollowButton = ({
           role="menu"
           aria-label={t("followUs")}
           className={cn(
-            "absolute left-1/2 z-20 mt-3 flex -translate-x-1/2 items-center gap-2 rounded-full border px-2 py-2 shadow-lg backdrop-blur-md",
+            "absolute inset-x-0 z-20 mx-auto mt-3 flex w-fit items-center gap-2 rounded-full border px-2 py-2 shadow-lg backdrop-blur-md",
             isLight ? "border-white/20 bg-black/85" : "border-ink/10 bg-surface-elevated",
           )}
         >

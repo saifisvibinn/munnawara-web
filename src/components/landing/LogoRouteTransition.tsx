@@ -570,10 +570,17 @@ export const LogoRouteTransition = () => {
     }
   }
 
+  // The animation helpers are re-created every render; effects call them through
+  // refs so they always use the latest version without re-subscribing / re-running.
+  const beginCoverRef = useRef(beginCover)
+  beginCoverRef.current = beginCover
+  const landIntoBarRef = useRef(landIntoBar)
+  landIntoBarRef.current = landIntoBar
+
   useEffect(() => {
     const onPointerDown = (event: MouseEvent) => {
       if (!isInternalNavClick(event, pathnameRef.current)) return
-      beginCover()
+      beginCoverRef.current()
     }
 
     document.addEventListener("pointerdown", onPointerDown, true)
@@ -594,7 +601,7 @@ export const LogoRouteTransition = () => {
       return
     }
 
-    void landIntoBar(pathname)
+    void landIntoBarRef.current(pathname)
     // Intentionally no cleanup that kills the land timeline — that left the
     // overlay stuck when React tore the effect down mid-flight (Strict Mode).
   }, [pathname])

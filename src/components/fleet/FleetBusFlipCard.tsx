@@ -96,7 +96,7 @@ export const FleetBusFlipCard = ({
           </div>
         }
         back={
-          <div className="flex h-full flex-col gap-2.5 overflow-y-auto p-4 sm:gap-3 sm:p-5">
+          <div data-lenis-prevent className="flex h-full flex-col gap-2.5 overflow-y-auto p-4 sm:gap-3 sm:p-5">
             <div>
               <p className="font-label text-[0.65rem] font-semibold tracking-[0.14em] text-orange uppercase">
                 {t("detailsLabel")}
@@ -194,6 +194,7 @@ export const FleetMoreImagesModal = ({
         role="dialog"
         aria-modal="true"
         aria-labelledby="fleet-more-images-title"
+        data-lenis-prevent
         className="max-h-[min(88dvh,40rem)] w-full max-w-3xl overflow-y-auto rounded-2xl bg-surface-elevated p-5 text-ink shadow-md sm:p-7"
         onClick={(event) => event.stopPropagation()}
       >
@@ -236,7 +237,7 @@ export const FleetMoreImagesModal = ({
                 />
               ) : (
                 <div className="flex h-full flex-col items-center justify-center gap-1 px-3 text-center">
-                  <span className="text-xs font-medium text-ink/45">
+                  <span className="text-xs font-medium text-ink/70">
                     {t("imagePlaceholder")}
                   </span>
                   <span className="text-[11px] text-ink/30">

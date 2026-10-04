@@ -19,7 +19,7 @@ const FleetPage = async ({ params }: PageProps) => {
   return (
     <div className="overflow-hidden pb-28 pt-20">
       <PageIntro title={page.title} subtitle={page.subtitle} align="start">
-        <p className="ms-0 me-auto mt-6 max-w-2xl text-base leading-relaxed text-ink/55 md:text-lg">
+        <p className="ms-0 me-auto mt-6 max-w-2xl text-base leading-relaxed text-ink/70 md:text-lg">
           {page.intro}
         </p>
       </PageIntro>
@@ -85,7 +85,7 @@ const FleetPage = async ({ params }: PageProps) => {
           >
             {page.exploreTitle}
           </h2>
-          <p className="mt-4 text-base text-ink/55 sm:text-lg">
+          <p className="mt-4 text-base text-ink/70 sm:text-lg">
             {page.exploreSubtitle}
           </p>
         </div>

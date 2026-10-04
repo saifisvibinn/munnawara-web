@@ -146,6 +146,7 @@ function Popover({
     <div
       ref={panelRef}
       dir={dir}
+      data-lenis-prevent
       className={cn(panelClass, className)}
       style={{
         top: pos?.top ?? 0,
@@ -404,14 +405,15 @@ export function DatePicker({
   }
 
   // Move focus into the panel so keyboard users can reach the days.
+  // Depend on a boolean (not the position object) so it runs once per open, not on every reposition.
+  const positioned = pos !== null
   useEffect(() => {
-    if (!open || !pos) return
+    if (!open || !positioned) return
     const target =
       panelRef.current?.querySelector<HTMLElement>("[data-selected=true]") ??
       panelRef.current?.querySelector<HTMLElement>("[data-day]:not([disabled])")
     target?.focus({ preventScroll: true })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open, pos === null])
+  }, [open, positioned])
 
   const todayISO = toISO(new Date())
   const isDisabled = (d: Date) => Boolean(minDate && d < minDate)
@@ -618,13 +620,13 @@ export function TimePicker({
   }
 
   // Scroll the selected hour / minute into view when opening.
+  const positioned = pos !== null
   useEffect(() => {
-    if (!open || !pos) return
+    if (!open || !positioned) return
     panelRef.current?.querySelectorAll<HTMLElement>("[data-on=true]").forEach((el) => {
       el.scrollIntoView({ block: "center" })
     })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open, pos === null])
+  }, [open, positioned])
 
   const col = "flex max-h-56 flex-1 flex-col gap-0.5 overflow-y-auto px-0.5"
   const item = (on: boolean) =>
@@ -671,7 +673,7 @@ export function TimePicker({
         }}
       >
         <div className="flex gap-1" dir="ltr">
-          <div className={col} role="listbox" aria-label={t("hour", locale)}>
+          <div data-lenis-prevent className={col} role="listbox" aria-label={t("hour", locale)}>
             {HOURS.map((h) => (
               <button
                 key={h}
@@ -686,7 +688,7 @@ export function TimePicker({
               </button>
             ))}
           </div>
-          <div className={col} role="listbox" aria-label={t("minute", locale)}>
+          <div data-lenis-prevent className={col} role="listbox" aria-label={t("minute", locale)}>
             {MINUTES.map((m) => (
               <button
                 key={m}
@@ -792,6 +794,7 @@ export function NumberStepper({
       </button>
       <input
         id={id}
+        name={id}
         inputMode="numeric"
         autoComplete="off"
         placeholder={placeholder}

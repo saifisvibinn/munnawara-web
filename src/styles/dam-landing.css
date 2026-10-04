@@ -93,6 +93,8 @@ body.is-transitioning [data-floating-quote-chrome] {
   --landing-elevated: #ffffff;
   --brand-peach: rgb(255, 184, 112);
   --brand-orange: rgb(247, 91, 18);
+  /* Hero is always light, so keep the light-theme AA orange even in .dark */
+  --brand-orange-text: #a8420a;
   --brand-gold: rgb(255, 199, 123);
   --brand-apricot: rgb(255, 155, 55);
   --brand-amber: rgb(255, 194, 108);
@@ -505,7 +507,7 @@ body.is-loading .loader-surface {
 
 .hero__eyebrow {
   margin: 0 0 clamp(18px, 2.4vh, 28px);
-  color: var(--brand-orange);
+  color: var(--brand-orange-text);
   font-family: var(--font-body);
   font-size: 0.8rem;
   font-weight: 700;
@@ -572,7 +574,7 @@ body.is-loading .loader-surface {
 .hero__sub {
   width: min(460px, 100%);
   margin: clamp(22px, 3vh, 34px) 0 28px;
-  color: var(--muted);
+  color: color-mix(in srgb, var(--paper) 74%, transparent);
   font-family: var(--font-body);
   font-size: clamp(1.05rem, 1.35vw, 1.22rem);
   line-height: 1.6;

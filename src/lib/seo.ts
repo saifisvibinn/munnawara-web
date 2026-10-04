@@ -29,7 +29,18 @@ export const seoPaths: Record<SeoPage, string> = {
   quote: "/quote",
 }
 
-export const siteOrigin = () => getSiteConfig().siteUrl.replace(/\/$/, "")
+/**
+ * Canonical origin. `NEXT_PUBLIC_SITE_URL` wins, then the Vercel production
+ * domain (so canonicals match the deployed host), then `siteConfig.siteUrl`.
+ */
+export const siteOrigin = () => {
+  const vercelHost = process.env.VERCEL_PROJECT_PRODUCTION_URL
+  const origin =
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    (vercelHost ? `https://${vercelHost}` : "") ||
+    getSiteConfig().siteUrl
+  return origin.replace(/\/$/, "")
+}
 
 /** `/ar` or `/en` plus the page path; "" path is the locale home. */
 export const localizedPath = (locale: string, path: string) =>

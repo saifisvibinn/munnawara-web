@@ -16,7 +16,7 @@ export const Footer = async () => {
   const year = new Date().getFullYear()
 
   return (
-    <footer className="border-t border-ink/6 bg-surface-elevated text-ink/55">
+    <footer className="border-t border-ink/6 bg-surface-elevated text-ink/70">
       <div className="mx-auto grid max-w-[80rem] gap-12 px-4 py-16 md:grid-cols-4 md:px-10">
         <div className="md:col-span-2">
           <div className="flex items-center gap-3">

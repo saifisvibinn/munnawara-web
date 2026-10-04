@@ -99,7 +99,7 @@ export const BusPassbyClient = ({
       <div className="sticky top-0 h-dvh overflow-hidden">
         <p
           className={cn(
-            "font-label pointer-events-none absolute inset-x-0 top-[12%] z-30 mx-auto max-w-[80rem] px-4 text-center text-[11px] font-semibold text-orange sm:top-[14%] sm:text-xs md:top-[15%] md:px-10",
+            "font-label pointer-events-none absolute inset-x-0 top-[12%] z-30 mx-auto max-w-[80rem] px-4 text-center text-[11px] font-semibold text-orange-text sm:top-[14%] sm:text-xs md:top-[15%] md:px-10",
             isRtl
               ? "tracking-wide"
               : "tracking-[0.22em] uppercase sm:tracking-[0.28em]",

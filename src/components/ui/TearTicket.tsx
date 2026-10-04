@@ -242,7 +242,7 @@ export default function TearTicket({
   stubBackground = "",
   recenter = true,
   disabled = false,
-  ariaLabel = "Tear off the stub",
+  ariaLabel,
   usedLabel = "Used",
   className = "",
 }: TearTicketProps) {
@@ -515,6 +515,11 @@ export default function TearTicket({
     paint(performance.now())
   }
 
+  // `reset` closes over per-render values; keep the latest in a ref so the effects
+  // below re-run only on `used` / `geo` changes, never because its identity changed.
+  const resetRef = useRef(reset)
+  resetRef.current = reset
+
   useEffect(() => {
     if (used) {
       const s = sim.current
@@ -522,12 +527,10 @@ export default function TearTicket({
       return
     }
     setInstant(false)
-    reset()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    resetRef.current()
   }, [used])
   useEffect(() => {
-    reset()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    resetRef.current()
   }, [geo])
   useEffect(() => {
     const s = sim.current

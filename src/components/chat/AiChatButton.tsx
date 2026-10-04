@@ -27,7 +27,8 @@ export const AiChatButton = forwardRef<
   AiChatButtonProps
 >(function AiChatButton(props, ref) {
   const t = useTranslations("chat")
-  const unread = props.unread ?? 0
+  const { unread: unreadProp, ...domProps } = props
+  const unread = unreadProp ?? 0
   const badge =
     unread > 0 ? (
       <span className="ai-chat-btn__badge" aria-label={`${unread} unread`}>
@@ -48,8 +49,8 @@ export const AiChatButton = forwardRef<
     </>
   )
 
-  if ("href" in props && props.href) {
-    const { href, className = "", unread: _u, ...rest } = props
+  if ("href" in domProps && domProps.href) {
+    const { href, className = "", ...rest } = domProps
     return (
       <a
         className={cn("ai-chat-btn", className)}
@@ -63,7 +64,10 @@ export const AiChatButton = forwardRef<
     )
   }
 
-  const { className = "", unread: _u, ...rest } = props as AiChatButtonOnlyProps
+  const { className = "", ...rest } = domProps as Omit<
+    AiChatButtonOnlyProps,
+    "unread"
+  >
   return (
     <button
       className={cn("ai-chat-btn", className)}

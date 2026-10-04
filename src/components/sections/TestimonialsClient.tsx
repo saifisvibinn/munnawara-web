@@ -142,7 +142,7 @@ export const TestimonialsClient = ({
           >
             {title}
           </h2>
-          <p className="mt-5 max-w-sm text-base leading-relaxed text-ink/55 sm:text-lg">
+          <p className="mt-5 max-w-sm text-base leading-relaxed text-ink/70 sm:text-lg">
             {subtitle}
           </p>
           <Link
@@ -187,7 +187,7 @@ export const TestimonialsClient = ({
               </div>
             </div>
           ) : (
-            <p className="text-base text-ink/45">{emptyMessage}</p>
+            <p className="text-base text-ink/70">{emptyMessage}</p>
           )}
         </div>
       </div>
@@ -232,7 +232,7 @@ const ClientCard = ({ client }: { client: ClientItem }) => (
     <h3 className="font-display text-xl font-semibold tracking-tight text-ink sm:text-2xl">
       {client.label}
     </h3>
-    <p className="mt-3 text-sm leading-relaxed text-ink/55 sm:text-base">
+    <p className="mt-3 text-sm leading-relaxed text-ink/70 sm:text-base">
       {client.description}
     </p>
   </article>

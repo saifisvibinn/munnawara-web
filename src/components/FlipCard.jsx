@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   animate,
   motion,
@@ -98,12 +98,12 @@ export default function FlipCard({
     const base = snap(turn.get());
     settle(isBack(base) ? base - 180 : base + 180, 0, instant);
   };
-  const rest = () => {
+  const rest = useCallback(() => {
     tiltX.set(0);
     tiltY.set(0);
     sheen.set(0);
     lift.set(1);
-  };
+  }, [tiltX, tiltY, sheen, lift]);
 
   useEffect(() => {
     if (!controlled || isBack(target.current) === flipped) return;
@@ -112,13 +112,12 @@ export default function FlipCard({
     target.current = isBack(base) ? base - 180 : base + 180;
     if (reduce) turn.jump(target.current);
     else spin.current = animate(turn, target.current, { type: 'spring', stiffness, damping, restDelta: 0.05 });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [flipped]);
+    // The early return above makes re-runs from non-`flipped` deps no-ops.
+  }, [controlled, flipped, reduce, stiffness, damping, turn]);
   useEffect(() => () => spin.current?.stop(), []);
   useEffect(() => {
     if (disabled) rest();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [disabled]);
+  }, [disabled, rest]);
 
   const onPointerDown = e => {
     if (disabled || e.button !== 0 || grip.current) return;

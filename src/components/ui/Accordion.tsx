@@ -53,7 +53,7 @@ export const Accordion = ({ items, className }: AccordionProps) => {
                 <span
                   aria-hidden
                   className={cn(
-                    "font-label flex size-8 shrink-0 items-center justify-center rounded-full border border-ink/10 text-lg leading-none text-ink/55 transition",
+                    "font-label flex size-8 shrink-0 items-center justify-center rounded-full border border-ink/10 text-lg leading-none text-ink/70 transition",
                     isOpen && "border-orange/40 text-orange",
                   )}
                 >
@@ -71,7 +71,7 @@ export const Accordion = ({ items, className }: AccordionProps) => {
               )}
             >
               <div className="overflow-hidden">
-                <p className="pb-6 text-base leading-relaxed text-ink/55">
+                <p className="pb-6 text-base leading-relaxed text-ink/70">
                   {item.content}
                 </p>
               </div>

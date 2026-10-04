@@ -100,13 +100,13 @@ export const NewsTeaserClient = ({
           >
             {title}
           </h2>
-          <p className="mt-5 text-base leading-relaxed text-ink/55 sm:text-lg">
+          <p className="mt-5 text-base leading-relaxed text-ink/70 sm:text-lg">
             {subtitle}
           </p>
         </header>
 
         {posts.length === 0 ? (
-          <p className="mx-auto mt-14 max-w-md text-center text-base text-ink/45">
+          <p className="mx-auto mt-14 max-w-md text-center text-base text-ink/70">
             {emptyMessage}
           </p>
         ) : (
@@ -147,7 +147,7 @@ export const NewsTeaserClient = ({
                       {post.title}
                     </Link>
                   </h3>
-                  <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-ink/55 sm:text-base">
+                  <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-ink/70 sm:text-base">
                     {post.excerpt}
                   </p>
                   <p className="font-label mt-4 text-xs tracking-wide text-ink/40">

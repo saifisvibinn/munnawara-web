@@ -76,8 +76,9 @@ export const CTABandClient = ({
         <Image
           src="/hero/landing-sky.jpg"
           alt=""
-          fill
-          className="object-cover object-center"
+          width={1024}
+          height={576}
+          className="absolute inset-0 size-full object-cover object-center"
           sizes="100vw"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-white/55 via-white/70 to-white/90 dark:from-black/72 dark:via-black/82 dark:to-black/92" />

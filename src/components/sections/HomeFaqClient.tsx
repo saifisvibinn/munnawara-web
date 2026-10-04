@@ -82,7 +82,7 @@ export const HomeFaqClient = ({
           >
             {title}
           </h2>
-          <p className="mt-5 max-w-sm text-base leading-relaxed text-ink/55 sm:text-lg">
+          <p className="mt-5 max-w-sm text-base leading-relaxed text-ink/70 sm:text-lg">
             {subtitle}
           </p>
           <Link

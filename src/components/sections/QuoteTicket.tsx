@@ -19,7 +19,6 @@ const COPY = {
     hint: "Pull the orange stub to tear it off — your quote starts right after.",
     opening: "Opening your quote…",
     skip: "Prefer a plain form?",
-    aria: "Tear off the stub to start your quote",
     used: "Ticket used",
   },
   ar: {
@@ -34,7 +33,6 @@ const COPY = {
     hint: "اسحب القسيمة البرتقالية لتمزيقها — وسيبدأ طلب العرض مباشرة.",
     opening: "جارٍ فتح طلب العرض…",
     skip: "تفضّل نموذجاً عادياً؟",
-    aria: "مزّق القسيمة لبدء طلب العرض",
     used: "تم استخدام التذكرة",
   },
 } as const
@@ -107,14 +105,13 @@ export function QuoteTicket() {
         background="var(--brand-surface-elevated)"
         color="var(--brand-ink)"
         stubBackground="var(--brand-orange)"
-        ariaLabel={c.aria}
         usedLabel={c.used}
         onTear={handleTear}
         recenter={false}
         rotate={vertical ? 0 : 2}
         stub={
           <div
-            className="flex h-full w-full flex-col items-center justify-center gap-2 p-3 text-center text-white"
+            className="flex h-full w-full flex-col items-center justify-center gap-2 p-3 text-center text-black"
             dir={isAr ? "rtl" : "ltr"}
           >
             <svg
@@ -176,7 +173,7 @@ export function QuoteTicket() {
           href="/quote"
           data-no-route-transition
           onClick={() => skipNextRouteTransition()}
-          className="mt-1 inline-flex min-h-11 items-center text-sm font-semibold text-orange underline-offset-4 hover:underline"
+          className="mt-1 inline-flex min-h-11 items-center text-sm font-semibold text-orange-text underline-offset-4 hover:underline"
         >
           {c.skip}
         </Link>
