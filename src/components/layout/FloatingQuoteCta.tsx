@@ -194,7 +194,7 @@ export const FloatingQuoteCta = () => {
   return (
     <div
       data-floating-quote-chrome
-      className="pointer-events-none fixed inset-x-0 bottom-[calc(max(1.25rem,env(safe-area-inset-bottom))+var(--float-lift,0px))] z-[50] flex justify-start ps-3 pe-[8.75rem] sm:justify-center sm:px-4 sm:bottom-[calc(1.5rem+var(--float-lift,0px))]"
+      className="float-above-footer pointer-events-none fixed inset-x-0 z-[50] flex justify-start ps-3 pe-[8.75rem] sm:justify-center sm:px-4"
       aria-hidden={!visible}
     >
       <Link

@@ -575,3 +575,20 @@ body:has([data-quote-page]) main#main {
 
 /* Chat / WhatsApp buttons would sit on the wizard's Continue button here */
 body:has([data-quote-page]) [data-floating-actions] { display: none; }
+/* Floating chat / WhatsApp / quote chrome rests above the footer (see FloatingActions). */
+.float-above-footer {
+  bottom: calc(max(1.25rem, env(safe-area-inset-bottom)) + var(--float-lift, 0px));
+}
+@media (min-width: 640px) {
+  .float-above-footer {
+    bottom: calc(1.5rem + var(--float-lift, 0px));
+  }
+}
+html[data-footer-covers] .float-above-footer,
+html[data-footer-covers] [data-floating-quote-chrome] {
+  opacity: 0;
+  pointer-events: none;
+}
+.float-above-footer {
+  transition: opacity 180ms ease;
+}

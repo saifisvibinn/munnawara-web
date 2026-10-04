@@ -20,7 +20,7 @@ const CareersPage = async ({ params }: PageProps) => {
   return (
     <AnimatedSection className="pb-28 pt-20">
       <PageIntro title={t("careers")} align="start" />
-      <div className="mx-auto mt-12 max-w-4xl px-6">
+      <div className="mx-auto mt-12 max-w-4xl px-4 sm:px-6">
         <PhotoStrip
           locale={locale as AppLocale}
           ids={["workshop-0205", "people-0486", "people-0467"]}

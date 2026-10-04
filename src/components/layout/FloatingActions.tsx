@@ -26,6 +26,8 @@ const useFooterLift = () => {
       }
       const top = footer.getBoundingClientRect().top
       const lift = Math.max(0, window.innerHeight - top)
+      // Footer fills most of the screen (mobile): hide instead of floating mid-page.
+      root.toggleAttribute("data-footer-covers", top < window.innerHeight * 0.45)
       root.style.setProperty("--float-lift", `${Math.round(lift)}px`)
     }
     const schedule = () => {
@@ -46,6 +48,7 @@ const useFooterLift = () => {
       window.removeEventListener("resize", schedule)
       sizeObserver.disconnect()
       root.style.removeProperty("--float-lift")
+      root.removeAttribute("data-footer-covers")
     }
   }, [pathname])
 }
@@ -56,7 +59,7 @@ export const FloatingActions = () => {
   return (
     <div
       data-floating-actions
-      className="fixed bottom-[calc(max(1.25rem,env(safe-area-inset-bottom))+var(--float-lift,0px))] end-4 z-40 flex flex-row items-center sm:end-6 sm:bottom-[calc(1.5rem+var(--float-lift,0px))]"
+      className="float-above-footer fixed end-4 z-40 flex flex-row items-center sm:end-6"
     >
       <ChatWidget revealed />
       <WhatsAppButton />
