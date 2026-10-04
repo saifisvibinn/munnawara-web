@@ -521,7 +521,7 @@ export function StepBody({
             <span>{tx(COPY.consent)}</span>
           </label>
           {errors.consent ? (
-            <p className="px-1 text-sm text-red-700" role="alert">
+            <p className="px-1 text-sm text-red-700 dark:text-red-300" role="alert">
               {errors.consent}
             </p>
           ) : null}

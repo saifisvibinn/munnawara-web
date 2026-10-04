@@ -26,7 +26,7 @@ const CorporatePage = async ({ params }: PageProps) => {
   return (
     <AnimatedSection className="pb-28 pt-20">
       <PageIntro title={t("corporate")} subtitle={tCorporate("intro")} align="start" />
-      <ul className="mx-auto mt-16 max-w-2xl px-6">
+      <ul className="mx-auto mt-16 max-w-4xl px-4 sm:px-6">
         {services.map((service) => (
           <li
             key={service}
@@ -36,7 +36,7 @@ const CorporatePage = async ({ params }: PageProps) => {
           </li>
         ))}
       </ul>
-      <div className="mx-auto mt-16 max-w-4xl px-6">
+      <div className="mx-auto mt-16 max-w-4xl px-4 sm:px-6">
         <PhotoStrip
           locale={locale as AppLocale}
           ids={["workshop-0123", "workshop-0342", "interior-0269"]}

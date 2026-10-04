@@ -69,6 +69,7 @@ export const CTABandClient = ({
     <section
       ref={sectionRef}
       data-cta-band
+      data-quote-section
       className="relative isolate overflow-hidden px-4 py-24 text-center sm:px-6 sm:py-32 md:px-10 md:py-40"
       aria-labelledby="cta-band-heading"
     >
@@ -104,7 +105,7 @@ export const CTABandClient = ({
           <button
             type="button"
             onClick={handleOpenQuote}
-            className="font-label inline-flex cursor-pointer items-center justify-center rounded-full bg-black px-8 py-3.5 text-sm font-semibold text-white transition hover:bg-orange focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange dark:bg-white dark:text-black dark:hover:bg-orange dark:hover:text-white"
+            className="font-label inline-flex cursor-pointer items-center justify-center rounded-full bg-black dark:ring-1 dark:ring-white/25 px-8 py-3.5 text-sm font-semibold text-white transition hover:bg-orange focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange dark:bg-white dark:text-black dark:hover:bg-orange dark:hover:text-white"
           >
             {ctaLabel}
           </button>

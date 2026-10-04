@@ -116,12 +116,18 @@ export const HowItWorksClient = ({
           <h2 id="how-it-works-heading">{title}</h2>
         </header>
 
-        <div className="grid grid-cols-[auto_1fr] gap-4 md:grid-cols-[minmax(8rem,0.28fr)_1fr] md:gap-10 lg:grid-cols-[minmax(10rem,0.3fr)_1fr] lg:gap-16">
+        <div
+          className={
+            isRtl
+              ? "grid grid-cols-[auto_1fr] gap-4 md:gap-10 lg:gap-14"
+              : "grid grid-cols-[auto_1fr] gap-4 md:grid-cols-[minmax(8rem,0.28fr)_1fr] md:gap-10 lg:grid-cols-[minmax(10rem,0.3fr)_1fr] lg:gap-16"
+          }
+        >
           {/* Sticky digit column — numerals stay LTR (including Arabic-Indic) */}
           <div className="pointer-events-none relative" aria-hidden>
             <div
               dir="ltr"
-              className="sticky top-[18vh] flex items-start justify-start text-ink md:top-[22vh]"
+              className={`sticky top-[18vh] flex items-start text-ink md:top-[22vh] justify-start`}
             >
               {!isRtl ? (
                 <span className="font-numeral text-[clamp(3.5rem,14vw,9rem)] leading-none font-bold tracking-tight">
@@ -178,14 +184,14 @@ export const HowItWorksClient = ({
                     step.ctaHref.startsWith("#") ? (
                       <a
                         href={step.ctaHref}
-                        className="font-label mt-7 inline-flex items-center justify-center rounded-full bg-black px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-orange focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange sm:mt-8"
+                        className="font-label mt-7 inline-flex items-center justify-center rounded-full bg-black px-5 py-2.5 text-sm font-semibold text-white dark:ring-1 dark:ring-white/25 transition hover:bg-orange focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange sm:mt-8"
                       >
                         {step.ctaLabel}
                       </a>
                     ) : (
                       <Link
                         href={step.ctaHref}
-                        className="font-label mt-7 inline-flex items-center justify-center rounded-full bg-black px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-orange focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange sm:mt-8"
+                        className="font-label mt-7 inline-flex items-center justify-center rounded-full bg-black px-5 py-2.5 text-sm font-semibold text-white dark:ring-1 dark:ring-white/25 transition hover:bg-orange focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange sm:mt-8"
                       >
                         {step.ctaLabel}
                       </Link>

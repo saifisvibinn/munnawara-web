@@ -9,7 +9,7 @@ import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { ArrowUpRight } from "lucide-react"
 import Image from "next/image"
-import { useLayoutEffect, useRef } from "react"
+import { useLayoutEffect, useRef, type CSSProperties } from "react"
 import "@/styles/about-film.css"
 
 gsap.registerPlugin(ScrollTrigger)
@@ -19,19 +19,25 @@ type AboutFilmProps = {
   pageTitle: string
 }
 
+/** Art-directed frames: ratio = intrinsic width / height so buses are never cropped. */
 const FLEET_FRAMES = [
-  "/fleet/premium-vip-2026/exterior/pv-col.webp",
-  "/fleet/coach-2025-2026/cover.webp",
-  "/fleet/city-2025.png",
-  "/fleet/premium-vip-2026/interior/pv-in-1.webp",
+  { src: "/fleet/premium-vip-2026/exterior/pv-col.webp", ratio: 720 / 1280 },
+  { src: "/fleet/coach-2025-2026/cover.webp", ratio: 424 / 285 },
+  { src: "/fleet/city-2025.png", ratio: 1152 / 864 },
+  { src: "/fleet/premium-vip-2026/interior/pv-in-1.webp", ratio: 16 / 9 },
 ] as const
 
 const DETAIL_FRAMES = [
-  "/about/placeholders/airport.jpg",
-  "/about/placeholders/holy-sites.jpg",
-  "/photos/exterior/7727.webp",
-  "/about/placeholders/events.jpg",
+  { src: "/about/placeholders/airport.jpg", ratio: 3 / 2 },
+  { src: "/about/placeholders/holy-sites.jpg", ratio: 4 / 5 },
+  { src: "/photos/exterior/7727.webp", ratio: 16 / 9 },
+  { src: "/about/placeholders/events.jpg", ratio: 3 / 2 },
 ] as const
+
+const GALLERY_SIZES = "(max-width: 767px) 80vw, 50vw"
+
+const frameStyle = (ratio: number) =>
+  ({ "--af-ratio": ratio }) as CSSProperties
 
 export const AboutFilm = ({ film, pageTitle }: AboutFilmProps) => {
   const reduced = useReducedMotion()
@@ -354,7 +360,7 @@ export const AboutFilm = ({ film, pageTitle }: AboutFilmProps) => {
               data-af-journey-headline
               className="about-film__display about-film__display--xl"
             >
-              {film.brandName}
+              {film.brandName.replace(/-/g, "‑")}
             </h1>
             <p className="about-film__lead">{film.journeyHeadline}</p>
             <p data-af-journey-support className="about-film__body">
@@ -378,7 +384,6 @@ export const AboutFilm = ({ film, pageTitle }: AboutFilmProps) => {
               alt=""
               fill
               sizes="100vw"
-              quality={80}
               className="about-film__sky-photo object-cover"
             />
           </div>
@@ -492,10 +497,19 @@ export const AboutFilm = ({ film, pageTitle }: AboutFilmProps) => {
             <div className="about-film__gallery-window">
               <div data-af-track className="about-film__gallery-track">
                 {film.fleetBeats.map((beat, index) => (
-                  <figure key={beat.id} className="about-film__gallery-item">
+                  <figure
+                    key={beat.id}
+                    className="about-film__gallery-item"
+                    style={frameStyle(FLEET_FRAMES[index].ratio)}
+                  >
                     <div className="about-film__gallery-image">
-                      <Image src={FLEET_FRAMES[index]} alt="" fill
-                        sizes="(max-width: 767px) 85vw, 36rem" className="object-cover" />
+                      <Image
+                        src={FLEET_FRAMES[index].src}
+                        alt=""
+                        fill
+                        sizes={GALLERY_SIZES}
+                        className="object-cover"
+                      />
                     </div>
                     <figcaption className="about-film__gallery-caption">{beat.line}</figcaption>
                   </figure>
@@ -556,10 +570,19 @@ export const AboutFilm = ({ film, pageTitle }: AboutFilmProps) => {
             <div className="about-film__gallery-window">
               <div data-af-track className="about-film__gallery-track">
                 {film.details.map((detail, index) => (
-                  <figure key={detail.id} className="about-film__gallery-item">
+                  <figure
+                    key={detail.id}
+                    className="about-film__gallery-item"
+                    style={frameStyle(DETAIL_FRAMES[index].ratio)}
+                  >
                     <div className="about-film__gallery-image">
-                      <Image src={DETAIL_FRAMES[index]} alt="" fill
-                        sizes="(max-width: 767px) 85vw, 36rem" className="object-cover" />
+                      <Image
+                        src={DETAIL_FRAMES[index].src}
+                        alt=""
+                        fill
+                        sizes={GALLERY_SIZES}
+                        className="object-cover"
+                      />
                     </div>
                     <figcaption className="about-film__gallery-caption">{detail.line}</figcaption>
                   </figure>

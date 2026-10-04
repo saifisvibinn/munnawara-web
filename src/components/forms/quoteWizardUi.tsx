@@ -35,7 +35,7 @@ export function Field({
       </label>
       {children}
       {error ? (
-        <p className="mt-1.5 text-sm leading-snug text-red-700" role="alert">
+        <p className="mt-1.5 text-sm leading-snug text-red-700 dark:text-red-300" role="alert">
           {error}
         </p>
       ) : null}

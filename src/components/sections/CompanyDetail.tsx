@@ -27,7 +27,7 @@ const CompanyDetailPage = async ({
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <TextLink href="/companies" back>{tCommon("backToCompanies")}</TextLink>
 
-        <div className="relative mt-6 flex min-h-[min(52vw,28rem)] items-center justify-center overflow-hidden rounded-2xl bg-surface-elevated px-8 py-14 ring-1 ring-ink/6 sm:px-14">
+        <div className="relative mt-6 flex min-h-[min(52vw,28rem)] items-center justify-center overflow-hidden rounded-2xl bg-white px-8 py-14 ring-1 ring-ink/6 sm:px-14">
           <Image
             src={company.logo}
             alt={company.name}

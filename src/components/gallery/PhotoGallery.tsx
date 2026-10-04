@@ -144,6 +144,7 @@ export const PhotoGallery = ({ photos }: PhotoGalleryProps) => {
               width={photo.width}
               height={photo.height}
               sizes="(max-width: 768px) 50vw, 33vw"
+              priority={index < 3}
               className="size-full object-cover transition-transform duration-500 group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
             />
           </button>
@@ -170,11 +171,11 @@ export const PhotoGallery = ({ photos }: PhotoGalleryProps) => {
               height={current.height}
               sizes="92vw"
               priority
-              className="max-h-[82dvh] w-auto max-w-[92vw] rounded-lg object-contain"
+              className="-mt-6 max-h-[72dvh] w-auto max-w-[92vw] rounded-lg object-contain"
             />
             <p
               aria-live="polite"
-              className="absolute inset-x-0 bottom-4 text-center text-sm text-white/80"
+              className="absolute inset-x-0 bottom-7 text-center sm:bottom-4 text-sm text-white/80"
             >
               {t("counter", { current: (openIndex ?? 0) + 1, total: visible.length })}
             </p>
@@ -192,7 +193,7 @@ export const PhotoGallery = ({ photos }: PhotoGalleryProps) => {
                   type="button"
                   onClick={() => step(-1)}
                   aria-label={t("prev")}
-                  className="absolute start-3 top-1/2 inline-flex size-11 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-white/15 text-white transition hover:bg-white/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange"
+                  className="absolute bottom-4 start-4 inline-flex size-11 sm:bottom-auto sm:start-3 sm:top-1/2 sm:-translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-white/15 text-white transition hover:bg-white/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange"
                 >
                   <ChevronLeft aria-hidden className="size-6 rtl:rotate-180" />
                 </button>
@@ -200,7 +201,7 @@ export const PhotoGallery = ({ photos }: PhotoGalleryProps) => {
                   type="button"
                   onClick={() => step(1)}
                   aria-label={t("next")}
-                  className="absolute end-3 top-1/2 inline-flex size-11 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-white/15 text-white transition hover:bg-white/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange"
+                  className="absolute bottom-4 end-4 inline-flex size-11 sm:bottom-auto sm:end-3 sm:top-1/2 sm:-translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-white/15 text-white transition hover:bg-white/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange"
                 >
                   <ChevronRight aria-hidden className="size-6 rtl:rotate-180" />
                 </button>

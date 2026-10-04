@@ -30,7 +30,7 @@ export const fleet: readonly FleetCategory[] = [
       "ABS systems",
       "GPS systems",
     ],
-    coverImage: "/fleet/premium-vip-2026/exterior/pv-col.webp",
+    coverImage: "/fleet/premium-vip-2026/exterior/pv-out-1.webp",
     exteriorImages: [
       "/fleet/premium-vip-2026/exterior/pv-out-1.webp",
       "/fleet/premium-vip-2026/exterior/pv-out-2.webp",
@@ -45,7 +45,7 @@ export const fleet: readonly FleetCategory[] = [
       "/fleet/premium-vip-2026/interior/pv-in-3.webp",
       "/fleet/premium-vip-2026/interior/pv-in-4.webp",
     ],
-    images: ["/fleet/premium-vip-2026/exterior/pv-col.webp"],
+    images: ["/fleet/premium-vip-2026/exterior/pv-out-1.webp"],
     interactive: true,
   },
   {

@@ -34,5 +34,5 @@ export const fleetPage: FleetPageContent = {
   ],
   exploreTitle: "Explore the fleet",
   exploreSubtitle:
-    "Browse each category, open interactive tours where available, and request a quote for your group.",
+    "Switch between categories, view exterior and interior photos, open any image full screen, and request a quote for your group.",
 }

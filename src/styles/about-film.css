@@ -67,6 +67,7 @@ html:has([data-about-film]) main#main {
 }
 
 .about-film__stage--gallery {
+  width: 100%;
   align-content: center;
   grid-template-rows: auto auto;
   gap: 2rem;
@@ -260,30 +261,45 @@ html[lang="ar"] .about-film__problem-line {
 }
 
 .about-film__gallery-window {
+  --af-h: min(44svh, 26rem);
   width: 100%;
   min-width: 0;
   overflow: hidden;
+  /* soft edge fade (symmetric, so it needs no RTL flip) */
+  mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    black 3%,
+    black 97%,
+    transparent 100%
+  );
 }
 
 .about-film__gallery-track {
   display: flex;
+  align-items: flex-start;
   gap: 1.5rem;
   width: 100%;
+  padding-inline: clamp(1rem, 4vw, 2.5rem);
   will-change: transform;
 }
 
 .about-film__gallery-item {
-  flex: 0 0 46%;
+  flex: 0 0 auto;
+  width: min(calc(var(--af-h) * var(--af-ratio, 1.5)), 80vw);
   min-width: 0;
   margin: 0;
 }
 
 .about-film__gallery-image {
   position: relative;
-  aspect-ratio: 16 / 10;
-  max-height: 40svh;
-  border-radius: 0.5rem;
+  aspect-ratio: var(--af-ratio, 1.5);
+  width: 100%;
+  border-radius: 0.75rem;
   overflow: hidden;
+  background: var(--af-muted-bg);
+  box-shadow: 0 1px 0 color-mix(in oklab, var(--af-ink) 8%, transparent),
+    0 18px 40px -24px color-mix(in oklab, var(--af-ink) 45%, transparent);
 }
 
 .about-film__gallery-caption {
@@ -498,8 +514,8 @@ html[lang="ar"] .about-film__company span {
     gap: 1rem;
   }
 
-  .about-film__gallery-item {
-    flex-basis: 86%;
+  .about-film__gallery-window {
+    --af-h: min(38svh, 20rem);
   }
 
   .about-film__gallery-track {
@@ -548,15 +564,19 @@ html[lang="ar"] .about-film__company span {
     overflow: visible;
   }
 
-  .about-film__gallery-image {
-    max-height: none;
+  .about-film__gallery-window {
+    mask-image: none;
   }
 
   .about-film__gallery-track {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    flex-wrap: wrap;
+    justify-content: center;
     transform: none !important;
     will-change: auto;
+  }
+
+  .about-film__gallery-item {
+    max-width: 100%;
   }
 
   .about-film__problem-line,
@@ -588,9 +608,98 @@ html[lang="ar"] .about-film__company span {
   }
 }
 
-@media (prefers-reduced-motion: reduce) and (max-width: 767px),
-  (max-height: 460px) and (max-width: 767px) {
-  .about-film__gallery-track {
-    grid-template-columns: 1fr;
+/* —— Film player —— */
+.about-film-player {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 1.25rem;
+  background: var(--color-black);
+  box-shadow: 0 30px 60px -32px color-mix(in oklab, var(--color-ink) 55%, transparent),
+    0 0 0 1px color-mix(in oklab, var(--color-ink) 10%, transparent);
+}
+
+.about-film-player__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: var(--color-black);
+}
+
+.about-film-player__poster {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  cursor: pointer;
+  background: transparent;
+  transition: opacity 240ms ease;
+}
+
+.about-film-player__poster::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    color-mix(in oklab, var(--color-black) 55%, transparent),
+    transparent 55%
+  );
+}
+
+.about-film-player__play {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: clamp(4rem, 9vw, 5.5rem);
+  aspect-ratio: 1;
+  border-radius: 9999px;
+  background: var(--color-orange);
+  color: var(--color-black);
+  box-shadow: 0 12px 32px -8px color-mix(in oklab, var(--color-black) 60%, transparent);
+  transition: transform 200ms ease, background-color 160ms ease;
+}
+
+.about-film-player__play svg {
+  width: 38%;
+  height: 38%;
+  fill: currentColor;
+  margin-inline-start: 6%;
+}
+
+html[dir="rtl"] .about-film-player__play svg {
+  transform: scaleX(-1);
+  margin-inline-start: 0;
+  margin-inline-end: 6%;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .about-film-player__poster:hover .about-film-player__play {
+    transform: scale(1.06);
+    background: var(--color-orange-soft);
+  }
+}
+
+.about-film-player__poster:focus-visible {
+  outline: 3px solid var(--color-orange);
+  outline-offset: -3px;
+}
+
+.about-film-player[data-started="true"] .about-film-player__poster {
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .about-film-player__poster,
+  .about-film-player__play {
+    transition: none;
   }
 }

@@ -342,7 +342,7 @@ export const QuoteWizard = ({
           {body}
 
           {errors.choice ? (
-            <p className="text-sm text-red-700" role="alert">
+            <p className="text-sm text-red-700 dark:text-red-300" role="alert">
               {errors.choice}
             </p>
           ) : null}
@@ -362,7 +362,7 @@ export const QuoteWizard = ({
 
         {status === "error" ? (
           <div
-            className="mt-4 rounded-xl bg-red-50 px-3.5 py-3 text-sm text-red-800 ring-1 ring-red-200/80"
+            className="mt-4 rounded-xl bg-red-50 px-3.5 py-3 text-sm text-red-800 ring-1 ring-red-200/80 dark:bg-red-950/60 dark:text-red-200 dark:ring-red-400/30"
             role="alert"
           >
             {tx(COPY.error)}
