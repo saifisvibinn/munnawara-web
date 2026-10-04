@@ -278,7 +278,15 @@ export const LogoRouteTransition = () => {
     overlay.setAttribute("aria-hidden", "true")
     gsap.set(overlay, { autoAlpha: 0 })
     if (backdrop) gsap.set(backdrop, { autoAlpha: 1 })
-    if (logo) resetFlightLayout(logo)
+    if (logo) {
+      gsap.set(logo, { opacity: 0 })
+      resetFlightLayout(logo)
+    }
+    // Soft home returns must never leave DamLanding's flight mark painted.
+    const homeFlight = document.querySelectorAll<HTMLElement>(
+      ".logo-flight, .logo-flight__mark, .logo-flight__petal-mark",
+    )
+    if (homeFlight.length) gsap.set(homeFlight, { autoAlpha: 0, opacity: 0 })
     document.body.classList.remove("is-page-transitioning")
   }
 
@@ -316,6 +324,10 @@ export const LogoRouteTransition = () => {
     const backdrop = backdropRef.current
     const logo = logoRef.current
     if (!overlay || !logo) return
+
+    // Mark before the destination mounts — home must skip its long LOADING
+    // intro when this bloom is already covering the navigation.
+    markSeen()
 
     const runId = ++runIdRef.current
     phaseRef.current = "covering"
@@ -557,6 +569,9 @@ export const LogoRouteTransition = () => {
         )
       }
     } else {
+      // No target yet — still clear the flight mark so it can't stick centered.
+      gsap.set(logo, { opacity: 0 })
+      if (settledLogo) gsap.set(settledLogo, { opacity: 1, visibility: "visible" })
       timeline.to(backdrop ?? overlay, {
         autoAlpha: 0,
         duration: TIMING.fade,
@@ -566,7 +581,6 @@ export const LogoRouteTransition = () => {
           document.body.classList.remove("is-page-transitioning")
         },
       })
-      if (settledLogo) gsap.set(settledLogo, { opacity: 1, visibility: "visible" })
     }
   }
 
@@ -612,7 +626,9 @@ export const LogoRouteTransition = () => {
       bloomTlRef.current?.kill()
       landTlRef.current?.kill()
       breatheRef.current?.kill()
-      document.body.classList.remove("is-page-transitioning")
+      // Kill alone left the flight mark painted after HMR / remount mid-bloom.
+      dismissOverlay()
+      phaseRef.current = "idle"
     }
   }, [])
 

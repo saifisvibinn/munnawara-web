@@ -108,7 +108,6 @@ export type AboutFilmContent = {
   connectionBody: string
   fleetHeadline: string
   fleetBody: string
-  fleetBeats: readonly AboutFilmFeature[]
   sidesLeft: string
   sidesRight: string
   sidesMerge: string
@@ -119,9 +118,6 @@ export type AboutFilmContent = {
   humanLine2: string
   videoHeadline: string
   videoLabel: string
-  brandLine: string
-  futureHeadline: string
-  futureBody: string
   ctaHeadline: string
   ctaBody: string
   ctaLabel: string

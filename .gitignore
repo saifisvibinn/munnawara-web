@@ -44,6 +44,9 @@ next-env.d.ts
 # local design references
 .stitch-ref/
 
+# Raw client photo dumps (use processed /public/photos masters instead)
+/public/fleet/damt-pics/
+
 # Cursor local config — keep design hook trackable; skills live in .agents/skills
 .cursor/*
 !.cursor/hooks.json

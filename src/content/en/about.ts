@@ -33,12 +33,6 @@ export const about: AboutContent = {
     fleetHeadline: "A modern fleet, carefully driven.",
     fleetBody:
       "VIP coaches, group buses, and city transport, current-model vehicles prepared for sacred routes and institutional travel.",
-    fleetBeats: [
-      { id: "vip", line: "Premium VIP coaches" },
-      { id: "group", line: "Group and pilgrim transport" },
-      { id: "city", line: "City and staff routes" },
-      { id: "ops", line: "Disciplined operations" },
-    ],
     sidesLeft: "Pilgrims & guests",
     sidesRight: "Operators & institutions",
     sidesMerge: "One group. One standard of care.",
@@ -54,10 +48,6 @@ export const about: AboutContent = {
     humanLine2: "People are.",
     videoHeadline: "A look behind the scenes",
     videoLabel: "Video: the workshop, the parts warehouse, coach interiors, and the team.",
-    brandLine: "Durrah Al-Munawwara",
-    futureHeadline: "Built for the journey ahead.",
-    futureBody:
-      "Calm operations for real travel, so every group moves with confidence across every mile.",
     ctaHeadline: "Wherever the journey takes you,\ntravel with care.",
     ctaBody: "Begin with a quiet request. We take it from there.",
     ctaLabel: "Request a quote",

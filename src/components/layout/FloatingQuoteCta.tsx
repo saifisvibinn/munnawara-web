@@ -205,7 +205,7 @@ export const FloatingQuoteCta = () => {
         aria-label={t("requestQuote")}
         onClick={() => skipNextRouteTransition()}
         className={cn(
-          "font-label pointer-events-auto inline-flex h-14 origin-bottom cursor-pointer items-center overflow-hidden rounded-full border border-ink/10 bg-surface-muted/80 text-sm font-medium text-ink shadow-md backdrop-blur-md transition-[border-color,background-color,box-shadow] hover:border-orange/40 hover:bg-surface-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange",
+          "font-label pointer-events-auto inline-flex h-14 origin-bottom cursor-pointer items-center overflow-hidden rounded-full border border-ink/10 bg-surface-muted/80 text-sm font-medium text-ink shadow-md backdrop-blur-md transition-[transform,border-color,background-color,box-shadow] duration-100 ease-out hover:border-orange/40 hover:bg-surface-elevated active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange motion-reduce:transition-none motion-reduce:active:scale-100",
           isRtl ? "flex-row-reverse pe-0.5 ps-1" : "ps-0.5 pe-1",
           !visible && "pointer-events-none",
         )}

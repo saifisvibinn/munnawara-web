@@ -33,7 +33,9 @@ gsap.registerPlugin(ScrollTrigger)
 /**
  * PerformanceNavigationTiming.type is the *document* load type for the whole
  * session tab — it stays "reload" after a hard refresh even during later
- * client navigations. Only clear the intro flag once per document load.
+ * client navigations. Only clear the intro flag when this document itself
+ * was a hard reload of home — never when soft-navigating home after reloading
+ * /fleet (or any other route).
  */
 let didHandleDocumentNavType = false
 const clearIntroSeenOnHardReload = () => {
@@ -43,7 +45,10 @@ const clearIntroSeenOnHardReload = () => {
     const nav = performance.getEntriesByType("navigation")[0] as
       | PerformanceNavigationTiming
       | undefined
-    if (nav?.type === "reload") {
+    if (nav?.type !== "reload") return
+    const loadedUrl = new URL(nav.name || window.location.href, window.location.origin)
+    const loadedPath = loadedUrl.pathname.replace(/^\/(ar|en)(?=\/|$)/, "") || "/"
+    if (loadedPath === "/") {
       sessionStorage.removeItem(LOGO_INTRO_SEEN_KEY)
     }
   } catch {
@@ -359,87 +364,66 @@ export const DamLanding = ({ copy }: DamLandingProps) => {
   }, [])
 
   useLayoutEffect(() => {
-    const elements = getElements()
-    if (!elements) return
+    let cancelled = false
+    let introFinished = false
+    let fabEntrance: gsap.core.Timeline | undefined
+    let retryId = 0
+    let failsafeId = 0
+    let topWatchId = 0
+    let assemble: gsap.core.Timeline | undefined
+    let breathing: gsap.core.Tween | undefined
+    let loadingPulse: gsap.core.Timeline | undefined
+    let reveal: gsap.core.Timeline | undefined
+    let resolveAssemble: (() => void) | undefined
+    let keepTop: (() => void) | undefined
 
-    if (prefersReducedMotion) {
-      setIntroFinalState(elements)
+    const hideFlightLogo = () => {
+      const flight = document.querySelector<HTMLElement>(".logo-flight")
+      const marks = document.querySelectorAll<HTMLElement>(
+        ".logo-flight__mark, .logo-flight__petal-mark",
+      )
+      if (flight) gsap.set(flight, { autoAlpha: 0 })
+      if (marks.length) gsap.set(marks, { opacity: 0, visibility: "hidden" })
+    }
+
+    const settleAsSeen = (elements: IntroElements, animateFabs: boolean) => {
+      if (cancelled || introFinished) return
+      introFinished = true
+      setIntroFinalState(elements, { animateFabs })
+      hideFlightLogo()
       heroVideoRef.current?.showFinalFrame()
+      setSkipIntroMorph(true)
       setLoaded(true)
+      document.body.classList.remove("is-loading")
       try {
         sessionStorage.setItem(LOGO_INTRO_SEEN_KEY, "1")
       } catch {
         // ignore
       }
-      return
-    }
-
-    // Soft navigations back to home skip the long bloom; hard reload replays once.
-    clearIntroSeenOnHardReload()
-    let alreadySeen = false
-    try {
-      alreadySeen = sessionStorage.getItem(LOGO_INTRO_SEEN_KEY) === "1"
-    } catch {
-      alreadySeen = false
-    }
-    if (alreadySeen) {
-      setIntroFinalState(elements, { animateFabs: true })
-      // Intro skip also skips playOnce — jump straight to the settled end frame
-      heroVideoRef.current?.showFinalFrame()
-      setSkipIntroMorph(true)
-      setLoaded(true)
-      document.body.classList.remove("is-loading")
-      const fabEntrance = playFabEntrance(elements)
-      return () => {
-        fabEntrance.kill()
+      if (animateFabs) {
+        fabEntrance = playFabEntrance(elements)
       }
     }
 
-    let cancelled = false
-    let introFinished = false
-    const startedAt = performance.now()
-    const petalFlights = elements.petalFlights.filter(Boolean)
-    // Distance past the viewport edge so each petal is fully off-screen at start.
-    const markSize = Math.min(window.innerWidth * 0.4, window.innerHeight * 0.4)
-    const clearX = window.innerWidth * 0.5 + markSize * 0.75
-    const clearY = window.innerHeight * 0.5 + markSize * 0.75
-    // Matches visiblePetal order in the flight marks: 4, 2, 1, 3, 5
-    const flightOrigins = [
-      { x: -clearX, y: clearY * 0.92, rotation: -16 }, // bottom-left
-      { x: -clearX, y: -clearY * 0.28, rotation: -22 }, // mid-left
-      { x: 0, y: -clearY, rotation: -6 }, // top
-      { x: clearX, y: -clearY * 0.28, rotation: 22 }, // mid-right
-      { x: clearX, y: clearY * 0.92, rotation: 16 }, // bottom-right
-    ]
-    const loaderStatus = loaderStatusRef.current
-    const loaderLetters = loaderLettersRef.current
-    const brandWords = brandWordsRef.current
-    let reveal: gsap.core.Timeline | undefined
-    let failsafeId = 0
-
-    forceHomeTop()
-    document.body.classList.add("is-loading")
-    // Only pin while the veil is up — never after the intro has finished.
-    const keepTop = () => {
-      if (cancelled || introFinished) return
-      if (!document.body.classList.contains("is-loading")) return
-      if (window.scrollY !== 0 || document.documentElement.scrollTop !== 0) {
-        forceHomeTop()
+    const shouldSkipLongIntro = () => {
+      // Soft route bloom already covering this navigation — never stack LOADING on it.
+      if (document.body.classList.contains("is-page-transitioning")) return true
+      try {
+        return sessionStorage.getItem(LOGO_INTRO_SEEN_KEY) === "1"
+      } catch {
+        return false
       }
     }
-    keepTop()
-    window.addEventListener("scroll", keepTop, { passive: true })
-    const topWatchId = window.setInterval(keepTop, 100)
 
     const releaseScrollPin = () => {
-      introFinished = true
-      window.removeEventListener("scroll", keepTop)
+      if (keepTop) window.removeEventListener("scroll", keepTop)
       window.clearInterval(topWatchId)
       window.clearTimeout(failsafeId)
     }
 
     const completeIntroLoad = () => {
       if (cancelled || introFinished) return
+      introFinished = true
       releaseScrollPin()
       document.body.classList.remove("is-loading")
       try {
@@ -450,167 +434,244 @@ export const DamLanding = ({ copy }: DamLandingProps) => {
       setLoaded(true)
     }
 
-    // Nothing on screen yet — full mark CSS-hidden; flights parked off-canvas.
-    gsap.set(elements.logo, {
-      opacity: 0,
-      scale: 1,
-      rotation: 0,
-      x: 0,
-      y: 0,
-      transformOrigin: "center center",
-    })
-    gsap.set(petalFlights, {
-      visibility: "visible",
-      opacity: 0,
-      scale: motion.loader.assembleScaleFrom,
-      x: (index) => flightOrigins[index]?.x ?? 0,
-      y: (index) => flightOrigins[index]?.y ?? 0,
-      rotation: (index) => flightOrigins[index]?.rotation ?? 0,
-      transformOrigin: "center center",
-    })
-    gsap.set(loaderStatus, { opacity: 0, visibility: "hidden" })
-    gsap.set(loaderLetters, { opacity: 1, y: 0 })
-    gsap.set(elements.brandName, { opacity: 0, visibility: "visible" })
-    gsap.set(brandWords, { opacity: 0, y: 18 })
+    const runLongIntro = (elements: IntroElements) => {
+      const petalFlights = elements.petalFlights.filter(Boolean)
+      const startedAt = performance.now()
+      const markSize = Math.min(window.innerWidth * 0.4, window.innerHeight * 0.4)
+      const clearX = window.innerWidth * 0.5 + markSize * 0.75
+      const clearY = window.innerHeight * 0.5 + markSize * 0.75
+      const flightOrigins = [
+        { x: -clearX, y: clearY * 0.92, rotation: -16 },
+        { x: -clearX, y: -clearY * 0.28, rotation: -22 },
+        { x: 0, y: -clearY, rotation: -6 },
+        { x: clearX, y: -clearY * 0.28, rotation: 22 },
+        { x: clearX, y: clearY * 0.92, rotation: 16 },
+      ]
+      const loaderStatus = loaderStatusRef.current
+      const loaderLetters = loaderLettersRef.current
+      const brandWords = brandWordsRef.current
 
-    const handoffAssemble = () => {
-      gsap.set(elements.logo, { opacity: 1 })
-      gsap.set(petalFlights, {
+      forceHomeTop()
+      document.body.classList.add("is-loading")
+      keepTop = () => {
+        if (cancelled || introFinished) return
+        if (!document.body.classList.contains("is-loading")) return
+        if (window.scrollY !== 0 || document.documentElement.scrollTop !== 0) {
+          forceHomeTop()
+        }
+      }
+      keepTop()
+      window.addEventListener("scroll", keepTop, { passive: true })
+      topWatchId = window.setInterval(keepTop, 100)
+
+      const flight = document.querySelector<HTMLElement>(".logo-flight")
+      if (flight) gsap.set(flight, { autoAlpha: 1 })
+
+      gsap.set(elements.logo, {
         opacity: 0,
-        visibility: "hidden",
-        x: 0,
-        y: 0,
         scale: 1,
         rotation: 0,
+        x: 0,
+        y: 0,
+        transformOrigin: "center center",
       })
-    }
-
-    let resolveAssemble!: () => void
-    const assembleDone = new Promise<void>((resolve) => {
-      resolveAssemble = resolve
-    })
-
-    const assemble = gsap
-      .timeline({
-        onComplete: () => {
-          handoffAssemble()
-          resolveAssemble()
-        },
+      gsap.set(petalFlights, {
+        visibility: "visible",
+        opacity: 0,
+        scale: motion.loader.assembleScaleFrom,
+        x: (index) => flightOrigins[index]?.x ?? 0,
+        y: (index) => flightOrigins[index]?.y ?? 0,
+        rotation: (index) => flightOrigins[index]?.rotation ?? 0,
+        transformOrigin: "center center",
       })
-      .to(
-        petalFlights,
-        {
+      gsap.set(loaderStatus, { opacity: 0, visibility: "hidden" })
+      gsap.set(loaderLetters, { opacity: 1, y: 0 })
+      gsap.set(elements.brandName, { opacity: 0, visibility: "visible" })
+      gsap.set(brandWords, { opacity: 0, y: 18 })
+
+      const handoffAssemble = () => {
+        gsap.set(elements.logo, { opacity: 1 })
+        gsap.set(petalFlights, {
+          opacity: 0,
+          visibility: "hidden",
           x: 0,
           y: 0,
-          rotation: 0,
           scale: 1,
-          opacity: 1,
-          duration: motion.loader.assembleDuration,
-          stagger: motion.loader.assembleStagger,
-          ease: "power3.out",
-        },
-        motion.loader.assembleDelay,
-      )
-      .to(
-        loaderStatus,
-        {
-          opacity: 1,
-          visibility: "visible",
-          duration: 0.35,
-          ease: motion.ease.soft,
-        },
-        motion.loader.assembleDelay + motion.loader.assembleDuration * 0.45,
-      )
-
-    const assembleSettleAt =
-      motion.loader.assembleDelay +
-      motion.loader.assembleDuration +
-      motion.loader.assembleStagger * Math.max(0, petalFlights.length - 1)
-
-    const breathing = gsap.to(elements.logo, {
-      scale: motion.loader.breatheScale,
-      duration: motion.loader.breatheDuration,
-      delay: assembleSettleAt,
-      repeat: -1,
-      yoyo: true,
-      ease: motion.ease.inOut,
-    })
-
-    const loadingPulse = gsap
-      .timeline({
-        repeat: -1,
-        yoyo: true,
-        delay: motion.loader.assembleDelay + motion.loader.assembleDuration * 0.45,
-      })
-      .to(loaderLetters, {
-        opacity: 0.28,
-        y: -2,
-        duration: motion.loader.loadingPulseDuration,
-        stagger: 0.07,
-        ease: "sine.inOut",
-      })
-
-    const finishLoading = async () => {
-      await waitForPageAssets(elements.root)
-      const remaining = Math.max(
-        0,
-        motion.loader.minimumMs - (performance.now() - startedAt),
-      )
-      await new Promise((resolve) => window.setTimeout(resolve, remaining))
-      if (cancelled) return
-
-      await assembleDone
-      if (cancelled) return
-
-      assemble.kill()
-      breathing.kill()
-      loadingPulse.kill()
-      handoffAssemble()
-      gsap.set(elements.logo, { opacity: 1, scale: 1, rotation: 0, x: 0, y: 0 })
-      reveal = gsap.timeline({
-        onComplete: completeIntroLoad,
-      })
-        .to(loaderLetters, {
-          opacity: 0,
-          y: -8,
-          duration: 0.22,
-          stagger: 0.025,
-          ease: motion.ease.soft,
+          rotation: 0,
         })
-        .set(loaderStatus, { visibility: "hidden" })
-        .to(elements.brandName, { opacity: 1, duration: 0.2 }, "-=0.05")
+      }
+
+      const assembleDone = new Promise<void>((resolve) => {
+        resolveAssemble = resolve
+      })
+
+      assemble = gsap
+        .timeline({
+          onComplete: () => {
+            handoffAssemble()
+            resolveAssemble?.()
+          },
+        })
         .to(
-          brandWords,
+          petalFlights,
+          {
+            x: 0,
+            y: 0,
+            rotation: 0,
+            scale: 1,
+            opacity: 1,
+            duration: motion.loader.assembleDuration,
+            stagger: motion.loader.assembleStagger,
+            ease: "power3.out",
+          },
+          motion.loader.assembleDelay,
+        )
+        .to(
+          loaderStatus,
           {
             opacity: 1,
-            y: 0,
-            duration: motion.loader.companyRevealDuration,
-            stagger: motion.loader.companyWordStagger,
+            visibility: "visible",
+            duration: 0.35,
             ease: motion.ease.soft,
           },
-          "<",
+          motion.loader.assembleDelay + motion.loader.assembleDuration * 0.45,
         )
+
+      const assembleSettleAt =
+        motion.loader.assembleDelay +
+        motion.loader.assembleDuration +
+        motion.loader.assembleStagger * Math.max(0, petalFlights.length - 1)
+
+      breathing = gsap.to(elements.logo, {
+        scale: motion.loader.breatheScale,
+        duration: motion.loader.breatheDuration,
+        delay: assembleSettleAt,
+        repeat: -1,
+        yoyo: true,
+        ease: motion.ease.inOut,
+      })
+
+      loadingPulse = gsap
+        .timeline({
+          repeat: -1,
+          yoyo: true,
+          delay:
+            motion.loader.assembleDelay + motion.loader.assembleDuration * 0.45,
+        })
+        .to(loaderLetters, {
+          opacity: 0.28,
+          y: -2,
+          duration: motion.loader.loadingPulseDuration,
+          stagger: 0.07,
+          ease: "sine.inOut",
+        })
+
+      const finishLoading = async () => {
+        await waitForPageAssets(elements.root)
+        const remaining = Math.max(
+          0,
+          motion.loader.minimumMs - (performance.now() - startedAt),
+        )
+        await new Promise((resolve) => window.setTimeout(resolve, remaining))
+        if (cancelled) return
+
+        await assembleDone
+        if (cancelled) return
+
+        assemble?.kill()
+        breathing?.kill()
+        loadingPulse?.kill()
+        handoffAssemble()
+        gsap.set(elements.logo, {
+          opacity: 1,
+          scale: 1,
+          rotation: 0,
+          x: 0,
+          y: 0,
+        })
+        reveal = gsap
+          .timeline({
+            onComplete: completeIntroLoad,
+          })
+          .to(loaderLetters, {
+            opacity: 0,
+            y: -8,
+            duration: 0.22,
+            stagger: 0.025,
+            ease: motion.ease.soft,
+          })
+          .set(loaderStatus, { visibility: "hidden" })
+          .to(elements.brandName, { opacity: 1, duration: 0.2 }, "-=0.05")
+          .to(
+            brandWords,
+            {
+              opacity: 1,
+              y: 0,
+              duration: motion.loader.companyRevealDuration,
+              stagger: motion.loader.companyWordStagger,
+              ease: motion.ease.soft,
+            },
+            "<",
+          )
+      }
+
+      void finishLoading()
+
+      failsafeId = window.setTimeout(() => {
+        if (cancelled || introFinished) return
+        if (!document.body.classList.contains("is-loading")) return
+        forceHomeTop()
+        completeIntroLoad()
+      }, ASSET_FAILSAFE_MS + motion.loader.minimumMs + 4000)
     }
 
-    void finishLoading()
+    const start = () => {
+      if (cancelled) return
+      const elements = getElements()
+      if (!elements) {
+        retryId = window.setTimeout(start, 32)
+        return
+      }
 
-    // Hard failsafe: never leave mobile stuck behind is-loading
-    failsafeId = window.setTimeout(() => {
+      if (prefersReducedMotion) {
+        settleAsSeen(elements, false)
+        return
+      }
+
+      clearIntroSeenOnHardReload()
+      if (shouldSkipLongIntro()) {
+        settleAsSeen(elements, true)
+        return
+      }
+
+      runLongIntro(elements)
+    }
+
+    start()
+
+    // If refs never arrive, still clear the veil instead of hanging forever.
+    const bootFailsafeId = window.setTimeout(() => {
       if (cancelled || introFinished) return
-      // Only recover a stuck veil — do not yank scroll after a successful intro.
-      if (!document.body.classList.contains("is-loading")) return
-      forceHomeTop()
-      completeIntroLoad()
-    }, ASSET_FAILSAFE_MS + motion.loader.minimumMs + 4000)
+      const elements = getElements()
+      if (elements) settleAsSeen(elements, true)
+      else {
+        introFinished = true
+        setLoaded(true)
+        document.body.classList.remove("is-loading")
+      }
+    }, 2500)
 
     return () => {
       cancelled = true
-      resolveAssemble()
+      window.clearTimeout(retryId)
+      window.clearTimeout(bootFailsafeId)
+      resolveAssemble?.()
       releaseScrollPin()
-      assemble.kill()
-      breathing.kill()
-      loadingPulse.kill()
+      assemble?.kill()
+      breathing?.kill()
+      loadingPulse?.kill()
       reveal?.kill()
+      fabEntrance?.kill()
       document.body.classList.remove("is-loading")
     }
   }, [prefersReducedMotion])

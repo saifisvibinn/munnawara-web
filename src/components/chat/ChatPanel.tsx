@@ -21,6 +21,9 @@ import {
   type VisitorIdentity,
 } from "@/lib/chat"
 import { useLocale, useTranslations } from "next-intl"
+import { useReducedMotion } from "@/hooks/useReducedMotion"
+import { project, SPRING_SHEET } from "@/lib/appleMotion"
+import { AnimatePresence, motion, useDragControls } from "motion/react"
 import { RobotAvatar } from "./RobotAvatar"
 import {
   Fragment,
@@ -86,6 +89,8 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
   const seenIdsRef = useRef<Set<string>>(new Set())
   const openRef = useRef(open)
   const unreadRef = useRef(0)
+  const dragControls = useDragControls()
+  const reducedMotion = useReducedMotion()
 
   const [identity, setIdentity] = useState<VisitorIdentity>(
     () => loadIdentity() || emptyIdentity(),
@@ -461,8 +466,6 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
     disconnectCustomerSocket()
   }
 
-  if (!open) return null
-
   const whoLabel = (role: Role) => {
     if (role === "user") return t("you")
     if (role === "system") return t("system")
@@ -485,15 +488,44 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
       ? t("escalated")
       : t("subtitle")
 
+  const handleSheetDragEnd = (
+    _: unknown,
+    info: { offset: { y: number }; velocity: { y: number } },
+  ) => {
+    const projected = info.offset.y + project(info.velocity.y)
+    if (projected > 110 || info.velocity.y > 700) onClose()
+  }
+
   return (
-    <div
+    <AnimatePresence>
+      {open ? (
+    <motion.div
+      key="chat-panel"
       className="chat-panel"
       role="dialog"
       aria-modal="true"
       aria-labelledby={titleId}
       dir={locale === "ar" ? "rtl" : "ltr"}
+      initial={reducedMotion ? { opacity: 0 } : { opacity: 0, y: 18, scale: 0.98 }}
+      animate={reducedMotion ? { opacity: 1 } : { opacity: 1, y: 0, scale: 1 }}
+      exit={reducedMotion ? { opacity: 0 } : { opacity: 0, y: 14, scale: 0.98 }}
+      transition={SPRING_SHEET}
+      drag={reducedMotion ? false : "y"}
+      dragControls={dragControls}
+      dragListener={false}
+      dragConstraints={{ top: 0, bottom: 0 }}
+      dragElastic={{ top: 0.06, bottom: 0.5 }}
+      onDragEnd={handleSheetDragEnd}
     >
-      <header className="chat-panel__header">
+      <header
+        className="chat-panel__header"
+        onPointerDown={(event) => {
+          if (reducedMotion) return
+          // Don't steal taps on close / reset.
+          if ((event.target as HTMLElement).closest("button")) return
+          dragControls.start(event)
+        }}
+      >
         <div className="chat-panel__heading">
           <div className="chat-panel__title-row">
             <RobotAvatar className="chat-panel__avatar" />
@@ -679,6 +711,8 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
           </form>
         </>
       )}
-    </div>
+    </motion.div>
+      ) : null}
+    </AnimatePresence>
   )
 }

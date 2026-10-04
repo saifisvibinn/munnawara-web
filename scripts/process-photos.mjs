@@ -3,7 +3,7 @@
  *
  *   node scripts/process-photos.mjs "<path to the photos folder>"
  *
- * One WebP per photo (1920px long edge, EXIF orientation applied, metadata
+ * One WebP per photo (2560px long edge, EXIF orientation applied, metadata
  * such as GPS stripped). next/image builds the responsive sizes at request
  * time, so only one master per photo is stored. Writes
  * `src/content/photoManifest.ts` with the real pixel sizes.
@@ -55,8 +55,8 @@ for (const [category, ids] of Object.entries(SELECTION)) {
     const dest = path.join(outRoot, category, `${name}.webp`)
     const info = await sharp(path.join(dir, file))
       .rotate()
-      .resize({ width: 1920, height: 1920, fit: "inside", withoutEnlargement: true })
-      .webp({ quality: 75 })
+      .resize({ width: 2560, height: 2560, fit: "inside", withoutEnlargement: true })
+      .webp({ quality: 88 })
       .toFile(dest)
     manifest.push({
       id: `${category}-${name}`,

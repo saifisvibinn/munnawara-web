@@ -28,7 +28,7 @@
 - Set `dir` and `lang` on `<html>` from the locale layout
 
 ## Agent skills
-Project skills live in `.agents/skills/` (mirrored locally at `.cursor/skills/` for Cursor). Restore with `npx skills experimental_install`. Impeccable design hook is enabled via `.cursor/hooks.json` + `.impeccable/config.json`. Prefer these for UI craft work:
+`impeccable` is installed as a project skill in `.agents/skills/` (mirrored at `.cursor/skills/` for Cursor). Restore project skills with `npx skills experimental_install`. Emil Kowalski skills (`emilkowalski/skills`) are installed globally — available in every project. Impeccable design hook is enabled via `.cursor/hooks.json` + `.impeccable/config.json`. Prefer these for UI craft work:
 
 | Skill | Use when |
 |---|---|
@@ -38,8 +38,9 @@ Project skills live in `.agents/skills/` (mirrored locally at `.cursor/skills/` 
 | `prototype` | Fast UI prototyping |
 | `ask-sonner` | Toast / notification UX with Sonner |
 | `pick-ui-library` | Choosing a UI library |
+| `break-ui` | Stress-test UI with worst-case data (long names, empty states, overflow) |
 
-Also installed (use only if relevant): `animate-expo`, `apple-design`, `mobile-native`, `write-swift`.
+Also available globally (use only if relevant): `animate-expo`, `apple-design`, `mobile-native`, `write-swift`.
 
 Do not invent brand tokens — follow `src/lib/theme.ts`, `DESIGN.md`, and existing page patterns.
 

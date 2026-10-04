@@ -45,7 +45,7 @@ export const Accordion = ({ items, className }: AccordionProps) => {
                 aria-expanded={isOpen}
                 aria-controls={panelId}
                 tabIndex={0}
-                className="flex w-full items-center justify-between gap-4 py-5 text-start text-base font-medium break-words text-ink transition hover:text-orange focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange sm:py-6 sm:text-lg"
+                className="flex w-full items-center justify-between gap-4 py-5 text-start text-base font-medium break-words text-ink transition-[color,transform] duration-100 ease-out hover:text-orange active:scale-[0.995] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange motion-reduce:transition-none motion-reduce:active:scale-100 sm:py-6 sm:text-lg"
                 onClick={() => handleToggle(item.id)}
                 onKeyDown={(event) => handleKeyDown(event, item.id)}
               >

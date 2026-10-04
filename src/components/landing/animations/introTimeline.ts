@@ -181,6 +181,9 @@ export function createIntroTimeline(elements: IntroElements) {
   const stageOrigin = rtl ? '35% 55%' : '65% 55%'
   const navItemFrom = rtl ? 12 : -12
 
+  const flight = elements.logo.parentElement
+  if (flight) gsap.set(flight, { autoAlpha: 1 })
+
   gsap.set(petals, { clearProps: 'transform', opacity: 1 })
   gsap.set(elements.logo, {
     x: 0,
@@ -234,6 +237,9 @@ export function createIntroTimeline(elements: IntroElements) {
     onComplete: () => {
       state = 'end'
       unlockScroll()
+      // Keep the flight layer dead after handoff so soft returns can't revive it.
+      if (flight) gsap.set(flight, { autoAlpha: 0 })
+      gsap.set(elements.logo, { opacity: 0, visibility: 'hidden' })
       // FABs land after the morph — not during loading / petal flight
       fabEntrance = playFabEntrance(elements)
     },

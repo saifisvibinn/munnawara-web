@@ -4,7 +4,10 @@ import { LandingLanguageSwitcher } from "@/components/landing/LandingLanguageSwi
 import { LogoMark } from "@/components/landing/LogoMark"
 import { OPEN_QUOTE_EVENT } from "@/components/layout/FloatingQuoteCta"
 import { ThemeToggle } from "@/components/theme/ThemeToggle"
+import { useReducedMotion } from "@/hooks/useReducedMotion"
+import { project, SPRING_SHEET } from "@/lib/appleMotion"
 import { Link, usePathname } from "@/i18n/navigation"
+import { AnimatePresence, motion, useDragControls } from "motion/react"
 import { useLocale, useTranslations } from "next-intl"
 import {
   useEffect,
@@ -34,6 +37,8 @@ export const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false)
   const menuId = useId()
   const isHome = pathname === "/"
+  const reducedMotion = useReducedMotion()
+  const drawerDragControls = useDragControls()
 
   useLayoutEffect(() => {
     if (pathname === "/") {
@@ -110,6 +115,14 @@ export const Header = () => {
     window.dispatchEvent(new Event(OPEN_QUOTE_EVENT))
   }
 
+  const handleDrawerDragEnd = (
+    _: unknown,
+    info: { offset: { y: number }; velocity: { y: number } },
+  ) => {
+    const projected = info.offset.y + project(info.velocity.y)
+    if (projected < -90 || info.velocity.y < -650) setMenuOpen(false)
+  }
+
   return (
     <div data-site-header className="site-chrome">
       <div className="site-chrome__spacer" aria-hidden="true" />
@@ -177,44 +190,74 @@ export const Header = () => {
       <ThemeToggle />
       <LandingLanguageSwitcher />
 
-      {menuOpen ? (
-        <div
-          id={menuId}
-          className="site-nav__drawer is-open"
-          role="dialog"
-          aria-modal="true"
-          aria-label={t("menu")}
-        >
-          <button
-            type="button"
-            className="site-nav__drawer-backdrop"
-            aria-label={t("closeMenu")}
-            tabIndex={-1}
-            onClick={handleCloseMenu}
-          />
-          <nav className="site-nav__drawer-panel" aria-label={t("menu")}>
-            {NAV_ITEMS.map((item) => (
-              <Link
-                href={item.href}
-                key={`drawer-${item.id}`}
-                className={active === item.id ? "is-active" : undefined}
-                onClick={item.id === "home" ? handleHomeClick : handleNavClick}
-                tabIndex={0}
-              >
-                {t(item.key)}
-              </Link>
-            ))}
+      <AnimatePresence>
+        {menuOpen ? (
+          <motion.div
+            id={menuId}
+            key="site-nav-drawer"
+            className="site-nav__drawer is-open"
+            role="dialog"
+            aria-modal="true"
+            aria-label={t("menu")}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: reducedMotion ? 0.1 : 0.2 }}
+          >
             <button
               type="button"
-              className="site-nav__drawer-quote"
-              onClick={handleQuoteClick}
-              tabIndex={0}
+              className="site-nav__drawer-backdrop"
+              aria-label={t("closeMenu")}
+              tabIndex={-1}
+              onClick={handleCloseMenu}
+            />
+            <motion.nav
+              className="site-nav__drawer-panel"
+              aria-label={t("menu")}
+              initial={
+                reducedMotion
+                  ? { opacity: 0 }
+                  : { opacity: 0, y: -14, scale: 0.98 }
+              }
+              animate={
+                reducedMotion ? { opacity: 1 } : { opacity: 1, y: 0, scale: 1 }
+              }
+              transition={SPRING_SHEET}
+              drag={reducedMotion ? false : "y"}
+              dragControls={drawerDragControls}
+              dragListener={false}
+              dragConstraints={{ top: 0, bottom: 0 }}
+              dragElastic={{ top: 0.45, bottom: 0.08 }}
+              onDragEnd={handleDrawerDragEnd}
+              onPointerDown={(event) => {
+                if (reducedMotion) return
+                if ((event.target as HTMLElement).closest("a,button")) return
+                drawerDragControls.start(event)
+              }}
             >
-              {t("quote")}
-            </button>
-          </nav>
-        </div>
-      ) : null}
+              {NAV_ITEMS.map((item) => (
+                <Link
+                  href={item.href}
+                  key={`drawer-${item.id}`}
+                  className={active === item.id ? "is-active" : undefined}
+                  onClick={item.id === "home" ? handleHomeClick : handleNavClick}
+                  tabIndex={0}
+                >
+                  {t(item.key)}
+                </Link>
+              ))}
+              <button
+                type="button"
+                className="site-nav__drawer-quote"
+                onClick={handleQuoteClick}
+                tabIndex={0}
+              >
+                {t("quote")}
+              </button>
+            </motion.nav>
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
     </div>
   )
 }

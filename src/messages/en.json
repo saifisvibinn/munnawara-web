@@ -16,6 +16,12 @@
     "contact": "Contact the Durrah Al-Munawwara team by phone, WhatsApp, or email, or visit the Jeddah office.",
     "quote": "Request a transport quote: share your dates, group size, and route and our team will follow up."
   },
+  "cursor": {
+    "scroll": "scroll",
+    "click": "click",
+    "drag": "drag",
+    "play": "play"
+  },
   "nav": {
     "home": "Home",
     "about": "About",
@@ -34,6 +40,8 @@
     "switchLanguage": "العربية"
   },
   "photoGallery": {
+    "pageTitle": "Gallery",
+    "pageSubtitle": "Fleet, workshops, and the people who keep every journey moving.",
     "all": "All",
     "fleet": "Fleet",
     "interior": "Interiors",
@@ -50,7 +58,7 @@
   "behindScenes": {
     "title": "Behind every journey",
     "subtitle": "The workshop team and spare-parts stores that keep our coaches on the road.",
-    "cta": "See more photos"
+    "cta": "View the gallery"
   },
   "theme": {
     "switchToDark": "Switch to dark mode",
@@ -179,10 +187,29 @@
   },
   "fleetViewer": {
     "carouselLabel": "Fleet carousel",
+    "interactive": "3D tour",
     "inspectBus": "Inspect this bus",
+    "viewInterior": "Enter the cabin",
+    "viewExterior": "Back to exterior",
     "interior": "Interior",
     "exterior": "Exterior",
+    "dragToRotate": "Drag or use arrow keys to rotate",
+    "previousShot": "Previous view",
+    "nextShot": "Next view",
+    "previousBus": "Previous bus",
+    "nextBus": "Next bus",
     "close": "Close",
-    "detailsLabel": "Bus details"
+    "scrollHint": "Drag the carousel to browse. Click a bus to flip it for details, click again to flip back.",
+    "flipHint": "Click or drag to flip",
+    "flipBackHint": "Click again to flip back",
+    "detailsLabel": "Bus details",
+    "detailClimate": "Climate control for year-round comfort",
+    "detailSafety": "Safety suite with ABS, GPS, and CCTV",
+    "detailConnectivity": "Wi‑Fi and USB charging on board",
+    "detailComfort": "Premium seating with refined cabin finish",
+    "showMore": "Show more",
+    "moreImagesTitle": "More photos",
+    "moreImagesSubtitle": "Gallery placeholders until final assets are ready",
+    "imagePlaceholder": "Photo coming soon"
   }
 }

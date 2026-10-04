@@ -33,12 +33,6 @@ export const about: AboutContent = {
     fleetHeadline: "أسطول حديث، بقيادة واعية.",
     fleetBody:
       "حافلات VIP ونقل جماعي ونقل مدني، مركبات حديثة مهيأة للمسارات المقدسة والتنقل المؤسسي.",
-    fleetBeats: [
-      { id: "vip", line: "حافلات VIP فاخرة" },
-      { id: "group", line: "نقل جماعي للحجاج" },
-      { id: "city", line: "مسارات المدينة والموظفين" },
-      { id: "ops", line: "تشغيل منضبط" },
-    ],
     sidesLeft: "الحجاج والضيوف",
     sidesRight: "المشغّلون والمؤسسات",
     sidesMerge: "مجموعة واحدة. معيار واحد من العناية.",
@@ -54,10 +48,6 @@ export const about: AboutContent = {
     humanLine2: "الناس هم المحور.",
     videoHeadline: "نظرة من وراء الكواليس",
     videoLabel: "فيديو: الورشة ومستودع قطع الغيار ومقصورات الحافلات والفريق.",
-    brandLine: "درة المنورة",
-    futureHeadline: "صُممت لما يأتي من الرحلة.",
-    futureBody:
-      "تشغيل هادئ لسفر حقيقي، لتتحرك كل مجموعة بثقة في كل ميل.",
     ctaHeadline: "أينما أخذتك الرحلة،\nسافر بعناية.",
     ctaBody: "ابدأ بطلب هادئ، ونتولى الباقي.",
     ctaLabel: "اطلب عرض سعر",

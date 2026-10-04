@@ -21,10 +21,10 @@ type AboutFilmProps = {
 
 /** Art-directed frames: ratio = intrinsic width / height so buses are never cropped. */
 const FLEET_FRAMES = [
-  { src: "/fleet/premium-vip-2026/exterior/pv-col.webp", ratio: 720 / 1280 },
-  { src: "/fleet/coach-2025-2026/cover.webp", ratio: 424 / 285 },
-  { src: "/fleet/city-2025.png", ratio: 1152 / 864 },
-  { src: "/fleet/premium-vip-2026/interior/pv-in-1.webp", ratio: 16 / 9 },
+  { src: "/photos/exterior/7725.webp", ratio: 16 / 9 },
+  { src: "/photos/exterior/0436.webp", ratio: 3 / 2 },
+  { src: "/photos/exterior/0417.webp", ratio: 3 / 2 },
+  { src: "/photos/exterior/0427.webp", ratio: 3 / 2 },
 ] as const
 
 const DETAIL_FRAMES = [
@@ -111,7 +111,8 @@ export const AboutFilm = ({ film, pageTitle }: AboutFilmProps) => {
             tl.to(media, { scale: 1, opacity: 1, duration: 0.45 }, 0)
               .to(title, { opacity: 1, y: 0, duration: 0.2 }, 0.18)
               .to(body, { opacity: 1, y: 0, duration: 0.18 }, 0.28)
-              .to(copy, { y: -18 * depth, duration: 0.35 }, 0.55)
+              // Keep copy centered — no upward drift off the middle.
+              .to(copy, { y: 0, duration: 0.35 }, 0.55)
               .to(media, { scale: 1.03, duration: 0.3 }, 0.72)
           }
 
@@ -133,22 +134,15 @@ export const AboutFilm = ({ film, pageTitle }: AboutFilmProps) => {
               },
             })
 
-            // Headline holds, then each question gets its own long beat on screen.
-            tl.to(head, { opacity: 1, y: 0, duration: 0.06 }, 0)
-              .to(head, { opacity: 0, y: -24, duration: 0.05 }, 0.18)
-
-            lines.forEach((line, index) => {
-              const start = 0.26 + index * 0.18
-              tl.to(line, { opacity: 1, y: 0, duration: 0.05 }, start)
-              if (index < lines.length - 1) {
-                tl.to(
-                  line,
-                  { opacity: 0, y: -24 * depth, duration: 0.05 },
-                  start + 0.13,
-                )
-              }
-            })
-            tl.to({}, { duration: 0.12 })
+            // Headline, then questions stack in — short hold, then release.
+            tl.to(head, { opacity: 1, y: 0, duration: 0.1 }, 0)
+              .to(head, { opacity: 0, y: -20, duration: 0.08 }, 0.22)
+              .to(
+                lines,
+                { opacity: 1, y: 0, duration: 0.12, stagger: 0.05 },
+                0.28,
+              )
+              .to({}, { duration: 0.12 })
           }
 
           /* —— Scene 04: Connection —— */
@@ -248,53 +242,7 @@ export const AboutFilm = ({ film, pageTitle }: AboutFilmProps) => {
             )
           }
 
-          /* —— Scene 09: Brand —— */
-          const brand = root.querySelector<HTMLElement>("[data-af-brand]")
-          if (brand) {
-            const mark = brand.querySelector("[data-af-brand-mark]")
-            const line = brand.querySelector("[data-af-brand-line]")
-
-            gsap.set(mark, { scale: 0.94, opacity: 0.3 })
-            gsap.set(line, { opacity: 0, y: 24 })
-
-            const tl = gsap.timeline({
-              scrollTrigger: {
-                trigger: brand,
-                start: "top 85%",
-                end: "center center",
-                scrub,
-              },
-            })
-
-            tl.to(
-              mark,
-              { scale: 1.05, opacity: 1, duration: 0.55 },
-              0,
-            )
-              .to(line, { opacity: 1, y: 0, duration: 0.2 }, 0.32)
-              .to(mark, { scale: 1.12, duration: 0.25 }, 0.7)
-          }
-
-          /* —— Scene 10 + CTA —— */
-          const future = root.querySelector<HTMLElement>("[data-af-future]")
-          if (future) {
-            const title = future.querySelector("[data-af-future-title]")
-            const body = future.querySelector("[data-af-future-body]")
-            gsap.set([title, body].filter(Boolean), { opacity: 0, y: 28 })
-
-            gsap
-              .timeline({
-                scrollTrigger: {
-                  trigger: future,
-                  start: "top 75%",
-                  end: "center center",
-                  scrub: scrub * 0.7,
-                },
-              })
-              .to(title, { opacity: 1, y: 0, duration: 0.4 }, 0)
-              .to(body, { opacity: 1, y: 0, duration: 0.35 }, 0.25)
-          }
-
+          /* —— Final CTA —— */
           const cta = root.querySelector<HTMLElement>("[data-af-cta]")
           if (cta) {
             const parts = cta.querySelectorAll("[data-af-cta-reveal]")
@@ -408,7 +356,7 @@ export const AboutFilm = ({ film, pageTitle }: AboutFilmProps) => {
         data-af-problem
       >
         <div className="about-film__sticky bg-surface">
-          <div className="about-film__stage">
+          <div className="about-film__stage about-film__stage--problem">
             <h2
               data-af-problem-head
               className="about-film__display about-film__display--lg"
@@ -496,22 +444,21 @@ export const AboutFilm = ({ film, pageTitle }: AboutFilmProps) => {
             </div>
             <div className="about-film__gallery-window">
               <div data-af-track className="about-film__gallery-track">
-                {film.fleetBeats.map((beat, index) => (
+                {FLEET_FRAMES.map((frame) => (
                   <figure
-                    key={beat.id}
+                    key={frame.src}
                     className="about-film__gallery-item"
-                    style={frameStyle(FLEET_FRAMES[index].ratio)}
+                    style={frameStyle(frame.ratio)}
                   >
                     <div className="about-film__gallery-image">
                       <Image
-                        src={FLEET_FRAMES[index].src}
+                        src={frame.src}
                         alt=""
                         fill
                         sizes={GALLERY_SIZES}
                         className="object-cover"
                       />
                     </div>
-                    <figcaption className="about-film__gallery-caption">{beat.line}</figcaption>
                   </figure>
                 ))}
               </div>
@@ -610,41 +557,6 @@ export const AboutFilm = ({ film, pageTitle }: AboutFilmProps) => {
       </section>
 
       <AboutVideo headline={film.videoHeadline} label={film.videoLabel} />
-
-      {/* 09 — Brand */}
-      <section className="about-film__scene about-film__brand-band" data-af-brand>
-        <div className="about-film__sides-content">
-          <div className="about-film__stage about-film__stage--brand">
-            <LogoMark
-              data-af-brand-mark
-              title={film.brandName}
-              idPrefix="about-brand"
-              className="about-film__brand-mark"
-            />
-            <p
-              data-af-brand-line
-              className="about-film__display about-film__display--md text-wordmark"
-            >
-              {film.brandLine}
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* 10 — Future */}
-      <section className="about-film__breath bg-surface" data-af-future>
-        <div className="mx-auto grid max-w-2xl gap-4">
-          <h2
-            data-af-future-title
-            className="about-film__display about-film__display--lg"
-          >
-            {film.futureHeadline}
-          </h2>
-          <p data-af-future-body className="about-film__body mx-auto">
-            {film.futureBody}
-          </p>
-        </div>
-      </section>
 
       {/* Final CTA */}
       <section className="about-film__cta" data-af-cta>

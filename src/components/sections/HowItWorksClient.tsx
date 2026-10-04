@@ -184,14 +184,14 @@ export const HowItWorksClient = ({
                     step.ctaHref.startsWith("#") ? (
                       <a
                         href={step.ctaHref}
-                        className="font-label mt-7 inline-flex items-center justify-center rounded-full bg-black px-5 py-2.5 text-sm font-semibold text-white dark:ring-1 dark:ring-white/25 transition hover:bg-orange focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange sm:mt-8"
+                        className="font-label mt-7 inline-flex items-center justify-center rounded-full bg-black px-5 py-2.5 text-sm font-semibold text-white dark:ring-1 dark:ring-white/25 transition-[transform,background-color] duration-100 ease-out hover:bg-orange active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange motion-reduce:transition-none motion-reduce:active:scale-100 sm:mt-8"
                       >
                         {step.ctaLabel}
                       </a>
                     ) : (
                       <Link
                         href={step.ctaHref}
-                        className="font-label mt-7 inline-flex items-center justify-center rounded-full bg-black px-5 py-2.5 text-sm font-semibold text-white dark:ring-1 dark:ring-white/25 transition hover:bg-orange focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange sm:mt-8"
+                        className="font-label mt-7 inline-flex items-center justify-center rounded-full bg-black px-5 py-2.5 text-sm font-semibold text-white dark:ring-1 dark:ring-white/25 transition-[transform,background-color] duration-100 ease-out hover:bg-orange active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange motion-reduce:transition-none motion-reduce:active:scale-100 sm:mt-8"
                       >
                         {step.ctaLabel}
                       </Link>
