@@ -179,29 +179,10 @@
   },
   "fleetViewer": {
     "carouselLabel": "معرض الأسطول",
-    "interactive": "جولة ثلاثية الأبعاد",
     "inspectBus": "استعرض هذه الحافلة",
-    "viewInterior": "ادخل المقصورة",
-    "viewExterior": "العودة للخارج",
     "interior": "الداخل",
     "exterior": "الخارج",
-    "dragToRotate": "اسحب أو استخدم الأسهم للدوران",
-    "previousShot": "الصورة السابقة",
-    "nextShot": "الصورة التالية",
-    "previousBus": "الحافلة السابقة",
-    "nextBus": "الحافلة التالية",
     "close": "إغلاق",
-    "scrollHint": "اسحب المعرض للتصفح. اضغط على الحافلة لقلبها وعرض التفاصيل، واضغط مرة أخرى للعودة.",
-    "flipHint": "اضغط أو اسحب للقلب",
-    "flipBackHint": "اضغط مرة أخرى للعودة",
-    "detailsLabel": "تفاصيل الحافلة",
-    "detailClimate": "تكييف مريح على مدار العام",
-    "detailSafety": "حزمة أمان تشمل ABS وGPS وكاميرات",
-    "detailConnectivity": "واي فاي ومنافذ USB للشحن",
-    "detailComfort": "مقاعد فاخرة وتشطيب مقصورة أنيق",
-    "showMore": "المزيد",
-    "moreImagesTitle": "المزيد من الصور",
-    "moreImagesSubtitle": "صور مؤقتة حتى اعتماد الأصول النهائية",
-    "imagePlaceholder": "الصورة قريباً"
+    "detailsLabel": "تفاصيل الحافلة"
   }
 }
