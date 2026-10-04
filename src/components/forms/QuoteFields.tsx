@@ -174,7 +174,7 @@ export function Dropdown({
   value,
   options,
   onChange,
-  placeholder = "—",
+  placeholder = "-",
   error,
   locale,
 }: {
@@ -347,7 +347,7 @@ export function DatePicker({
   value,
   onChange,
   min,
-  placeholder = "—",
+  placeholder = "-",
   error,
   locale,
 }: {
@@ -590,7 +590,7 @@ export function TimePicker({
   id,
   value,
   onChange,
-  placeholder = "—",
+  placeholder = "-",
   error,
   locale,
 }: {

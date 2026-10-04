@@ -41,7 +41,7 @@ export const api = async <T>(
   } catch {
     throw new ApiError(
       0,
-      "Network error — check the chat API URL / CORS configuration.",
+      "Network error: check the chat API URL / CORS configuration.",
     )
   }
 

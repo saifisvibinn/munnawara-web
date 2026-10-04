@@ -105,7 +105,7 @@ export const COPY = {
   },
   done: {
     eyebrow: { en: "Request received", ar: "تم استلام الطلب" },
-    title: { en: "Thank you — your request is in.", ar: "شكراً لك — وصلنا طلبك." },
+    title: { en: "Thank you, your request is in.", ar: "شكراً لك، وصلنا طلبك." },
     number: { en: "Request number", ar: "رقم الطلب" },
     eta: (h: number): L10n => ({
       en: `Our team will respond within about ${h} hours via your phone or WhatsApp.`,

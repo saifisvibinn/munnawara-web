@@ -69,7 +69,7 @@ export const FleetBusFlipCard = ({
         shadow={false}
         glareOpacity={0.12}
         hoverScale={1}
-        ariaLabel={`${bus.name} — ${t("flipHint")}`}
+        ariaLabel={`${bus.name}: ${t("flipHint")}`}
         className="fleet-flip-card !max-w-none"
         front={
           <div className="relative h-full w-full overflow-hidden">
@@ -207,7 +207,7 @@ export const FleetMoreImagesModal = ({
               {t("moreImagesTitle")}
             </h2>
             <p className="mt-1 text-sm text-ink-muted">
-              {bus.name} — {t("moreImagesSubtitle")}
+              {bus.name}: {t("moreImagesSubtitle")}
             </p>
           </div>
           <button

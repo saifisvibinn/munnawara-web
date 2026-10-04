@@ -5,7 +5,7 @@ export const companies: readonly Company[] = [
     slug: "transport",
     name: "Durrah Al-Munawwara Transport for Pilgrims",
     summary:
-      "A modern fleet for Hajj and Umrah pilgrims, staff, and students — including airport reception, intercity transport, Holy Sites journeys, and international routes to Yemen (Marib, Mukalla, Aden). Hajj-season pilgrim transport is contracted via the responsible mission and the electronic path.",
+      "A modern fleet for Hajj and Umrah pilgrims, staff, and students, including airport reception, intercity transport, Holy Sites journeys, and international routes to Yemen (Marib, Mukalla, Aden). Hajj-season pilgrim transport is contracted via the responsible mission and the electronic path.",
     services: [
       "Airport reception",
       "Intercity transport",
@@ -36,7 +36,7 @@ export const companies: readonly Company[] = [
     slug: "tourism",
     name: "Durrah Al-Munawwara Tourism Services",
     summary:
-      "Group tourism, conferences, events, and private hire — with reception plans, spare buses, and VIP airport options by capacity.",
+      "Group tourism, conferences, events, and private hire, with reception plans, spare buses, and VIP airport options by capacity.",
     services: [
       "Tourist group transport",
       "Conferences and events",

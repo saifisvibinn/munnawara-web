@@ -7,7 +7,7 @@ export const home: HomeContent = {
     sub: "Premium journeys, thoughtfully driven across every mile.",
     cta: "Explore our services",
     brandWords: ["DURRAH", "AL", "MUNAWWARA", "TRANSPORTATION"],
-    backTop: "DMTC — back to top",
+    backTop: "DMTC, back to top",
     chatAria: "Chat with DMTC",
   },
   valueTitle: "Transport built for sacred journeys",
@@ -93,7 +93,7 @@ export const home: HomeContent = {
   newsTitle: "Read about the group",
   newsSubtitle:
     "Seasonal notes, fleet updates, and announcements from Durrah Al-Munawwara.",
-  newsEmpty: "No news posts yet — check back soon.",
+  newsEmpty: "No news posts yet. Check back soon.",
   faqTitle: "FAQs",
   faqSubtitle: "Answers to questions groups and institutions ask most often.",
   faqCta: "Contact us",

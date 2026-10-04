@@ -16,10 +16,10 @@ export const about: AboutContent = {
     brandName: "Durrah Al-Munawwara",
     journeyHeadline: "Every journey is better when no one travels alone.",
     journeySupport:
-      "A continuous story of organized mobility — from the open road to the groups who move with us.",
+      "A continuous story of organized mobility, from the open road to the groups who move with us.",
     worldHeadline: "Organized journeys across sacred routes.",
     worldBody:
-      "Pilgrims, institutions, and travellers move together across the Kingdom. Coordination is not optional — it is the journey.",
+      "Pilgrims, institutions, and travellers move together across the Kingdom. Coordination is not optional. It is the journey.",
     problemHeadline: "Keeping a group together is harder than it looks.",
     problemLines: [
       "Where is everyone?",
@@ -29,10 +29,10 @@ export const about: AboutContent = {
     ],
     connectionHeadline: "Then everything finds its place.",
     connectionBody:
-      "Durrah Al-Munawwara brings transport, Umrah support, tourism, and hospitality under one accountable group — so journeys stay clear from request to return.",
+      "Durrah Al-Munawwara brings transport, Umrah support, tourism, and hospitality under one accountable group, so journeys stay clear from request to return.",
     fleetHeadline: "A modern fleet, carefully driven.",
     fleetBody:
-      "VIP coaches, group buses, and city transport — current-model vehicles prepared for sacred routes and institutional travel.",
+      "VIP coaches, group buses, and city transport, current-model vehicles prepared for sacred routes and institutional travel.",
     fleetBeats: [
       { id: "vip", line: "Premium VIP coaches" },
       { id: "group", line: "Group and pilgrim transport" },
@@ -55,9 +55,9 @@ export const about: AboutContent = {
     brandLine: "Durrah Al-Munawwara",
     futureHeadline: "Built for the journey ahead.",
     futureBody:
-      "Calm operations for real travel — so every group moves with confidence across every mile.",
+      "Calm operations for real travel, so every group moves with confidence across every mile.",
     ctaHeadline: "Wherever the journey takes you,\ntravel with care.",
-    ctaBody: "Begin with a quiet request — we take it from there.",
+    ctaBody: "Begin with a quiet request. We take it from there.",
     ctaLabel: "Request a quote",
     ctaHref: "/quote",
     companies: [

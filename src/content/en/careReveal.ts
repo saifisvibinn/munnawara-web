@@ -4,7 +4,7 @@ export const careReveal: CareRevealContent = {
   eyebrow: "Munawwara Care",
   headingLines: ["Travel together.", "Stay connected."],
   body:
-    "Munawwara Care supports Guests of Rahman with guidance, health information, help requests, location sharing, and hotel/room details — within the scope of the contracted program — so organizers and pilgrims stay aligned from meetpoint to return.",
+    "Munawwara Care supports Guests of Rahman with guidance, health information, help requests, location sharing, and hotel/room details, within the scope of the contracted program, so organizers and pilgrims stay aligned from meetpoint to return.",
   benefits: [
     {
       id: "aligned",
