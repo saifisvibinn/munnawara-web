@@ -171,8 +171,8 @@ export function StepBody({
                             className={cn(
                               "rounded-full px-3.5 py-2 text-sm transition",
                               on
-                                ? "bg-black text-white"
-                                : "bg-surface-muted text-ink hover:bg-surface-container",
+                                ? "bg-orange/15 text-ink ring-2 ring-orange"
+                                : "bg-surface-muted text-ink ring-1 ring-transparent hover:bg-surface-container",
                             )}
                           >
                             {tx(o.label)}
@@ -508,7 +508,7 @@ export function StepBody({
           <label
             className={cn(
               "flex items-start gap-3 rounded-xl px-3.5 py-3 text-sm text-ink/70",
-              errors.consent ? "bg-red-50 ring-2 ring-red-400/40" : "bg-surface-muted/60",
+              errors.consent ? "bg-red-50 ring-2 ring-red-400/40 dark:bg-red-950/40" : "bg-surface-muted/60",
             )}
           >
             <input

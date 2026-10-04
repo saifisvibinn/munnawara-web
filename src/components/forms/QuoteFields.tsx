@@ -805,7 +805,10 @@ export function NumberStepper({
         )}
         value={value}
         onChange={(e) => {
-          const digits = e.target.value.replace(/[^\d]/g, "")
+          const digits = e.target.value
+            .replace(/[٠-٩]/g, (d) => String(d.charCodeAt(0) - 0x0660))
+            .replace(/[۰-۹]/g, (d) => String(d.charCodeAt(0) - 0x06f0))
+            .replace(/[^\d]/g, "")
           onChange(digits === "" ? "" : String(Math.min(max, Number(digits))))
         }}
         onKeyDown={(e) => {

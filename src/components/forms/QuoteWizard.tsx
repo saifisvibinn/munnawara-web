@@ -5,7 +5,7 @@ import { quoteRequestSchema } from "@/components/forms/formSchemas"
 import { useReducedMotion } from "@/hooks/useReducedMotion"
 import { cn } from "@/lib/cn"
 import { useLocale } from "next-intl"
-import { useMemo, useRef, useState, type FormEvent, type ReactNode } from "react"
+import { useEffect, useMemo, useRef, useState, type FormEvent, type ReactNode } from "react"
 import {
   charterService,
   corporateServices,
@@ -72,6 +72,14 @@ export const QuoteWizard = ({
     () => computeSteps(state.service, state.umrahKind),
     [state.service, state.umrahKind],
   )
+
+  // Bring the first validation message into view (e.g. consent below the fold on phones).
+  useEffect(() => {
+    if (!Object.keys(errors).length) return
+    topRef.current
+      ?.querySelector<HTMLElement>('[role="alert"]')
+      ?.scrollIntoView({ block: "nearest", behavior: "smooth" })
+  }, [errors])
 
   const stepIndexSafe = Math.min(stepIndex, steps.length - 1)
   const step = steps[stepIndexSafe]

@@ -65,6 +65,11 @@ export function getMapView(step: StepId, state: WizardState): MapView {
       context: chosen.length < 2 ? allHubStops().filter((h) => !chosen.includes(h.id as PlaceId)) : [],
     }
   }
+  const laterSteps: readonly StepId[] = ["when", "passengers", "vehicle", "extras", "contact", "review"]
+  if (laterSteps.includes(step)) {
+    const finalRoute = getFinalStops(state)
+    if (finalRoute.length > 1) return { stops: finalRoute, context: [] }
+  }
   return { stops: [], context: allHubStops() }
 }
 
@@ -122,7 +127,7 @@ export function getRouteParts(state: WizardState, loc: string) {
     return {
       pickup: placeLabel(state.arrival, loc),
       destination: placeLabel(state.departure, loc),
-      stops: mid.join(" → "),
+      stops: mid.join(loc === "ar" ? " ← " : " → "),
     }
   }
   if (state.service === "umrah") {
@@ -250,14 +255,35 @@ export function buildSummaryRows(
 ): SummaryRow[] {
   const route = getRouteParts(state, locale)
   const customer = findOption(customerOptions, state.customer)
-  const dateLine = [state.date, state.time].filter(Boolean).join(" ")
-  const when = state.returnDate ? `${dateLine} → ${state.returnDate}` : dateLine
+  const tag = locale === "ar" ? "ar-SA-u-ca-gregory-nu-latn" : "en-GB"
+  const fmtDate = (iso: string) => {
+    const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso)
+    if (!m) return iso
+    return new Intl.DateTimeFormat(tag, {
+      weekday: "short",
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    }).format(new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3])))
+  }
+  const fmtTime = (hhmm: string) => {
+    const m = /^(\d{1,2}):(\d{2})$/.exec(hhmm)
+    if (!m) return hhmm
+    return new Intl.DateTimeFormat(tag, { hour: "numeric", minute: "2-digit", hour12: true }).format(
+      new Date(2000, 0, 1, Number(m[1]), Number(m[2])),
+    )
+  }
+  const dateLine = [state.date ? fmtDate(state.date) : "", state.time ? fmtTime(state.time) : ""]
+    .filter(Boolean)
+    .join(" · ")
+  const arrow = locale === "ar" ? " ← " : " → "
+  const when = state.returnDate ? `${dateLine}${arrow}${fmtDate(state.returnDate)}` : dateLine
   const extras = [
     ...extraOptions.filter((o) => state.extras[o.id]).map((o) => tx(o.label)),
   ]
   const routeText = [route.pickup, route.stops, route.destination]
     .filter(Boolean)
-    .join(" → ")
+    .join(arrow)
   const rows: SummaryRow[] = [
     { id: "customer", label: COPY.summary.who, value: customer ? tx(customer.label) : "" },
     { id: "service", label: COPY.summary.service, value: getServiceLabel(state, serviceOptions, tx) },

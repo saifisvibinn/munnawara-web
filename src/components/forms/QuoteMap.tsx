@@ -173,6 +173,7 @@ export default function QuoteMap({ stops, context = [], locale, className, still
         .bindTooltip(pick(s.label, locale), {
           permanent: s.kind === "hub",
           direction: hubDir[s.id] ?? tooltipDir,
+          offset: (hubDir[s.id] ?? tooltipDir) === "left" ? [-16, 0] : (hubDir[s.id] ?? tooltipDir) === "right" ? [16, 0] : [0, -16],
           className: "qmap-tip",
         })
         .addTo(layer)
