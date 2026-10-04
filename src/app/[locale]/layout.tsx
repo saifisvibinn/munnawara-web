@@ -8,6 +8,7 @@ import { routing } from "@/i18n/routing"
 import { NextIntlClientProvider, hasLocale } from "next-intl"
 import { getMessages, getTranslations, setRequestLocale } from "next-intl/server"
 import type { Metadata } from "next"
+import { Cairo } from "next/font/google"
 import { notFound } from "next/navigation"
 import type { ReactNode } from "react"
 import { LogoRouteTransition } from "@/components/landing/LogoRouteTransition"
@@ -15,6 +16,15 @@ import { buildOrganizationSchema, serializeJsonLd } from "@/lib/schema"
 import { siteOrigin } from "@/lib/seo"
 import "../globals.css"
 import "@/styles/dam-landing.css"
+
+// Self-hosted at build time; the CSS @import for Google Fonts is not emitted
+// by the bundler, so this is what actually loads Cairo.
+const cairo = Cairo({
+  subsets: ["arabic", "latin"],
+  weight: ["400", "500", "600", "700", "800"],
+  variable: "--font-cairo",
+  display: "swap",
+})
 
 type LocaleLayoutProps = {
   children: ReactNode
@@ -72,7 +82,12 @@ const LocaleLayout = async ({ children, params }: LocaleLayoutProps) => {
   const dir = locale === "ar" ? "rtl" : "ltr"
 
   return (
-    <html lang={locale} dir={dir} suppressHydrationWarning>
+    <html
+      lang={locale}
+      dir={dir}
+      className={cairo.variable}
+      suppressHydrationWarning
+    >
       <body className="antialiased" suppressHydrationWarning>
         <script dangerouslySetInnerHTML={{ __html: THEME_BOOT_SCRIPT }} />
         <script

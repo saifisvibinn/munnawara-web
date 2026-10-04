@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Archivo:wght@500;600;700;800&family=Cairo:wght@600;700&family=Noto+Sans:wght@400;500;600;700&family=Noto+Sans+Arabic:wght@400;500;600;700&family=Noto+Serif:wght@500;600;700&family=Nunito+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Cairo:wght@400;500;600;700;800&family=Noto+Sans:wght@400;500;600;700&family=Noto+Serif:wght@500;600;700&family=Nunito+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap");
 
 html:has(.dam-landing) {
   background: var(--landing-plate);
@@ -35,10 +35,10 @@ html:has(.dam-landing) [data-floating-actions] {
   --paper: #201d1a;
   --muted: rgba(32, 29, 26, 0.62);
   --font-latin: "Noto Sans", system-ui, sans-serif;
-  --font-arabic: "Noto Sans Arabic", "Cairo", sans-serif;
+  --font-arabic: var(--font-cairo), "Cairo", sans-serif;
   --font-display: "Noto Serif", "Archivo", Georgia, serif;
-  --font-display-ar: "Cairo", var(--font-arabic), sans-serif;
-  --font-numeral-ar: "Amiri", "Noto Serif", serif;
+  --font-display-ar: var(--font-cairo), "Cairo", var(--font-arabic), sans-serif;
+  --font-numeral-ar: var(--font-cairo), "Cairo", sans-serif;
 }
 
 /* Inner-page chrome — same floating pill bar as the landing */
@@ -49,7 +49,7 @@ html:has(.dam-landing) [data-floating-actions] {
   --brand-orange: rgb(247, 91, 18);
   --font-display: "Archivo", var(--font-latin), sans-serif;
   --font-body: "Nunito Sans", var(--font-latin), sans-serif;
-  --font-arabic: var(--font-display-ar), "Cairo", sans-serif;
+  --font-arabic: var(--font-cairo), "Cairo", sans-serif;
   font-family: var(--font-body);
 }
 
@@ -110,7 +110,7 @@ body.is-transitioning [data-floating-quote-chrome] {
   --corner-logo-size: clamp(54px, 5vw, 64px);
   --font-display: "Archivo", var(--font-latin), sans-serif;
   --font-body: "Nunito Sans", var(--font-latin), sans-serif;
-  --font-arabic: var(--font-display-ar), "Cairo", sans-serif;
+  --font-arabic: var(--font-cairo), "Cairo", sans-serif;
   color: var(--paper);
   background: #eaeae6;
   color-scheme: light;
@@ -2741,3 +2741,9 @@ html.is-locale-in .landing-fab-row {
 }
 .chat-panel__option-link:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(247, 91, 18, 0.35); }
 html[dir='rtl'] .chat-panel__option-link { direction: rtl; }.chat-panel__options .chat-panel__more { border-style: dashed; color: var(--brand-orange); background: transparent; }
+/* Arabic: Cairo for body and display text (Latin stacks lack Arabic glyphs). */
+html[lang="ar"] .site-chrome,
+html[lang="ar"] .dam-landing {
+  --font-display: var(--font-cairo), "Cairo", sans-serif;
+  --font-body: var(--font-cairo), "Cairo", sans-serif;
+}

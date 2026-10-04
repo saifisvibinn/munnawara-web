@@ -233,11 +233,11 @@ body::-webkit-scrollbar {
   --color-white: var(--brand-white);
   --color-whatsapp: var(--brand-whatsapp);
   --font-sans: var(--font-latin);
-  --font-arabic: "Noto Sans Arabic", "Cairo", sans-serif;
+  --font-arabic: var(--font-cairo), "Cairo", sans-serif;
   --font-latin: "Noto Sans", system-ui, sans-serif;
   --font-display: "Noto Serif", "Archivo", Georgia, serif;
-  --font-display-ar: "Cairo", var(--font-arabic), sans-serif;
-  --font-numeral-ar: "Amiri", "Noto Serif", serif;
+  --font-display-ar: var(--font-cairo), "Cairo", sans-serif;
+  --font-numeral-ar: var(--font-cairo), "Cairo", sans-serif;
   --font-label: var(--font-latin);
   --font-label-ar: var(--font-arabic);
   --radius-sm: var(--brand-radius-sm);
@@ -320,6 +320,10 @@ html[lang="en"] .font-numeral {
 
 .font-label {
   font-family: var(--font-label-ar), var(--font-label), sans-serif;
+}
+
+html[lang="en"] .font-label {
+  font-family: var(--font-label), var(--font-label-ar), sans-serif;
 }
 
 body {
