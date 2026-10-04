@@ -591,7 +591,8 @@ body.is-loading .loader-surface {
 .explore-btn {
   --explore-surface: #ffffff;
   --explore-surface-active: #201d1a;
-  --explore-text: rgb(247, 91, 18);
+  /* Darker idle orange so CTA stays ≥4.5:1 on the light hero plate */
+  --explore-text: #9a3412;
   --explore-text-active: #ffffff;
   --explore-glow-soft: rgba(247, 91, 18, 0.22);
   --explore-transition: 0.3s ease-in-out;

@@ -106,7 +106,12 @@ const LocaleLayout = async ({ children, params }: LocaleLayoutProps) => {
           <NextIntlClientProvider messages={messages}>
             <SmoothScrollProvider>
               <Header />
-              <main id="main" className="min-h-[60dvh]">{children}</main>
+              <main
+                id="main"
+                className="min-h-[60dvh] pb-[calc(5.5rem+env(safe-area-inset-bottom))] md:pb-16"
+              >
+                {children}
+              </main>
               <Footer />
               <FloatingActions />
               <FloatingQuoteCta />

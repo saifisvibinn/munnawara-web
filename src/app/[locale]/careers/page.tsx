@@ -18,7 +18,7 @@ const CareersPage = async ({ params }: PageProps) => {
   const roles = getCareers(locale as AppLocale)
 
   return (
-    <AnimatedSection className="pb-28 pt-20">
+    <AnimatedSection className="pt-20">
       <PageIntro title={t("careers")} align="start" />
       <div className="mx-auto mt-12 max-w-4xl px-4 sm:px-6">
         <PhotoStrip

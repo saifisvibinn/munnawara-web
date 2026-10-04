@@ -18,7 +18,7 @@ const ClientsPage = async ({ params }: PageProps) => {
   const clients = getClients(locale as AppLocale)
 
   return (
-    <AnimatedSection className="pb-28 pt-20">
+    <AnimatedSection className="pt-20">
       <PageIntro title={t("clients")} subtitle={tHome("clientsTitle")} align="start" />
       <PartnerLogoGrid className="mx-auto mt-16 max-w-4xl px-4 sm:px-6" />
       <div className="mx-auto mt-16 max-w-4xl px-4 sm:px-6">

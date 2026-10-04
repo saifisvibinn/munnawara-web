@@ -37,7 +37,7 @@ const NewsPostPage = async ({ params }: PageProps) => {
   const tCommon = await getTranslations("common")
 
   return (
-    <AnimatedSection className="pb-28 pt-20">
+    <AnimatedSection className="pt-20">
       <div className="mx-auto max-w-2xl px-6">
         <TextLink href="/news" back>{tCommon("backToNews")}</TextLink>
         <h1 className="mt-8 text-4xl font-semibold tracking-tight text-ink md:text-5xl">

@@ -262,7 +262,7 @@ export const PhotoGallery = ({ photos }: PhotoGalleryProps) => {
               onClick={close}
               aria-label={t("close")}
               data-cursor="open"
-              className="absolute end-3 top-3 inline-flex size-11 cursor-pointer items-center justify-center rounded-full bg-white/10 text-white transition-[transform,background-color] duration-100 ease-out hover:bg-white/20 active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange motion-reduce:transition-none motion-reduce:active:scale-100 sm:end-5 sm:top-5"
+              className="absolute end-3 top-3 inline-flex size-11 cursor-pointer items-center justify-center rounded-full bg-black/60 text-white shadow-md ring-1 ring-white/30 backdrop-blur-sm transition-[transform,background-color] duration-100 ease-out hover:bg-black/75 active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange motion-reduce:transition-none motion-reduce:active:scale-100 sm:end-5 sm:top-5"
             >
               <X aria-hidden className="size-5" />
             </button>

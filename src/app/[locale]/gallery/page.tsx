@@ -17,7 +17,7 @@ const GalleryPage = async ({ params }: PageProps) => {
   const photos = getPhotos(locale as AppLocale)
 
   return (
-    <AnimatedSection className="pb-28 pt-20">
+    <AnimatedSection className="pt-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <header className="max-w-2xl">
           <h1 className="font-display text-[clamp(1.85rem,7vw,3.5rem)] font-semibold leading-[1.1] tracking-tight text-ink">

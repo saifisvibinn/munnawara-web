@@ -80,7 +80,7 @@ const ContactPage = async ({ params }: PageProps) => {
 
   return (
     <div className="text-start">
-      <section className="mx-auto grid max-w-6xl gap-10 px-4 pt-10 pb-20 sm:px-6 md:pt-16 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-16 lg:pb-28">
+      <section className="mx-auto grid max-w-6xl gap-10 px-4 pt-10 pb-12 sm:px-6 md:pt-16 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-16 lg:pb-16">
         <div>
           <h1 className="font-display text-[2.5rem] leading-[1.1] font-semibold text-balance text-ink sm:text-5xl lg:text-6xl">
             {content.headline}
@@ -116,7 +116,7 @@ const ContactPage = async ({ params }: PageProps) => {
         </figure>
       </section>
 
-      <AnimatedSection className="mx-auto max-w-6xl px-4 pb-20 sm:px-6 lg:pb-28">
+      <AnimatedSection className="mx-auto max-w-6xl px-4 pb-8 sm:px-6">
         <h2 className={sectionTitle}>{content.channelsTitle}</h2>
         <ul className="mt-10 border-t border-border">
           {channels.map(({ id, label, value, note, href, external, Icon }) => (
