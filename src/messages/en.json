@@ -10,7 +10,7 @@
     "fleet": "Explore the coach fleet: VIP, standard, city, and staff transport classes.",
     "corporate": "Staff, school, and institutional transport with route planning and recurring contracts.",
     "clients": "The organisations and groups that travel with Durrah Al-Munawwara.",
-    "gallery": "Photos of the Durrah Al-Munawwara coach fleet.",
+    "gallery": "Photos of the Durrah Al-Munawwara coaches, interiors, workshop, and facilities.",
     "news": "News and updates from Durrah Al-Munawwara Group.",
     "careers": "Open roles and careers at Durrah Al-Munawwara Group.",
     "contact": "Contact the Durrah Al-Munawwara team by phone, WhatsApp, or email, or visit the Jeddah office.",
@@ -32,6 +32,25 @@
     "openMenu": "Open menu",
     "closeMenu": "Close menu",
     "switchLanguage": "العربية"
+  },
+  "photoGallery": {
+    "all": "All",
+    "fleet": "Fleet",
+    "interior": "Interiors",
+    "workshop": "Workshop",
+    "team": "Team",
+    "facilities": "Facilities",
+    "tabs": "Photo categories",
+    "open": "Open photo",
+    "close": "Close",
+    "prev": "Previous photo",
+    "next": "Next photo",
+    "counter": "Photo {current} of {total}"
+  },
+  "behindScenes": {
+    "title": "Behind every journey",
+    "subtitle": "The workshop team and spare-parts stores that keep our coaches on the road.",
+    "cta": "See more photos"
   },
   "theme": {
     "switchToDark": "Switch to dark mode",

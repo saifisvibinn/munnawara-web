@@ -117,6 +117,8 @@ export type AboutFilmContent = {
   details: readonly AboutFilmFeature[]
   humanLine1: string
   humanLine2: string
+  videoHeadline: string
+  videoLabel: string
   brandLine: string
   futureHeadline: string
   futureBody: string

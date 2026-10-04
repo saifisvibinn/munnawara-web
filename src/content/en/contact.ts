@@ -4,7 +4,7 @@ export const contact: ContactContent = {
   headline: "Talk to the team behind every journey.",
   intro:
     "Planning a pilgrimage group, an institutional contract, or a single transfer? Reach us directly and we will follow up with clear options.",
-  heroImageAlt: "Interior of a Durrah Al-Munawwara premium VIP coach",
+  heroImageAlt: "Leather coach seats with the Durrah Al-Munawwara logo",
   whatsappCta: "Message us on WhatsApp",
   channelsTitle: "Reach us directly",
   whatsappNote: "Message our operations team",

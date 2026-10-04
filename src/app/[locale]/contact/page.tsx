@@ -106,7 +106,7 @@ const ContactPage = async ({ params }: PageProps) => {
         </div>
         <figure className="relative aspect-[4/3] overflow-hidden rounded-lg bg-surface-muted lg:aspect-[4/5] lg:max-h-[38rem]">
           <Image
-            src="/fleet/premium-vip-2026/interior/pv-in-1.webp"
+            src="/photos/interior/0222.webp"
             alt={content.heroImageAlt}
             fill
             priority

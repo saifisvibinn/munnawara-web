@@ -52,6 +52,8 @@ export const about: AboutContent = {
     ],
     humanLine1: "المركبات يجب ألا تكون محور الرحلة.",
     humanLine2: "الناس هم المحور.",
+    videoHeadline: "نظرة من وراء الكواليس",
+    videoLabel: "فيديو: الورشة ومستودع قطع الغيار ومقصورات الحافلات والفريق.",
     brandLine: "درة المنورة",
     futureHeadline: "صُممت لما يأتي من الرحلة.",
     futureBody:

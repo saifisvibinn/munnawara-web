@@ -52,6 +52,8 @@ export const about: AboutContent = {
     ],
     humanLine1: "Vehicles should never be the focus of the journey.",
     humanLine2: "People are.",
+    videoHeadline: "A look behind the scenes",
+    videoLabel: "Video: the workshop, the parts warehouse, coach interiors, and the team.",
     brandLine: "Durrah Al-Munawwara",
     futureHeadline: "Built for the journey ahead.",
     futureBody:

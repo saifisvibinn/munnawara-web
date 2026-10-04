@@ -1,4 +1,5 @@
 import { AnimatedSection } from "@/components/motion/AnimatedSection"
+import { PhotoStrip } from "@/components/gallery/PhotoStrip"
 import { PageIntro } from "@/components/ui/PageIntro"
 import { getCareers } from "@/content"
 import type { AppLocale } from "@/content/types"
@@ -19,6 +20,12 @@ const CareersPage = async ({ params }: PageProps) => {
   return (
     <AnimatedSection className="pb-28 pt-20">
       <PageIntro title={t("careers")} align="start" />
+      <div className="mx-auto mt-12 max-w-4xl px-6">
+        <PhotoStrip
+          locale={locale as AppLocale}
+          ids={["workshop-0205", "people-0486", "people-0467"]}
+        />
+      </div>
       <div className="mx-auto mt-16 max-w-2xl px-6 text-center">
         {roles.length === 0 ? (
           <p className="text-lg text-ink-muted">{tCommon("noOpenRoles")}</p>

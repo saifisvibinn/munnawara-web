@@ -1,5 +1,7 @@
 import { AnimatedSection } from "@/components/motion/AnimatedSection"
+import { PhotoStrip } from "@/components/gallery/PhotoStrip"
 import { PageIntro } from "@/components/ui/PageIntro"
+import type { AppLocale } from "@/content/types"
 import { TextLink } from "@/components/ui/TextLink"
 import { getTranslations, setRequestLocale } from "next-intl/server"
 import { buildPageMetadata } from "@/lib/seo"
@@ -34,6 +36,12 @@ const CorporatePage = async ({ params }: PageProps) => {
           </li>
         ))}
       </ul>
+      <div className="mx-auto mt-16 max-w-4xl px-6">
+        <PhotoStrip
+          locale={locale as AppLocale}
+          ids={["workshop-0123", "workshop-0342", "interior-0269"]}
+        />
+      </div>
       <div className="mt-12 text-center">
         <TextLink href="/quote">{tCommon("requestQuote")}</TextLink>
       </div>

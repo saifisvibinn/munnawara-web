@@ -1,6 +1,7 @@
 "use client"
 
 import type { AboutFilmContent } from "@/content/types"
+import { AboutVideo } from "@/components/about/AboutVideo"
 import { LogoMark } from "@/components/landing/LogoMark"
 import { useReducedMotion } from "@/hooks/useReducedMotion"
 import { Link } from "@/i18n/navigation"
@@ -28,7 +29,7 @@ const FLEET_FRAMES = [
 const DETAIL_FRAMES = [
   "/about/placeholders/airport.jpg",
   "/about/placeholders/holy-sites.jpg",
-  "/hero/quote-ticket-bus.jpg",
+  "/photos/exterior/7727.webp",
   "/about/placeholders/events.jpg",
 ] as const
 
@@ -373,7 +374,7 @@ export const AboutFilm = ({ film, pageTitle }: AboutFilmProps) => {
           <div className="about-film__sky" aria-hidden>
             <Image
               data-af-world-media
-              src="/about/placeholders/holy-sites-wide.jpg"
+              src="/photos/exterior/0427.webp"
               alt=""
               fill
               sizes="100vw"
@@ -584,6 +585,8 @@ export const AboutFilm = ({ film, pageTitle }: AboutFilmProps) => {
           </p>
         </div>
       </section>
+
+      <AboutVideo headline={film.videoHeadline} label={film.videoLabel} />
 
       {/* 09 — Brand */}
       <section className="about-film__scene about-film__brand-band" data-af-brand>

@@ -1,4 +1,5 @@
 import { AboutPreview } from "@/components/sections/AboutPreview"
+import { BehindTheScenes } from "@/components/sections/BehindTheScenes"
 import { BusPassby } from "@/components/sections/BusPassby"
 import { CTABand } from "@/components/sections/CTABand"
 import { HomeFaq } from "@/components/sections/HomeFaq"
@@ -40,6 +41,7 @@ const HomePage = async ({ params }: PageProps) => {
       <BusPassby />
       <HowItWorks />
       <AboutPreview />
+      <BehindTheScenes locale={locale as AppLocale} />
       <QuoteSection />
       <Testimonials />
       <NewsTeaser />

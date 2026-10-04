@@ -17,6 +17,9 @@ import type {
   Testimonial,
 } from "./types"
 import { siteConfig } from "./siteConfig"
+import { photoManifest, type PhotoEntry } from "./photoManifest"
+import { photoAlts as photoAltsAr } from "./ar/photoAlts"
+import { photoAlts as photoAltsEn } from "./en/photoAlts"
 
 import { about as aboutAr } from "./ar/about"
 import { about as aboutEn } from "./en/about"
@@ -97,3 +100,10 @@ export const getNewsPost = (
   locale: AppLocale,
   slug: string,
 ): NewsPost | undefined => getNews(locale).find((p) => p.slug === slug)
+
+export type GalleryPhoto = PhotoEntry & { alt: string }
+
+export const getPhotos = (locale: AppLocale): readonly GalleryPhoto[] => {
+  const alts = isAr(locale) ? photoAltsAr : photoAltsEn
+  return photoManifest.map((photo) => ({ ...photo, alt: alts[photo.id] ?? "" }))
+}
