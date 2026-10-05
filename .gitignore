@@ -63,5 +63,6 @@ tmp-*.tsx
 tmp-*.mjs
 tmp-*/
 tmp-*/
+.qa/
 
 .vercel

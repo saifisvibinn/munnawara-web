@@ -48,7 +48,7 @@ export const Header = () => {
     const match = NAV_ITEMS.find(
       (item) => item.href !== "/" && pathname.startsWith(item.href),
     )
-    setActive(match?.id ?? "")
+    if (match) setActive(match.id)
   }, [pathname])
 
   useEffect(() => {
