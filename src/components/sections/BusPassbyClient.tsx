@@ -84,10 +84,10 @@ export const BusPassbyClient = ({
   }, [reduced, isRtl])
 
   const titleClass = cn(
-    "w-full text-center font-semibold tracking-tight break-words text-ink [text-shadow:0_1px_14px_rgb(0_0_0/0.4)]",
+    "w-full text-center font-semibold tracking-tight break-words text-ink",
     isRtl
-      ? "text-[1.65rem] leading-[1.25] sm:text-4xl md:text-5xl lg:text-[3.75rem]"
-      : "text-[1.65rem] leading-[1.2] sm:text-5xl md:text-6xl lg:text-[4.75rem]",
+      ? "text-3xl leading-[1.2] sm:text-4xl md:text-5xl lg:text-[3.75rem]"
+      : "text-3xl leading-[1.15] sm:text-5xl md:text-6xl lg:text-[4.75rem]",
   )
 
   return (
@@ -108,7 +108,8 @@ export const BusPassbyClient = ({
           {eyebrow}
         </p>
 
-        <div className="pointer-events-none absolute inset-x-0 top-[38%] z-30 flex md:z-10 w-full -translate-y-1/2 justify-center px-4 md:top-1/2 md:px-10">
+        {/* Title under bus — bus (z-20) passes over copy (z-10) */}
+        <div className="pointer-events-none absolute inset-x-0 top-1/2 z-10 flex w-full -translate-y-1/2 justify-center px-4 md:px-10">
           {reduced ? (
             <div className="mx-auto w-full max-w-4xl space-y-3 text-center">
               <h2 className={titleClass} dir={isRtl ? "rtl" : "ltr"}>
@@ -137,12 +138,12 @@ export const BusPassbyClient = ({
 
         <div
           ref={busRef}
-          className="pointer-events-none absolute inset-x-0 top-[58%] z-20 flex -translate-y-1/2 justify-center will-change-transform md:top-1/2"
+          className="pointer-events-none absolute inset-x-0 top-1/2 z-20 flex -translate-y-1/2 justify-center will-change-transform"
           aria-hidden
         >
           <div
             className={cn(
-              "relative h-auto w-[min(112vw,82rem)] md:w-[min(160vw,82rem)]",
+              "relative h-auto w-[min(160vw,82rem)]",
               isRtl && "-scale-x-100",
             )}
           >
@@ -152,7 +153,7 @@ export const BusPassbyClient = ({
               width={1800}
               height={452}
               className="h-auto w-full select-none drop-shadow-[0_24px_60px_rgb(26_18_16/0.18)]"
-              sizes="(max-width:768px) 112vw, 82rem"
+              sizes="(max-width:768px) 160vw, 82rem"
               priority={false}
             />
           </div>

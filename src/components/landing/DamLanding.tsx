@@ -653,7 +653,7 @@ export const DamLanding = ({ copy }: DamLandingProps) => {
 
     // If refs never arrive, still clear the veil instead of hanging forever.
     const bootFailsafeId = window.setTimeout(() => {
-      // Long intro owns its own failsafe — never cut it short.
+      // Long intro owns its own failsafe — never cut it short (that skipped playVideo).
       if (cancelled || introFinished || introStarted) return
       const elements = getElements()
       if (elements) settleAsSeen(elements, true)
