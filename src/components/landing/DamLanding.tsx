@@ -366,6 +366,7 @@ export const DamLanding = ({ copy }: DamLandingProps) => {
   useLayoutEffect(() => {
     let cancelled = false
     let introFinished = false
+    let introStarted = false
     let fabEntrance: gsap.core.Timeline | undefined
     let retryId = 0
     let failsafeId = 0
@@ -644,6 +645,7 @@ export const DamLanding = ({ copy }: DamLandingProps) => {
         return
       }
 
+      introStarted = true
       runLongIntro(elements)
     }
 
@@ -651,7 +653,8 @@ export const DamLanding = ({ copy }: DamLandingProps) => {
 
     // If refs never arrive, still clear the veil instead of hanging forever.
     const bootFailsafeId = window.setTimeout(() => {
-      if (cancelled || introFinished) return
+      // Long intro owns its own failsafe — never cut it short.
+      if (cancelled || introFinished || introStarted) return
       const elements = getElements()
       if (elements) settleAsSeen(elements, true)
       else {
