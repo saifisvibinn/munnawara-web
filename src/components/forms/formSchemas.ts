@@ -12,7 +12,15 @@ export const tripTypes = [
 
 export type TripType = (typeof tripTypes)[number]
 
-export const busClasses = ["standard", "vip", "city", "coach", "employee"] as const
+export const busClasses = [
+  "standard",
+  "vip",
+  "city",
+  "coach",
+  "employee",
+  "premium_vip",
+  "city_large",
+] as const
 
 export type BusClass = (typeof busClasses)[number]
 
@@ -35,7 +43,7 @@ export const quoteRequestSchema = z
     phone: z.string().trim().min(8).max(40),
     pickup: z.string().trim().min(2).max(120),
     destination: z.string().trim().min(2).max(120),
-    stops: z.string().trim().max(300).optional().default(""),
+    stops: z.string().trim().max(600).optional().default(""),
     date: z.string().trim().min(1).max(40),
     departureTime: z.string().trim().max(20).optional().default(""),
     returnDate: z.string().trim().max(40).optional().default(""),

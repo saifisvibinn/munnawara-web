@@ -3,9 +3,10 @@ import type { HomeContent } from "../types"
 export const home: HomeContent = {
   landingHero: {
     eyebrow: "Durrah Al Munawwara Transportation",
-    lines: ["Moving", "you", "forward"],
-    sub: "Premium journeys, thoughtfully driven across every mile.",
-    cta: "Explore our services",
+    lines: ["Moving", "with care", "for guests"],
+    sub: "Integrated transport solutions for pilgrims and institutions, supported by a modern fleet and a complete operations network.",
+    primaryCta: "Request transport",
+    secondaryCta: "Explore our fleet",
     brandWords: ["DURRAH", "AL", "MUNAWWARA", "TRANSPORTATION"],
     backTop: "DMTC, back to top",
     chatAria: "Chat with DMTC",
@@ -37,8 +38,8 @@ export const home: HomeContent = {
     },
   ],
   passbyEyebrow: "Durrah Al-Munawwara",
-  passbyTitle: "every journey, carefully arranged",
-  passbyTitleAfter: "from quote to confirmed departure",
+  passbyTitle: "you choose the destination",
+  passbyTitleAfter: "we get you there safely",
   howTitle: "How it works",
   howSubtitle: "Three clear steps from request to confirmed transport.",
   howStepPrefix: "Step",
@@ -46,27 +47,27 @@ export const home: HomeContent = {
     {
       id: "request",
       number: "01",
-      title: "Request your trip & expect a follow-up,",
+      title: "Tell us about your trip… and we’ll take care of the rest",
       description:
-        "Share trip type, cities, dates, and passenger count through the quote form or WhatsApp. Our team reviews the request and prepares clear options.",
+        "Share the trip type, destination, date, and passenger count through the “Request a quote” form or via WhatsApp. Our team will contact you with the option best suited to your trip.",
       ctaLabel: "Request a quote",
       ctaHref: "#quote",
     },
     {
       id: "quote",
       number: "02",
-      title: "Choose the best option for your group.",
+      title: "We prepare the option that suits you best",
       description:
-        "We send a confirmed quote and itinerary covering fleet, timing, and supporting services so you can decide with confidence.",
+        "We offer a range of options and exceptional services, so you can choose what best suits your trip.",
       ctaLabel: null,
       ctaHref: null,
     },
     {
       id: "confirm",
       number: "03",
-      title: "Trip confirmed.",
+      title: "We confirm your trip and arrange every detail",
       description:
-        "Once approved, we assign the vehicle and driver and keep coordination open through departure.",
+        "Once you approve the quote, we prepare the right bus and coordinate the trip details so everything is ready at the scheduled time.",
       ctaLabel: "Contact us",
       ctaHref: "/contact",
     },

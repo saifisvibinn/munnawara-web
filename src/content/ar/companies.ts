@@ -29,7 +29,7 @@ export const companies: readonly Company[] = [
       "التنسيق مع الفنادق والنقل",
     ],
     logo: "/brand/company-umrah.png",
-    heroImage: "/hero/cover.png",
+    heroImage: "/fleet/vip-2026/cover.webp",
     contentReady: true,
   },
   {
@@ -45,7 +45,7 @@ export const companies: readonly Company[] = [
       "أسطول متعدد الحافلات للفعاليات",
     ],
     logo: "/brand/company-tourism.png",
-    heroImage: "/hero/cover.png",
+    heroImage: "/fleet/premium-vip-2026/exterior/pv-out-2.webp",
     contentReady: true,
   },
   {

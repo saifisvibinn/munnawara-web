@@ -1,57 +1,42 @@
 import type { ReactNode } from "react"
 import type { BusClass, TripType } from "@/components/forms/formSchemas"
-import type { ExtraId, PlaceId } from "./quoteWizardConfig"
 
 export type WizardProps = {
   className?: string
   formId?: string
-  /** "split" = map pane + form panel that fits the viewport (used by /quote). */
+  /** "split" = form panel + summary/map sidebar that fits the viewport (used by /quote). */
   layout?: "stack" | "split"
-  /** Title chip drawn over the map in split layout. */
+  /** Page title shown above the form in split layout. */
   heading?: { eyebrow?: string; title: string }
-  /** Optional chrome above the step progress (e.g. back link). */
+  /** Optional chrome beside the title (e.g. back link). */
   toolbar?: ReactNode
 }
 
 export type StepId =
   | "customer"
   | "service"
-  | "umrahKind"
-  | "dawraLength"
-  | "dawraRoute"
-  | "maktaaRoute"
-  | "charterRoute"
-  | "when"
-  | "passengers"
+  | "route"
   | "vehicle"
-  | "extras"
+  | "passengers"
+  | "notes"
   | "contact"
   | "review"
+
+export type Trip = { from: string; to: string; date: string; time: string }
+
+export const emptyTrip: Trip = { from: "", to: "", date: "", time: "" }
+
+export const MAX_TRIPS = 5
 
 export type WizardState = {
   customer: TripType | ""
   service: string
-  umrahKind: string
-  dawraLength: string
-  mazarat: string[]
-  direction: string
-  from: PlaceId | ""
-  to: PlaceId | ""
-  arrival: PlaceId
-  departure: PlaceId
-  pickup: string
-  destination: string
-  stops: string
-  date: string
-  time: string
-  returnDate: string
-  waitingHours: string
+  trips: Trip[]
   passengers: string
   luggage: string
   accessibility: string
   busCount: string
   busClass: BusClass
-  extras: Record<ExtraId, boolean>
   notes: string
   name: string
   organization: string
@@ -63,32 +48,12 @@ export type WizardState = {
 export const initialState: WizardState = {
   customer: "",
   service: "",
-  umrahKind: "",
-  dawraLength: "",
-  mazarat: [],
-  direction: "oneway",
-  from: "",
-  to: "",
-  arrival: "jed_airport",
-  departure: "med_airport",
-  pickup: "",
-  destination: "",
-  stops: "",
-  date: "",
-  time: "",
-  returnDate: "",
-  waitingHours: "",
+  trips: [emptyTrip],
   passengers: "1",
   luggage: "",
   accessibility: "",
   busCount: "1",
   busClass: "standard",
-  extras: {
-    needsSupervisors: false,
-    needsTracking: false,
-    needsBranding: false,
-    needsAirportReception: false,
-  },
   notes: "",
   name: "",
   organization: "",

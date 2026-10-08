@@ -167,7 +167,8 @@ export type LandingHeroContent = {
   /** Headline rows; the last row uses the brand blue accent. */
   lines: readonly string[]
   sub: string
-  cta: string
+  primaryCta: string
+  secondaryCta: string
   /** Words of the intro brand line; first is orange, last is blue. Arabic uses 3 (درة المنورة للنقل). */
   brandWords: readonly string[]
   backTop: string

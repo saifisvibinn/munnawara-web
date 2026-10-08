@@ -1,6 +1,6 @@
 /**
- * Quote wizard content — everything Abdullah may want to change lives here.
- * Draft options come from the product notes; confirm exact lists with Abdullah.
+ * Quote wizard content — everything that may change lives here.
+ * Options mirror the production quote form.
  */
 
 export type L10n = { en: string; ar: string }
@@ -16,11 +16,6 @@ export const l = (en: string, ar: string): L10n => ({ en, ar })
 /* ---------- Step 1: who is asking ---------- */
 
 export const customerOptions = [
-  {
-    id: "individual",
-    label: l("Individual", "فرد"),
-    hint: l("Family or personal trip", "رحلة عائلية أو شخصية"),
-  },
   {
     id: "company",
     label: l("Company / Corporate", "شركة / مؤسسة"),
@@ -38,8 +33,8 @@ export const customerOptions = [
   },
   {
     id: "hajj_mission",
-    label: l("Hajj / Umrah mission", "بعثة حج / عمرة"),
-    hint: l("Mission or campaign operators", "مكاتب وحملات الحج والعمرة"),
+    label: l("Umrah campaigns", "حملات عمرة"),
+    hint: l("Umrah campaign operators and offices", "مكاتب وحملات العمرة"),
   },
   {
     id: "tourism",
@@ -48,183 +43,85 @@ export const customerOptions = [
   },
 ] as const satisfies readonly Option[]
 
-export type CustomerId = (typeof customerOptions)[number]["id"]
+/* ---------- Step 2 (companies only): service ---------- */
 
-/** Customer types that must give an organization name. */
-export const orgRequired: readonly CustomerId[] = [
-  "company",
-  "government",
-  "school",
-  "hajj_mission",
-  "tourism",
-]
-
-/* ---------- Step 2: service ---------- */
-
-export const umrahService: Option = {
-  id: "umrah",
-  label: l("Umrah Group Package", "مجموعة عمرة"),
-  hint: l("Transport between the airports, Makkah and Madinah", "نقل بين المطارات ومكة والمدينة"),
-}
-
-export const charterService: Option = {
-  id: "charter",
-  label: l("Custom trip", "رحلة مخصصة"),
-  hint: l("Any route, any date", "أي مسار وأي موعد"),
-}
-
-/** Company sub-menu (draft — workers confirmed, rest from the KB; confirm with Abdullah). */
 export const corporateServices: readonly Option[] = [
   {
     id: "workers",
     label: l("Workers / staff transport", "نقل العمال والموظفين"),
     hint: l("Daily or contract shuttles", "نقل يومي أو بعقد"),
   },
-  {
-    id: "education",
-    label: l("School / university transport", "نقل مدارس وجامعات"),
-  },
-  {
-    id: "tourism_group",
-    label: l("Tourism groups", "مجموعات سياحية"),
-  },
-  {
-    id: "events",
-    label: l("Events & conferences", "فعاليات ومؤتمرات"),
-  },
-  {
-    id: "vip_airport",
-    label: l("VIP airport transfer", "استقبال كبار الزوار من المطار"),
-  },
-  {
-    id: "international",
-    label: l("International routes", "رحلات دولية"),
-  },
-  {
-    id: "other",
-    label: l("Something else", "طلب آخر"),
-  },
-]
-
-/* ---------- Umrah: Circuit (Dawra) / Transfer (Maqta') ---------- */
-
-export const umrahKinds: readonly Option[] = [
-  {
-    id: "dawra",
-    label: l("Umrah Circuit (Dawra)", "دورة"),
-    hint: l(
-      "The full loop: airport → Makkah → Madinah → airport",
-      "الدورة الكاملة: مطار ← مكة ← المدينة ← مطار",
-    ),
-  },
-  {
-    id: "maktaa",
-    label: l("Point-to-Point Transfer (Maqta')", "مقطع"),
-    hint: l(
-      "One leg between two places, one-way or round trip",
-      "رحلة بين نقطتين، اتجاه واحد أو ذهاب وعودة",
-    ),
-  },
-]
-
-export const dawraLengths: readonly Option[] = [
-  {
-    id: "short",
-    label: l("Short Circuit", "دورة قصيرة"),
-    hint: l("Airport → Makkah → Madinah → Airport", "مطار ← مكة ← المدينة ← مطار"),
-  },
-  {
-    id: "long",
-    label: l("Long Circuit with Ziyarat", "دورة طويلة مع المزارات"),
-    hint: l("The same route plus visits to holy sites", "نفس المسار مع زيارة المزارات"),
-  },
-]
-
-export const tripDirections: readonly Option[] = [
-  { id: "oneway", label: l("One way", "اتجاه واحد") },
-  { id: "twoway", label: l("Round trip", "ذهاب وعودة") },
+  { id: "education", label: l("School / university transport", "نقل مدارس وجامعات") },
+  { id: "tourism_group", label: l("Tourism groups", "مجموعات سياحية") },
+  { id: "events", label: l("Events & conferences", "فعاليات ومؤتمرات") },
+  { id: "vip_airport", label: l("VIP airport transfer", "استقبال كبار الزوار من المطار") },
+  { id: "international", label: l("International routes", "رحلات دولية") },
+  { id: "other", label: l("Something else", "طلب آخر") },
 ]
 
 /*
- * ---------- Locations (WGS84, verified against Wikipedia / OpenStreetMap) ----------
- * Jeddah: King Abdulaziz Int'l Airport · Makkah: Masjid al-Haram ·
- * Madinah: Prophet's Mosque · MED: Prince Mohammad bin Abdulaziz Int'l Airport.
+ * ---------- Locations ----------
+ * Airports, Makkah, Madinah and the holy sites carried over from the previous
+ * wizard are verified against Wikipedia / OpenStreetMap. Taif, the miqats, the
+ * generic "ziyarat tour" entries and the Mushaf complex are approximate map
+ * pins: they only place the marker.
  */
 
-export type PlaceId = "jed_airport" | "makkah" | "madinah" | "med_airport"
+export type PlaceGroup = "airports" | "cities" | "makkah" | "madinah"
 
-export type Place = Option<PlaceId> & { lat: number; lng: number; city: "jeddah" | "makkah" | "madinah" }
+export type Place = Option & { lat: number; lng: number; group: PlaceGroup }
 
-export const places: readonly Place[] = [
-  {
-    id: "jed_airport",
-    label: l("Jeddah Airport (JED)", "مطار جدة (JED)"),
-    lat: 21.67944,
-    lng: 39.15667,
-    city: "jeddah",
-  },
-  {
-    id: "makkah",
-    label: l("Makkah", "مكة المكرمة"),
-    lat: 21.4225,
-    lng: 39.82611,
-    city: "makkah",
-  },
-  {
-    id: "madinah",
-    label: l("Madinah", "المدينة المنورة"),
-    lat: 24.46833,
-    lng: 39.61083,
-    city: "madinah",
-  },
-  {
-    id: "med_airport",
-    label: l("Madinah Airport (MED)", "مطار المدينة (MED)"),
-    lat: 24.55333,
-    lng: 39.705,
-    city: "madinah",
-  },
-]
-
-export const airports: readonly Option<PlaceId>[] = places.filter(
-  (p) => p.id === "jed_airport" || p.id === "med_airport",
-)
-
-/**
- * Ziyarat (holy sites) offered on the long circuit. `city` decides where the
- * stop falls in the route; `order` is the visiting order within that city.
- * `preselect` sites are ticked by default when the user picks the long circuit.
- */
-export type Ziyarat = Option & {
-  lat: number
-  lng: number
-  city: "makkah" | "madinah"
-  order: number
-  preselect?: boolean
+export const placeGroups: Record<PlaceGroup, L10n> = {
+  airports: l("Airports", "المطارات"),
+  cities: l("Makkah & Madinah", "مكة والمدينة"),
+  makkah: l("Holy sites in Makkah", "المزارات في مكة"),
+  madinah: l("Holy sites in Madinah", "المزارات في المدينة"),
 }
 
-export const ziyaratOptions: readonly Ziyarat[] = [
-  // Makkah
-  { id: "aisha", label: l("Masjid Aisha (Tan'im)", "مسجد عائشة (التنعيم)"), lat: 21.46771, lng: 39.80137, city: "makkah", order: 1 },
-  { id: "hira", label: l("Jabal al-Nour & Cave of Hira", "جبل النور وغار حراء"), lat: 21.45806, lng: 39.86139, city: "makkah", order: 2, preselect: true },
-  { id: "thawr", label: l("Jabal Thawr", "جبل ثور"), lat: 21.377, lng: 39.84987, city: "makkah", order: 3, preselect: true },
-  { id: "mina", label: l("Mina", "منى"), lat: 21.41333, lng: 39.89333, city: "makkah", order: 4 },
-  { id: "muzdalifah", label: l("Muzdalifah", "مزدلفة"), lat: 21.3925, lng: 39.93778, city: "makkah", order: 5 },
-  { id: "arafat", label: l("Mount Arafat", "جبل عرفات"), lat: 21.35472, lng: 39.98389, city: "makkah", order: 6, preselect: true },
-  // Madinah
-  { id: "quba", label: l("Quba Mosque", "مسجد قباء"), lat: 24.43917, lng: 39.61722, city: "madinah", order: 1, preselect: true },
-  { id: "qiblatayn", label: l("Masjid al-Qiblatayn", "مسجد القبلتين"), lat: 24.48409, lng: 39.57891, city: "madinah", order: 2, preselect: true },
-  { id: "khandaq", label: l("Seven Mosques (Al-Khandaq)", "المساجد السبعة (الخندق)"), lat: 24.47673, lng: 39.59602, city: "madinah", order: 3 },
-  { id: "ghamama", label: l("Masjid al-Ghamama", "مسجد الغمامة"), lat: 24.46581, lng: 39.60696, city: "madinah", order: 4 },
-  { id: "baqi", label: l("Al-Baqi Cemetery", "مقبرة البقيع"), lat: 24.4669, lng: 39.6164, city: "madinah", order: 5 },
-  { id: "uhud", label: l("Mount Uhud & the Martyrs' Cemetery", "جبل أحد ومقبرة الشهداء"), lat: 24.5, lng: 39.61, city: "madinah", order: 6, preselect: true },
-  { id: "badr", label: l("Badr (full-day trip)", "بدر (رحلة يوم كامل)"), lat: 23.73333, lng: 38.76667, city: "madinah", order: 7 },
+const place = (
+  id: string,
+  group: PlaceGroup,
+  en: string,
+  ar: string,
+  lat: number,
+  lng: number,
+): Place => ({ id, group, label: l(en, ar), lat, lng })
+
+export const places: readonly Place[] = [
+  place("jed_airport", "airports", "Jeddah Airport (JED)", "مطار جدة (JED)", 21.67944, 39.15667),
+  place("med_airport", "airports", "Madinah Airport (MED)", "مطار المدينة (MED)", 24.55333, 39.705),
+  place("tif_airport", "airports", "Taif Airport (TIF)", "مطار الطائف (TIF)", 21.48333, 40.54444),
+  place("ynb_airport", "airports", "Yanbu Airport (YNB)", "مطار ينبع (YNB)", 24.14417, 38.06333),
+  place("ula_airport", "airports", "AlUla Airport (ULH)", "مطار العلا (ULH)", 26.48333, 38.12806),
+  place("ruh_airport", "airports", "Riyadh Airport (RUH)", "مطار الرياض (RUH)", 24.95764, 46.69878),
+  place("dmm_airport", "airports", "Dammam Airport (DMM)", "مطار الدمام (DMM)", 26.47117, 49.79789),
+
+  place("makkah", "cities", "Makkah", "مكة المكرمة", 21.4225, 39.82611),
+  place("madinah", "cities", "Madinah", "المدينة المنورة", 24.46833, 39.61083),
+
+  place("makkah_ziyarat", "makkah", "Makkah Ziyarat tour", "مكة - مزارات", 21.4225, 39.82611),
+  place("hudaybiyah", "makkah", "Miqat al-Hudaybiyah", "مكة - ميقات الحديبية", 21.43, 39.68),
+  place("jiranah", "makkah", "Miqat al-Ja'ranah", "مكة - ميقات الجعرانة", 21.5333, 40.0),
+  place("tanim", "makkah", "Miqat al-Tan'im (Masjid Aisha)", "مكة - ميقات التنعيم", 21.46771, 39.80137),
+  place("taif_tour", "makkah", "Taif tour", "مكة - جولة الطائف", 21.2703, 40.4158),
+  place("hira", "makkah", "Jabal al-Nour & Cave of Hira", "جبل النور وغار حراء", 21.45806, 39.86139),
+  place("thawr", "makkah", "Jabal Thawr", "جبل ثور", 21.377, 39.84987),
+  place("mina", "makkah", "Mina", "منى", 21.41333, 39.89333),
+  place("muzdalifah", "makkah", "Muzdalifah", "مزدلفة", 21.3925, 39.93778),
+  place("arafat", "makkah", "Mount Arafat", "جبل عرفات", 21.35472, 39.98389),
+
+  place("madinah_ziyarat", "madinah", "Madinah Ziyarat tour", "المدينة - مزارات", 24.46833, 39.61083),
+  place("mushaf", "madinah", "Mushaf Printing Complex", "المدينة - مطبعة المصحف", 24.563, 39.539),
+  place("quba", "madinah", "Quba Mosque", "مسجد قباء", 24.43917, 39.61722),
+  place("qiblatayn", "madinah", "Masjid al-Qiblatayn", "مسجد القبلتين", 24.48409, 39.57891),
+  place("khandaq", "madinah", "Seven Mosques (Al-Khandaq)", "المساجد السبعة (الخندق)", 24.47673, 39.59602),
+  place("ghamama", "madinah", "Masjid al-Ghamama", "مسجد الغمامة", 24.46581, 39.60696),
+  place("baqi", "madinah", "Al-Baqi Cemetery", "مقبرة البقيع", 24.4669, 39.6164),
+  place("uhud", "madinah", "Mount Uhud & the Martyrs' Cemetery", "جبل أحد ومقبرة الشهداء", 24.5, 39.61),
+  place("badr", "madinah", "Badr (full-day trip)", "بدر (رحلة يوم كامل)", 23.73333, 38.76667),
 ]
 
-export const defaultZiyarat = (): string[] =>
-  ziyaratOptions.filter((z) => z.preselect).map((z) => z.id)
-
-/* A stop on the map, in visiting order. */
+/** A stop on the map, in visiting order. */
 export type MapStop = {
   id: string
   lat: number
@@ -233,41 +130,24 @@ export type MapStop = {
   kind: "hub" | "ziyarat"
 }
 
-const hubStop = (id: PlaceId): MapStop => {
-  const p = places.find((x) => x.id === id)!
-  return { id: p.id, lat: p.lat, lng: p.lng, label: p.label, kind: "hub" }
+export const placeStop = (id: string): MapStop | null => {
+  const p = places.find((x) => x.id === id)
+  if (!p) return null
+  const hub = p.group === "airports" || p.group === "cities"
+  return { id: p.id, lat: p.lat, lng: p.lng, label: p.label, kind: hub ? "hub" : "ziyarat" }
 }
 
-const ziyaratStops = (city: "makkah" | "madinah", selected: readonly string[]): MapStop[] =>
-  ziyaratOptions
-    .filter((z) => z.city === city && selected.includes(z.id))
-    .sort((a, b) => a.order - b.order)
-    .map((z) => ({ id: z.id, lat: z.lat, lng: z.lng, label: z.label, kind: "ziyarat" as const }))
+export const allHubStops = (): MapStop[] =>
+  places.flatMap((p) => (p.group === "airports" || p.group === "cities" ? [placeStop(p.id)!] : []))
 
-/** Dawra route: arrival → Makkah (+ziyarat) → Madinah (+ziyarat) → departure. */
-export const buildDawraStops = (
-  arrival: PlaceId,
-  departure: PlaceId,
-  selected: readonly string[],
-  withZiyarat: boolean,
-): MapStop[] => [
-  hubStop(arrival),
-  hubStop("makkah"),
-  ...(withZiyarat ? ziyaratStops("makkah", selected) : []),
-  hubStop("madinah"),
-  ...(withZiyarat ? ziyaratStops("madinah", selected) : []),
-  hubStop(departure),
-]
-
-export const buildTransferStops = (ids: readonly PlaceId[]): MapStop[] => ids.map(hubStop)
-
-export const allHubStops = (): MapStop[] => places.map((p) => hubStop(p.id))
 /* ---------- Fleet ---------- */
 
 export const busClassOptions = [
   { id: "vip", label: l("VIP", "في آي بي"), hint: l("32 seats", "٣٢ مقعد") },
+  { id: "premium_vip", label: l("Premium VIP", "بريميوم في آي بي"), hint: l("18 seats", "١٨ مقعد") },
   { id: "standard", label: l("Standard", "عادية"), hint: l("49 seats", "٤٩ مقعد") },
   { id: "coach", label: l("Coach", "حافلة ٤٥"), hint: l("45 seats", "٤٥ مقعد") },
+  { id: "city_large", label: l("City bus 55", "حافلة مدينة ٥٥"), hint: l("55 seats", "٥٥ مقعد") },
   { id: "city", label: l("City bus", "حافلة مدينة"), hint: l("19 seats", "١٩ مقعد") },
   {
     id: "employee",
@@ -278,14 +158,16 @@ export const busClassOptions = [
 
 export type BusClassId = (typeof busClassOptions)[number]["id"]
 
-export const extraOptions = [
-  { id: "needsSupervisors", label: l("Supervisors / coordinators", "مشرفون / منسقون") },
-  { id: "needsTracking", label: l("Live tracking", "تتبع مباشر") },
-  { id: "needsBranding", label: l("Branding on buses", "هوية المؤسسة على الحافلات") },
-  { id: "needsAirportReception", label: l("Airport pickup", "استقبال من المطار") },
-] as const
-
-export type ExtraId = (typeof extraOptions)[number]["id"]
+/** Cut-out photo per class (public/quotes). The two "city" files are named opposite to their fleet years. */
+export const busClassImages: Record<BusClassId, string> = {
+  vip: "/quotes/vip_bus-removebg-preview.png",
+  premium_vip: "/quotes/premium_vip-removebg-preview.png",
+  standard: "/quotes/COACH_BUS-removebg-preview.png",
+  coach: "/quotes/city_bus_2025-removebg-preview.png",
+  city_large: "/quotes/CITY_BUS-removebg-preview.png",
+  city: "/quotes/mini_bus-removebg-preview.png",
+  employee: "/quotes/labour-removebg-preview.png",
+}
 
 /* ---------- Helpers ---------- */
 

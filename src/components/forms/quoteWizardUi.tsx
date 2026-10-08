@@ -1,14 +1,14 @@
 import { cn } from "@/lib/cn"
 import type { ReactNode } from "react"
-import { pick, type Option, type PlaceId } from "./quoteWizardConfig"
+import { pick, placeGroups, type Option, type Place } from "./quoteWizardConfig"
 import { Dropdown } from "./QuoteFields"
 import { CheckBadge, choiceIcon } from "./QuoteChoiceIcons"
 
 export const fieldClass =
-  "w-full min-w-0 rounded-xl border border-border bg-surface-muted px-4 py-3.5 text-base text-ink outline-none transition placeholder:text-ink-muted focus:border-orange/40 focus:bg-surface-elevated focus:ring-2 focus:ring-orange/25 sm:text-[0.9375rem]"
+  "w-full min-w-0 rounded-xl border border-border bg-surface-elevated px-4 py-3.5 text-base text-ink outline-none transition placeholder:text-ink-muted hover:border-ink/20 focus:border-orange/60 focus:ring-2 focus:ring-orange/20 sm:text-[0.9375rem]"
 export const fieldErrorRing = "ring-2 ring-red-400/50 focus:ring-red-400/60 bg-red-50/60 dark:bg-red-950/40"
 export const btnPrimary =
-  "font-label inline-flex min-w-[9.5rem] items-center justify-center rounded-full bg-gradient-to-b from-orange-soft to-orange px-8 py-3 text-sm font-semibold text-white shadow-[0_12px_28px_-10px_rgb(243,112,33,0.9)] transition-[transform,filter,box-shadow] duration-100 ease-out hover:brightness-[1.03] active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-45 disabled:shadow-none disabled:hover:brightness-100 disabled:active:scale-100 motion-reduce:transition-none motion-reduce:active:scale-100"
+  "font-label inline-flex min-w-[9.5rem] items-center justify-center rounded-full bg-orange px-8 py-3 text-sm font-semibold text-black shadow-[0_10px_24px_-14px_rgb(243_112_33/0.9)] transition-[transform,background-color,box-shadow] duration-150 ease-out hover:bg-orange-soft active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange focus-visible:ring-offset-2 focus-visible:ring-offset-surface-elevated disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none disabled:hover:bg-orange disabled:active:scale-100 motion-reduce:transition-none motion-reduce:active:scale-100"
 export const btnGhost =
   "font-label inline-flex items-center justify-center rounded-full px-5 py-3 text-sm font-semibold text-ink-muted transition-[transform,background-color,color] duration-100 ease-out hover:bg-surface-muted hover:text-ink active:scale-[0.97] motion-reduce:transition-none motion-reduce:active:scale-100"
 
@@ -59,8 +59,8 @@ export function Choices({
   return (
     <div
       className={cn(
-        "grid gap-2.5",
-        columns === 2 && "grid-cols-1 @sm:grid-cols-2",
+        "grid gap-3",
+        columns === 2 && "grid-cols-[repeat(auto-fit,minmax(min(100%,15.5rem),1fr))]",
       )}
       role="radiogroup"
     >
@@ -74,19 +74,19 @@ export function Choices({
             aria-checked={selected}
             onClick={() => onPick(o.id)}
             className={cn(
-              "relative flex items-start gap-3 rounded-2xl border px-3.5 py-3.5 text-start transition-[transform,border-color,background-color,box-shadow] duration-100 ease-out active:scale-[0.98] motion-reduce:transition-none motion-reduce:active:scale-100 sm:px-4",
+              "relative flex items-start gap-3 rounded-2xl border bg-surface-elevated px-3.5 py-3.5 text-start transition-[transform,border-color,background-color,box-shadow] duration-150 ease-out active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange/60 motion-reduce:transition-none motion-reduce:active:scale-100 sm:px-4 sm:py-4",
               selected
-                ? "border-orange bg-orange/5 shadow-[0_0_0_3px_rgb(243,112,33,0.14)]"
-                : "border-transparent bg-surface-muted text-ink hover:border-border hover:bg-surface-container",
+                ? "border-orange bg-orange/[0.06] shadow-[0_0_0_1px_var(--brand-orange)]"
+                : "border-border text-ink hover:border-ink/20 hover:shadow-[0_10px_24px_-18px_rgb(0_0_0/0.45)]",
             )}
           >
             {selected ? <CheckBadge /> : null}
             <span
               className={cn(
-                "mt-0.5 inline-flex size-9 shrink-0 items-center justify-center rounded-full",
+                "mt-0.5 inline-flex size-9 shrink-0 items-center justify-center rounded-full transition-colors duration-150",
                 selected
-                  ? "bg-orange/15 text-orange"
-                  : "bg-surface-elevated text-ink-muted ring-1 ring-border",
+                  ? "bg-orange/15 text-orange-text"
+                  : "bg-surface-muted text-ink-muted",
               )}
             >
               {choiceIcon(o.id)}
@@ -125,29 +125,32 @@ export function StepProgress({
 }) {
   return (
     <div className="space-y-2.5">
-      <div className="flex min-h-11 items-center justify-between gap-3">
-        {toolbar ?? <span />}
+      {toolbar ? <div className="flex min-h-11 items-center">{toolbar}</div> : null}
+      <div className="flex items-center justify-between gap-3">
+        <p className="font-label text-[0.7rem] font-semibold tracking-[0.12em] text-orange-text uppercase rtl:tracking-normal">
+          {name}
+        </p>
         <p className="font-label shrink-0 text-xs font-semibold text-ink-muted tabular-nums">
           {counter}
         </p>
       </div>
-      <div className="flex items-center gap-3">
-        <p className="font-label shrink-0 text-[0.7rem] font-semibold tracking-[0.12em] text-orange uppercase rtl:tracking-normal">
-          {name}
-        </p>
-        <div
-          className="h-1 flex-1 overflow-hidden rounded-full bg-surface-muted"
-          role="progressbar"
-          aria-label={label}
-          aria-valuemin={1}
-          aria-valuemax={total}
-          aria-valuenow={current}
-        >
-          <div
-            className="h-full rounded-full bg-orange transition-[width] duration-500 ease-out motion-reduce:transition-none"
-            style={{ width: `${(current / total) * 100}%` }}
+      <div
+        className="flex gap-1"
+        role="progressbar"
+        aria-label={label}
+        aria-valuemin={1}
+        aria-valuemax={total}
+        aria-valuenow={current}
+      >
+        {Array.from({ length: total }, (_, i) => (
+          <span
+            key={i}
+            className={cn(
+              "h-1 flex-1 rounded-full transition-colors duration-300 ease-out motion-reduce:transition-none",
+              i < current ? "bg-orange" : "bg-surface-container",
+            )}
           />
-        </div>
+        ))}
       </div>
     </div>
   )
@@ -164,8 +167,8 @@ export function PlaceSelect({
 }: {
   id: string
   value: string
-  onChange: (v: PlaceId | "") => void
-  options: readonly Option<PlaceId>[]
+  onChange: (id: string) => void
+  options: readonly Place[]
   locale: string
   placeholder: string
   error?: string
@@ -177,8 +180,12 @@ export function PlaceSelect({
       locale={locale}
       placeholder={placeholder}
       error={error}
-      options={options.map((o) => ({ id: o.id, label: pick(o.label, locale) }))}
-      onChange={(v) => onChange(v as PlaceId | "")}
+      options={options.map((o) => ({
+        id: o.id,
+        label: pick(o.label, locale),
+        group: pick(placeGroups[o.group], locale),
+      }))}
+      onChange={onChange}
     />
   )
 }

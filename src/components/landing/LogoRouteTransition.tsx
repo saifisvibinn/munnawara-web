@@ -3,6 +3,7 @@
 import { routing } from "@/i18n/routing"
 import { usePathname } from "@/i18n/navigation"
 import gsap from "gsap"
+import { useTranslations } from "next-intl"
 import { useEffect, useLayoutEffect, useRef } from "react"
 import { LogoMark } from "./LogoMark"
 
@@ -238,9 +239,11 @@ const tweenIf = (
  * Cover shows on click; land waits until the destination page is warm.
  */
 export const LogoRouteTransition = () => {
+  const tMeta = useTranslations("meta")
   const pathname = usePathname()
   const overlayRef = useRef<HTMLDivElement>(null)
   const backdropRef = useRef<HTMLDivElement>(null)
+  const markLabelRef = useRef<HTMLParagraphElement>(null)
   const logoRef = useRef<SVGSVGElement>(null)
   const isFirstPath = useRef(true)
   const runIdRef = useRef(0)
@@ -347,6 +350,7 @@ export const LogoRouteTransition = () => {
     overlay.setAttribute("aria-hidden", "false")
     gsap.set(overlay, { autoAlpha: 1 })
     if (backdrop) gsap.set(backdrop, { autoAlpha: 1 })
+    if (markLabelRef.current) gsap.set(markLabelRef.current, { autoAlpha: 0, y: 8 })
     resetFlightLayout(logo)
     gsap.set(logo, {
       x: 0,
@@ -400,6 +404,13 @@ export const LogoRouteTransition = () => {
           ease: "sine.inOut",
         })
       })
+    if (markLabelRef.current) {
+      bloomTlRef.current.to(
+        markLabelRef.current,
+        { autoAlpha: 1, y: 0, duration: TIMING.bloom, ease: "power3.out" },
+        TIMING.spin * 0.5,
+      )
+    }
   }
 
   const landIntoBar = async (nextPath: string) => {
@@ -440,6 +451,10 @@ export const LogoRouteTransition = () => {
 
     breatheRef.current?.kill()
     breatheRef.current = null
+
+    if (markLabelRef.current) {
+      gsap.to(markLabelRef.current, { autoAlpha: 0, duration: 0.18, ease: "power2.out" })
+    }
 
     const cornerLogo = document.querySelector<HTMLElement>(".corner-logo")
     const nav = document.querySelector<HTMLElement>(".site-nav")
@@ -646,6 +661,9 @@ export const LogoRouteTransition = () => {
         className="logo-route-transition__mark"
         idPrefix="route-logo"
       />
+      <p ref={markLabelRef} className="logo-route-transition__label" dir="ltr">
+        <span className="dmtc-gradient">{tMeta("siteNameEn")}</span>
+      </p>
     </div>
   )
 }

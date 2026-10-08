@@ -294,7 +294,7 @@ export function createIntroTimeline(elements: IntroElements) {
       motion.glass.cardRevealStart,
     )
     .set(elements.logo, { opacity: 0 }, motion.intro.petalStart)
-    .set(elements.petalFlights, { opacity: 1 }, motion.intro.petalStart)
+    .set(elements.petalFlights, { opacity: 1, visibility: 'visible' }, motion.intro.petalStart)
 
   elements.petalFlights.forEach((petal, index) => {
     const start = motion.intro.petalStart + index * motion.intro.petalTravelStagger

@@ -46,6 +46,13 @@ export const submitQuoteRequest = async (
   let leadId: string | undefined
   let quoteSlaHours = 24
 
+  // The sales backend only knows the original five classes; the two newer ones
+  // are sent as their closest class and named exactly in the notes.
+  const backendBusClass =
+    { premium_vip: "vip", city_large: "city" }[data.busClass as string] ?? data.busClass
+  const busClassNote =
+    backendBusClass !== data.busClass ? `Bus class requested: ${data.busClass}` : ""
+
   const extras = [
     data.needsSupervisors ? "Supervisors" : "",
     data.needsTracking ? "Tracking" : "",
@@ -72,8 +79,8 @@ export const submitQuoteRequest = async (
           dropoff: data.destination,
           date: data.date,
           returnDatetime: data.returnDate || undefined,
-          vehicleType: data.busClass || "standard",
-          busClass: data.busClass || "standard",
+          vehicleType: backendBusClass || "standard",
+          busClass: backendBusClass || "standard",
           passengers: data.passengers,
           busCount: data.busCount || 1,
           channel: "web",
@@ -97,6 +104,7 @@ export const submitQuoteRequest = async (
           preferredContactChannel: "whatsapp",
           consent: data.consent,
           notes: [
+            busClassNote,
             data.serviceType ? `Service: ${data.serviceType}` : "",
             data.stops ? `Stops: ${data.stops}` : "",
             data.departureTime ? `Time: ${data.departureTime}` : "",

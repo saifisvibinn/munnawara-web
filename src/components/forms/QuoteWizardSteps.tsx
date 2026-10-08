@@ -1,22 +1,19 @@
 import type { BusClass, TripType } from "@/components/forms/formSchemas"
 import { cn } from "@/lib/cn"
+import Image from "next/image"
+import { useState } from "react"
 import {
-  airports,
+  busClassImages,
   busClassOptions,
+  corporateServices,
   customerOptions,
-  dawraLengths,
-  defaultZiyarat,
-  extraOptions,
   places,
-  tripDirections,
-  umrahKinds,
-  ziyaratOptions,
-  type Option,
 } from "./quoteWizardConfig"
+import { CheckBadge, choiceIcon } from "./QuoteChoiceIcons"
 import { DatePicker, NumberStepper, TimePicker } from "./QuoteFields"
 import { COPY } from "./quoteWizardCopy"
-import type { SummaryRow, Tx } from "./quoteWizardLogic"
-import type { StepId, WizardState } from "./quoteWizardTypes"
+import { tripLine, type SummaryRow, type Tx } from "./quoteWizardLogic"
+import { MAX_TRIPS, emptyTrip, type StepId, type Trip, type WizardState } from "./quoteWizardTypes"
 import { Choices, Field, PlaceSelect, fieldClass, fieldErrorRing } from "./quoteWizardUi"
 
 export type StepBodyProps = {
@@ -27,11 +24,141 @@ export type StepBodyProps = {
   tx: Tx
   patch: (p: Partial<WizardState>) => void
   jumpTo: (id: StepId) => void
-  serviceOptions: readonly Option[]
-  isCompany: boolean
   needsOrg: boolean
   todayISO: string
   summaryRows: () => SummaryRow[]
+}
+
+const tripFields = ["from", "to", "date", "time"] as const
+
+/** Trips as cards: finished ones collapse to a summary, the open one is editable. */
+function TripsEditor({
+  state,
+  errors,
+  locale,
+  tx,
+  patch,
+  todayISO,
+}: Pick<StepBodyProps, "state" | "errors" | "locale" | "tx" | "patch" | "todayISO">) {
+  const { trips } = state
+  const [open, setOpen] = useState(trips.length - 1)
+  // A validation error always opens the trip it belongs to.
+  const errAt = trips.findIndex((_, i) => tripFields.some((k) => errors[`${k}${i}`]))
+  const current = errAt >= 0 ? errAt : Math.min(open, trips.length - 1)
+  const last = trips[trips.length - 1]
+  const lastDone = tripFields.every((k) => last[k])
+
+  const set = (i: number, p: Partial<Trip>) =>
+    patch({ trips: trips.map((t, j) => (j === i ? { ...t, ...p } : t)) })
+  const add = () => {
+    patch({ trips: [...trips, { ...emptyTrip, from: last.to }] })
+    setOpen(trips.length)
+  }
+  const remove = (i: number) => {
+    patch({ trips: trips.filter((_, j) => j !== i) })
+    setOpen(trips.length - 2)
+  }
+
+  return (
+    <div className="space-y-3">
+      {trips.map((t, i) =>
+        i === current ? (
+          <div
+            key={i}
+            className="space-y-3.5 rounded-2xl border border-border bg-surface-elevated p-4"
+          >
+            <div className="flex items-center justify-between gap-3">
+              <p className="font-label text-xs font-semibold text-orange-text">
+                {tx(COPY.trip(i + 1))}
+              </p>
+              {trips.length > 1 ? (
+                <button
+                  type="button"
+                  className="text-xs font-semibold text-ink-muted transition-colors hover:text-orange-text"
+                  onClick={() => remove(i)}
+                >
+                  {tx(COPY.removeTrip)}
+                </button>
+              ) : null}
+            </div>
+            <div className="grid grid-cols-1 gap-3.5 @lg:grid-cols-2">
+              <Field label={tx(COPY.fields.from)} htmlFor={`qw-from-${i}`} error={errors[`from${i}`]}>
+                <PlaceSelect
+                  id={`qw-from-${i}`}
+                  value={t.from}
+                  options={places}
+                  locale={locale}
+                  placeholder={tx(COPY.pickPlace)}
+                  error={errors[`from${i}`]}
+                  onChange={(v) => set(i, { from: v })}
+                />
+              </Field>
+              <Field label={tx(COPY.fields.to)} htmlFor={`qw-to-${i}`} error={errors[`to${i}`]}>
+                <PlaceSelect
+                  id={`qw-to-${i}`}
+                  value={t.to}
+                  options={places}
+                  locale={locale}
+                  placeholder={tx(COPY.pickPlace)}
+                  error={errors[`to${i}`]}
+                  onChange={(v) => set(i, { to: v })}
+                />
+              </Field>
+              <Field label={tx(COPY.fields.date)} htmlFor={`qw-date-${i}`} error={errors[`date${i}`]}>
+                <DatePicker
+                  id={`qw-date-${i}`}
+                  locale={locale}
+                  value={t.date}
+                  min={todayISO}
+                  placeholder={tx(COPY.pickDate)}
+                  error={errors[`date${i}`]}
+                  onChange={(v) => set(i, { date: v })}
+                />
+              </Field>
+              <Field label={tx(COPY.fields.time)} htmlFor={`qw-time-${i}`} error={errors[`time${i}`]}>
+                <TimePicker
+                  id={`qw-time-${i}`}
+                  locale={locale}
+                  value={t.time}
+                  placeholder={tx(COPY.pickTime)}
+                  error={errors[`time${i}`]}
+                  onChange={(v) => set(i, { time: v })}
+                />
+              </Field>
+            </div>
+          </div>
+        ) : (
+          <div
+            key={i}
+            className="flex items-start justify-between gap-3 rounded-2xl border border-border bg-surface-muted px-4 py-3"
+          >
+            <div className="min-w-0">
+              <p className="font-label text-xs font-semibold text-orange-text">
+                {tx(COPY.trip(i + 1))}
+              </p>
+              <p className="mt-0.5 text-sm font-medium text-ink">{tripLine(t, locale, true)}</p>
+            </div>
+            <button
+              type="button"
+              className="shrink-0 text-xs font-semibold text-orange-text hover:underline"
+              onClick={() => setOpen(i)}
+            >
+              {tx(COPY.edit)}
+            </button>
+          </div>
+        ),
+      )}
+      <button
+        type="button"
+        disabled={!lastDone || trips.length >= MAX_TRIPS}
+        onClick={add}
+        className="font-label inline-flex items-center gap-2 rounded-full border border-orange/50 px-4 py-2 text-sm font-semibold text-orange-text transition-[background-color,transform] duration-150 hover:bg-orange/[0.06] active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent disabled:active:scale-100"
+      >
+        <span aria-hidden>+</span>
+        {tx(COPY.addTrip)}
+      </button>
+    </div>
+  )
 }
 
 export function StepBody({
@@ -42,14 +169,10 @@ export function StepBody({
   tx,
   patch,
   jumpTo,
-  serviceOptions,
-  isCompany,
   needsOrg,
   todayISO,
   summaryRows,
 }: StepBodyProps) {
-  const twoWay = state.direction === "twoway"
-  const isLongDawra = state.dawraLength === "long"
   const inputErr = (key: string) => (errors[key] ? fieldErrorRing : "")
 
   switch (step) {
@@ -59,285 +182,132 @@ export function StepBody({
           options={customerOptions}
           value={state.customer}
           locale={locale}
-          onPick={(id) => {
-            const next = id as TripType
+          onPick={(id) =>
             patch({
-              customer: next,
-              service:
-                (next === "company") === isCompany || !state.service ? state.service : "",
+              customer: id as TripType,
+              service: id === "company" ? state.service : "",
             })
-          }}
+          }
         />
       )
     case "service":
       return (
         <Choices
-          options={serviceOptions}
+          options={corporateServices}
           value={state.service}
           locale={locale}
-          onPick={(id) => patch({ service: id, umrahKind: "", dawraLength: "" })}
+          onPick={(id) => patch({ service: id })}
         />
       )
-    case "umrahKind":
+    case "route":
       return (
-        <Choices
-          options={umrahKinds}
-          value={state.umrahKind}
+        <TripsEditor
+          state={state}
+          errors={errors}
           locale={locale}
-          onPick={(id) => patch({ umrahKind: id })}
+          tx={tx}
+          patch={patch}
+          todayISO={todayISO}
         />
       )
-    case "dawraLength":
+    case "vehicle":
       return (
-        <Choices
-          options={dawraLengths}
-          value={state.dawraLength}
-          locale={locale}
-          onPick={(id) =>
-            patch({ dawraLength: id, mazarat: id === "long" ? defaultZiyarat() : [] })
-          }
-        />
-      )
-    case "dawraRoute":
-      return (
-        <div className="space-y-4">
-          <div className="grid grid-cols-1 gap-3.5 @lg:grid-cols-2">
-            <Field label={tx(COPY.fields.arrival)} htmlFor="qw-arrival">
-              <PlaceSelect
-                id="qw-arrival"
-                value={state.arrival}
-                options={airports}
-                locale={locale}
-                placeholder=""
-                onChange={(v) => v && patch({ arrival: v })}
-              />
-            </Field>
-            <Field label={tx(COPY.fields.departure)} htmlFor="qw-departure">
-              <PlaceSelect
-                id="qw-departure"
-                value={state.departure}
-                options={airports}
-                locale={locale}
-                placeholder=""
-                onChange={(v) => v && patch({ departure: v })}
-              />
-            </Field>
-          </div>
-          {isLongDawra ? (
-            <fieldset className="space-y-4">
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                <legend className="font-label text-[0.7rem] font-semibold tracking-[0.14em] text-ink-muted uppercase">
-                  {tx(COPY.ziyaratTitle)}
-                </legend>
-                <div className="flex gap-1 text-xs font-semibold text-orange">
-                  <button
-                    type="button"
-                    className="rounded-md px-2 py-1 hover:underline"
-                    onClick={() => patch({ mazarat: ziyaratOptions.map((z) => z.id) })}
+        <div
+          className="grid grid-cols-1 items-start gap-3 @md:grid-cols-2 @3xl:grid-cols-3 @4xl:grid-cols-4"
+          role="radiogroup"
+          aria-label={tx(COPY.titles.vehicle)}
+        >
+          {busClassOptions.map((o) => {
+            const selected = state.busClass === o.id
+            return (
+              <div
+                key={o.id}
+                className={cn(
+                  "flex flex-col rounded-2xl border bg-surface-elevated p-2 transition-[border-color,box-shadow] duration-150 ease-out motion-reduce:transition-none",
+                  selected
+                    ? "border-orange shadow-[0_0_0_1px_var(--brand-orange),0_16px_32px_-22px_rgb(243_112_33/0.8)]"
+                    : "border-border hover:border-ink/20 hover:shadow-[0_12px_28px_-20px_rgb(0_0_0/0.5)]",
+                )}
+              >
+                <button
+                  type="button"
+                  role="radio"
+                  aria-checked={selected}
+                  onClick={() => patch({ busClass: o.id as BusClass })}
+                  className="group flex items-center gap-3 rounded-xl text-start focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange/60 @md:flex-col @md:items-stretch @md:gap-0"
+                >
+                  <span className="relative block aspect-[3/2] w-[44%] shrink-0 overflow-hidden rounded-xl bg-surface-muted @md:w-full">
+                    <Image
+                      src={busClassImages[o.id]}
+                      alt=""
+                      fill
+                      sizes="(min-width: 1280px) 240px, (min-width: 768px) 33vw, 45vw"
+                      className="scale-[1.12] object-contain transition-transform duration-500 ease-out group-hover:scale-[1.18] motion-reduce:transition-none motion-reduce:group-hover:scale-[1.12]"
+                    />
+                    {selected ? (
+                      <CheckBadge />
+                    ) : (
+                      <span
+                        aria-hidden
+                        className="absolute end-2 top-2 size-5 rounded-full border-[1.5px] border-white bg-black/20 shadow-sm"
+                      />
+                    )}
+                  </span>
+                  <span className="block min-w-0 @md:mt-3 @md:px-1.5">
+                    <span className="block text-[0.95rem] leading-snug font-semibold text-ink">
+                      {tx(o.label)}
+                    </span>
+                    <span className="mt-1 mb-1 flex items-center gap-1.5 text-xs text-ink-muted">
+                      {choiceIcon("individual")}
+                      {tx(o.hint)}
+                    </span>
+                  </span>
+                </button>
+                {selected ? (
+                  <Field
+                    label={tx(COPY.fields.busCount)}
+                    htmlFor="qw-buses"
+                    error={errors.busCount}
+                    className="mt-2 border-t border-border px-1.5 pt-3 pb-1"
                   >
-                    {tx(COPY.selectAll)}
-                  </button>
-                  <button
-                    type="button"
-                    className="rounded-md px-2 py-1 hover:underline"
-                    onClick={() => patch({ mazarat: [] })}
-                  >
-                    {tx(COPY.selectNone)}
-                  </button>
-                </div>
+                    <NumberStepper
+                      id="qw-buses"
+                      locale={locale}
+                      min={1}
+                      max={50}
+                      error={errors.busCount}
+                      value={state.busCount}
+                      onChange={(v) => patch({ busCount: v })}
+                    />
+                  </Field>
+                ) : null}
               </div>
-              {(["makkah", "madinah"] as const).map((city) => (
-                <div key={city}>
-                  <p className="mb-2 text-sm font-semibold text-ink">
-                    {tx(city === "makkah" ? COPY.cityMakkah : COPY.cityMadinah)}
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    {ziyaratOptions
-                      .filter((z) => z.city === city)
-                      .map((o) => {
-                        const on = state.mazarat.includes(o.id)
-                        return (
-                          <button
-                            key={o.id}
-                            type="button"
-                            aria-pressed={on}
-                            onClick={() =>
-                              patch({
-                                mazarat: on
-                                  ? state.mazarat.filter((m) => m !== o.id)
-                                  : [...state.mazarat, o.id],
-                              })
-                            }
-                            className={cn(
-                              "rounded-full px-3.5 py-2 text-sm transition",
-                              on
-                                ? "bg-orange/15 text-ink ring-2 ring-orange"
-                                : "bg-surface-muted text-ink ring-1 ring-transparent hover:bg-surface-container",
-                            )}
-                          >
-                            {tx(o.label)}
-                          </button>
-                        )
-                      })}
-                  </div>
-                </div>
-              ))}
-            </fieldset>
-          ) : null}
+            )
+          })}
         </div>
       )
-    case "maktaaRoute":
-      return (
-        <div className="space-y-4">
-          <Choices
-            options={tripDirections}
-            value={state.direction}
-            locale={locale}
-            onPick={(id) => patch({ direction: id })}
-          />
-          <div className="grid grid-cols-1 gap-3.5 @lg:grid-cols-2">
-            <Field label={tx(COPY.fields.from)} htmlFor="qw-from" error={errors.from}>
-              <PlaceSelect
-                id="qw-from"
-                value={state.from}
-                options={places}
-                locale={locale}
-                placeholder={tx(COPY.pickPlace)}
-                error={errors.from}
-                onChange={(v) => patch({ from: v })}
-              />
-            </Field>
-            <Field label={tx(COPY.fields.to)} htmlFor="qw-to" error={errors.to}>
-              <PlaceSelect
-                id="qw-to"
-                value={state.to}
-                options={places}
-                locale={locale}
-                placeholder={tx(COPY.pickPlace)}
-                error={errors.to}
-                onChange={(v) => patch({ to: v })}
-              />
-            </Field>
-          </div>
-        </div>
-      )
-    case "charterRoute":
-      return (
-        <div className="grid grid-cols-1 gap-3.5 @lg:grid-cols-2">
-          <Field label={tx(COPY.fields.pickup)} htmlFor="qw-pickup" error={errors.pickup}>
-            <input
-              id="qw-pickup"
-              name="pickup"
-              className={cn(fieldClass, inputErr("pickup"))}
-              value={state.pickup}
-              onChange={(e) => patch({ pickup: e.target.value })}
-            />
-          </Field>
-          <Field
-            label={tx(COPY.fields.destination)}
-            htmlFor="qw-destination"
-            error={errors.destination}
-          >
-            <input
-              id="qw-destination"
-              name="destination"
-              className={cn(fieldClass, inputErr("destination"))}
-              value={state.destination}
-              onChange={(e) => patch({ destination: e.target.value })}
-            />
-          </Field>
-          <Field
-            label={tx(COPY.fields.stops)}
-            htmlFor="qw-stops"
-            className="@lg:col-span-2"
-          >
-            <input
-              id="qw-stops"
-              name="stops"
-              className={fieldClass}
-              value={state.stops}
-              onChange={(e) => patch({ stops: e.target.value })}
-            />
-          </Field>
-        </div>
-      )
-    case "when": {
-      const returnRequired = state.umrahKind === "maktaa" && twoWay
-      return (
-        <div className="grid grid-cols-1 gap-3.5 @lg:grid-cols-2">
-          <Field label={tx(COPY.fields.date)} htmlFor="qw-date" error={errors.date}>
-            <DatePicker
-              id="qw-date"
-              locale={locale}
-              value={state.date}
-              min={todayISO}
-              placeholder={tx(COPY.pickDate)}
-              error={errors.date}
-              onChange={(v) => patch({ date: v })}
-            />
-          </Field>
-          <Field label={tx(COPY.fields.time)} htmlFor="qw-time" error={errors.time}>
-            <TimePicker
-              id="qw-time"
-              locale={locale}
-              value={state.time}
-              placeholder={tx(COPY.pickTime)}
-              error={errors.time}
-              onChange={(v) => patch({ time: v })}
-            />
-          </Field>
-          <Field
-            label={tx(
-              returnRequired ? COPY.fields.returnDate : COPY.fields.returnDateOptional,
-            )}
-            htmlFor="qw-return"
-            error={errors.returnDate}
-          >
-            <DatePicker
-              id="qw-return"
-              locale={locale}
-              value={state.returnDate}
-              min={state.date || todayISO}
-              placeholder={tx(COPY.pickDate)}
-              error={errors.returnDate}
-              onChange={(v) => patch({ returnDate: v })}
-            />
-          </Field>
-          {state.service !== "umrah" ? (
-            <Field label={tx(COPY.fields.waiting)} htmlFor="qw-waiting">
-              <NumberStepper
-                id="qw-waiting"
-                locale={locale}
-                min={0}
-                max={168}
-                placeholder="0"
-                value={state.waitingHours}
-                onChange={(v) => patch({ waitingHours: v })}
-              />
-            </Field>
-          ) : null}
-        </div>
-      )
-    }
     case "passengers":
       return (
-        <div className="grid grid-cols-1 gap-3.5 @lg:grid-cols-2">
-          <Field
-            label={tx(COPY.fields.passengers)}
-            htmlFor="qw-pax"
+        <Field
+          label={tx(COPY.fields.passengers)}
+          htmlFor="qw-pax"
+          error={errors.passengers}
+        >
+          <NumberStepper
+            id="qw-pax"
+            locale={locale}
+            min={1}
+            max={500}
+            step={1}
             error={errors.passengers}
-          >
-            <NumberStepper
-              id="qw-pax"
-              locale={locale}
-              min={1}
-              max={500}
-              step={1}
-              error={errors.passengers}
-              value={state.passengers}
-              onChange={(v) => patch({ passengers: v })}
-            />
-          </Field>
+            value={state.passengers}
+            onChange={(v) => patch({ passengers: v })}
+          />
+        </Field>
+      )
+    case "notes":
+      return (
+        <div className="grid grid-cols-1 gap-3.5 @lg:grid-cols-2">
           <Field label={tx(COPY.fields.luggage)} htmlFor="qw-luggage">
             <input
               id="qw-luggage"
@@ -347,11 +317,7 @@ export function StepBody({
               onChange={(e) => patch({ luggage: e.target.value })}
             />
           </Field>
-          <Field
-            label={tx(COPY.fields.accessibility)}
-            htmlFor="qw-access"
-            className="@lg:col-span-2"
-          >
+          <Field label={tx(COPY.fields.accessibility)} htmlFor="qw-access">
             <input
               id="qw-access"
               name="access"
@@ -360,57 +326,7 @@ export function StepBody({
               onChange={(e) => patch({ accessibility: e.target.value })}
             />
           </Field>
-        </div>
-      )
-    case "vehicle":
-      return (
-        <div className="space-y-4">
-          <Field
-            label={tx(COPY.fields.busCount)}
-            htmlFor="qw-buses"
-            error={errors.busCount}
-          >
-            <NumberStepper
-              id="qw-buses"
-              locale={locale}
-              min={1}
-              max={50}
-              error={errors.busCount}
-              value={state.busCount}
-              onChange={(v) => patch({ busCount: v })}
-            />
-          </Field>
-          <Choices
-            options={busClassOptions}
-            value={state.busClass}
-            locale={locale}
-            onPick={(id) => patch({ busClass: id as BusClass })}
-          />
-        </div>
-      )
-    case "extras":
-      return (
-        <div className="space-y-4">
-          <div className="grid grid-cols-1 gap-2.5 @lg:grid-cols-2">
-            {extraOptions.map((o) => (
-              <label
-                key={o.id}
-                className="flex cursor-pointer items-center gap-3 rounded-xl bg-surface-muted px-3.5 py-3 text-sm text-ink/80"
-              >
-                <input
-                  type="checkbox"
-                  name={`extra-${o.id}`}
-                  className="qw-check"
-                  checked={state.extras[o.id]}
-                  onChange={(e) =>
-                    patch({ extras: { ...state.extras, [o.id]: e.target.checked } })
-                  }
-                />
-                {tx(o.label)}
-              </label>
-            ))}
-          </div>
-          <Field label={tx(COPY.fields.notes)} htmlFor="qw-notes">
+          <Field label={tx(COPY.fields.notes)} htmlFor="qw-notes" className="@lg:col-span-2">
             <textarea
               id="qw-notes"
               name="notes"
@@ -488,7 +404,7 @@ export function StepBody({
           <dl className="divide-y divide-border rounded-xl bg-surface-muted/60 text-sm">
             {summaryRows().map((row) => (
               <div
-                key={row.id + row.value}
+                key={row.id + row.label.en + row.value}
                 className="flex items-start justify-between gap-3 px-4 py-2.5"
               >
                 <div className="min-w-0">
@@ -497,7 +413,7 @@ export function StepBody({
                 </div>
                 <button
                   type="button"
-                  className="shrink-0 text-xs font-semibold text-orange hover:underline"
+                  className="shrink-0 text-xs font-semibold text-orange-text hover:underline"
                   onClick={() => jumpTo(row.id)}
                 >
                   {tx(COPY.edit)}

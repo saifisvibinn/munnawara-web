@@ -6,15 +6,7 @@ import { useReducedMotion } from "@/hooks/useReducedMotion"
 import { cn } from "@/lib/cn"
 import { useLocale } from "next-intl"
 import { useEffect, useMemo, useRef, useState, type FormEvent, type ReactNode } from "react"
-import {
-  charterService,
-  corporateServices,
-  orgRequired,
-  pick,
-  umrahService,
-  type L10n,
-  type Option,
-} from "./quoteWizardConfig"
+import { pick, type L10n } from "./quoteWizardConfig"
 import dynamic from "next/dynamic"
 import { GlobeVisual } from "./QuoteVisuals"
 import { COPY } from "./quoteWizardCopy"
@@ -22,8 +14,8 @@ import {
   buildQuotePayload,
   buildSummaryRows,
   computeSteps,
-  getFinalStops,
   getMapView,
+  getRouteStops,
   getServiceType,
   getTodayISO,
   validateStep,
@@ -65,13 +57,9 @@ export const QuoteWizard = ({
     setErrors({})
   }
 
-  const isCompany = state.customer === "company"
-  const needsOrg = state.customer !== "" && orgRequired.includes(state.customer)
+  const needsOrg = state.customer !== ""
 
-  const steps = useMemo<StepId[]>(
-    () => computeSteps(state.service, state.umrahKind),
-    [state.service, state.umrahKind],
-  )
+  const steps = useMemo<StepId[]>(() => computeSteps(state.customer), [state.customer])
 
   // Bring the first validation message into view (e.g. consent below the fold on phones).
   useEffect(() => {
@@ -84,17 +72,13 @@ export const QuoteWizard = ({
   const stepIndexSafe = Math.min(stepIndex, steps.length - 1)
   const step = steps[stepIndexSafe]
 
-  const serviceOptions: readonly Option[] = isCompany
-    ? corporateServices
-    : [umrahService, charterService]
-
   /* ---- derived trip data ---- */
 
   const todayISO = getTodayISO()
-  const mapView = () => getMapView(step, state)
-  const finalStops = () => getFinalStops(state)
-  const serviceType = getServiceType(state, isCompany)
-  const summaryRows = () => buildSummaryRows(state, locale, serviceOptions, tx)
+  const mapView = () => getMapView(state)
+  const finalStops = () => getRouteStops(state)
+  const serviceType = getServiceType(state)
+  const summaryRows = () => buildSummaryRows(state, locale, tx)
 
   /* ---- navigation ---- */
 
@@ -171,6 +155,14 @@ export const QuoteWizard = ({
   const shell = (children: ReactNode, mv?: MapView) => {
     if (split) {
       const view = mv ?? mapView()
+      // Live summary only shows what the visitor has reached, not untouched defaults.
+      const rows =
+        status === "done"
+          ? []
+          : summaryRows().filter((row) => {
+              const i = steps.indexOf(row.id)
+              return i !== -1 && i <= stepIndexSafe
+            })
       return (
         <div
           id={formId}
@@ -178,28 +170,52 @@ export const QuoteWizard = ({
           dir={isAr ? "rtl" : "ltr"}
           className={cn("qw-split text-start", className)}
         >
-          <aside className="qw-split__map" aria-label={isAr ? "الخريطة" : "Route map"}>
-            <QuoteMap
-              stops={view.stops}
-              context={view.context}
-              locale={locale}
-              still={reducedMotion}
-              className="qmap qmap--fill"
-            />
+          <section className="qw-split__panel">
             {heading ? (
-              <div className="qw-split__chip">
-                {heading.eyebrow ? (
-                  <p className="font-label hidden text-[0.62rem] font-semibold tracking-[0.18em] text-orange uppercase sm:block">
-                    {heading.eyebrow}
-                  </p>
-                ) : null}
-                <h1 className="font-display text-base leading-tight font-semibold text-ink sm:text-xl">
-                  {heading.title}
-                </h1>
-              </div>
+              <header className="mb-5 flex shrink-0 flex-wrap items-start justify-between gap-x-4 gap-y-1">
+                <div className="min-w-0">
+                  <h1 className="font-display text-2xl leading-tight font-semibold text-balance text-ink sm:text-[1.75rem]">
+                    {heading.title}
+                  </h1>
+                  {heading.eyebrow ? (
+                    <p className="mt-1 text-sm text-ink-muted">{heading.eyebrow}</p>
+                  ) : null}
+                </div>
+                {toolbar}
+              </header>
             ) : null}
+            {children}
+          </section>
+          <aside className="qw-split__side">
+            {status === "done" ? null : (
+              <div data-lenis-prevent className="qw-split__summary" aria-live="polite">
+                <h2 className="font-display text-lg font-semibold text-ink">
+                  {tx(COPY.summaryTitle)}
+                </h2>
+                {rows.length ? (
+                  <dl className="mt-3 divide-y divide-border">
+                    {rows.map((row) => (
+                      <div key={row.id + row.label.en} className="py-2.5 first:pt-0 last:pb-0">
+                        <dt className="text-xs text-ink-muted">{tx(row.label)}</dt>
+                        <dd className="mt-0.5 text-sm leading-snug font-medium text-ink">{row.value}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                ) : (
+                  <p className="mt-3 text-sm text-ink-muted">{tx(COPY.summaryEmpty)}</p>
+                )}
+              </div>
+            )}
+            <div className="qw-split__map" aria-label={isAr ? "الخريطة" : "Route map"}>
+              <QuoteMap
+                stops={view.stops}
+                context={view.context}
+                locale={locale}
+                still={reducedMotion}
+                className="qmap qmap--fill"
+              />
+            </div>
           </aside>
-          <section className="qw-split__panel">{children}</section>
         </div>
       )
     }
@@ -263,13 +279,7 @@ export const QuoteWizard = ({
   /* ---- step bodies ---- */
 
   const showGlobe = step === "customer" || step === "service"
-  const showRoute =
-    step === "umrahKind" ||
-    step === "dawraLength" ||
-    step === "dawraRoute" ||
-    step === "maktaaRoute"
-
-  const mapData = showRoute && !split ? mapView() : null
+  const mapData = step === "route" && !split ? mapView() : null
 
   const body = (
     <StepBody
@@ -280,8 +290,6 @@ export const QuoteWizard = ({
       tx={tx}
       patch={patch}
       jumpTo={jumpTo}
-      serviceOptions={serviceOptions}
-      isCompany={isCompany}
       needsOrg={needsOrg}
       todayISO={todayISO}
       summaryRows={summaryRows}
@@ -289,32 +297,22 @@ export const QuoteWizard = ({
   )
 
   const isLast = stepIndexSafe === steps.length - 1
-  const isChoiceStep =
-    step === "customer" || step === "service" || step === "umrahKind" || step === "dawraLength"
-  const choiceValue =
-    step === "customer"
-      ? state.customer
-      : step === "service"
-        ? state.service
-        : step === "umrahKind"
-          ? state.umrahKind
-          : step === "dawraLength"
-            ? state.dawraLength
-            : ""
+  const isChoiceStep = step === "customer" || step === "service"
+  const choiceValue = step === "customer" ? state.customer : step === "service" ? state.service : ""
   const showContinue = !isChoiceStep || Boolean(choiceValue)
   const stepName = tx(COPY.stepNames[step])
   const stepLabel = tx(COPY.stepOf(stepIndexSafe + 1, steps.length, stepName))
 
   return shell(
     <>
-      <div className={split ? "mb-4 shrink-0" : "mb-5"}>
+      <div className={split ? "mb-5 shrink-0" : "mb-5"}>
         <StepProgress
           current={stepIndexSafe + 1}
           total={steps.length}
           name={stepName}
           counter={tx(COPY.stepCount(stepIndexSafe + 1, steps.length))}
           label={stepLabel}
-          toolbar={toolbar}
+          toolbar={split ? undefined : toolbar}
         />
         <div className="sr-only" aria-live="polite">
           {stepLabel}
@@ -378,7 +376,7 @@ export const QuoteWizard = ({
         ) : null}
         </div>
 
-        <div className={split ? "flex shrink-0 flex-wrap items-center gap-2 border-t border-border pt-3" : "flex flex-wrap items-center gap-2 pt-1"}>
+        <div className={split ? "flex shrink-0 flex-wrap items-center gap-2 border-t border-border pt-4" : "flex flex-wrap items-center gap-2 pt-1"}>
           {stepIndexSafe > 0 ? (
             <button type="button" className={btnGhost} onClick={goBack}>
               {tx(COPY.back)}

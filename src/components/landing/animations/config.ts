@@ -1,7 +1,7 @@
 export const animationConfig = {
   loader: {
-    /** Short brand beat only — real wait is asset readiness, not padding. */
-    minimumMs: 2400,
+    /** Logo hold before the intro hands off to the hero; asset readiness can only extend it. */
+    minimumMs: 6000,
     /** Empty dark beat before petals enter from off-screen. */
     assembleDelay: 0.4,
     /** Petals fly in from outside the viewport and lock in the center. */

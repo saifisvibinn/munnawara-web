@@ -2,6 +2,7 @@
 
 import { cn } from "@/lib/cn"
 import {
+  Fragment,
   useCallback,
   useEffect,
   useId,
@@ -20,7 +21,7 @@ import { createPortal } from "react-dom"
 /* -------------------------------------------------------------------------- */
 
 export const triggerClass =
-  "flex w-full min-w-0 items-center justify-between gap-3 rounded-xl border border-border bg-surface-muted px-4 py-3.5 text-start text-base text-ink outline-none transition hover:border-orange/30 focus-visible:border-orange/50 focus-visible:bg-surface-elevated focus-visible:ring-2 focus-visible:ring-orange/25 sm:text-[0.9375rem]"
+  "flex w-full min-w-0 items-center justify-between gap-3 rounded-xl border border-border bg-surface-elevated px-4 py-3.5 text-start text-base text-ink outline-none transition hover:border-ink/20 focus-visible:border-orange/60 focus-visible:ring-2 focus-visible:ring-orange/20 sm:text-[0.9375rem]"
 
 const errorRing = "ring-2 ring-red-400/50 bg-red-50/60 dark:bg-red-950/40"
 
@@ -167,7 +168,7 @@ function Popover({
 /* Dropdown                                                                    */
 /* -------------------------------------------------------------------------- */
 
-export type DropdownOption = { id: string; label: string; hint?: string }
+export type DropdownOption = { id: string; label: string; hint?: string; group?: string }
 
 export function Dropdown({
   id,
@@ -296,32 +297,41 @@ export function Dropdown({
           options.map((o, i) => {
             const selected = o.id === value
             return (
-              <div
-                key={o.id}
-                id={`${listId}-${i}`}
-                role="option"
-                aria-selected={selected}
-                data-index={i}
-                onPointerEnter={() => setActive(i)}
-                onClick={() => choose(i)}
-                className={cn(
-                  "flex cursor-pointer items-center justify-between gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors",
-                  i === active && "bg-surface-muted",
-                  selected && "font-semibold text-orange",
-                )}
-              >
-                <span className="min-w-0">
-                  <span className="block truncate">{o.label}</span>
-                  {o.hint ? (
-                    <span className="block truncate text-xs font-normal text-ink-muted">{o.hint}</span>
-                  ) : null}
-                </span>
-                {selected ? (
-                  <svg viewBox="0 0 20 20" className="size-4 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                    <path d="m4.5 10.5 3.5 3.5 7.5-8" />
-                  </svg>
+              <Fragment key={o.id}>
+                {o.group && o.group !== options[i - 1]?.group ? (
+                  <p
+                    role="presentation"
+                    className="font-label px-3 pt-2.5 pb-1 text-[0.65rem] font-semibold tracking-[0.14em] text-ink-muted uppercase rtl:tracking-normal"
+                  >
+                    {o.group}
+                  </p>
                 ) : null}
-              </div>
+                <div
+                  id={`${listId}-${i}`}
+                  role="option"
+                  aria-selected={selected}
+                  data-index={i}
+                  onPointerEnter={() => setActive(i)}
+                  onClick={() => choose(i)}
+                  className={cn(
+                    "flex cursor-pointer items-center justify-between gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors",
+                    i === active && "bg-surface-muted",
+                    selected && "font-semibold text-orange",
+                  )}
+                >
+                  <span className="min-w-0">
+                    <span className="block truncate">{o.label}</span>
+                    {o.hint ? (
+                      <span className="block truncate text-xs font-normal text-ink-muted">{o.hint}</span>
+                    ) : null}
+                  </span>
+                  {selected ? (
+                    <svg viewBox="0 0 20 20" className="size-4 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <path d="m4.5 10.5 3.5 3.5 7.5-8" />
+                    </svg>
+                  ) : null}
+                </div>
+              </Fragment>
             )
           })
         )}
@@ -779,7 +789,7 @@ export function NumberStepper({
   const bump = (delta: number) => onChange(String(clamp((has ? n : min) + delta)))
 
   const btn =
-    "grid size-11 shrink-0 place-items-center rounded-xl border border-border bg-surface-muted text-lg text-ink transition hover:border-orange/40 hover:bg-surface-container active:scale-95 disabled:cursor-not-allowed disabled:opacity-35 sm:size-[2.9rem]"
+    "grid size-11 shrink-0 place-items-center rounded-xl border border-border bg-surface-elevated text-lg text-ink transition hover:border-orange/50 hover:bg-orange/[0.06] active:scale-95 disabled:cursor-not-allowed disabled:opacity-35 disabled:hover:border-border disabled:hover:bg-surface-elevated sm:size-[2.9rem]"
 
   return (
     <div className="flex items-stretch gap-2" dir="ltr">
@@ -800,7 +810,7 @@ export function NumberStepper({
         placeholder={placeholder}
         aria-invalid={error ? true : undefined}
         className={cn(
-          "min-w-0 flex-1 rounded-xl border border-border bg-surface-muted px-3 py-3 text-center text-base font-semibold tabular-nums text-ink outline-none transition placeholder:font-normal placeholder:text-ink-muted focus:border-orange/50 focus:bg-surface-elevated focus:ring-2 focus:ring-orange/25",
+          "min-w-0 flex-1 rounded-xl border border-border bg-surface-elevated px-3 py-3 text-center text-base font-semibold tabular-nums text-ink outline-none transition placeholder:font-normal placeholder:text-ink-muted hover:border-ink/20 focus:border-orange/60 focus:ring-2 focus:ring-orange/20",
           error && errorRing,
         )}
         value={value}

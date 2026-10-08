@@ -21,7 +21,7 @@ type HeroVideoProps = {
   reducedMotion: boolean
 }
 
-const VIDEO_SRC = "/hero/backvid.mp4"
+const VIDEO_SRC = "/hero/NewHero.mp4"
 
 export const HeroVideo = forwardRef<HeroVideoHandle, HeroVideoProps>(
   function HeroVideo({ reducedMotion }, ref) {
@@ -32,8 +32,6 @@ export const HeroVideo = forwardRef<HeroVideoHandle, HeroVideoProps>(
     const preferFinalFrameRef = useRef(false)
     const playPendingRef = useRef(false)
     const [ready, setReady] = useState(false)
-    const [mobile, setMobile] = useState(false)
-    const [rtl, setRtl] = useState(false)
 
     const freezeAtLastSecond = useCallback(() => {
       const video = videoRef.current
@@ -243,33 +241,6 @@ export const HeroVideo = forwardRef<HeroVideoHandle, HeroVideoProps>(
       }
     }, [freezeAtLastSecond, playForward, reducedMotion])
 
-    useEffect(() => {
-      const query = window.matchMedia(
-        `(max-width: ${motion.video.mobileBreakpoint}px)`,
-      )
-      const update = () => setMobile(query.matches)
-      update()
-      query.addEventListener("change", update)
-      return () => query.removeEventListener("change", update)
-    }, [])
-
-    useEffect(() => {
-      const sync = () => setRtl(document.documentElement.dir === "rtl")
-      sync()
-      const observer = new MutationObserver(sync)
-      observer.observe(document.documentElement, {
-        attributes: true,
-        attributeFilter: ["dir"],
-      })
-      return () => observer.disconnect()
-    }, [])
-
-    const objectPosition = mobile
-      ? motion.video.objectPositionMobile
-      : rtl
-        ? "30% center"
-        : motion.video.objectPositionDesktop
-
     return (
       <div
         className={`hero-video${ready ? " hero-video--ready" : ""}`}
@@ -283,9 +254,6 @@ export const HeroVideo = forwardRef<HeroVideoHandle, HeroVideoProps>(
           playsInline
           preload="auto"
           loop={false}
-          style={{
-            objectPosition,
-          }}
         >
           <source src={VIDEO_SRC} type="video/mp4" />
         </video>

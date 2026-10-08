@@ -12,6 +12,7 @@ import {
   type MouseEvent,
 } from "react"
 import { ChatWidget } from "@/components/chat/ChatWidget"
+import { BusFront, ChevronLeft, ChevronRight } from "lucide-react"
 import { animationConfig as motion } from "./animations/config"
 import {
   createIntroTimeline,
@@ -19,7 +20,6 @@ import {
   setIntroFinalState,
   type IntroElements,
 } from "./animations/introTimeline"
-import { ExploreButton } from "./ExploreButton"
 import { HeroVideo, type HeroVideoHandle } from "./HeroVideo"
 import { ThemeToggle } from "@/components/theme/ThemeToggle"
 import { LandingLanguageSwitcher } from "./LandingLanguageSwitcher"
@@ -255,6 +255,7 @@ type DamLandingProps = {
 
 export const DamLanding = ({ copy }: DamLandingProps) => {
   const tCommon = useTranslations("common")
+  const tMeta = useTranslations("meta")
   const locale = useLocale()
   const loadingLabel = tCommon("loading")
   const loadingChars =
@@ -506,6 +507,9 @@ export const DamLanding = ({ copy }: DamLandingProps) => {
         resolveAssemble = resolve
       })
 
+      const loadingTextAt =
+        motion.loader.assembleDelay + motion.loader.assembleDuration * 0.45
+
       assemble = gsap
         .timeline({
           onComplete: () => {
@@ -535,7 +539,19 @@ export const DamLanding = ({ copy }: DamLandingProps) => {
             duration: 0.35,
             ease: motion.ease.soft,
           },
-          motion.loader.assembleDelay + motion.loader.assembleDuration * 0.45,
+          loadingTextAt,
+        )
+        .to(elements.brandName, { opacity: 1, duration: 0.2 }, loadingTextAt)
+        .to(
+          brandWords,
+          {
+            opacity: 1,
+            y: 0,
+            duration: motion.loader.companyRevealDuration,
+            stagger: motion.loader.companyWordStagger,
+            ease: motion.ease.soft,
+          },
+          loadingTextAt,
         )
 
       const assembleSettleAt =
@@ -602,18 +618,6 @@ export const DamLanding = ({ copy }: DamLandingProps) => {
             ease: motion.ease.soft,
           })
           .set(loaderStatus, { visibility: "hidden" })
-          .to(elements.brandName, { opacity: 1, duration: 0.2 }, "-=0.05")
-          .to(
-            brandWords,
-            {
-              opacity: 1,
-              y: 0,
-              duration: motion.loader.companyRevealDuration,
-              stagger: motion.loader.companyWordStagger,
-              ease: motion.ease.soft,
-            },
-            "<",
-          )
       }
 
       void finishLoading()
@@ -867,14 +871,16 @@ export const DamLanding = ({ copy }: DamLandingProps) => {
     }
   }, [loaded, prefersReducedMotion])
 
-  const handleExplore = (event: MouseEvent<HTMLAnchorElement>) => {
+  const handlePrimaryCta = (event: MouseEvent<HTMLAnchorElement>) => {
     event.preventDefault()
-    scrollToTarget("#how-it-works", { offset: -88 })
+    scrollToTarget("#quote", { offset: -88 })
   }
 
   const handleGoTop = () => {
     scrollToTarget("#home", { offset: 0 })
   }
+
+  const DirectionChevron = locale === "ar" ? ChevronLeft : ChevronRight
 
   return (
     <div className="dam-landing">
@@ -912,14 +918,25 @@ export const DamLanding = ({ copy }: DamLandingProps) => {
                       <span ref={collectHeroLine}>{copy.sub}</span>
                     </p>
                     <div className="line-mask line-mask--cta">
-                      <ExploreButton
-                        className="hero__cta"
-                        href="#how-it-works"
-                        ref={collectHeroLine}
-                        onClick={handleExplore}
-                      >
-                        {copy.cta}
-                      </ExploreButton>
+                      <div className="hero__actions" ref={collectHeroLine}>
+                        <a
+                          className="hero__action hero__action--primary"
+                          href="#quote"
+                          onClick={handlePrimaryCta}
+                        >
+                          <BusFront aria-hidden="true" />
+                          <span>{copy.primaryCta}</span>
+                          <DirectionChevron aria-hidden="true" />
+                        </a>
+                        <a
+                          className="hero__action hero__action--secondary"
+                          href={`/${locale}/fleet`}
+                        >
+                          <BusFront aria-hidden="true" />
+                          <span>{copy.secondaryCta}</span>
+                          <DirectionChevron aria-hidden="true" />
+                        </a>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -985,11 +1002,23 @@ export const DamLanding = ({ copy }: DamLandingProps) => {
           lang={locale}
           dir={locale === "ar" ? "rtl" : "ltr"}
         >
+          <span
+            className="loader-brand__mark"
+            dir="ltr"
+            ref={(element) => {
+              if (element && !brandWordsRef.current.includes(element))
+                brandWordsRef.current.push(element)
+            }}
+          >
+            <span className="dmtc-gradient">{tMeta("siteNameEn")}</span>
+          </span>
           {copy.brandWords.map((word) => (
             <span
+              className="loader-brand__word"
               key={word}
               ref={(element) => {
-                if (element) brandWordsRef.current.push(element)
+                if (element && !brandWordsRef.current.includes(element))
+                  brandWordsRef.current.push(element)
               }}
             >
               {word}
