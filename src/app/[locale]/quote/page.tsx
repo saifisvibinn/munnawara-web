@@ -7,11 +7,13 @@ import { buildPageMetadata } from "@/lib/seo"
 
 type PageProps = {
   params: Promise<{ locale: string }>
+  searchParams: Promise<{ bus?: string }>
 }
 
 /** Fit-to-screen quote page: map pane + wizard panel (see .qpage in globals.css). */
-const QuotePage = async ({ params }: PageProps) => {
+const QuotePage = async ({ params, searchParams }: PageProps) => {
   const { locale } = await params
+  const { bus } = await searchParams
   setRequestLocale(locale)
   const t = await getTranslations("quote")
   const home = getHome(locale as AppLocale)
@@ -24,6 +26,7 @@ const QuotePage = async ({ params }: PageProps) => {
         layout="split"
         heading={{ eyebrow: home.quoteEyebrow, title: t("title") }}
         toolbar={<QuoteBackLink />}
+        preselectBus={bus}
       />
     </div>
   )

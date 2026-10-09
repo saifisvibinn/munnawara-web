@@ -191,6 +191,7 @@
     "openPhoto": "Open photo full screen",
     "specsAmenities": "On board",
     "showAll": "Show all {count}",
-    "showLess": "Show less"
+    "showLess": "Show less",
+    "requestThisBus": "Request this bus"
   }
 }

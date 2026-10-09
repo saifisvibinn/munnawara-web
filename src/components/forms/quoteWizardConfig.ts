@@ -168,6 +168,22 @@ export const busClassImages: Record<BusClassId, string> = {
   employee: "/quotes/labour-removebg-preview.png",
 }
 
+/** Fleet page category id → quote wizard bus class (for /quote?bus=…). */
+export const fleetCategoryToBusClass: Record<string, BusClassId> = {
+  "premium-vip-2026": "premium_vip",
+  "vip-2026": "vip",
+  "coach-2025-2026": "standard",
+  "city-2025": "city_large",
+  "labour-2024": "employee",
+  "coaster-2026": "city",
+}
+
+export const resolveQuoteBusClass = (raw: string | undefined | null): BusClassId | null => {
+  if (!raw) return null
+  if (busClassOptions.some((o) => o.id === raw)) return raw as BusClassId
+  return fleetCategoryToBusClass[raw] ?? null
+}
+
 /* ---------- Helpers ---------- */
 
 export const pick = (text: L10n, locale: string) => (locale === "ar" ? text.ar : text.en)

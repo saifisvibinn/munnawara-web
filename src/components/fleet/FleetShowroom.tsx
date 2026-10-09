@@ -273,10 +273,10 @@ export const FleetShowroom = ({ categories }: FleetShowroomProps) => {
               </p>
             </div>
             <Link
-              href="/quote"
+              href={`/quote?bus=${encodeURIComponent(bus.id)}`}
               className="inline-flex shrink-0 rounded-full bg-orange px-5 py-2.5 text-sm font-semibold text-white transition-[transform,background-color] duration-150 ease-out hover:bg-orange-soft active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange focus-visible:ring-offset-2 focus-visible:ring-offset-black motion-reduce:transition-none motion-reduce:active:scale-100"
             >
-              {tCommon("requestQuote")}
+              {t("requestThisBus")}
             </Link>
           </div>
 

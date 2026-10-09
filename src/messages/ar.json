@@ -191,6 +191,7 @@
     "openPhoto": "افتح الصورة بملء الشاشة",
     "specsAmenities": "على متن الحافلة",
     "showAll": "عرض الكل ({count})",
-    "showLess": "عرض أقل"
+    "showLess": "عرض أقل",
+    "requestThisBus": "اطلب هذه الحافلة"
   }
 }

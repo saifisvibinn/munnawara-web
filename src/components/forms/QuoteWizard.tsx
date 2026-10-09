@@ -7,7 +7,13 @@ import { cn } from "@/lib/cn"
 import { useLocale } from "next-intl"
 import { useEffect, useMemo, useRef, useState, type FormEvent, type ReactNode } from "react"
 import Image from "next/image"
-import { busClassImages, busClassOptions, pick, type L10n } from "./quoteWizardConfig"
+import {
+  busClassImages,
+  busClassOptions,
+  pick,
+  resolveQuoteBusClass,
+  type L10n,
+} from "./quoteWizardConfig"
 import dynamic from "next/dynamic"
 import { COPY } from "./quoteWizardCopy"
 import {
@@ -36,6 +42,7 @@ export const QuoteWizard = ({
   layout = "stack",
   heading,
   toolbar,
+  preselectBus,
 }: WizardProps) => {
   const locale = useLocale()
   const isAr = locale === "ar"
@@ -61,40 +68,51 @@ export const QuoteWizard = ({
   const [status, setStatus] = useState<"idle" | "submitting" | "done" | "error">("idle")
   const [result, setResult] = useState<{ leadId?: string; sla: number } | null>(null)
   const topRef = useRef<HTMLDivElement>(null)
+  const fleetBusClass = resolveQuoteBusClass(preselectBus)
 
   useEffect(() => {
     try {
       const serialized = sessionStorage.getItem(draftStorageKey)
-      if (!serialized) return
-      const draft = JSON.parse(serialized) as {
-        version?: number
-        state?: WizardState
-        stepIndex?: number
-      }
-      if (
-        (draft.version === 1 || draft.version === 2) &&
-        draft.state &&
-        Array.isArray(draft.state.trips) &&
-        draft.state.busCounts &&
-        typeof draft.stepIndex === "number" &&
-        Number.isInteger(draft.stepIndex)
-      ) {
-        const previousNotesIndex = draft.state.customer === "company" ? 5 : 4
-        const restoredStepIndex =
-          draft.version === 1 && draft.stepIndex >= previousNotesIndex
-            ? draft.stepIndex - 1
-            : draft.stepIndex
-        setState({ ...initialState, ...draft.state })
-        setStepIndex(Math.max(0, restoredStepIndex))
+      if (serialized) {
+        const draft = JSON.parse(serialized) as {
+          version?: number
+          state?: WizardState
+          stepIndex?: number
+        }
+        if (
+          (draft.version === 1 || draft.version === 2) &&
+          draft.state &&
+          Array.isArray(draft.state.trips) &&
+          draft.state.busCounts &&
+          typeof draft.stepIndex === "number" &&
+          Number.isInteger(draft.stepIndex)
+        ) {
+          const previousNotesIndex = draft.state.customer === "company" ? 5 : 4
+          const restoredStepIndex =
+            draft.version === 1 && draft.stepIndex >= previousNotesIndex
+              ? draft.stepIndex - 1
+              : draft.stepIndex
+          // Fleet deep-link wins over a stale draft bus mix.
+          setState({
+            ...initialState,
+            ...draft.state,
+            ...(fleetBusClass ? { busCounts: { [fleetBusClass]: "1" } } : {}),
+          })
+          setStepIndex(Math.max(0, restoredStepIndex))
+          setDraftReady(true)
+          return
+        }
       }
     } catch {
       try {
         sessionStorage.removeItem(draftStorageKey)
       } catch {}
-    } finally {
-      setDraftReady(true)
     }
-  }, [draftStorageKey])
+    if (fleetBusClass) {
+      setState((s) => ({ ...s, busCounts: { [fleetBusClass]: "1" } }))
+    }
+    setDraftReady(true)
+  }, [draftStorageKey, fleetBusClass])
 
   useEffect(() => {
     if (!draftReady) return
@@ -215,13 +233,16 @@ export const QuoteWizard = ({
       const view = mv ?? mapView()
       // The map only earns its space while the visitor is choosing the route.
       const showMap = desktop && step === "route" && status !== "done"
-      // Live summary only shows what the visitor has reached, not untouched defaults.
+      // Live summary only shows what the visitor has reached — except a bus
+      // chosen from the fleet page, which should appear in the details card right away.
       const rows =
         status === "done"
           ? []
           : summaryRows().filter((row) => {
               const i = steps.indexOf(row.id)
-              return i !== -1 && i <= stepIndexSafe
+              if (i === -1) return false
+              if (i <= stepIndexSafe) return true
+              return Boolean(fleetBusClass) && row.id === "vehicle"
             })
       return (
         <div

@@ -10,6 +10,8 @@ export type WizardProps = {
   heading?: { eyebrow?: string; title: string }
   /** Optional chrome beside the title (e.g. back link). */
   toolbar?: ReactNode
+  /** Fleet category id or bus class id from /quote?bus= — preselects that bus. */
+  preselectBus?: string
 }
 
 export type StepId =
