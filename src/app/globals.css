@@ -599,25 +599,22 @@ body:has([data-quote-page]) main#main {
   display: grid;
   gap: var(--qp-gap);
   height: 100%;
-  /* phones & portrait tablets: route map band on top, wizard below */
-  grid-template-rows: clamp(8rem, 24%, 15rem) minmax(0, 1fr);
+  /* below desktop the form owns the whole screen: no map, no summary */
+  grid-template-rows: minmax(0, 1fr);
   grid-template-columns: minmax(0, 1fr);
 }
 .qw-split__side {
-  order: -1;
-  display: flex;
+  display: none;
   flex-direction: column;
   gap: var(--qp-gap);
   min-height: 0;
 }
-.qw-split__summary { display: none; }
-/* desktop & landscape tablets: the wizard is the main stage, summary + map ride alongside */
+/* desktop: the wizard is the main stage, summary + map ride alongside */
 @media (min-width: 1024px) {
   .qw-split {
-    grid-template-rows: minmax(0, 1fr);
     grid-template-columns: minmax(0, 1fr) clamp(19rem, 27vw, 25rem);
   }
-  .qw-split__side { order: 0; }
+  .qw-split__side { display: flex; }
   .qw-split__summary {
     display: flex;
     flex-direction: column;
@@ -634,17 +631,6 @@ body:has([data-quote-page]) main#main {
     border: 1px solid var(--brand-border);
     box-shadow: 0 10px 30px -18px rgb(0 0 0 / 0.45);
   }
-}
-/* short landscape phones: wizard + map side by side, no summary */
-@media (max-height: 560px) and (orientation: landscape) and (min-width: 560px) {
-  .qpage { --qp-gap: 0.5rem; }
-  .qw-split {
-    grid-template-rows: minmax(0, 1fr);
-    grid-template-columns: minmax(0, 1fr) minmax(0, 0.7fr);
-  }
-  .qw-split__side { order: 0; }
-  .qw-split__summary { display: none; }
-  .qw-split__panel { padding: 0.6rem 1rem 0.75rem; }
 }
 
 .qw-split__map {
@@ -663,14 +649,14 @@ body:has([data-quote-page]) main#main {
   display: flex;
   flex-direction: column;
   min-height: 0;
-  padding: 1rem;
+  padding: clamp(0.75rem, 2.2vh, 1.75rem) 1rem;
   border-radius: 1.25rem;
   background: var(--brand-surface-elevated);
   border: 1px solid var(--brand-border);
   box-shadow: 0 10px 30px -18px rgb(0 0 0 / 0.45);
 }
-@media (min-width: 640px) { .qw-split__panel { padding: 1.5rem; } }
-@media (min-width: 1024px) { .qw-split__panel { padding: 1.75rem 2rem; } }
+@media (min-width: 640px) { .qw-split__panel { padding-inline: 1.5rem; } }
+@media (min-width: 1024px) { .qw-split__panel { padding-inline: 2rem; } }
 
 /* thin scrollbar inside the wizard body */
 .qw-scroll { scrollbar-width: thin; scrollbar-color: var(--brand-border) transparent; padding-inline: 0.25rem 0.4rem; }

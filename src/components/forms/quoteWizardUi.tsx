@@ -59,8 +59,9 @@ export function Choices({
   return (
     <div
       className={cn(
-        "grid gap-3",
-        columns === 2 && "grid-cols-[repeat(auto-fit,minmax(min(100%,15.5rem),1fr))]",
+        "grid min-h-0 flex-1 gap-[clamp(0.25rem,1.2vh,0.625rem)] sm:max-h-[26rem] sm:gap-4",
+        columns === 2 &&
+          "auto-rows-[minmax(2.5rem,1fr)] grid-cols-[repeat(auto-fit,minmax(min(100%,16rem),1fr))]",
       )}
       role="radiogroup"
     >
@@ -74,29 +75,29 @@ export function Choices({
             aria-checked={selected}
             onClick={() => onPick(o.id)}
             className={cn(
-              "relative flex items-start gap-3 rounded-2xl border bg-surface-elevated px-3.5 py-3.5 text-start transition-[transform,border-color,background-color,box-shadow] duration-150 ease-out active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange/60 motion-reduce:transition-none motion-reduce:active:scale-100 sm:px-4 sm:py-4",
+              "group relative flex min-h-0 items-center gap-3 rounded-2xl border bg-surface-elevated px-3.5 py-0.5 text-start transition-[transform,border-color,background-color,box-shadow] duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange/60 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-elevated motion-reduce:transition-none sm:min-h-[6rem] sm:flex-col sm:items-start sm:justify-between sm:gap-[clamp(0.5rem,1.6vh,1.25rem)] sm:rounded-[1.25rem] sm:p-[clamp(0.875rem,2.4vh,1.5rem)]",
               selected
-                ? "border-orange bg-orange/[0.06] shadow-[0_0_0_1px_var(--brand-orange)]"
-                : "border-border text-ink hover:border-ink/20 hover:shadow-[0_10px_24px_-18px_rgb(0_0_0/0.45)]",
+                ? "border-orange bg-orange/[0.05] shadow-[0_18px_36px_-26px_rgb(243_112_33/0.65)]"
+                : "border-border text-ink hover:-translate-y-0.5 hover:border-ink/25 hover:shadow-[0_18px_32px_-24px_rgb(0_0_0/0.4)] motion-reduce:hover:translate-y-0 active:translate-y-0",
             )}
           >
             {selected ? <CheckBadge /> : null}
             <span
               className={cn(
-                "mt-0.5 inline-flex size-9 shrink-0 items-center justify-center rounded-full transition-colors duration-150",
+                "inline-flex size-8 shrink-0 items-center justify-center rounded-full border transition-colors duration-200 sm:size-11 [&_svg]:size-4 sm:[&_svg]:size-5",
                 selected
-                  ? "bg-orange/15 text-orange-text"
-                  : "bg-surface-muted text-ink-muted",
+                  ? "border-orange/30 bg-orange/10 text-orange-text"
+                  : "border-border bg-surface text-ink-muted group-hover:text-ink",
               )}
             >
               {choiceIcon(o.id)}
             </span>
-            <span className="min-w-0 pe-5">
-              <span className="block text-sm font-semibold text-ink">
+            <span className="min-w-0">
+              <span className="block text-[0.9375rem] leading-tight font-semibold tracking-[-0.005em] text-ink sm:text-[1.0625rem] sm:leading-snug rtl:tracking-normal">
                 {pick(o.label, locale)}
               </span>
               {o.hint ? (
-                <span className="mt-0.5 block text-xs leading-snug text-ink-muted">
+                <span className="mt-0.5 line-clamp-1 block text-xs leading-snug text-ink-muted sm:mt-1 sm:text-sm">
                   {pick(o.hint, locale)}
                 </span>
               ) : null}
@@ -111,31 +112,26 @@ export function Choices({
 export function StepProgress({
   current,
   total,
-  name,
   counter,
   label,
   toolbar,
 }: {
   current: number
   total: number
-  name: string
   counter: string
   label: string
   toolbar?: ReactNode
 }) {
   return (
-    <div className="space-y-2.5">
-      {toolbar ? <div className="flex min-h-11 items-center">{toolbar}</div> : null}
-      <div className="flex items-center justify-between gap-3">
-        <p className="font-label text-[0.7rem] font-semibold tracking-[0.12em] text-orange-text uppercase rtl:tracking-normal">
-          {name}
-        </p>
-        <p className="font-label shrink-0 text-xs font-semibold text-ink-muted tabular-nums">
+    <div className="space-y-3">
+      <div className="flex min-h-9 items-center justify-between gap-3">
+        {toolbar ?? <span />}
+        <p className="font-label shrink-0 text-xs font-semibold tracking-[0.04em] text-ink-muted tabular-nums">
           {counter}
         </p>
       </div>
       <div
-        className="flex gap-1"
+        className="flex gap-1.5"
         role="progressbar"
         aria-label={label}
         aria-valuemin={1}
@@ -146,8 +142,8 @@ export function StepProgress({
           <span
             key={i}
             className={cn(
-              "h-1 flex-1 rounded-full transition-colors duration-300 ease-out motion-reduce:transition-none",
-              i < current ? "bg-orange" : "bg-surface-container",
+              "h-[3px] flex-1 rounded-full transition-colors duration-300 ease-out motion-reduce:transition-none",
+              i < current ? "bg-orange" : "bg-border",
             )}
           />
         ))}

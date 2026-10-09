@@ -8,7 +8,6 @@ import { useLocale } from "next-intl"
 import { useEffect, useMemo, useRef, useState, type FormEvent, type ReactNode } from "react"
 import { pick, type L10n } from "./quoteWizardConfig"
 import dynamic from "next/dynamic"
-import { GlobeVisual } from "./QuoteVisuals"
 import { COPY } from "./quoteWizardCopy"
 import {
   buildQuotePayload,
@@ -42,7 +41,15 @@ export const QuoteWizard = ({
   const tx = (text: L10n) => pick(text, locale)
   const split = layout === "split"
   const reducedMotion = useReducedMotion()
-
+  // Map tiles are only fetched where the sidebar is shown (matches the 1024px CSS breakpoint).
+  const [desktop, setDesktop] = useState(false)
+  useEffect(() => {
+    const media = window.matchMedia("(min-width: 1024px)")
+    const sync = () => setDesktop(media.matches)
+    sync()
+    media.addEventListener("change", sync)
+    return () => media.removeEventListener("change", sync)
+  }, [])
   const [state, setState] = useState<WizardState>(initialState)
   const [stepIndex, setStepIndex] = useState(0)
   const [dir, setDir] = useState<"fwd" | "back">("fwd")
@@ -171,19 +178,7 @@ export const QuoteWizard = ({
           className={cn("qw-split text-start", className)}
         >
           <section className="qw-split__panel">
-            {heading ? (
-              <header className="mb-5 flex shrink-0 flex-wrap items-start justify-between gap-x-4 gap-y-1">
-                <div className="min-w-0">
-                  <h1 className="font-display text-2xl leading-tight font-semibold text-balance text-ink sm:text-[1.75rem]">
-                    {heading.title}
-                  </h1>
-                  {heading.eyebrow ? (
-                    <p className="mt-1 text-sm text-ink-muted">{heading.eyebrow}</p>
-                  ) : null}
-                </div>
-                {toolbar}
-              </header>
-            ) : null}
+            {heading ? <h1 className="sr-only">{heading.title}</h1> : null}
             {children}
           </section>
           <aside className="qw-split__side">
@@ -207,13 +202,15 @@ export const QuoteWizard = ({
               </div>
             )}
             <div className="qw-split__map" aria-label={isAr ? "الخريطة" : "Route map"}>
-              <QuoteMap
-                stops={view.stops}
-                context={view.context}
-                locale={locale}
-                still={reducedMotion}
-                className="qmap qmap--fill"
-              />
+              {desktop ? (
+                <QuoteMap
+                  stops={view.stops}
+                  context={view.context}
+                  locale={locale}
+                  still={reducedMotion}
+                  className="qmap qmap--fill"
+                />
+              ) : null}
             </div>
           </aside>
         </div>
@@ -278,7 +275,6 @@ export const QuoteWizard = ({
 
   /* ---- step bodies ---- */
 
-  const showGlobe = step === "customer" || step === "service"
   const mapData = step === "route" && !split ? mapView() : null
 
   const body = (
@@ -305,14 +301,13 @@ export const QuoteWizard = ({
 
   return shell(
     <>
-      <div className={split ? "mb-5 shrink-0" : "mb-5"}>
+      <div className={split ? "mb-[clamp(0.75rem,3vh,2.5rem)] shrink-0" : "mb-5"}>
         <StepProgress
           current={stepIndexSafe + 1}
           total={steps.length}
-          name={stepName}
           counter={tx(COPY.stepCount(stepIndexSafe + 1, steps.length))}
           label={stepLabel}
-          toolbar={split ? undefined : toolbar}
+          toolbar={toolbar}
         />
         <div className="sr-only" aria-live="polite">
           {stepLabel}
@@ -324,16 +319,11 @@ export const QuoteWizard = ({
         noValidate
         className={split ? "flex min-h-0 flex-1 flex-col gap-3" : "space-y-5"}
       >
-        <div data-lenis-prevent className={split ? "qw-scroll @container min-h-0 flex-1 overflow-y-auto overscroll-contain" : "@container space-y-5"}>
-        <div key={step} className={cn("qw-step space-y-4", dir === "fwd" ? "qw-step--fwd" : "qw-step--back")}>
-          <div className="flex items-center gap-3">
-            {showGlobe ? (
-              <GlobeVisual className="size-11 shrink-0 sm:size-12" />
-            ) : null}
-            <h2 className="font-display text-xl leading-snug font-semibold text-balance text-ink sm:text-2xl">
-              {tx(COPY.titles[step])}
-            </h2>
-          </div>
+        <div data-lenis-prevent className={split ? "qw-scroll @container flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain" : "@container space-y-5"}>
+        <div key={step} className={cn("qw-step flex flex-col gap-[clamp(0.5rem,1.8vh,1rem)]", split && "min-h-0 flex-1", dir === "fwd" ? "qw-step--fwd" : "qw-step--back")}>
+          <h2 className="shrink-0 font-display text-[clamp(1.125rem,3.4vh,1.5rem)] leading-[1.2] font-semibold tracking-[-0.015em] text-balance text-ink sm:text-[clamp(1.5rem,4.4vh,2.5rem)] sm:leading-[1.15] rtl:tracking-normal">
+            {tx(COPY.titles[step])}
+          </h2>
 
           {mapData ? (
             <QuoteMap
@@ -376,7 +366,7 @@ export const QuoteWizard = ({
         ) : null}
         </div>
 
-        <div className={split ? "flex shrink-0 flex-wrap items-center gap-2 border-t border-border pt-4" : "flex flex-wrap items-center gap-2 pt-1"}>
+        <div className={split ? "flex shrink-0 flex-wrap items-center gap-2 border-t border-border pt-[clamp(0.5rem,1.6vh,1rem)]" : "flex flex-wrap items-center gap-2 pt-1"}>
           {stepIndexSafe > 0 ? (
             <button type="button" className={btnGhost} onClick={goBack}>
               {tx(COPY.back)}

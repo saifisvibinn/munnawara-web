@@ -213,7 +213,7 @@ export function StepBody({
     case "vehicle":
       return (
         <div
-          className="grid grid-cols-1 items-start gap-3 @md:grid-cols-2 @3xl:grid-cols-3 @4xl:grid-cols-4"
+          className="grid grid-cols-1 items-start gap-2 @md:grid-cols-2 @md:gap-3 @xl:grid-cols-4"
           role="radiogroup"
           aria-label={tx(COPY.titles.vehicle)}
         >
@@ -223,7 +223,7 @@ export function StepBody({
               <div
                 key={o.id}
                 className={cn(
-                  "flex flex-col rounded-2xl border bg-surface-elevated p-2 transition-[border-color,box-shadow] duration-150 ease-out motion-reduce:transition-none",
+                  "flex flex-col rounded-2xl border bg-surface-elevated p-1.5 transition-[border-color,box-shadow] duration-150 ease-out motion-reduce:transition-none @md:p-2",
                   selected
                     ? "border-orange shadow-[0_0_0_1px_var(--brand-orange),0_16px_32px_-22px_rgb(243_112_33/0.8)]"
                     : "border-border hover:border-ink/20 hover:shadow-[0_12px_28px_-20px_rgb(0_0_0/0.5)]",
@@ -236,7 +236,7 @@ export function StepBody({
                   onClick={() => patch({ busClass: o.id as BusClass })}
                   className="group flex items-center gap-3 rounded-xl text-start focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange/60 @md:flex-col @md:items-stretch @md:gap-0"
                 >
-                  <span className="relative block aspect-[3/2] w-[44%] shrink-0 overflow-hidden rounded-xl bg-surface-muted @md:w-full">
+                  <span className="relative block aspect-[16/9] w-[4.75rem] shrink-0 overflow-hidden rounded-xl bg-surface-muted @md:w-full">
                     <Image
                       src={busClassImages[o.id]}
                       alt=""
@@ -257,7 +257,7 @@ export function StepBody({
                     <span className="block text-[0.95rem] leading-snug font-semibold text-ink">
                       {tx(o.label)}
                     </span>
-                    <span className="mt-1 mb-1 flex items-center gap-1.5 text-xs text-ink-muted">
+                    <span className="mt-0.5 flex items-center gap-1.5 text-xs text-ink-muted @md:mt-1 @md:mb-1">
                       {choiceIcon("individual")}
                       {tx(o.hint)}
                     </span>
@@ -268,7 +268,7 @@ export function StepBody({
                     label={tx(COPY.fields.busCount)}
                     htmlFor="qw-buses"
                     error={errors.busCount}
-                    className="mt-2 border-t border-border px-1.5 pt-3 pb-1"
+                    className="mt-1 border-t border-border px-1.5 pt-1.5 pb-0.5 @md:mt-2 @md:pt-3 @md:pb-1 [&>label]:sr-only @md:[&>label]:not-sr-only"
                   >
                     <NumberStepper
                       id="qw-buses"
@@ -405,7 +405,7 @@ export function StepBody({
             {summaryRows().map((row) => (
               <div
                 key={row.id + row.label.en + row.value}
-                className="flex items-start justify-between gap-3 px-4 py-2.5"
+                className="flex items-start justify-between gap-3 px-4 py-[clamp(0.25rem,1.1vh,0.625rem)]"
               >
                 <div className="min-w-0">
                   <dt className="text-xs text-ink-muted">{tx(row.label)}</dt>
