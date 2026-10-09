@@ -18,7 +18,6 @@ export type StepId =
   | "route"
   | "vehicle"
   | "passengers"
-  | "notes"
   | "contact"
   | "review"
 
@@ -35,8 +34,7 @@ export type WizardState = {
   passengers: string
   luggage: string
   accessibility: string
-  busCount: string
-  busClass: BusClass
+  busCounts: Partial<Record<BusClass, string>>
   notes: string
   name: string
   organization: string
@@ -52,8 +50,7 @@ export const initialState: WizardState = {
   passengers: "1",
   luggage: "",
   accessibility: "",
-  busCount: "1",
-  busClass: "standard",
+  busCounts: { standard: "1" },
   notes: "",
   name: "",
   organization: "",

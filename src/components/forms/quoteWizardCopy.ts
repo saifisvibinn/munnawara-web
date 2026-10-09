@@ -16,7 +16,6 @@ export const COPY = {
     route: { en: "Route", ar: "المسار" },
     vehicle: { en: "Fleet", ar: "الأسطول" },
     passengers: { en: "Travellers", ar: "المسافرون" },
-    notes: { en: "Notes", ar: "ملاحظات" },
     contact: { en: "Contact", ar: "التواصل" },
     review: { en: "Review", ar: "المراجعة" },
   } satisfies Record<StepId, L10n>,
@@ -26,10 +25,6 @@ export const COPY = {
     route: { en: "Where and when?", ar: "من أين إلى أين، ومتى؟" },
     vehicle: { en: "Choose your buses", ar: "اختر الحافلات" },
     passengers: { en: "Who is travelling?", ar: "من المسافرون؟" },
-    notes: {
-      en: "Anything else we should know?",
-      ar: "هل هناك أي شيء آخر نحتاج أن نعرفه؟",
-    },
     contact: { en: "How can we reach you?", ar: "كيف نتواصل معك؟" },
     review: { en: "Review and send", ar: "راجع وأرسل" },
   } satisfies Record<StepId, L10n>,
@@ -83,7 +78,7 @@ export const COPY = {
     date: { en: "Please choose a date.", ar: "الرجاء اختيار التاريخ." },
     time: { en: "Please choose a time.", ar: "الرجاء اختيار الوقت." },
     passengers: { en: "Please enter the number of passengers.", ar: "الرجاء إدخال عدد الركاب." },
-    buses: { en: "Please enter the number of buses.", ar: "الرجاء إدخال عدد الحافلات." },
+    buses: { en: "Select at least one bus and set its quantity.", ar: "اختر حافلة واحدة على الأقل وحدد عددها." },
     consent: { en: "Please tick the box to agree before sending.", ar: "الرجاء الموافقة قبل الإرسال." },
   },
   done: {

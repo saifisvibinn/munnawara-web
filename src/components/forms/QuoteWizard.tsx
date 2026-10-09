@@ -6,7 +6,8 @@ import { useReducedMotion } from "@/hooks/useReducedMotion"
 import { cn } from "@/lib/cn"
 import { useLocale } from "next-intl"
 import { useEffect, useMemo, useRef, useState, type FormEvent, type ReactNode } from "react"
-import { pick, type L10n } from "./quoteWizardConfig"
+import Image from "next/image"
+import { busClassImages, busClassOptions, pick, type L10n } from "./quoteWizardConfig"
 import dynamic from "next/dynamic"
 import { COPY } from "./quoteWizardCopy"
 import {
@@ -41,6 +42,8 @@ export const QuoteWizard = ({
   const tx = (text: L10n) => pick(text, locale)
   const split = layout === "split"
   const reducedMotion = useReducedMotion()
+  const draftStorageKey = `quote-wizard:${formId}`
+  const [draftReady, setDraftReady] = useState(false)
   // Map tiles are only fetched where the sidebar is shown (matches the 1024px CSS breakpoint).
   const [desktop, setDesktop] = useState(false)
   useEffect(() => {
@@ -58,6 +61,54 @@ export const QuoteWizard = ({
   const [status, setStatus] = useState<"idle" | "submitting" | "done" | "error">("idle")
   const [result, setResult] = useState<{ leadId?: string; sla: number } | null>(null)
   const topRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    try {
+      const serialized = sessionStorage.getItem(draftStorageKey)
+      if (!serialized) return
+      const draft = JSON.parse(serialized) as {
+        version?: number
+        state?: WizardState
+        stepIndex?: number
+      }
+      if (
+        (draft.version === 1 || draft.version === 2) &&
+        draft.state &&
+        Array.isArray(draft.state.trips) &&
+        draft.state.busCounts &&
+        typeof draft.stepIndex === "number" &&
+        Number.isInteger(draft.stepIndex)
+      ) {
+        const previousNotesIndex = draft.state.customer === "company" ? 5 : 4
+        const restoredStepIndex =
+          draft.version === 1 && draft.stepIndex >= previousNotesIndex
+            ? draft.stepIndex - 1
+            : draft.stepIndex
+        setState({ ...initialState, ...draft.state })
+        setStepIndex(Math.max(0, restoredStepIndex))
+      }
+    } catch {
+      try {
+        sessionStorage.removeItem(draftStorageKey)
+      } catch {}
+    } finally {
+      setDraftReady(true)
+    }
+  }, [draftStorageKey])
+
+  useEffect(() => {
+    if (!draftReady) return
+    try {
+      if (status === "done") {
+        sessionStorage.removeItem(draftStorageKey)
+        return
+      }
+      sessionStorage.setItem(
+        draftStorageKey,
+        JSON.stringify({ version: 2, state, stepIndex }),
+      )
+    } catch {}
+  }, [draftReady, draftStorageKey, state, stepIndex, status])
 
   const patch = (p: Partial<WizardState>) => {
     setState((s) => ({ ...s, ...p }))
@@ -194,7 +245,35 @@ export const QuoteWizard = ({
                     {rows.map((row) => (
                       <div key={row.id + row.label.en} className="py-2.5 first:pt-0 last:pb-0">
                         <dt className="text-xs text-ink-muted">{tx(row.label)}</dt>
-                        <dd className="mt-0.5 text-sm leading-snug font-medium text-ink">{row.value}</dd>
+                        <dd className="mt-0.5 text-sm leading-snug font-medium text-ink">
+                          {row.id === "vehicle" ? (
+                            <div className="mt-2 grid grid-cols-2 gap-x-3 gap-y-2">
+                              {busClassOptions.map((option) => {
+                                const count = Number(state.busCounts[option.id] ?? 0)
+                                if (!count) return null
+                                return (
+                                  <div key={option.id} className="flex min-w-0 items-center gap-2">
+                                    <span className="relative block h-10 w-14 shrink-0 overflow-hidden rounded-md bg-surface-elevated">
+                                      <Image
+                                        src={busClassImages[option.id]}
+                                        alt=""
+                                        fill
+                                        sizes="56px"
+                                        className="object-contain"
+                                      />
+                                    </span>
+                                    <span className="min-w-0 text-xs leading-snug">
+                                      <span className="block font-semibold tabular-nums">{count} ×</span>
+                                      <span className="block text-ink-muted">{tx(option.label)}</span>
+                                    </span>
+                                  </div>
+                                )
+                              })}
+                            </div>
+                          ) : (
+                            row.value
+                          )}
+                        </dd>
                       </div>
                     ))}
                   </dl>

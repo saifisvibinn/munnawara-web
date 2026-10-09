@@ -1,4 +1,4 @@
-import type { BusClass, TripType } from "@/components/forms/formSchemas"
+import type { TripType } from "@/components/forms/formSchemas"
 import { cn } from "@/lib/cn"
 import Image from "next/image"
 import { useState } from "react"
@@ -174,6 +174,10 @@ export function StepBody({
   summaryRows,
 }: StepBodyProps) {
   const inputErr = (key: string) => (errors[key] ? fieldErrorRing : "")
+  const totalBusCount = Object.values(state.busCounts).reduce(
+    (total, count) => total + Number(count || 0),
+    0,
+  )
 
   switch (step) {
     case "customer":
@@ -213,12 +217,14 @@ export function StepBody({
     case "vehicle":
       return (
         <div
-          className="grid grid-cols-1 items-start gap-2 @md:grid-cols-2 @md:gap-3 @xl:grid-cols-4"
-          role="radiogroup"
+          className="grid max-h-[calc(100dvh_-_20rem)] grid-cols-1 items-start gap-2 overflow-y-auto overscroll-contain @md:grid-cols-2 @md:gap-3 @xl:grid-cols-4"
+          data-lenis-prevent
+          role="group"
           aria-label={tx(COPY.titles.vehicle)}
         >
           {busClassOptions.map((o) => {
-            const selected = state.busClass === o.id
+            const busCount = Number(state.busCounts[o.id] ?? 0)
+            const selected = busCount > 0
             return (
               <div
                 key={o.id}
@@ -231,12 +237,17 @@ export function StepBody({
               >
                 <button
                   type="button"
-                  role="radio"
+                  role="checkbox"
                   aria-checked={selected}
-                  onClick={() => patch({ busClass: o.id as BusClass })}
+                  onClick={() => {
+                    const busCounts = { ...state.busCounts }
+                    if (selected) delete busCounts[o.id]
+                    else busCounts[o.id] = "1"
+                    patch({ busCounts })
+                  }}
                   className="group flex items-center gap-3 rounded-xl text-start focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange/60 @md:flex-col @md:items-stretch @md:gap-0"
                 >
-                  <span className="relative block aspect-[16/9] w-[4.75rem] shrink-0 overflow-hidden rounded-xl bg-surface-muted @md:w-full">
+                  <span className="relative block aspect-[16/9] w-[4.75rem] shrink-0 overflow-hidden rounded-xl bg-surface-elevated @md:w-full">
                     <Image
                       src={busClassImages[o.id]}
                       alt=""
@@ -266,18 +277,18 @@ export function StepBody({
                 {selected ? (
                   <Field
                     label={tx(COPY.fields.busCount)}
-                    htmlFor="qw-buses"
-                    error={errors.busCount}
+                    htmlFor={`qw-buses-${o.id}`}
                     className="mt-1 border-t border-border px-1.5 pt-1.5 pb-0.5 @md:mt-2 @md:pt-3 @md:pb-1 [&>label]:sr-only @md:[&>label]:not-sr-only"
                   >
                     <NumberStepper
-                      id="qw-buses"
+                      id={`qw-buses-${o.id}`}
                       locale={locale}
                       min={1}
-                      max={50}
-                      error={errors.busCount}
-                      value={state.busCount}
-                      onChange={(v) => patch({ busCount: v })}
+                      max={50 - totalBusCount + busCount}
+                      value={String(busCount)}
+                      onChange={(v) =>
+                        patch({ busCounts: { ...state.busCounts, [o.id]: v } })
+                      }
                     />
                   </Field>
                 ) : null}
@@ -288,26 +299,23 @@ export function StepBody({
       )
     case "passengers":
       return (
-        <Field
-          label={tx(COPY.fields.passengers)}
-          htmlFor="qw-pax"
-          error={errors.passengers}
-        >
-          <NumberStepper
-            id="qw-pax"
-            locale={locale}
-            min={1}
-            max={500}
-            step={1}
-            error={errors.passengers}
-            value={state.passengers}
-            onChange={(v) => patch({ passengers: v })}
-          />
-        </Field>
-      )
-    case "notes":
-      return (
         <div className="grid grid-cols-1 gap-3.5 @lg:grid-cols-2">
+          <Field
+            label={tx(COPY.fields.passengers)}
+            htmlFor="qw-pax"
+            error={errors.passengers}
+          >
+            <NumberStepper
+              id="qw-pax"
+              locale={locale}
+              min={1}
+              max={500}
+              step={1}
+              error={errors.passengers}
+              value={state.passengers}
+              onChange={(v) => patch({ passengers: v })}
+            />
+          </Field>
           <Field label={tx(COPY.fields.luggage)} htmlFor="qw-luggage">
             <input
               id="qw-luggage"

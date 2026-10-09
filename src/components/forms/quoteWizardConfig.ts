@@ -49,7 +49,6 @@ export const corporateServices: readonly Option[] = [
   {
     id: "workers",
     label: l("Workers / staff transport", "نقل العمال والموظفين"),
-    hint: l("Daily or contract shuttles", "نقل يومي أو بعقد"),
   },
   { id: "education", label: l("School / university transport", "نقل مدارس وجامعات") },
   { id: "tourism_group", label: l("Tourism groups", "مجموعات سياحية") },

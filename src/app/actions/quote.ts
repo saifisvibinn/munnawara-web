@@ -46,18 +46,30 @@ export const submitQuoteRequest = async (
   let leadId: string | undefined
   let quoteSlaHours = 24
 
-  // The sales backend only knows the original five classes; the two newer ones
-  // are sent as their closest class and named exactly in the notes.
+  const buses = data.busMix.length
+    ? data.busMix
+    : [{ busClass: data.busClass, count: data.busCount }]
+  const totalBusCount = buses.reduce((total, bus) => total + bus.count, 0)
+  const primaryBusClass = buses[0]?.busClass ?? data.busClass
+  const busMixNote = buses
+    .map(({ busClass, count }) => `${count} × ${busClass}`)
+    .join(", ")
+
+  // The sales backend only knows the original five classes; preserve newer
+  // classes and the full mix in the request notes.
   const backendBusClass =
-    { premium_vip: "vip", city_large: "city" }[data.busClass as string] ?? data.busClass
+    { premium_vip: "vip", city_large: "city" }[primaryBusClass as string] ?? primaryBusClass
   const busClassNote =
-    backendBusClass !== data.busClass ? `Bus class requested: ${data.busClass}` : ""
+    backendBusClass !== primaryBusClass
+      ? `Bus class requested: ${primaryBusClass}`
+      : ""
 
   const extras = [
     data.needsSupervisors ? "Supervisors" : "",
     data.needsTracking ? "Tracking" : "",
     data.needsBranding ? "Bus branding" : "",
     data.needsAirportReception ? "Airport reception" : "",
+    busMixNote ? `Bus mix: ${busMixNote}` : "",
     data.specialRequirements,
   ]
     .filter(Boolean)
@@ -82,7 +94,7 @@ export const submitQuoteRequest = async (
           vehicleType: backendBusClass || "standard",
           busClass: backendBusClass || "standard",
           passengers: data.passengers,
-          busCount: data.busCount || 1,
+          busCount: totalBusCount || 1,
           channel: "web",
           language: data.language,
           customerType: data.tripType,
@@ -176,7 +188,7 @@ export const submitQuoteRequest = async (
             `Date: ${data.date} ${data.departureTime || ""}`,
             `Return: ${data.returnDate || "-"}`,
             `Passengers: ${data.passengers}`,
-            `Buses: ${data.busCount} × ${data.busClass}`,
+            `Buses: ${totalBusCount} total (${busMixNote})`,
             `Phone: ${data.phone}`,
             `Requirements: ${extras || "-"}`,
           ].join("\n"),

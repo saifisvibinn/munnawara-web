@@ -23,7 +23,6 @@ export function computeSteps(customer: string): StepId[] {
     "route",
     "vehicle",
     "passengers",
-    "notes",
     "contact",
     "review",
   ]
@@ -120,8 +119,8 @@ export function validateStep(
       }
       break
     case "vehicle":
-      if (!Number(state.busCount) || Number(state.busCount) < 1) {
-        e.busCount = tx(COPY.errors.buses)
+      if (!Object.values(state.busCounts).some((count) => Number(count) > 0)) {
+        e.choice = tx(COPY.errors.buses)
       }
       break
     case "contact":
@@ -149,6 +148,10 @@ export function buildQuotePayload(
   honeypot: string,
 ) {
   const [first, ...more] = state.trips
+  const busMix = busClassOptions.flatMap((option) => {
+    const count = Number(state.busCounts[option.id] ?? 0)
+    return count > 0 ? [{ busClass: option.id, count }] : []
+  })
   return {
     tripType: state.customer || undefined,
     serviceType,
@@ -164,8 +167,9 @@ export function buildQuotePayload(
     date: first.date,
     departureTime: first.time,
     passengers: Number(state.passengers),
-    busCount: Number(state.busCount),
-    busClass: state.busClass,
+    busCount: busMix.reduce((total, bus) => total + bus.count, 0),
+    busClass: busMix[0]?.busClass ?? "standard",
+    busMix,
     accessibilityNeeds: state.accessibility,
     luggageNotes: state.luggage,
     specialRequirements: state.notes,
@@ -179,6 +183,10 @@ export function buildSummaryRows(state: WizardState, locale: string, tx: Tx): Su
   const customer = findOption(customerOptions, state.customer)
   const service = findOption(corporateServices, state.service)
   const multi = state.trips.length > 1
+  const buses = busClassOptions.flatMap((option) => {
+    const count = Number(state.busCounts[option.id] ?? 0)
+    return count > 0 ? [`${count} × ${tx(option.label)}`] : []
+  })
   const rows: SummaryRow[] = [
     { id: "customer", label: COPY.summary.who, value: customer ? tx(customer.label) : "" },
     ...(state.customer === "company"
@@ -192,7 +200,7 @@ export function buildSummaryRows(state: WizardState, locale: string, tx: Tx): Su
     {
       id: "vehicle",
       label: COPY.summary.vehicle,
-      value: `${state.busCount} × ${tx(findOption(busClassOptions, state.busClass)!.label)}`,
+      value: buses.join(", "),
     },
     { id: "passengers", label: COPY.summary.passengers, value: state.passengers },
     {

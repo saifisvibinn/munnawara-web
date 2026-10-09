@@ -51,6 +51,10 @@ export const quoteRequestSchema = z
     passengers: z.coerce.number().int().min(1).max(500),
     busCount: z.coerce.number().int().min(1).max(50).optional().default(1),
     busClass: z.enum(busClasses).optional().default("standard"),
+    busMix: z.array(z.object({
+      busClass: z.enum(busClasses),
+      count: z.coerce.number().int().min(1).max(50),
+    })).max(busClasses.length).optional().default([]),
     accessibilityNeeds: z.string().trim().max(300).optional().default(""),
     luggageNotes: z.string().trim().max(300).optional().default(""),
     specialRequirements: z.string().trim().max(500).optional().default(""),
@@ -64,6 +68,13 @@ export const quoteRequestSchema = z
     companyWebsite: z.string().optional().default(""),
   })
   .superRefine((data, ctx) => {
+    if (data.busMix.reduce((total, bus) => total + bus.count, 0) > 50) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "bus count exceeds maximum",
+        path: ["busMix"],
+      })
+    }
     if (
       orgRequiredTypes.includes(data.tripType) &&
       !data.organization.trim()

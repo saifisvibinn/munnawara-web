@@ -59,7 +59,7 @@ export function Choices({
   return (
     <div
       className={cn(
-        "grid min-h-0 flex-1 gap-[clamp(0.25rem,1.2vh,0.625rem)] sm:max-h-[26rem] sm:gap-4",
+        "grid min-h-0 flex-1 gap-2.5 sm:max-h-[26rem] sm:gap-4",
         columns === 2 &&
           "auto-rows-[minmax(2.5rem,1fr)] grid-cols-[repeat(auto-fit,minmax(min(100%,16rem),1fr))]",
       )}
@@ -75,7 +75,7 @@ export function Choices({
             aria-checked={selected}
             onClick={() => onPick(o.id)}
             className={cn(
-              "group relative flex min-h-0 items-center gap-3 rounded-2xl border bg-surface-elevated px-3.5 py-0.5 text-start transition-[transform,border-color,background-color,box-shadow] duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange/60 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-elevated motion-reduce:transition-none sm:min-h-[6rem] sm:flex-col sm:items-start sm:justify-between sm:gap-[clamp(0.5rem,1.6vh,1.25rem)] sm:rounded-[1.25rem] sm:p-[clamp(0.875rem,2.4vh,1.5rem)]",
+              "group relative flex min-h-0 items-center gap-3 rounded-2xl border bg-surface-elevated px-3.5 py-0.5 text-start transition-[transform,border-color,background-color,box-shadow] duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange/60 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-elevated motion-reduce:transition-none sm:min-h-[6rem] sm:rounded-[1.25rem] sm:p-4",
               selected
                 ? "border-orange bg-orange/[0.05] shadow-[0_18px_36px_-26px_rgb(243_112_33/0.65)]"
                 : "border-border text-ink hover:-translate-y-0.5 hover:border-ink/25 hover:shadow-[0_18px_32px_-24px_rgb(0_0_0/0.4)] motion-reduce:hover:translate-y-0 active:translate-y-0",
