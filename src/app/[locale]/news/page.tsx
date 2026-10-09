@@ -1,6 +1,7 @@
 import { AnimatedSection } from "@/components/motion/AnimatedSection"
 import { PageIntro } from "@/components/ui/PageIntro"
-import { getNews } from "@/content"
+import { SocialFeeds } from "@/components/sections/SocialFeeds"
+import { getNews, getSiteConfig } from "@/content"
 import type { AppLocale } from "@/content/types"
 import { Link } from "@/i18n/navigation"
 import { getTranslations, setRequestLocale } from "next-intl/server"
@@ -16,6 +17,7 @@ const NewsPage = async ({ params }: PageProps) => {
   const t = await getTranslations("nav")
   const tCommon = await getTranslations("common")
   const posts = getNews(locale as AppLocale)
+  const { social } = getSiteConfig()
 
   return (
     <AnimatedSection className="pt-20">
@@ -39,6 +41,15 @@ const NewsPage = async ({ params }: PageProps) => {
           </ul>
         )}
       </div>
+      <SocialFeeds
+        title={tCommon("latestFromSocial")}
+        twitterUrl={social.twitter}
+        facebookUrl={social.facebook}
+        twitterLabel={tCommon("socialTwitter")}
+        facebookLabel={tCommon("socialFacebook")}
+        openLabel={tCommon("openProfile")}
+        locale={locale}
+      />
     </AnimatedSection>
   )
 }
