@@ -187,14 +187,6 @@
     "identityStarting": "Starting…",
     "identityChange": "Change details"
   },
-  "fleetLayout": {
-    "requestBus": "Request this bus",
-    "specsEyebrow": "Specifications",
-    "specsTitle": "Fleet specifications",
-    "capacityTitle": "Seating capacity",
-    "ctaTitle": "Not sure which bus fits your group?",
-    "ctaText": "Share your group size and trip type and our team will follow up."
-  },
   "fleetViewer": {
     "carouselLabel": "Fleet carousel",
     "interactive": "3D tour",
