@@ -16,12 +16,6 @@
     "contact": "تواصل مع فريق درة المنورة هاتفياً أو عبر واتساب أو البريد، أو قم بزيارة مكتب جدة.",
     "quote": "اطلب عرض سعر للنقل: شاركنا التواريخ وعدد المجموعة والمسار وسيتواصل معك فريقنا."
   },
-  "cursor": {
-    "scroll": "مرّر",
-    "click": "اضغط",
-    "drag": "اسحب",
-    "play": "شغّل"
-  },
   "nav": {
     "home": "الرئيسية",
     "about": "من نحن",
@@ -188,36 +182,14 @@
     "identityChange": "تغيير البيانات"
   },
   "fleetViewer": {
-    "carouselLabel": "معرض الأسطول",
-    "interactive": "جولة ثلاثية الأبعاد",
-    "inspectBus": "استعرض هذه الحافلة",
-    "viewInterior": "ادخل المقصورة",
-    "viewExterior": "العودة للخارج",
     "interior": "الداخل",
     "exterior": "الخارج",
-    "dragToRotate": "اسحب أو استخدم الأسهم للدوران",
     "previousShot": "الصورة السابقة",
     "nextShot": "الصورة التالية",
-    "previousBus": "الحافلة السابقة",
-    "nextBus": "الحافلة التالية",
-    "close": "إغلاق",
-    "scrollHint": "اسحب المعرض للتصفح. اضغط على الحافلة لقلبها وعرض التفاصيل، واضغط مرة أخرى للعودة.",
-    "flipHint": "اضغط أو اسحب للقلب",
-    "flipBackHint": "اضغط مرة أخرى للعودة",
-    "detailsLabel": "تفاصيل الحافلة",
-    "detailClimate": "تكييف مريح على مدار العام",
-    "detailSafety": "حزمة أمان تشمل ABS وGPS وكاميرات",
-    "detailConnectivity": "واي فاي ومنافذ USB للشحن",
-    "detailComfort": "مقاعد فاخرة وتشطيب مقصورة أنيق",
-    "showMore": "المزيد",
-    "moreImagesTitle": "المزيد من الصور",
-    "moreImagesSubtitle": "صور مؤقتة حتى اعتماد الأصول النهائية",
-    "imagePlaceholder": "الصورة قريباً",
     "categoriesLabel": "فئات الأسطول",
     "photoCount": "الصورة {current} من {total}",
     "openPhoto": "افتح الصورة بملء الشاشة",
     "specsAmenities": "على متن الحافلة",
-    "showroomLabel": "معرض الأسطول",
     "showAll": "عرض الكل ({count})",
     "showLess": "عرض أقل"
   }

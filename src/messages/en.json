@@ -16,12 +16,6 @@
     "contact": "Contact the Durrah Al-Munawwara team by phone, WhatsApp, or email, or visit the Jeddah office.",
     "quote": "Request a transport quote: share your dates, group size, and route and our team will follow up."
   },
-  "cursor": {
-    "scroll": "scroll",
-    "click": "click",
-    "drag": "drag",
-    "play": "play"
-  },
   "nav": {
     "home": "Home",
     "about": "About",
@@ -188,36 +182,14 @@
     "identityChange": "Change details"
   },
   "fleetViewer": {
-    "carouselLabel": "Fleet carousel",
-    "interactive": "3D tour",
-    "inspectBus": "Inspect this bus",
-    "viewInterior": "Enter the cabin",
-    "viewExterior": "Back to exterior",
     "interior": "Interior",
     "exterior": "Exterior",
-    "dragToRotate": "Drag or use arrow keys to rotate",
     "previousShot": "Previous view",
     "nextShot": "Next view",
-    "previousBus": "Previous bus",
-    "nextBus": "Next bus",
-    "close": "Close",
-    "scrollHint": "Drag the carousel to browse. Click a bus to flip it for details, click again to flip back.",
-    "flipHint": "Click or drag to flip",
-    "flipBackHint": "Click again to flip back",
-    "detailsLabel": "Bus details",
-    "detailClimate": "Climate control for year-round comfort",
-    "detailSafety": "Safety suite with ABS, GPS, and CCTV",
-    "detailConnectivity": "Wi‑Fi and USB charging on board",
-    "detailComfort": "Premium seating with refined cabin finish",
-    "showMore": "Show more",
-    "moreImagesTitle": "More photos",
-    "moreImagesSubtitle": "Gallery placeholders until final assets are ready",
-    "imagePlaceholder": "Photo coming soon",
     "categoriesLabel": "Fleet categories",
     "photoCount": "Photo {current} of {total}",
     "openPhoto": "Open photo full screen",
     "specsAmenities": "On board",
-    "showroomLabel": "Fleet showroom",
     "showAll": "Show all {count}",
     "showLess": "Show less"
   }

@@ -35,7 +35,6 @@ export type FleetCategory = {
   exteriorImages: readonly string[]
   interiorImages: readonly string[]
   images: readonly string[]
-  interactive?: boolean
 }
 
 export type FleetPageContent = {

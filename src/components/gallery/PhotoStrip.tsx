@@ -104,7 +104,6 @@ const StripFrame = ({
   <Link
     href={`/gallery?p=${encodeURIComponent(photo.id)}`}
     aria-label={`${openLabel}: ${photo.alt}`}
-    data-cursor="open"
     className={cn(
       "group relative block aspect-[3/4] overflow-hidden rounded-2xl bg-surface-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange",
       className,

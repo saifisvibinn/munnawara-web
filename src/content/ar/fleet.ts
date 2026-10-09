@@ -49,7 +49,6 @@ export const fleet: readonly FleetCategory[] = [
       "/fleet/premium-vip-2026/interior/pv-in-4.webp",
     ],
     images: ["/fleet/premium-vip-2026/studio/1.webp"],
-    interactive: true,
   },
   {
     id: "vip-2026",

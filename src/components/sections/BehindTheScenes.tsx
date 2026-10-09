@@ -28,7 +28,6 @@ export const BehindTheScenes = async ({ locale }: BehindTheScenesProps) => {
           </div>
           <Link
             href="/gallery"
-            data-cursor="open"
             className="font-label inline-flex min-h-11 shrink-0 items-center gap-2 self-start rounded-full border border-ink/10 bg-surface-elevated px-5 text-sm font-semibold text-ink shadow-sm transition-[transform,border-color,background-color] duration-100 ease-out hover:border-orange/40 hover:bg-surface-muted active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange motion-reduce:transition-none motion-reduce:active:scale-100 md:self-auto"
           >
             {t("cta")}

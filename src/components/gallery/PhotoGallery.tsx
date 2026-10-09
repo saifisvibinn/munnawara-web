@@ -158,7 +158,6 @@ export const PhotoGallery = ({ photos }: PhotoGalleryProps) => {
               aria-selected={selected}
               aria-controls={panelId}
               onClick={() => selectTab(entry.id)}
-              data-cursor="open"
               className={cn(
                 "relative min-h-11 cursor-pointer px-4 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange",
                 selected ? "text-ink" : "text-ink-muted hover:text-ink",
@@ -189,7 +188,6 @@ export const PhotoGallery = ({ photos }: PhotoGalleryProps) => {
             type="button"
             aria-label={`${t("open")}: ${photo.alt}`}
             onClick={() => setOpenIndex(index)}
-            data-cursor="open"
             className="group mb-3 block w-full break-inside-avoid overflow-hidden rounded-2xl bg-surface-muted text-start focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange md:mb-4"
           >
             <Image
@@ -226,7 +224,6 @@ export const PhotoGallery = ({ photos }: PhotoGalleryProps) => {
               dragTransition={{ bounceStiffness: 420, bounceDamping: 32 }}
               style={{ x }}
               onDragEnd={handleDragEnd}
-              data-cursor="drag"
               className="flex max-h-full max-w-full cursor-grab touch-pan-y select-none items-center justify-center active:cursor-grabbing"
             >
               <Image
@@ -261,7 +258,6 @@ export const PhotoGallery = ({ photos }: PhotoGalleryProps) => {
               type="button"
               onClick={close}
               aria-label={t("close")}
-              data-cursor="open"
               className="absolute end-3 top-3 inline-flex size-11 cursor-pointer items-center justify-center rounded-full bg-black/60 text-white shadow-md ring-1 ring-white/30 backdrop-blur-sm transition-[transform,background-color] duration-100 ease-out hover:bg-black/75 active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange motion-reduce:transition-none motion-reduce:active:scale-100 sm:end-5 sm:top-5"
             >
               <X aria-hidden className="size-5" />
@@ -273,7 +269,6 @@ export const PhotoGallery = ({ photos }: PhotoGalleryProps) => {
                   type="button"
                   onClick={() => step(-1)}
                   aria-label={t("prev")}
-                  data-cursor="open"
                   className="absolute start-2 top-1/2 hidden -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-white/10 text-white transition-[transform,background-color] duration-100 ease-out hover:bg-white/20 active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange motion-reduce:transition-none motion-reduce:active:scale-100 sm:inline-flex sm:size-12"
                 >
                   <ChevronLeft aria-hidden className="size-6 rtl:rotate-180" />
@@ -282,7 +277,6 @@ export const PhotoGallery = ({ photos }: PhotoGalleryProps) => {
                   type="button"
                   onClick={() => step(1)}
                   aria-label={t("next")}
-                  data-cursor="open"
                   className="absolute end-2 top-1/2 hidden -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-white/10 text-white transition-[transform,background-color] duration-100 ease-out hover:bg-white/20 active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange motion-reduce:transition-none motion-reduce:active:scale-100 sm:inline-flex sm:size-12"
                 >
                   <ChevronRight aria-hidden className="size-6 rtl:rotate-180" />
