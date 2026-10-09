@@ -162,6 +162,8 @@ export const QuoteWizard = ({
   const shell = (children: ReactNode, mv?: MapView) => {
     if (split) {
       const view = mv ?? mapView()
+      // The map only earns its space while the visitor is choosing the route.
+      const showMap = desktop && step === "route" && status !== "done"
       // Live summary only shows what the visitor has reached, not untouched defaults.
       const rows =
         status === "done"
@@ -183,7 +185,7 @@ export const QuoteWizard = ({
           </section>
           <aside className="qw-split__side">
             {status === "done" ? null : (
-              <div data-lenis-prevent className="qw-split__summary" aria-live="polite">
+              <div data-lenis-prevent className={cn("qw-split__summary", !showMap && "qw-split__summary--solo")} aria-live="polite">
                 <h2 className="font-display text-lg font-semibold text-ink">
                   {tx(COPY.summaryTitle)}
                 </h2>
@@ -201,8 +203,8 @@ export const QuoteWizard = ({
                 )}
               </div>
             )}
-            <div className="qw-split__map" aria-label={isAr ? "الخريطة" : "Route map"}>
-              {desktop ? (
+            {showMap ? (
+              <div className="qw-split__map qw-step qw-step--fwd" aria-label={isAr ? "الخريطة" : "Route map"}>
                 <QuoteMap
                   stops={view.stops}
                   context={view.context}
@@ -210,8 +212,8 @@ export const QuoteWizard = ({
                   still={reducedMotion}
                   className="qmap qmap--fill"
                 />
-              ) : null}
-            </div>
+              </div>
+            ) : null}
           </aside>
         </div>
       )

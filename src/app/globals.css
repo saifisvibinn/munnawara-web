@@ -614,7 +614,7 @@ body:has([data-quote-page]) main#main {
   .qw-split {
     grid-template-columns: minmax(0, 1fr) clamp(19rem, 27vw, 25rem);
   }
-  .qw-split__side { display: flex; }
+  .qw-split__side { display: flex; justify-content: flex-start; }
   .qw-split__summary {
     display: flex;
     flex-direction: column;
@@ -631,6 +631,7 @@ body:has([data-quote-page]) main#main {
     border: 1px solid var(--brand-border);
     box-shadow: 0 10px 30px -18px rgb(0 0 0 / 0.45);
   }
+  .qw-split__summary--solo { max-height: 100%; }
 }
 
 .qw-split__map {
