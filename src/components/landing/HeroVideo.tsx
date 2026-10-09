@@ -22,6 +22,8 @@ type HeroVideoProps = {
 }
 
 const VIDEO_SRC = "/hero/NewHero.mp4"
+// Frame at (duration - endFrameOffsetSeconds), the exact point playback freezes on.
+const END_FRAME_SRC = "/hero/hero-end.jpg"
 
 export const HeroVideo = forwardRef<HeroVideoHandle, HeroVideoProps>(
   function HeroVideo({ reducedMotion }, ref) {
@@ -32,6 +34,7 @@ export const HeroVideo = forwardRef<HeroVideoHandle, HeroVideoProps>(
     const preferFinalFrameRef = useRef(false)
     const playPendingRef = useRef(false)
     const [ready, setReady] = useState(false)
+    const [showEndFrame, setShowEndFrame] = useState(false)
 
     const freezeAtLastSecond = useCallback(() => {
       const video = videoRef.current
@@ -50,6 +53,7 @@ export const HeroVideo = forwardRef<HeroVideoHandle, HeroVideoProps>(
       if (Math.abs(video.currentTime - holdAt) > 0.04) {
         video.currentTime = holdAt
       }
+      setShowEndFrame(true)
       return true
     }, [])
 
@@ -58,41 +62,16 @@ export const HeroVideo = forwardRef<HeroVideoHandle, HeroVideoProps>(
       startedRef.current = true
       finishedRef.current = true
       playPendingRef.current = false
+      setShowEndFrame(true)
+      setReady(true)
 
+      // The still replaces the clip: abort the MP4 download instead of seeking it.
       const video = videoRef.current
       if (!video) return
-
-      const hold = () => {
-        if (!Number.isFinite(video.duration) || video.duration <= 0) return
-
-        const holdAt = Math.max(
-          0,
-          video.duration - motion.video.endFrameOffsetSeconds,
-        )
-        finishedRef.current = true
-        video.pause()
-
-        const reveal = () => setReady(true)
-        if (Math.abs(video.currentTime - holdAt) <= 0.04) {
-          reveal()
-          return
-        }
-
-        video.addEventListener("seeked", reveal, { once: true })
-        video.currentTime = holdAt
-      }
-
-      if (video.readyState >= HTMLMediaElement.HAVE_METADATA) {
-        hold()
-        return
-      }
-
-      video.addEventListener("loadedmetadata", hold, { once: true })
-      try {
-        video.load()
-      } catch {
-        // ignore
-      }
+      video.pause()
+      video.preload = "none"
+      video.removeAttribute("src")
+      video.load()
     }, [])
 
     const playForward = useCallback(() => {
@@ -157,12 +136,16 @@ export const HeroVideo = forwardRef<HeroVideoHandle, HeroVideoProps>(
       const video = videoRef.current
       if (!video) return
 
+      // Attach the clip only when it will play; return visits show the still and never fetch it.
       // Kick the network early — iOS/Android often won't fetch with preload alone.
-      try {
-        video.preload = "auto"
-        video.load()
-      } catch {
-        // ignore
+      if (!preferFinalFrameRef.current && !video.getAttribute("src")) {
+        try {
+          video.preload = "auto"
+          video.src = VIDEO_SRC
+          video.load()
+        } catch {
+          // ignore
+        }
       }
 
       const onLoadedMeta = () => {
@@ -243,7 +226,7 @@ export const HeroVideo = forwardRef<HeroVideoHandle, HeroVideoProps>(
 
     return (
       <div
-        className={`hero-video${ready ? " hero-video--ready" : ""}`}
+        className={`hero-video${ready ? " hero-video--ready" : ""}${showEndFrame ? " hero-video--ended" : ""}`}
         ref={containerRef}
         aria-hidden="true"
       >
@@ -252,11 +235,16 @@ export const HeroVideo = forwardRef<HeroVideoHandle, HeroVideoProps>(
           ref={videoRef}
           muted
           playsInline
-          preload="auto"
+          preload="none"
           loop={false}
-        >
-          <source src={VIDEO_SRC} type="video/mp4" />
-        </video>
+        />
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          className="hero-video__end-frame"
+          src={END_FRAME_SRC}
+          alt=""
+          decoding="async"
+        />
       </div>
     )
   },

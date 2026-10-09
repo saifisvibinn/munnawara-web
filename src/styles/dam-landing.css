@@ -474,6 +474,24 @@ html[dir='ltr'] .hero-video__media {
   opacity: 1;
 }
 
+.hero-video__end-frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 8% 50%;
+  opacity: 0;
+}
+
+html[dir='ltr'] .hero-video__end-frame {
+  transform: scaleX(-1);
+}
+
+.hero-video--ended .hero-video__end-frame {
+  opacity: 1;
+}
+
 /* Plain text column ? no glass / card / mask */
 .hero__eyebrow,
 .hero h1,
@@ -1762,72 +1780,28 @@ a[data-whatsapp-fab] {
   font-weight: 700;
 }
 
-/* Fast logo bloom on client-side page switches */
-.logo-route-transition {
+/* Pointer-driven route transition: progress in the chrome, not a blocking logo overlay. */
+.route-transition-progress {
   position: fixed;
-  inset: 0;
-  z-index: 200;
-  display: grid;
-  place-items: center;
-  background: transparent;
-  pointer-events: none;
-  opacity: 0;
-  visibility: hidden;
-}
-
-.logo-route-transition__backdrop {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  background:
-    radial-gradient(circle at 50% 44%, rgba(151, 36, 143, 0.18), transparent 30%),
-    radial-gradient(circle at 43% 51%, rgba(247, 91, 18, 0.2), transparent 34%),
-    #0c0a09;
-  pointer-events: none;
-}
-
-.logo-route-transition[data-active="true"] {
-  /* Keep none during cover so the originating link click still fires */
-  pointer-events: none;
-  visibility: visible;
-  opacity: 1;
-}
-
-.logo-route-transition[data-active="true"][data-locking="true"] {
-  pointer-events: auto;
-}
-
-.logo-route-transition__mark {
-  position: relative;
-  z-index: 1;
-  width: min(36vw, 36vh, 220px);
-  height: min(36vw, 36vh, 220px);
-  overflow: visible;
-  will-change: transform, opacity;
-}
-
-.logo-route-transition__mark .petal {
-  transform-box: view-box;
-  will-change: transform;
-}
-
-.logo-route-transition__label {
-  position: absolute;
+  inset-block-start: 0;
   inset-inline: 0;
-  top: calc(50% + min(36vw, 36vh, 220px) * 0.27);
-  z-index: 1;
-  text-align: center;
-  color: #f5efe8;
-  font-family: "Archivo", var(--font-latin), sans-serif;
-  font-size: clamp(1.1rem, 2.6vw, 1.6rem);
-  font-weight: 800;
-  letter-spacing: 0.32em;
-  padding-inline-start: 0.32em;
+  z-index: 10001;
+  height: 2px;
   pointer-events: none;
+  transform: scaleX(0);
+  transform-origin: left center;
+  opacity: 0;
+  background: var(--brand-orange);
+  transition: transform 800ms cubic-bezier(0.23, 1, 0.32, 1), opacity 140ms ease-out;
 }
 
-body.is-page-transitioning {
-  overflow: hidden;
+html[dir="rtl"] .route-transition-progress { transform-origin: right center; }
+body.is-page-leaving .route-transition-progress { transform: scaleX(0.78); opacity: 1; }
+body.is-page-arriving .route-transition-progress { transform: scaleX(1); opacity: 0; transition-duration: 120ms, 120ms; }
+
+/* No transform on header/main: it traps fixed children and drops the nav under the blur scrim. */
+@media (prefers-reduced-motion: reduce) {
+  .route-transition-progress { display: none; }
 }
 
 .corner-target {
@@ -3073,25 +3047,4 @@ html[lang="ar"] .site-chrome,
 html[lang="ar"] .dam-landing {
   --font-display: var(--font-cairo), "Cairo", sans-serif;
   --font-body: var(--font-cairo), "Cairo", sans-serif;
-}
-
-/* Soft blur scrim behind the fixed header controls so page copy never
-   collides with the logo / language / theme / menu pills while scrolling. */
-body::before {
-  content: "";
-  position: fixed;
-  inset-block-start: 0;
-  inset-inline: 0;
-  z-index: 30;
-  block-size: calc(var(--corner-logo-size, 54px) + 36px);
-  pointer-events: none;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  -webkit-mask-image: linear-gradient(to bottom, #000 35%, transparent);
-  mask-image: linear-gradient(to bottom, #000 35%, transparent);
-}
-
-body.is-loading::before,
-body.is-transitioning::before {
-  display: none;
 }

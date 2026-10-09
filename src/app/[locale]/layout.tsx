@@ -11,7 +11,7 @@ import type { Metadata } from "next"
 import { Cairo } from "next/font/google"
 import { notFound } from "next/navigation"
 import type { ReactNode } from "react"
-import { LogoRouteTransition } from "@/components/landing/LogoRouteTransition"
+import { PageRouteTransition } from "@/components/landing/LogoRouteTransition"
 import { SiteCursor } from "@/components/layout/SiteCursor"
 import { buildOrganizationSchema, serializeJsonLd } from "@/lib/schema"
 import { siteOrigin } from "@/lib/seo"
@@ -115,7 +115,7 @@ const LocaleLayout = async ({ children, params }: LocaleLayoutProps) => {
               <Footer />
               <FloatingActions />
               <FloatingQuoteCta />
-              <LogoRouteTransition />
+              <PageRouteTransition />
               <SiteCursor />
             </SmoothScrollProvider>
           </NextIntlClientProvider>
