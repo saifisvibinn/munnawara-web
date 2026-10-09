@@ -3048,3 +3048,82 @@ html[lang="ar"] .dam-landing {
   --font-display: var(--font-cairo), "Cairo", sans-serif;
   --font-body: var(--font-cairo), "Cairo", sans-serif;
 }
+
+/* Durri chat — dark mode (panel bg is dark; base rules use light-theme ink) */
+html.dark .chat-panel {
+  --paper: #f5efe8;
+  --muted: rgba(245, 239, 232, 0.62);
+}
+
+html.dark .chat-panel__header,
+html.dark .chat-panel__composer {
+  border-color: rgba(245, 239, 232, 0.1);
+}
+
+html.dark .chat-panel__ghost,
+html.dark .chat-panel__close,
+html.dark .chat-panel__inline {
+  color: rgba(245, 239, 232, 0.6);
+}
+
+html.dark .chat-panel__ghost:hover,
+html.dark .chat-panel__close:hover {
+  background: rgba(245, 239, 232, 0.08);
+  color: rgba(245, 239, 232, 0.95);
+}
+
+html.dark .chat-panel__inline:hover {
+  color: rgba(245, 239, 232, 0.95);
+}
+
+html.dark .chat-panel__hint,
+html.dark .chat-panel__identity label span {
+  color: rgba(245, 239, 232, 0.6);
+}
+
+html.dark .chat-panel__error {
+  background: rgba(247, 91, 18, 0.18);
+  color: #f9a066;
+}
+
+html.dark .chat-bubble--assistant,
+html.dark .chat-typing {
+  background: rgba(245, 239, 232, 0.09);
+}
+
+html.dark .chat-typing span {
+  background: rgba(245, 239, 232, 0.5);
+}
+
+html.dark .chat-bubble--system {
+  background: rgba(78, 196, 245, 0.12);
+  color: #a9dcf5;
+}
+
+html.dark .chat-bubble--admin {
+  border-color: rgba(78, 196, 245, 0.28);
+  background: rgba(78, 196, 245, 0.16);
+  color: #c4e7f8;
+}
+
+html.dark .chat-panel__options button {
+  border-color: rgba(245, 239, 232, 0.14);
+  background: rgba(245, 239, 232, 0.07);
+  color: rgba(245, 239, 232, 0.85);
+}
+
+html.dark .chat-panel__options button:hover:not(:disabled) {
+  border-color: rgba(247, 91, 18, 0.5);
+  background: rgba(245, 239, 232, 0.12);
+}
+
+html.dark .chat-panel__identity input,
+html.dark .chat-panel__composer textarea {
+  border-color: rgba(245, 239, 232, 0.14);
+  background: rgba(245, 239, 232, 0.07);
+}
+
+html.dark .chat-panel__identity input::placeholder,
+html.dark .chat-panel__composer textarea::placeholder {
+  color: rgba(245, 239, 232, 0.4);
+}

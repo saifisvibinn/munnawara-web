@@ -15,6 +15,7 @@ const nextConfig: NextConfig = {
     // Prefer sharper masters in the gallery lightbox and editorial strips.
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 2560, 3840],
     imageSizes: [64, 96, 128, 256, 384, 640],
+    qualities: [75, 90],
   },
   async rewrites() {
     // /chat is handled by src/app/chat/[...path]/route.ts (strips Origin so
