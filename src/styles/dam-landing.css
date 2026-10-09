@@ -1824,7 +1824,7 @@ body.is-page-arriving .route-transition-progress { transform: scaleX(1); opacity
   padding: 0;
   border: 0;
   background: transparent;
-  cursor: var(--site-cursor, default);
+  cursor: default;
   opacity: 0;
   visibility: hidden;
 }

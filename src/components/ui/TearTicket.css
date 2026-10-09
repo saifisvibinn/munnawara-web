@@ -100,7 +100,7 @@
 }
 
 .tear-ticket[data-disabled] .tear-ticket__paper--stub {
-  cursor: var(--site-cursor, default);
+  cursor: default;
 }
 
 .tear-ticket__art {

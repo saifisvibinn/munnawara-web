@@ -14,7 +14,7 @@ type FleetShowcaseProps = {
   categories: readonly FleetCategory[]
 }
 
-const CARD_WIDTH = 560
+const CARD_WIDTH = 440
 const ASPECT_RATIO = 1.7
 
 export const FleetShowcase = ({ categories }: FleetShowcaseProps) => {
@@ -31,7 +31,7 @@ export const FleetShowcase = ({ categories }: FleetShowcaseProps) => {
         src: bus.coverImage,
         alt: bus.name,
         title: bus.name,
-        subtitle: `${bus.yearLabel} · ${tCommon("seats")}: ${bus.seatsLabel}`,
+        subtitle: `${tCommon("seats")}: ${bus.seatsLabel}`,
       })),
     [categories, tCommon],
   )
@@ -59,7 +59,7 @@ export const FleetShowcase = ({ categories }: FleetShowcaseProps) => {
   return (
     <div className="space-y-6">
       <div
-        className="relative mx-auto h-[min(62vw,680px)] w-full max-w-none px-0"
+        className="relative mx-auto h-[min(62vw,720px)] w-full max-w-none overflow-visible px-6 pt-3 sm:px-10"
         aria-label={t("carouselLabel")}
       >
         <CircularCarousel
@@ -68,14 +68,14 @@ export const FleetShowcase = ({ categories }: FleetShowcaseProps) => {
           intro="rise"
           cardWidth={CARD_WIDTH}
           aspectRatio={ASPECT_RATIO}
-          gap={44}
+          gap={72}
           curve={0}
           autoplay={flippedIndex !== null || galleryOpen ? "off" : "drift"}
           speed={10}
           direction={locale === "ar" ? "right" : "left"}
           captions
-          fadeColor="var(--brand-surface)"
-          cornerRadius={16}
+          fadeColor="#000000"
+          cornerRadius={28}
           depthFade={0.3}
           perspective={3400}
           onChange={handleChange}
@@ -85,16 +85,24 @@ export const FleetShowcase = ({ categories }: FleetShowcaseProps) => {
             const bus = categories[index]
             if (!bus) return null
             return (
-              <FleetBusFlipCard
-                bus={bus}
-                flipped={flippedIndex === index}
-                width={meta.width}
-                height={meta.height}
-                onShowMore={() => {
-                  setActiveIndex(index)
-                  setGalleryOpen(true)
-                }}
-              />
+              <div
+                className={
+                  meta.active
+                    ? "box-border h-full w-full rounded-[1.75rem] border-[3px] border-orange p-0"
+                    : "box-border h-full w-full rounded-[1.75rem] border-[3px] border-transparent"
+                }
+              >
+                <FleetBusFlipCard
+                  bus={bus}
+                  flipped={flippedIndex === index}
+                  width={meta.width}
+                  height={meta.height}
+                  onShowMore={() => {
+                    setActiveIndex(index)
+                    setGalleryOpen(true)
+                  }}
+                />
+              </div>
             )
           }}
         />

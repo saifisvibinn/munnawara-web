@@ -12,7 +12,6 @@ import { Cairo } from "next/font/google"
 import { notFound } from "next/navigation"
 import type { ReactNode } from "react"
 import { PageRouteTransition } from "@/components/landing/LogoRouteTransition"
-import { SiteCursor } from "@/components/layout/SiteCursor"
 import { buildOrganizationSchema, serializeJsonLd } from "@/lib/schema"
 import { siteOrigin } from "@/lib/seo"
 import "../globals.css"
@@ -116,7 +115,6 @@ const LocaleLayout = async ({ children, params }: LocaleLayoutProps) => {
               <FloatingActions />
               <FloatingQuoteCta />
               <PageRouteTransition />
-              <SiteCursor />
             </SmoothScrollProvider>
           </NextIntlClientProvider>
         </ThemeProvider>
