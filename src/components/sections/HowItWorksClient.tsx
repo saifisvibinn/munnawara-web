@@ -6,7 +6,7 @@ import { toLocaleDigits } from "@/lib/localeDigits"
 import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { useLocale } from "next-intl"
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
 
 type HowStep = {
   id: string
@@ -37,6 +37,20 @@ export const HowItWorksClient = ({
   const isRtl = locale === "ar"
   const rootRef = useRef<HTMLElement>(null)
   const digitRef = useRef<HTMLDivElement>(null)
+  const [markPinned, setMarkPinned] = useState(false)
+
+  // Keep the petal watermark fixed in the viewport for the whole section (steps 1–3).
+  useEffect(() => {
+    const root = rootRef.current
+    if (!root) return
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setMarkPinned(entry.isIntersecting),
+      { root: null, threshold: 0 },
+    )
+    observer.observe(root)
+    return () => observer.disconnect()
+  }, [])
 
   useEffect(() => {
     const root = rootRef.current
@@ -114,7 +128,18 @@ export const HowItWorksClient = ({
         aria-hidden
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_70%_55%_at_0%_0%,color-mix(in_srgb,var(--brand-orange)_14%,transparent),transparent_60%),radial-gradient(ellipse_55%_45%_at_100%_100%,color-mix(in_srgb,var(--brand-blue)_10%,transparent),transparent_55%)]"
       />
-      <div className="relative mx-auto max-w-[80rem]">
+      {/* Fixed petal mark while this section (steps 1–3) is on screen — does not scroll */}
+      <div
+        aria-hidden
+        className={
+          markPinned
+            ? "pointer-events-none fixed inset-0 z-0"
+            : "pointer-events-none invisible absolute inset-0"
+        }
+      >
+        <div className="absolute -bottom-[8%] -end-[6%] size-[min(78vw,38rem)] bg-[url('/logo-mark.svg')] bg-contain bg-center bg-no-repeat opacity-[0.09] mix-blend-multiply dark:opacity-[0.16] dark:mix-blend-screen" />
+      </div>
+      <div className="relative z-[1] mx-auto max-w-[80rem]">
         <header className="sr-only">
           <p>{subtitle}</p>
           <h2 id="how-it-works-heading">{title}</h2>
