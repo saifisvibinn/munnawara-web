@@ -4,6 +4,7 @@ import {
   quoteRequestSchema,
   type QuoteRequestInput,
 } from "@/components/forms/formSchemas"
+import { DEFAULT_CHAT_API_URL } from "@/lib/chat/upstream"
 
 export type QuoteActionState = {
   ok: boolean
@@ -24,7 +25,7 @@ function backendBaseUrl() {
     process.env.CHAT_API_URL ||
     process.env.NEXT_PUBLIC_CHAT_API_URL ||
     process.env.QUOTE_API_URL ||
-    ""
+    DEFAULT_CHAT_API_URL
   ).replace(/\/$/, "")
 }
 
