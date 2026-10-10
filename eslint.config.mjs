@@ -18,6 +18,9 @@ const eslintConfig = [
       "out/**",
       "build/**",
       "next-env.d.ts",
+      // Vendored Framer modules (minified) — linting them is noise.
+      "src/components/about/framer-video-player.js",
+      "src/components/framer/liquid-glass-button.js",
     ],
   },
 ];

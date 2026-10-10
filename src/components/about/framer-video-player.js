@@ -1,4 +1,4 @@
-import{jsx as _jsx,jsxs as _jsxs}from"react/jsx-runtime";import{useEffect,useRef}from"react";// @ts-ignore
+import{jsx as _jsx,jsxs as _jsxs}from"react/jsx-runtime";import{useEffect,useRef}from"react";
 import{addPropertyControls,ControlType,useIsStaticRenderer}from"./framer-shim";const AR_MAP={"16:9":"16 / 9","9:16":"9 / 16","1:1":"1 / 1","4:3":"4 / 3","4:5":"4 / 5","3:2":"3 / 2","21:9":"21 / 9"};/**
  * @framerSupportedLayoutWidth any-prefer-fixed
  * @framerSupportedLayoutHeight any-prefer-fixed

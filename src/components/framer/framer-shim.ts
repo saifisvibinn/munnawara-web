@@ -2,8 +2,8 @@
 
 export const useIsStaticRenderer = () => false
 
-export const addPropertyControls = (_component: unknown, _controls?: unknown) => {
-  /* no-op outside Framer */
+export const addPropertyControls = (..._args: unknown[]) => {
+  void _args
 }
 
 export const ControlType = {
