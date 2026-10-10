@@ -440,6 +440,63 @@ html:has([data-quote-page]) {
   overscroll-behavior: none;
   height: 100%;
 }
+/*
+ * Quote canvas lives on html/body (not inside main). Atmosphere was trapped under
+ * the chrome spacer when nested in .qpage (main starts below the nav).
+ */
+html:has(body.is-quote-page),
+html:has([data-quote-page]),
+body.is-quote-page,
+body:has([data-quote-page]) {
+  --quote-canvas:
+    radial-gradient(
+      ellipse 55% 48% at 10% 0%,
+      color-mix(in srgb, var(--brand-orange) 26%, transparent),
+      transparent 68%
+    ),
+    radial-gradient(
+      ellipse 48% 42% at 96% 100%,
+      color-mix(in srgb, var(--brand-blue) 18%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 36% 32% at 78% 8%,
+      color-mix(in srgb, var(--brand-wordmark) 12%, transparent),
+      transparent 68%
+    ),
+    linear-gradient(
+      165deg,
+      var(--brand-surface-mint) 0%,
+      var(--brand-surface) 42%,
+      var(--brand-surface-muted) 100%
+    );
+  background: var(--quote-canvas);
+  background-attachment: fixed;
+}
+body.is-quote-page::after,
+body:has([data-quote-page])::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: url("/logo-mark.svg") no-repeat;
+  background-position: bottom -8% right -6%;
+  background-size: min(78vw, 38rem);
+  opacity: 0.09;
+  mix-blend-mode: multiply;
+}
+html[dir="rtl"] body.is-quote-page::after,
+html[dir="rtl"] body:has([data-quote-page])::after,
+html[lang="ar"] body.is-quote-page::after,
+html[lang="ar"] body:has([data-quote-page])::after {
+  background-position: bottom -8% left -6%;
+}
+html.dark body.is-quote-page::after,
+html.dark body:has([data-quote-page])::after {
+  opacity: 0.16;
+  mix-blend-mode: screen;
+}
 body.is-quote-page footer,
 body:has([data-quote-page]) footer,
 body.is-quote-page [data-floating-quote-chrome],
@@ -448,6 +505,8 @@ body:has([data-quote-page]) [data-floating-quote-chrome] {
 }
 body.is-quote-page main#main,
 body:has([data-quote-page]) main#main {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   min-height: 0;
@@ -455,6 +514,7 @@ body:has([data-quote-page]) main#main {
   /* floating chat/WhatsApp are hidden here, so drop the padding that clears them */
   padding-bottom: 0;
   overflow: hidden;
+  background: transparent;
 }
 @media (max-width: 980px) {
   body.is-quote-page main#main,
@@ -465,6 +525,7 @@ body:has([data-quote-page]) main#main {
 
 .qpage {
   --qp-gap: 0.75rem;
+  position: relative;
   box-sizing: border-box;
   flex: 1 1 auto;
   width: 100%;
@@ -474,11 +535,14 @@ body:has([data-quote-page]) main#main {
   padding-inline: var(--qp-gap);
   padding-bottom: var(--qp-gap);
   overflow: hidden;
+  background: transparent;
 }
 @media (min-width: 640px) { .qpage { --qp-gap: 1rem; } }
 @media (min-width: 1024px) { .qpage { --qp-gap: 1.25rem; } }
 
 .qw-split {
+  position: relative;
+  z-index: 1;
   display: grid;
   gap: var(--qp-gap);
   height: 100%;

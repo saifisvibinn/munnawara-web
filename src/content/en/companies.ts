@@ -3,7 +3,7 @@ import type { Company } from "../types"
 export const companies: readonly Company[] = [
   {
     slug: "transport",
-    name: "Durrah Al-Munawwara Transport for Pilgrims",
+    name: "Durrat Almunawwara Transport for Pilgrims",
     summary:
       "A modern fleet for Hajj and Umrah pilgrims, staff, and students, including airport reception, intercity transport, Holy Sites journeys, and international routes to Yemen (Marib, Mukalla, Aden). Hajj-season pilgrim transport is contracted via the responsible mission and the electronic path.",
     services: [
@@ -20,7 +20,7 @@ export const companies: readonly Company[] = [
   },
   {
     slug: "umrah-services",
-    name: "Durrah Al-Munawwara Umrah Services",
+    name: "Durrat Almunawwara Umrah Services",
     summary:
       "Supporting services for Umrah journeys, coordinated with transport and hospitality for group operators.",
     services: [
@@ -34,7 +34,7 @@ export const companies: readonly Company[] = [
   },
   {
     slug: "tourism",
-    name: "Durrah Al-Munawwara Tourism Services",
+    name: "Durrat Almunawwara Tourism Services",
     summary:
       "Group tourism, conferences, events, and private hire, with reception plans, spare buses, and VIP airport options by capacity.",
     services: [
@@ -50,7 +50,7 @@ export const companies: readonly Company[] = [
   },
   {
     slug: "hospitality-catering",
-    name: "Durrah Al-Munawwara Hospitality & Catering",
+    name: "Durrat Almunawwara Hospitality & Catering",
     summary:
       "Hospitality and catering support for Hajj and Umrah programs and institutional events.",
     services: [

@@ -23,7 +23,8 @@ type HeroVideoProps = {
 
 const VIDEO_SRC = "/hero/NewHero.mp4"
 // Frame at (duration - endFrameOffsetSeconds), the exact point playback freezes on.
-const END_FRAME_SRC = "/hero/hero-end.jpg"
+/* Bump when replacing the still so browsers don’t keep a stale depot frame. */
+const END_FRAME_SRC = "/hero/hero-end.jpg?v=2"
 
 export const HeroVideo = forwardRef<HeroVideoHandle, HeroVideoProps>(
   function HeroVideo({ reducedMotion }, ref) {

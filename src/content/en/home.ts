@@ -2,18 +2,18 @@ import type { HomeContent } from "../types"
 
 export const home: HomeContent = {
   landingHero: {
-    eyebrow: "Durrah Al Munawwara Transportation",
+    eyebrow: "Durrat Almunawwara Co.",
     lines: ["Moving", "with care", "for guests"],
     sub: "Integrated transport solutions for pilgrims and institutions, supported by a modern fleet and a complete operations network.",
     primaryCta: "Request transport",
     secondaryCta: "Explore our fleet",
-    brandWords: ["DURRAH", "AL", "MUNAWWARA", "TRANSPORTATION"],
-    backTop: "DMTC, back to top",
-    chatAria: "Chat with DMTC",
+    brandWords: ["Durrat", "Almunawwara", "Co."],
+    backTop: "Durrat Almunawwara Co., back to top",
+    chatAria: "Chat with Durrat Almunawwara Co.",
   },
   valueTitle: "Transport built for sacred journeys",
   valueIntro:
-    "Durrah Al-Munawwara Group coordinates modern coaches, careful operations, and clear communication so pilgrims and institutions travel with confidence.",
+    "Durrat Almunawwara Co. coordinates modern coaches, careful operations, and clear communication so pilgrims and institutions travel with confidence.",
   valueImage: "/fleet/premium-vip-2026/exterior/pv-out-1.webp",
   valueBullets: [
     {
@@ -37,7 +37,7 @@ export const home: HomeContent = {
       description: "Clear coordination from quote to confirmed trip.",
     },
   ],
-  passbyEyebrow: "Durrah Al-Munawwara",
+  passbyEyebrow: "Durrat Almunawwara Co.",
   passbyTitle: "you choose the destination",
   passbyTitleAfter: "we get you there safely",
   howTitle: "How it works",
@@ -81,7 +81,7 @@ export const home: HomeContent = {
     "Safe, comfortable journeys.",
     "Organized fleet. Clear standards.",
   ],
-  quoteEyebrow: "Plan your trip",
+  quoteEyebrow: "Tell us the road.",
   quoteHeadline: "Sit back. We'll coordinate the rest.",
   quoteBody:
     "Share trip type, cities, dates, and passenger count. Our team follows up with clear options.",
@@ -93,12 +93,12 @@ export const home: HomeContent = {
   testimonialsEmpty: "Client testimonials will appear here once approved for publication.",
   newsTitle: "Read about the group",
   newsSubtitle:
-    "Seasonal notes, fleet updates, and announcements from Durrah Al-Munawwara.",
+    "Seasonal notes, fleet updates, and announcements from Durrat Almunawwara Co.",
   newsEmpty: "No news posts yet. Check back soon.",
   faqTitle: "FAQs",
   faqSubtitle: "Answers to questions groups and institutions ask most often.",
   faqCta: "Contact us",
-  ctaBandEyebrow: "Experience organized transport like never before",
+  ctaBandEyebrow: "From request to road.",
   ctaBandTitle: "Sit back, we'll coordinate the rest.",
   ctaBandSubtitle:
     "Share your trip details and our team will follow up with clear options.",

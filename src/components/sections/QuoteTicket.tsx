@@ -9,7 +9,7 @@ import { useEffect, useRef, useState, useSyncExternalStore } from "react"
 const COPY = {
   en: {
     pass: "Boarding pass",
-    brand: "Durrah Al-Munawwara",
+    brand: "Durrat Almunawwara Co.",
     title: "Your journey starts here",
     sub: "Umrah circuits · Transfers · Corporate · Charter",
     route: "Jeddah → Makkah → Madinah",

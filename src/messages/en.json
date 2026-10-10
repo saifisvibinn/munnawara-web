@@ -1,19 +1,19 @@
 {
   "meta": {
-    "siteName": "Durrah Al-Munawwara",
+    "siteName": "Durrat Almunawwara Co.",
     "siteNameEn": "DMTC"
   },
   "seo": {
-    "site": "Durrah Al-Munawwara Group: transport and pilgrimage services",
-    "about": "The story of Durrah Al-Munawwara Group and how it serves pilgrims and institutions.",
-    "companies": "The companies of Durrah Al-Munawwara Group across transport, Umrah services, tourism, and hospitality.",
+    "site": "Durrat Almunawwara Co.: transport and pilgrimage services",
+    "about": "The story of Durrat Almunawwara Co. and how it serves pilgrims and institutions.",
+    "companies": "The companies of Durrat Almunawwara Co. across transport, Umrah services, tourism, and hospitality.",
     "fleet": "Explore the coach fleet: VIP, standard, city, and staff transport classes.",
     "corporate": "Staff, school, and institutional transport with route planning and recurring contracts.",
-    "clients": "The organisations and groups that travel with Durrah Al-Munawwara.",
-    "gallery": "Photos of the Durrah Al-Munawwara coaches, interiors, workshop, and facilities.",
-    "news": "News and updates from Durrah Al-Munawwara Group.",
-    "careers": "Open roles and careers at Durrah Al-Munawwara Group.",
-    "contact": "Contact the Durrah Al-Munawwara team by phone, WhatsApp, or email, or visit the Jeddah office.",
+    "clients": "The organisations and groups that travel with Durrat Almunawwara Co.",
+    "gallery": "Photos of the Durrat Almunawwara Co. coaches, interiors, workshop, and facilities.",
+    "news": "News and updates from Durrat Almunawwara Co.",
+    "careers": "Open roles and careers at Durrat Almunawwara Co.",
+    "contact": "Contact the Durrat Almunawwara Co. team by phone, WhatsApp, or email, or visit the Jeddah office.",
     "quote": "Request a transport quote: share your dates, group size, and route and our team will follow up."
   },
   "nav": {
@@ -70,6 +70,7 @@
     "contactUs": "Contact us",
     "whatsapp": "WhatsApp",
     "loading": "Loading",
+    "loadingSlogan": "A pearl on every road.",
     "comingSoon": "Content in preparation",
     "contentPending": "Awaiting client-approved content",
     "viewFleet": "View fleet",
@@ -100,7 +101,7 @@
     "contracts": "Recurring contracts with reports, maintenance, and alternate buses"
   },
   "footer": {
-    "tagline": "Trusted transport for pilgrims and institutions",
+    "tagline": "Care that travels with you.",
     "rights": "All rights reserved",
     "quickLinks": "Quick links",
     "companies": "Group companies"
@@ -126,7 +127,7 @@
     "hajjStepHint2": "Missions contract via the electronic path; we align fleet and routes",
     "hajjStepHint3": "Dedicated care throughout the season (including Munawwara Care)",
     "fleetTitle": "Our fleet",
-    "fleetSubtitle": "Calm, comfortable journeys on a modern, safety-led coach fleet.",
+    "fleetSubtitle": "Every coach, a quiet promise.",
     "fleetExplore": "Open the interactive fleet showcase",
     "cabinEyebrow": "Cabin experience",
     "cabinTitle": "Comfort designed for long sacred journeys",
@@ -147,7 +148,7 @@
     "title": "Request a quote",
     "backToTicket": "Back to ticket"
   },
-  "whatsappPrefill": "Hello, I would like to inquire about Durrah Al-Munawwara services",
+  "whatsappPrefill": "Hello, I would like to inquire about Durrat Almunawwara Co. services",
   "chat": {
     "open": "Chat with Durri",
     "chatWith": "Chat with",

@@ -29,9 +29,11 @@ export const Footer = async () => {
             />
             <div>
               <p className="font-label text-sm font-semibold text-ink">
-                {tMeta("siteNameEn")}
+                {config.brandNameEn}
               </p>
-              <p className="text-sm text-ink/70">{tMeta("siteName")}</p>
+              {locale === "ar" ? (
+                <p className="text-sm text-ink/70">{tMeta("siteName")}</p>
+              ) : null}
             </div>
           </div>
           <p className="mt-5 max-w-sm text-sm leading-relaxed">{t("tagline")}</p>

@@ -258,6 +258,7 @@ export const DamLanding = ({ copy }: DamLandingProps) => {
   const tMeta = useTranslations("meta")
   const locale = useLocale()
   const loadingLabel = tCommon("loading")
+  const loadingSlogan = tCommon("loadingSlogan")
   const loadingChars =
     locale === "ar" ? [loadingLabel] : loadingLabel.toUpperCase().split("")
   const [prefersReducedMotion] = useState(
@@ -279,6 +280,7 @@ export const DamLanding = ({ copy }: DamLandingProps) => {
   const loaderLettersRef = useRef<HTMLSpanElement[]>([])
   const brandNameRef = useRef<HTMLDivElement>(null)
   const brandWordsRef = useRef<HTMLSpanElement[]>([])
+  const loadingSloganRef = useRef<HTMLParagraphElement>(null)
   const navRef = useRef<HTMLElement>(null)
   const navBarRef = useRef<HTMLDivElement>(null)
   const navItemsRef = useRef<HTMLElement[]>([])
@@ -452,6 +454,7 @@ export const DamLanding = ({ copy }: DamLandingProps) => {
       const loaderStatus = loaderStatusRef.current
       const loaderLetters = loaderLettersRef.current
       const brandWords = brandWordsRef.current
+      const loadingSloganEl = loadingSloganRef.current
 
       forceHomeTop()
       document.body.classList.add("is-loading")
@@ -490,6 +493,7 @@ export const DamLanding = ({ copy }: DamLandingProps) => {
       gsap.set(loaderLetters, { opacity: 1, y: 0 })
       gsap.set(elements.brandName, { opacity: 0, visibility: "visible" })
       gsap.set(brandWords, { opacity: 0, y: 18 })
+      if (loadingSloganEl) gsap.set(loadingSloganEl, { opacity: 0, y: 10 })
 
       const handoffAssemble = () => {
         gsap.set(elements.logo, { opacity: 1 })
@@ -553,6 +557,19 @@ export const DamLanding = ({ copy }: DamLandingProps) => {
           },
           loadingTextAt,
         )
+
+      if (loadingSloganEl) {
+        assemble.to(
+          loadingSloganEl,
+          {
+            opacity: 1,
+            y: 0,
+            duration: motion.loader.companyRevealDuration,
+            ease: motion.ease.soft,
+          },
+          loadingTextAt + 0.12,
+        )
+      }
 
       const assembleSettleAt =
         motion.loader.assembleDelay +
@@ -1012,18 +1029,23 @@ export const DamLanding = ({ copy }: DamLandingProps) => {
           >
             <span className="dmtc-gradient">{tMeta("siteNameEn")}</span>
           </span>
-          {copy.brandWords.map((word) => (
-            <span
-              className="loader-brand__word"
-              key={word}
-              ref={(element) => {
-                if (element && !brandWordsRef.current.includes(element))
-                  brandWordsRef.current.push(element)
-              }}
-            >
-              {word}
-            </span>
-          ))}
+          <div className="loader-brand__words" lang={locale}>
+            {copy.brandWords.map((word) => (
+              <span
+                className="loader-brand__word"
+                key={word}
+                ref={(element) => {
+                  if (element && !brandWordsRef.current.includes(element))
+                    brandWordsRef.current.push(element)
+                }}
+              >
+                {word}
+              </span>
+            ))}
+          </div>
+          <p className="loader-brand__slogan" ref={loadingSloganRef}>
+            {loadingSlogan}
+          </p>
         </div>
         <div className="corner-target" ref={targetRef} aria-hidden="true" />
         <button

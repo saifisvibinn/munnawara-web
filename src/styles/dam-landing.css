@@ -477,15 +477,23 @@ html[dir='ltr'] .hero-video__media {
 .hero-video__end-frame {
   position: absolute;
   inset: 0;
+  z-index: 1;
   width: 100%;
   height: 100%;
   object-fit: cover;
   object-position: 8% 50%;
   opacity: 0;
+  pointer-events: none;
 }
 
 html[dir='ltr'] .hero-video__end-frame {
   transform: scaleX(-1);
+}
+
+/* Still must fully replace the clip — the MP4’s last frame is a different shot. */
+.hero-video--ended .hero-video__media {
+  opacity: 0;
+  visibility: hidden;
 }
 
 .hero-video--ended .hero-video__end-frame {
@@ -1718,16 +1726,21 @@ a[data-whatsapp-fab] {
   direction: rtl;
   gap: 0;
   letter-spacing: 0;
-  font-family: var(--font-arabic);
-  font-size: 0.78rem;
+  word-spacing: normal;
+  font-family: var(--font-cairo), "Cairo", var(--font-arabic), sans-serif;
+  font-size: 0.85rem;
+  font-weight: 500;
+  unicode-bidi: isolate;
 }
 
+/* Centered stack: DMTC → company line → slogan */
 .loader-brand {
   top: calc(50% + min(10vh, 70px));
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.2em 0.42em;
-  justify-content: center;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 0.35em;
   width: min(92vw, 960px);
   color: #f5efe8;
   font-size: clamp(1.125rem, 2.4vw, 1.75rem);
@@ -1740,8 +1753,6 @@ a[data-whatsapp-fab] {
 }
 
 .loader-brand__mark {
-  flex-basis: 100%;
-  margin-bottom: 0.35em;
   color: #f5efe8;
   font-family: "Archivo", var(--font-latin), sans-serif;
   font-size: clamp(1.5rem, 3.4vw, 2.4rem);
@@ -1764,7 +1775,17 @@ a[data-whatsapp-fab] {
   color: transparent;
 }
 
-.loader-brand__word:nth-child(2) {
+.loader-brand__words {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.2em 0.42em;
+  justify-content: center;
+  max-width: 100%;
+  line-height: 1.4;
+  text-align: center;
+}
+
+.loader-brand__word:first-child {
   color: var(--brand-orange);
 }
 
@@ -1773,11 +1794,48 @@ a[data-whatsapp-fab] {
 }
 
 .loader-brand--ar {
-  gap: 0.28em;
+  gap: 0.4em;
   letter-spacing: 0;
-  font-family: var(--font-arabic);
+  font-family: var(--font-cairo), "Cairo", var(--font-arabic), sans-serif;
   font-size: clamp(1.4rem, 3vw, 2.1rem);
   font-weight: 700;
+}
+
+.loader-brand--ar .loader-brand__words {
+  gap: 0.28em;
+  letter-spacing: 0;
+  word-spacing: normal;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  unicode-bidi: isolate;
+  direction: rtl;
+}
+
+.loader-brand--ar .loader-brand__word {
+  letter-spacing: 0;
+  font-family: inherit;
+}
+
+.loader-brand__slogan {
+  margin: 0.4em 0 0;
+  max-width: 32ch;
+  color: rgba(245, 239, 232, 0.62);
+  font-size: clamp(0.85rem, 1.6vw, 1.05rem);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  line-height: 1.45;
+  text-align: center;
+}
+
+.loader-brand--ar .loader-brand__slogan {
+  max-width: 36ch;
+  letter-spacing: 0;
+  word-spacing: normal;
+  font-family: var(--font-cairo), "Cairo", var(--font-arabic), sans-serif;
+  font-weight: 500;
+  unicode-bidi: isolate;
+  direction: rtl;
 }
 
 /* Pointer-driven route transition: progress in the chrome, not a blocking logo overlay. */

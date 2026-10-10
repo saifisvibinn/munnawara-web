@@ -4,7 +4,8 @@ import { Link } from "@/i18n/navigation"
 import { ArrowUpRight } from "lucide-react"
 import { getTranslations } from "next-intl/server"
 
-const PHOTO_IDS = ["workshop-0146", "workshop-0153", "workshop-0358"] as const
+// Parts / yard objects only — no face-forward portraits in the home preview.
+const PHOTO_IDS = ["workshop-0331", "workshop-0358", "workshop-0362"] as const
 
 type BehindTheScenesProps = {
   locale: AppLocale

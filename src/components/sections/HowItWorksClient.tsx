@@ -107,10 +107,14 @@ export const HowItWorksClient = ({
       ref={rootRef}
       id="how-it-works"
       data-how-it-works
-      className="relative overflow-x-clip bg-surface-elevated px-4 py-16 sm:px-6 sm:py-20 md:px-10 md:py-24 lg:py-28"
+      className="relative overflow-x-clip bg-surface-mint px-4 py-16 sm:px-6 sm:py-20 md:px-10 md:py-24 lg:py-28"
       aria-labelledby="how-it-works-heading"
     >
-      <div className="mx-auto max-w-[80rem]">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_70%_55%_at_0%_0%,color-mix(in_srgb,var(--brand-orange)_14%,transparent),transparent_60%),radial-gradient(ellipse_55%_45%_at_100%_100%,color-mix(in_srgb,var(--brand-blue)_10%,transparent),transparent_55%)]"
+      />
+      <div className="relative mx-auto max-w-[80rem]">
         <header className="sr-only">
           <p>{subtitle}</p>
           <h2 id="how-it-works-heading">{title}</h2>

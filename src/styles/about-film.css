@@ -652,10 +652,9 @@ html[lang="ar"] .about-film__company span {
   }
 }
 
-/* —— Film player —— */
+/* —— Film player (Framer VideoPlayerV8) —— */
 .about-film-player {
   position: relative;
-  aspect-ratio: 16 / 9;
   width: 100%;
   overflow: hidden;
   border-radius: 1.25rem;
@@ -664,86 +663,79 @@ html[lang="ar"] .about-film__company span {
     0 0 0 1px color-mix(in oklab, var(--color-ink) 10%, transparent);
 }
 
-.about-film-player__video {
+.about-film-player--framer .framer-vp {
+  width: 100%;
+}
+
+.about-film-player--framer .framer-vp .player-wrap {
+  max-width: none;
+  width: 100%;
+  margin-inline: 0;
+}
+
+.about-film-player--framer .framer-vp .media {
+  border-radius: inherit;
+}
+
+.about-film-player--framer .framer-vp .video-el {
+  object-fit: cover;
+  object-position: center 40%;
+}
+
+.about-film-player__preview {
   position: absolute;
   inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
+  z-index: 2;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: inherit;
+  cursor: pointer;
+  overflow: hidden;
   background: var(--color-black);
 }
 
-.about-film-player__poster {
+.about-film-player__preview-play {
   position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  width: 100%;
-  padding: 0;
-  border: 0;
-  cursor: pointer;
-  background: transparent;
-  transition: opacity 240ms ease;
+  inset-inline-start: 50%;
+  top: 50%;
+  z-index: 1;
+  width: 3.5rem;
+  height: 3.5rem;
+  translate: -50% -50%;
+  border-radius: 9999px;
+  background: color-mix(in oklab, var(--color-white) 18%, transparent);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  pointer-events: none;
 }
 
-.about-film-player__poster::after {
+.about-film-player__preview-play::after {
   content: "";
   position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    to top,
-    color-mix(in oklab, var(--color-black) 55%, transparent),
-    transparent 55%
-  );
+  inset-inline-start: 54%;
+  top: 50%;
+  width: 0;
+  height: 0;
+  translate: -50% -50%;
+  border-block: 0.55rem solid transparent;
+  border-inline-start: 0.9rem solid var(--color-white);
 }
 
-.about-film-player__play {
-  position: relative;
-  z-index: 1;
-  display: grid;
-  place-items: center;
-  width: clamp(4rem, 9vw, 5.5rem);
-  aspect-ratio: 1;
-  border-radius: 9999px;
-  background: var(--color-orange);
-  color: var(--color-black);
-  box-shadow: 0 12px 32px -8px color-mix(in oklab, var(--color-black) 60%, transparent);
-  transition: transform 200ms ease, background-color 160ms ease;
+html[dir="rtl"] .about-film-player__preview-play::after {
+  inset-inline-start: 46%;
+  border-inline-start: 0;
+  border-inline-end: 0.9rem solid var(--color-white);
 }
 
-.about-film-player__play svg {
-  width: 38%;
-  height: 38%;
-  fill: currentColor;
-  margin-inline-start: 6%;
-}
-
-html[dir="rtl"] .about-film-player__play svg {
-  transform: scaleX(-1);
-  margin-inline-start: 0;
-  margin-inline-end: 6%;
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .about-film-player__poster:hover .about-film-player__play {
-    transform: scale(1.06);
-    background: var(--color-orange-soft);
-  }
-}
-
-.about-film-player__poster:focus-visible {
+.about-film-player__preview:focus-visible {
   outline: 3px solid var(--color-orange);
   outline-offset: -3px;
 }
 
-.about-film-player[data-started="true"] .about-film-player__poster {
-  opacity: 0;
-  pointer-events: none;
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .about-film-player__poster,
-  .about-film-player__play {
-    transition: none;
+  .about-film-player__preview-play {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
   }
 }

@@ -3,7 +3,7 @@ import type { FleetPageContent } from "../types"
 /** Page copy adapted from munawwara.com/portfolio — not a visual recreation */
 export const fleetPage: FleetPageContent = {
   title: "Our fleet",
-  subtitle: "Calm, comfortable journeys on a modern, safety-led coach fleet.",
+  subtitle: "Every coach, a quiet promise.",
   intro:
     "Travel with a contemporary fleet built for comfort and high safety standards. Categories span VIP, coach, city, workforce, and mini buses so groups and institutions can match capacity to the assignment.",
   typesEyebrow: "Fleet categories",

@@ -1,9 +1,9 @@
 import type { AboutContent } from "../types"
 
 export const about: AboutContent = {
-  title: "About Durrah Al-Munawwara Group",
+  title: "About Durrat Almunawwara Co.",
   intro:
-    "Durrah Al-Munawwara Group is one of the leading companies in the Kingdom of Saudi Arabia, with more than 10 years of experience delivering a full range of travel and tourism services. The company aims to meet the needs and wishes of individuals and groups for mobility and for complete tourism and religious experiences.",
+    "Durrat Almunawwara Co. is one of the leading companies in the Kingdom of Saudi Arabia, with more than 10 years of experience delivering a full range of travel and tourism services. The company aims to meet the needs and wishes of individuals and groups for mobility and for complete tourism and religious experiences.",
   historyTitle: "Our story",
   history:
     // TODO(content): replace with client-approved history / years narrative
@@ -13,7 +13,7 @@ export const about: AboutContent = {
     "Enable safe, comfortable journeys through an organized fleet and high operating standards.",
   licensingNote: null,
   film: {
-    brandName: "Durrah Al-Munawwara",
+    brandName: "Durrat Almunawwara Co.",
     journeyHeadline: "Every journey is better when no one travels alone.",
     journeySupport:
       "A continuous story of organized mobility, from the open road to the groups who move with us.",
@@ -29,7 +29,7 @@ export const about: AboutContent = {
     ],
     connectionHeadline: "Then everything finds its place.",
     connectionBody:
-      "Durrah Al-Munawwara brings transport, Umrah support, tourism, and hospitality under one accountable group, so journeys stay clear from request to return.",
+      "Durrat Almunawwara Co. brings transport, Umrah support, tourism, and hospitality under one accountable group, so journeys stay clear from request to return.",
     fleetHeadline: "A modern fleet, carefully driven.",
     fleetBody:
       "VIP coaches, group buses, and city transport, current-model vehicles prepared for sacred routes and institutional travel.",

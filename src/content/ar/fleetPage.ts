@@ -3,7 +3,7 @@ import type { FleetPageContent } from "../types"
 /** Page copy adapted from munawwara.com/portfolio — not a visual recreation */
 export const fleetPage: FleetPageContent = {
   title: "أسطولنا",
-  subtitle: "رحلات هادئة ومريحة بأسطول حديث ومعايير سلامة عالية.",
+  subtitle: "كل حافلة، وعد هادئ.",
   intro:
     "سافروا بأسطول معاصر يجمع الراحة ومعايير السلامة العالية. تغطي الفئات VIP والكوتش والنقل الحضري ونقل العمالة والميني باص لتناسب احتياجات المجموعات والمؤسسات.",
   typesEyebrow: "فئات الأسطول",

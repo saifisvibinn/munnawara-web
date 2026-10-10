@@ -14,7 +14,7 @@ export type QuoteActionState = {
 
 const BACKEND_TIMEOUT_MS = 15_000
 const EMAIL_TIMEOUT_MS = 10_000
-const DEFAULT_EMAIL_FROM = "DMTC Website <onboarding@resend.dev>"
+const DEFAULT_EMAIL_FROM = "Durrat Almunawwara Co. Website <onboarding@resend.dev>"
 
 /** Collapse CR/LF so user text cannot inject headers into an email subject. */
 const singleLine = (value: string) => value.replace(/[\r\n]+/g, " ").trim()

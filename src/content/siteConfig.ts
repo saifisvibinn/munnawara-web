@@ -3,7 +3,7 @@ import type { SiteConfig } from "./types"
 /** Contact details from exhibition brochure page 16 — confirm WhatsApp preference with client */
 export const siteConfig: SiteConfig = {
   brandNameAr: "درة المنورة",
-  brandNameEn: "Durrah Al-Munawwara",
+  brandNameEn: "Durrat Almunawwara Co.",
   brandShort: "DMTC",
   email: "info@munawwara.com",
   phones: ["+966504352314", "+966596610097"],

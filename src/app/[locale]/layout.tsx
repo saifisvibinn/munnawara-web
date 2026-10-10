@@ -12,6 +12,7 @@ import { Cairo } from "next/font/google"
 import { notFound } from "next/navigation"
 import type { ReactNode } from "react"
 import { PageRouteTransition } from "@/components/landing/LogoRouteTransition"
+import { getSiteConfig } from "@/content"
 import { buildOrganizationSchema, serializeJsonLd } from "@/lib/schema"
 import { siteOrigin } from "@/lib/seo"
 import "../globals.css"
@@ -42,16 +43,17 @@ export const generateMetadata = async ({
     getTranslations({ locale, namespace: "seo" }),
   ])
   const siteName = tMeta("siteName")
+  const brandNameEn = getSiteConfig().brandNameEn
   const description = tSeo("site")
 
   return {
     metadataBase: new URL(siteOrigin()),
     title: {
-      default: `${tMeta("siteNameEn")} | ${siteName}`,
+      default: locale === "en" ? siteName : `${brandNameEn} | ${siteName}`,
       template: `%s | ${siteName}`,
     },
     description,
-    applicationName: siteName,
+    applicationName: locale === "en" ? siteName : brandNameEn,
     icons: {
       icon: "/icon.png",
       apple: "/icon.png",
