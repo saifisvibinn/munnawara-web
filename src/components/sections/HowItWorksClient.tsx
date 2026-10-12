@@ -1,12 +1,14 @@
 "use client"
 
+import { LogoMark } from "@/components/landing/LogoMark"
 import { useReducedMotion } from "@/hooks/useReducedMotion"
 import { Link } from "@/i18n/navigation"
+import { cn } from "@/lib/cn"
 import { toLocaleDigits } from "@/lib/localeDigits"
 import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { useLocale } from "next-intl"
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef } from "react"
 
 type HowStep = {
   id: string
@@ -37,58 +39,92 @@ export const HowItWorksClient = ({
   const isRtl = locale === "ar"
   const rootRef = useRef<HTMLElement>(null)
   const digitRef = useRef<HTMLDivElement>(null)
-  const [markPinned, setMarkPinned] = useState(false)
-
-  // Keep the petal watermark fixed in the viewport for the whole section (steps 1–3).
-  useEffect(() => {
-    const root = rootRef.current
-    if (!root) return
-
-    const observer = new IntersectionObserver(
-      ([entry]) => setMarkPinned(entry.isIntersecting),
-      { root: null, threshold: 0 },
-    )
-    observer.observe(root)
-    return () => observer.disconnect()
-  }, [])
+  const markRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const root = rootRef.current
     const digit = digitRef.current
+    const mark = markRef.current
     if (!root) return
+
+    const busSection = root.previousElementSibling as HTMLElement | null
+    const markBox = mark?.parentElement ?? null
+    const clamp01 = (value: number) => Math.min(1, Math.max(0, value))
+    const easeOutCubic = (t: number) => 1 - (1 - t) ** 3
+
+    /**
+     * Petal path, measured against the bus section's bottom edge (B):
+     *  - B ≥ 85% vh  → petal sits fully behind the bus (hidden)
+     *  - B → 35% vh  → it slides out from behind that edge down to its rest spot,
+     *                  vertically centred on step 1
+     *  - after that  → it holds still through steps 01-03 until About covers it.
+     * Returns the desired top edge of the petal in viewport px.
+     */
+    const getMarkViewportTop = () => {
+      const size = mark?.offsetHeight ?? 0
+      const vh = window.innerHeight
+      const restTop = vh * 0.5 - size / 2
+      const edge = busSection ? busSection.getBoundingClientRect().bottom : 0
+      const progress = easeOutCubic(clamp01((vh * 0.85 - edge) / (vh * 0.5)))
+      const hiddenTop = edge - size
+      return hiddenTop + (restTop - hiddenTop) * progress
+    }
+
+    const updateMark = () => {
+      if (!mark || !markBox) return
+      gsap.set(mark, { y: getMarkViewportTop() - markBox.getBoundingClientRect().top })
+    }
 
     if (reduced || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       root.querySelectorAll<HTMLElement>("[data-how-progress]").forEach((bar) => {
         bar.style.transform = "scaleX(0)"
       })
+      if (mark && markBox) {
+        gsap.set(mark, {
+          y: window.innerHeight * 0.5 - mark.offsetHeight / 2 - markBox.getBoundingClientRect().top,
+        })
+      }
       return
     }
 
     const ctx = gsap.context(() => {
+      if (mark) {
+        updateMark()
+        ScrollTrigger.create({
+          trigger: root,
+          start: "top bottom",
+          end: "bottom top",
+          onUpdate: updateMark,
+          onRefresh: updateMark,
+        })
+      }
+
       const panels = gsap.utils.toArray<HTMLElement>("[data-how-step]")
       if (!panels.length) return
 
-      const list = root.querySelector("ol")
-      const first = panels[0]
-      const last = panels[panels.length - 1]
-
-      if (digit && first && last) {
+      // Digit changes only as the next step arrives (its top crosses 62% → 42% of the
+      // viewport), then holds — no slow drift while the current step is still in view.
+      if (digit) {
         const stepH = () => digit.querySelector("span")?.offsetHeight ?? 0
         gsap.set(digit, { y: 0 })
-        gsap.to(digit, {
-          y: () => -stepH() * (steps.length - 1),
-          ease: "none",
-          scrollTrigger: {
-            trigger: list ?? root,
-            start: () => `top ${window.innerHeight * 0.35}`,
-            end: () => {
-              const lastBottom = last.getBoundingClientRect().bottom + window.scrollY
-              const listTop = (list ?? root).getBoundingClientRect().top + window.scrollY
-              return `+=${Math.max(lastBottom - listTop - window.innerHeight * 0.35, 400)}`
+        panels.slice(1).forEach((panel, index) => {
+          const stepIndex = index + 1
+          gsap.fromTo(
+            digit,
+            { y: () => -stepH() * (stepIndex - 1) },
+            {
+              y: () => -stepH() * stepIndex,
+              ease: "power2.inOut",
+              immediateRender: false,
+              scrollTrigger: {
+                trigger: panel,
+                start: "top 62%",
+                end: "top 42%",
+                scrub: 0.3,
+                invalidateOnRefresh: true,
+              },
             },
-            scrub: 0.4,
-            invalidateOnRefresh: true,
-          },
+          )
         })
       }
 
@@ -121,24 +157,35 @@ export const HowItWorksClient = ({
       ref={rootRef}
       id="how-it-works"
       data-how-it-works
-      className="relative overflow-x-clip bg-surface-mint px-4 py-16 sm:px-6 sm:py-20 md:px-10 md:py-24 lg:py-28"
+      className="relative z-10 -mt-[30vh] overflow-x-clip bg-surface-mint px-4 pt-[calc(30vh+4rem)] pb-16 sm:px-6 sm:pb-20 md:px-10 md:pb-24 lg:pb-28"
       aria-labelledby="how-it-works-heading"
     >
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_70%_55%_at_0%_0%,color-mix(in_srgb,var(--brand-orange)_14%,transparent),transparent_60%),radial-gradient(ellipse_55%_45%_at_100%_100%,color-mix(in_srgb,var(--brand-blue)_10%,transparent),transparent_55%)]"
       />
-      {/* Fixed petal mark while this section (steps 1–3) is on screen — does not scroll */}
-      <div
-        aria-hidden
-        className={
-          markPinned
-            ? "pointer-events-none fixed inset-0 z-0"
-            : "pointer-events-none invisible absolute inset-0"
-        }
-      >
-        <div className="absolute -bottom-[8%] -end-[6%] size-[min(78vw,38rem)] bg-[url('/logo-mark.svg')] bg-contain bg-center bg-no-repeat opacity-[0.09] mix-blend-multiply dark:opacity-[0.16] dark:mix-blend-screen" />
+
+      {/*
+        Layer sandwich (not position:fixed):
+        BusPassby z-20 → this section z-10 (petal sticky) → About z-20.
+        Petal starts at the top (under the bus), slides down with the scroll
+        while 01→03 scrub, and ends low so About covers it.
+        h-0 sticky keeps page scroll normal.
+      */}
+      <div aria-hidden className="pointer-events-none sticky top-0 z-0 h-0">
+        <div className="relative h-dvh w-full">
+          <div
+            ref={markRef}
+            className={cn(
+              "absolute top-0 size-[min(78vw,38rem)] opacity-[0.12] mix-blend-multiply will-change-transform dark:opacity-[0.18] dark:mix-blend-screen",
+              isRtl ? "-start-[6%]" : "-end-[6%]",
+            )}
+          >
+            <LogoMark className="size-full" idPrefix="how-works" />
+          </div>
+        </div>
       </div>
+
       <div className="relative z-[1] mx-auto max-w-[80rem]">
         <header className="sr-only">
           <p>{subtitle}</p>
@@ -156,7 +203,7 @@ export const HowItWorksClient = ({
           <div className="pointer-events-none relative" aria-hidden>
             <div
               dir="ltr"
-              className={`sticky top-[18vh] flex items-start text-ink md:top-[22vh] justify-start`}
+              className="sticky top-[18vh] flex items-start justify-start text-ink md:top-[22vh]"
             >
               {!isRtl ? (
                 <span className="font-numeral text-[clamp(3.5rem,14vw,9rem)] leading-none font-bold tracking-tight">
@@ -213,14 +260,14 @@ export const HowItWorksClient = ({
                     step.ctaHref.startsWith("#") ? (
                       <a
                         href={step.ctaHref}
-                        className="font-label mt-7 inline-flex items-center justify-center rounded-full bg-black px-5 py-2.5 text-sm font-semibold text-white dark:ring-1 dark:ring-white/25 transition-[transform,background-color] duration-100 ease-out hover:bg-orange active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange motion-reduce:transition-none motion-reduce:active:scale-100 sm:mt-8"
+                        className="font-label mt-7 inline-flex items-center justify-center rounded-full bg-black px-5 py-2.5 text-sm font-semibold text-white transition-[transform,background-color] duration-100 ease-out hover:bg-orange active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange motion-reduce:transition-none motion-reduce:active:scale-100 dark:ring-1 dark:ring-white/25 sm:mt-8"
                       >
                         {step.ctaLabel}
                       </a>
                     ) : (
                       <Link
                         href={step.ctaHref}
-                        className="font-label mt-7 inline-flex items-center justify-center rounded-full bg-black px-5 py-2.5 text-sm font-semibold text-white dark:ring-1 dark:ring-white/25 transition-[transform,background-color] duration-100 ease-out hover:bg-orange active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange motion-reduce:transition-none motion-reduce:active:scale-100 sm:mt-8"
+                        className="font-label mt-7 inline-flex items-center justify-center rounded-full bg-black px-5 py-2.5 text-sm font-semibold text-white transition-[transform,background-color] duration-100 ease-out hover:bg-orange active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange motion-reduce:transition-none motion-reduce:active:scale-100 dark:ring-1 dark:ring-white/25 sm:mt-8"
                       >
                         {step.ctaLabel}
                       </Link>

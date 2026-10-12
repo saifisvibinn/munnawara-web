@@ -9,7 +9,7 @@ import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { ArrowUpRight } from "lucide-react"
 import Image from "next/image"
-import { useLayoutEffect, useRef, type CSSProperties } from "react"
+import { useLayoutEffect, useRef, type CSSProperties, type ReactNode } from "react"
 import "@/styles/about-film.css"
 
 gsap.registerPlugin(ScrollTrigger)
@@ -17,6 +17,8 @@ gsap.registerPlugin(ScrollTrigger)
 type AboutFilmProps = {
   film: AboutFilmContent
   pageTitle: string
+  /** Static company facts (vision, mission, numbers) before the final CTA */
+  children?: ReactNode
 }
 
 /** Art-directed frames: ratio = intrinsic width / height so buses are never cropped. */
@@ -27,19 +29,12 @@ const FLEET_FRAMES = [
   { src: "/photos/exterior/0427.webp", ratio: 3 / 2 },
 ] as const
 
-const DETAIL_FRAMES = [
-  { src: "/about/placeholders/airport.jpg", ratio: 3 / 2 },
-  { src: "/about/placeholders/holy-sites.jpg", ratio: 4 / 5 },
-  { src: "/photos/exterior/7727.webp", ratio: 16 / 9 },
-  { src: "/about/placeholders/events.jpg", ratio: 3 / 2 },
-] as const
-
 const GALLERY_SIZES = "(max-width: 767px) 80vw, 50vw"
 
 const frameStyle = (ratio: number) =>
   ({ "--af-ratio": ratio }) as CSSProperties
 
-export const AboutFilm = ({ film, pageTitle }: AboutFilmProps) => {
+export const AboutFilm = ({ film, pageTitle, children }: AboutFilmProps) => {
   const reduced = useReducedMotion()
   const rootRef = useRef<HTMLElement>(null)
 
@@ -500,48 +495,9 @@ export const AboutFilm = ({ film, pageTitle }: AboutFilmProps) => {
         </div>
       </section>
 
-      {/* 07 — Details */}
-      <section
-        className="about-film__scene about-film__pin about-film__pin--gallery"
-        data-af-details
-        data-af-gallery
-      >
-        <div className="about-film__sticky bg-surface">
-          <div className="about-film__stage about-film__stage--gallery">
-            <h2
-              data-af-details-head
-              className="about-film__display about-film__display--md text-center"
-            >
-              {film.detailsHeadline}
-            </h2>
-            <div className="about-film__gallery-window">
-              <div data-af-track className="about-film__gallery-track">
-                {film.details.map((detail, index) => (
-                  <figure
-                    key={detail.id}
-                    className="about-film__gallery-item"
-                    style={frameStyle(DETAIL_FRAMES[index].ratio)}
-                  >
-                    <div className="about-film__gallery-image">
-                      <Image
-                        src={DETAIL_FRAMES[index].src}
-                        alt=""
-                        fill
-                        sizes={GALLERY_SIZES}
-                        className="object-cover"
-                      />
-                    </div>
-                    <figcaption className="about-film__gallery-caption">{detail.line}</figcaption>
-                  </figure>
-                ))}
-              </div>
-            </div>
-            <p className="about-film__image-note">{film.detailsImageNote}</p>
-          </div>
-        </div>
-      </section>
+      {children}
 
-      {/* 08 — Human */}
+      {/* 07 — Human */}
       <section className="about-film__breath" data-af-human>
         <div className="mx-auto grid max-w-xl gap-6">
           <p

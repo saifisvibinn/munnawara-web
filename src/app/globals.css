@@ -628,3 +628,32 @@ html[data-footer-covers] [data-floating-quote-chrome] {
 .float-above-footer {
   transition: opacity 180ms ease;
 }
+
+/* Partners logo cloud — infinite horizontal marquee (duplicated track = -50%) */
+@keyframes logo-marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+.logo-marquee-track {
+  animation-name: logo-marquee;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: transform;
+}
+.logo-marquee-track--reverse {
+  animation-direction: reverse;
+}
+@media (prefers-reduced-motion: reduce) {
+  .logo-marquee-track {
+    animation: none;
+  }
+}
+@media (hover: hover) and (pointer: fine) {
+  .logo-marquee-track:hover {
+    animation-play-state: paused;
+  }
+}

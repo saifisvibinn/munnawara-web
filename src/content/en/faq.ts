@@ -17,7 +17,7 @@ export const faq: readonly FaqItem[] = [
     id: "fleet-types",
     question: "Which bus types are available?",
     answer:
-      "Catalog classes include coach, VIP, city, and employee buses in multiple capacities. Brochure seat counts may differ from operational assignment. We confirm the bus for your date in the offer.",
+      "Official profile classes include VIP coaches (18 or 28 luxury seats), coach buses (49), city buses (45 with standing), V7 buses (41), and coasters (29). We confirm the assigned bus for your date in the offer.",
   },
   {
     id: "quote",

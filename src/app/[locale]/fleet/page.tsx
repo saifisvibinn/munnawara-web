@@ -18,6 +18,8 @@ const FleetPage = async ({ params }: PageProps) => {
   const fleet = getFleet(appLocale)
   const page = getFleetPage(appLocale)
   const tCommon = await getTranslations("common")
+  // The showroom lists the five photographed classes; premium VIP only labels the hero image.
+  const showroomBuses = fleet.filter((bus) => bus.id !== "premium-vip-2026")
   const nameOf = (id: string) => fleet.find((bus) => bus.id === id)?.name ?? ""
   // Left-to-right order of the buses in /fleet/preview.webp.
   const busLabels = [nameOf("city-2025"), nameOf("premium-vip-2026"), nameOf("vip-2026")] as const
@@ -48,7 +50,7 @@ const FleetPage = async ({ params }: PageProps) => {
               {page.intro}
             </p>
           </header>
-          <FleetShowroom categories={fleet} />
+          <FleetShowroom categories={showroomBuses} />
         </div>
       </section>
 

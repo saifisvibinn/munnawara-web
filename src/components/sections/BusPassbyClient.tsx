@@ -93,10 +93,11 @@ export const BusPassbyClient = ({
   return (
     <section
       ref={rootRef}
-      className="relative h-[140vh] bg-surface-elevated md:h-[160vh]"
+      className="relative z-20 h-[140vh] bg-surface-elevated md:h-[160vh]"
       aria-label={`${title}. ${titleAfter}`}
     >
-      <div className="sticky top-0 h-dvh overflow-hidden">
+      {/* Opaque stage — sits above HowItWorks so the petal reveals from underneath */}
+      <div className="sticky top-0 z-20 h-dvh overflow-hidden bg-surface-elevated">
         <p
           className={cn(
             "font-label pointer-events-none absolute inset-x-0 top-[12%] z-30 mx-auto max-w-[80rem] px-4 text-center text-[11px] font-semibold text-orange-text sm:top-[14%] sm:text-xs md:top-[15%] md:px-10",

@@ -1,21 +1,21 @@
 import type { SiteConfig } from "./types"
 
-/** Contact details from exhibition brochure page 16 — confirm WhatsApp preference with client */
+/** Contact details from the official 2026 company profile (Get in Touch). */
 export const siteConfig: SiteConfig = {
   brandNameAr: "درة المنورة",
   brandNameEn: "Durrat Almunawwara Co.",
   brandShort: "DMTC",
   email: "info@munawwara.com",
-  phones: ["+966504352314", "+966596610097"],
-  // KB / ops WhatsApp from info.md — confirm in admin Settings before launch
+  phones: ["+966508823748", "+966579435198"],
+  // Ops WhatsApp channel (not listed on the profile page)
   whatsappNumber: "966556616713",
   address: {
-    ar: "المملكة العربية السعودية، جدة، طريق المدينة المنورة، مبنى الوصال، الدور الرابع، مكتب 408",
-    en: "KSA, Jeddah, Almadinah Almunawarah Rd, Al Wessal Building, 4th floor, Office 408",
+    ar: "مكة المكرمة، المملكة العربية السعودية",
+    en: "Makkah, Kingdom of Saudi Arabia",
   },
   workingHours: {
-    ar: "الأحد – الخميس، ٩ ص – ٥ م",
-    en: "Sunday – Thursday, 9 AM – 5 PM",
+    ar: "على مدار الساعة، ٧ أيام في الأسبوع",
+    en: "24/7",
   },
   social: {
     handle: "@dmtcSA",

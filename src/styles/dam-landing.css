@@ -1818,22 +1818,23 @@ a[data-whatsapp-fab] {
 }
 
 .loader-brand__slogan {
-  margin: 0.4em 0 0;
-  max-width: 32ch;
-  color: rgba(245, 239, 232, 0.62);
-  font-size: clamp(0.85rem, 1.6vw, 1.05rem);
+  margin: 0.55em 0 0;
+  max-width: 28ch;
+  color: rgba(245, 239, 232, 0.72);
+  font-size: clamp(1.25rem, 3.2vw, 1.85rem);
   font-weight: 500;
   letter-spacing: 0.04em;
-  line-height: 1.45;
+  line-height: 1.4;
   text-align: center;
 }
 
 .loader-brand--ar .loader-brand__slogan {
-  max-width: 36ch;
+  max-width: 22ch;
   letter-spacing: 0;
   word-spacing: normal;
   font-family: var(--font-cairo), "Cairo", var(--font-arabic), sans-serif;
-  font-weight: 500;
+  font-size: clamp(1.35rem, 3.6vw, 2rem);
+  font-weight: 600;
   unicode-bidi: isolate;
   direction: rtl;
 }

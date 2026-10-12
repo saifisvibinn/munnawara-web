@@ -33,7 +33,8 @@ export const generateMetadata = async ({
 const HomePage = async ({ params }: PageProps) => {
   const { locale } = await params
   setRequestLocale(locale)
-  const home = getHome(locale as AppLocale)
+  const appLocale = locale as AppLocale
+  const home = getHome(appLocale)
 
   return (
     <>
@@ -41,7 +42,7 @@ const HomePage = async ({ params }: PageProps) => {
       <BusPassby />
       <HowItWorks />
       <AboutPreview />
-      <BehindTheScenes locale={locale as AppLocale} />
+      <BehindTheScenes locale={appLocale} />
       <QuoteSection />
       <Testimonials />
       <NewsTeaser />

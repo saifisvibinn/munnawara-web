@@ -8,12 +8,12 @@
     "about": "The story of Durrat Almunawwara Co. and how it serves pilgrims and institutions.",
     "companies": "The companies of Durrat Almunawwara Co. across transport, Umrah services, tourism, and hospitality.",
     "fleet": "Explore the coach fleet: VIP, standard, city, and staff transport classes.",
-    "corporate": "Staff, school, and institutional transport with route planning and recurring contracts.",
+    "corporate": "Staff, school, and institutional transport, flexible shifts, MoE partner programs, and coverage of industrial cities and remote complexes.",
     "clients": "The organisations and groups that travel with Durrat Almunawwara Co.",
     "gallery": "Photos of the Durrat Almunawwara Co. coaches, interiors, workshop, and facilities.",
     "news": "News and updates from Durrat Almunawwara Co.",
     "careers": "Open roles and careers at Durrat Almunawwara Co.",
-    "contact": "Contact the Durrat Almunawwara Co. team by phone, WhatsApp, or email, or visit the Jeddah office.",
+    "contact": "Contact the Durrat Almunawwara Co. team by phone, WhatsApp, or email, available 24/7 from Makkah.",
     "quote": "Request a transport quote: share your dates, group size, and route and our team will follow up."
   },
   "nav": {
@@ -95,9 +95,9 @@
     "socialSnapchat": "Snapchat"
   },
   "corporate": {
-    "intro": "Staff, school, and institutional transport: routes, shifts, reporting, and spare buses when contracted.",
-    "staff": "Staff transport (including night and 24-hour designs)",
-    "school": "School and university transport with route planning",
+    "intro": "Economic, practical solutions for companies and factories to manage daily staff commutes, flexible shifts, a diverse fleet, and coverage reaching industrial cities and remote residential complexes.",
+    "staff": "Staff transport with flexible shift schedules and fleet sized to the team",
+    "school": "Reliable partner to the Ministry of Education, schools, and universities, seat belts, live GPS tracking, and qualified drivers",
     "contracts": "Recurring contracts with reports, maintenance, and alternate buses"
   },
   "footer": {
@@ -136,7 +136,10 @@
     "cabinFeature2": "Climate control throughout the cabin",
     "cabinFeature3": "Onboard entertainment readiness",
     "cabinFeature4": "Quiet, well-lit passenger aisles",
-    "clientsTitle": "Serving multiple sectors",
+    "clientsTitle": "Trusted by campaigns, institutions, and operators across the Kingdom.",
+    "clientsSectorsTitle": "Who travels with us",
+    "clientsCta": "Plan a journey with us",
+    "clientsCtaBody": "Tell us about your group and we will follow up with clear options.",
     "ctaBandTitle": "Sit back, we'll coordinate the rest.",
     "ctaBandSubtitle": "Share your trip details and our team will follow up with clear options.",
     "ctaFormHint": "Tell us about your group and we will prepare a tailored transport plan.",
@@ -183,8 +186,6 @@
     "identityChange": "Change details"
   },
   "fleetViewer": {
-    "interior": "Interior",
-    "exterior": "Exterior",
     "previousShot": "Previous view",
     "nextShot": "Next view",
     "categoriesLabel": "Fleet categories",

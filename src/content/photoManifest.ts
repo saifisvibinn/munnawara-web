@@ -288,7 +288,7 @@ export const photoManifest: readonly PhotoEntry[] = [
     "category": "company",
     "src": "/photos/company/0444.webp",
     "width": 1920,
-    "height": 1280
+    "height": 1281
   },
   {
     "id": "company-0449",

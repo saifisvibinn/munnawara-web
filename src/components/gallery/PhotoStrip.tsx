@@ -33,31 +33,26 @@ export const PhotoStrip = ({
   if (variant === "editorial" && photos.length >= 3) {
     const [hero, second, third] = photos
     return (
-      <div
-        className={cn(
-          "grid gap-3 sm:gap-4 lg:grid-cols-12 lg:gap-5",
-          className,
-        )}
-      >
+      <div className={cn("grid gap-3 sm:gap-4", className)}>
         <StripFrame
           photo={hero}
           openLabel={openLabel}
-          className="lg:col-span-7 lg:aspect-[4/5]"
-          sizes="(max-width: 1023px) 100vw, 48vw"
+          className="aspect-[16/9] sm:aspect-[21/9]"
+          sizes="(max-width: 1023px) 100vw, 72rem"
           priority
         />
-        <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:col-span-5 lg:grid-cols-1 lg:gap-5">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4">
           <StripFrame
             photo={second}
             openLabel={openLabel}
-            className="lg:aspect-[5/4]"
-            sizes="(max-width: 1023px) 50vw, 28vw"
+            className="aspect-[4/3]"
+            sizes="(max-width: 1023px) 50vw, 36rem"
           />
           <StripFrame
             photo={third}
             openLabel={openLabel}
-            className="lg:aspect-[5/4]"
-            sizes="(max-width: 1023px) 50vw, 28vw"
+            className="aspect-[4/3]"
+            sizes="(max-width: 1023px) 50vw, 36rem"
           />
         </div>
       </div>
@@ -105,7 +100,7 @@ const StripFrame = ({
     href={`/gallery?p=${encodeURIComponent(photo.id)}`}
     aria-label={`${openLabel}: ${photo.alt}`}
     className={cn(
-      "group relative block aspect-[3/4] overflow-hidden rounded-2xl bg-surface-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange",
+      "group relative block overflow-hidden rounded-2xl bg-surface-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange",
       className,
     )}
   >

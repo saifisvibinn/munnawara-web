@@ -4,7 +4,7 @@ export const home: HomeContent = {
   landingHero: {
     eyebrow: "درة المنورة للنقل",
     lines: ["ننقل الرحلة…", "ونصنع تجربة تليق", "بضيوف الرحمن"],
-    sub: "حلول متكاملة لنقل ضيوف الرحمن والمؤسسات، مدعومة بأسطول حديث ومنظومة تشغيل متكاملة.",
+    sub: "الحلول التشغيلية والنقل المتكامل داخل وخارج المملكة العربية السعودية, لضيوف الرحمن والمؤسسات, مدعومة بأسطول حديث ومنظومة تشغيل متكاملة.",
     primaryCta: "اطلب خدمة نقل",
     secondaryCta: "اكتشف أسطولنا",
     brandWords: ["درة", "المنورة", "للنقل"],
@@ -14,27 +14,27 @@ export const home: HomeContent = {
   valueTitle: "نقل مصمم للرحلات المقدسة",
   valueIntro:
     "تنسّق مجموعة درة المنورة أسطولاً حديثاً وتشغيلاً دقيقاً وتواصلاً واضحاً ليشعر الحجاج والمؤسسات بالثقة في كل رحلة.",
-  valueImage: "/fleet/premium-vip-2026/exterior/pv-out-1.webp",
+  valueImage: "/fleet/vip-2026/side.webp",
   valueBullets: [
     {
       id: "safety",
       title: "السلامة أولاً",
-      description: "تشغيل منضبط وسائقون مدربون لكل مهمة.",
+      description: "كل مهمة تبدأ بمركبات آمنة وسائقين مدرّبين وتشغيل منضبط.",
     },
     {
-      id: "licensed",
-      title: "مجموعة منظمة",
-      description: "شركات تابعة تحت مظلة علامة واحدة مسؤولة.",
+      id: "commitment",
+      title: "الالتزام والجودة",
+      description: "معايير واضحة وتنفيذ موثوق للجهات الحكومية والشركاء من القطاع الخاص.",
     },
     {
-      id: "fleet",
-      title: "أسطول حديث",
-      description: "حافلات حديثة عبر فئات VIP والمجموعات.",
+      id: "hospitality",
+      title: "الضيافة والاحتراف",
+      description: "خدمة محترمة لضيوف الرحمن والموظفين والطلاب والوفود الرسمية.",
     },
     {
-      id: "tracked",
-      title: "وضوح الرحلة",
-      description: "تنسيق واضح من طلب العرض حتى تأكيد الرحلة.",
+      id: "innovation",
+      title: "الابتكار والتشغيل",
+      description: "تقنيات ذكية وتحسين مستمر عبر الأسطول وغرفة التحكم.",
     },
   ],
   passbyEyebrow: "درة المنورة",
@@ -89,6 +89,7 @@ export const home: HomeContent = {
   testimonialsSubtitle:
     "نقل منظم للحملات والمؤسسات والمهام الرسمية.",
   testimonialsCta: "تواصل معنا",
+  testimonialsViewMore: "عرض المزيد",
   // TODO(content): replace once client provides approved testimonials
   testimonialsEmpty: "ستظهر شهادات العملاء هنا بعد اعتمادها للنشر.",
   newsTitle: "اقرأ عن المجموعة",

@@ -4,7 +4,7 @@ export const home: HomeContent = {
   landingHero: {
     eyebrow: "Durrat Almunawwara Co.",
     lines: ["Moving", "with care", "for guests"],
-    sub: "Integrated transport solutions for pilgrims and institutions, supported by a modern fleet and a complete operations network.",
+    sub: "Operational solutions and integrated transport within and beyond the Kingdom, for pilgrims and institutions, supported by a modern fleet and a complete operations network.",
     primaryCta: "Request transport",
     secondaryCta: "Explore our fleet",
     brandWords: ["Durrat", "Almunawwara", "Co."],
@@ -14,27 +14,27 @@ export const home: HomeContent = {
   valueTitle: "Transport built for sacred journeys",
   valueIntro:
     "Durrat Almunawwara Co. coordinates modern coaches, careful operations, and clear communication so pilgrims and institutions travel with confidence.",
-  valueImage: "/fleet/premium-vip-2026/exterior/pv-out-1.webp",
+  valueImage: "/fleet/vip-2026/side.webp",
   valueBullets: [
     {
       id: "safety",
       title: "Safety first",
-      description: "Disciplined operations and trained drivers for every assignment.",
+      description: "Every assignment starts with safe vehicles, trained drivers, and disciplined operations.",
     },
     {
-      id: "licensed",
-      title: "Licensed group",
-      description: "Organized subsidiaries under one accountable brand.",
+      id: "commitment",
+      title: "Commitment & quality",
+      description: "Clear standards and reliable delivery for government and private partners.",
     },
     {
-      id: "fleet",
-      title: "Modern fleet",
-      description: "Current-model coaches across VIP and group categories.",
+      id: "hospitality",
+      title: "Hospitality & professionalism",
+      description: "Respectful service for guests of Allah, employees, students, and formal delegations.",
     },
     {
-      id: "tracked",
-      title: "Journey clarity",
-      description: "Clear coordination from quote to confirmed trip.",
+      id: "innovation",
+      title: "Innovation & operations",
+      description: "Smart technologies and continuous improvement across the fleet and control room.",
     },
   ],
   passbyEyebrow: "Durrat Almunawwara Co.",
@@ -89,6 +89,7 @@ export const home: HomeContent = {
   testimonialsSubtitle:
     "Organized transport for campaigns, institutions, and formal assignments.",
   testimonialsCta: "Contact us",
+  testimonialsViewMore: "View more",
   // TODO(content): replace once client provides approved testimonials
   testimonialsEmpty: "Client testimonials will appear here once approved for publication.",
   newsTitle: "Read about the group",

@@ -4,8 +4,8 @@ import { Link } from "@/i18n/navigation"
 import { ArrowUpRight } from "lucide-react"
 import { getTranslations } from "next-intl/server"
 
-// Parts / yard objects only — no face-forward portraits in the home preview.
-const PHOTO_IDS = ["workshop-0331", "workshop-0358", "workshop-0362"] as const
+// Fleet (wide) · storage · reception — home preview mosaic.
+const PHOTO_IDS = ["exterior-7727", "workshop-0331", "company-0444"] as const
 
 type BehindTheScenesProps = {
   locale: AppLocale

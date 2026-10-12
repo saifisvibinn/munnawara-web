@@ -13,9 +13,12 @@ type FleetShowroomProps = {
   categories: readonly FleetCategory[]
 }
 
-type Mode = "exterior" | "interior"
-
 const AMENITY_PREVIEW = 8
+
+const galleryFor = (bus: FleetCategory) => [
+  ...bus.exteriorImages,
+  ...bus.interiorImages,
+]
 
 const Chevron = ({ className }: { className?: string }) => (
   <svg
@@ -42,18 +45,12 @@ export const FleetShowroom = ({ categories }: FleetShowroomProps) => {
   const t = useTranslations("fleetViewer")
   const tCommon = useTranslations("common")
   const [index, setIndex] = useState(0)
-  const [mode, setMode] = useState<Mode>("exterior")
   const [shot, setShot] = useState(0)
   const [lightbox, setLightbox] = useState(false)
   const [expanded, setExpanded] = useState(false)
 
   const bus = categories[index]
-  const hasInterior = (bus?.interiorImages.length ?? 0) > 0
-  const photos = bus
-    ? mode === "interior" && hasInterior
-      ? bus.interiorImages
-      : bus.exteriorImages
-    : []
+  const photos = bus ? galleryFor(bus) : []
   const count = photos.length
   const position = Math.min(shot, count - 1)
   const current = photos[position] ?? bus?.coverImage
@@ -66,12 +63,6 @@ export const FleetShowroom = ({ categories }: FleetShowroomProps) => {
   const selectBus = (next: number) => {
     setIndex(next)
     setExpanded(false)
-    setMode("exterior")
-    setShot(0)
-  }
-
-  const selectMode = (next: Mode) => {
-    setMode(next)
     setShot(0)
   }
 
@@ -148,7 +139,7 @@ export const FleetShowroom = ({ categories }: FleetShowroomProps) => {
           <Image
             key={current}
             src={current}
-            alt={`${bus.name} — ${counter}`}
+            alt={`${bus.name}, ${counter}`}
             fill
             priority={index === 0 && shot === 0}
             sizes="(min-width:1024px) 60vw, 100vw"
@@ -203,61 +194,39 @@ export const FleetShowroom = ({ categories }: FleetShowroomProps) => {
           </p>
         </div>
 
-        <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-3">
-          {hasInterior ? (
-            <div className="flex rounded-full bg-white/10 p-1" role="group">
-              {(["exterior", "interior"] as const).map((m) => (
+        {count > 1 ? (
+          <ul className="no-scrollbar mt-4 flex gap-2 overflow-x-auto py-1">
+            {photos.map((src, i) => (
+              <li key={src} className="shrink-0">
                 <button
-                  key={m}
                   type="button"
-                  aria-pressed={mode === m}
-                  onClick={() => selectMode(m)}
+                  onClick={() => setShot(i)}
+                  aria-label={t("photoCount", {
+                    current: i + 1,
+                    total: count,
+                  })}
+                  aria-current={i === position}
                   className={cn(
-                    "rounded-full px-4 py-1.5 text-sm font-medium transition-[color,background-color,transform] duration-150 ease-out active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange motion-reduce:transition-none motion-reduce:active:scale-100",
-                    mode === m
-                      ? "bg-white text-black"
-                      : "text-white/70 hover:text-white",
+                    "block rounded-lg border-2 transition-[opacity,border-color,transform] duration-150 ease-out active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange motion-reduce:transition-none motion-reduce:active:scale-100",
+                    i === position
+                      ? "border-orange"
+                      : "border-transparent opacity-50 hover:opacity-100",
                   )}
                 >
-                  {t(m)}
+                  <span className="relative block aspect-[4/3] w-16 overflow-hidden rounded-[0.4rem] bg-white/5 sm:w-20">
+                    <Image
+                      src={src}
+                      alt=""
+                      fill
+                      sizes="80px"
+                      className="object-cover"
+                    />
+                  </span>
                 </button>
-              ))}
-            </div>
-          ) : null}
-          {count > 1 ? (
-            <ul className="no-scrollbar flex min-w-0 flex-1 gap-2 overflow-x-auto py-1">
-              {photos.map((src, i) => (
-                <li key={src} className="shrink-0">
-                  <button
-                    type="button"
-                    onClick={() => setShot(i)}
-                    aria-label={t("photoCount", {
-                      current: i + 1,
-                      total: count,
-                    })}
-                    aria-current={i === position}
-                    className={cn(
-                      "block rounded-lg border-2 transition-[opacity,border-color,transform] duration-150 ease-out active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange motion-reduce:transition-none motion-reduce:active:scale-100",
-                      i === position
-                        ? "border-orange"
-                        : "border-transparent opacity-50 hover:opacity-100",
-                    )}
-                  >
-                    <span className="relative block aspect-[4/3] w-16 overflow-hidden rounded-[0.4rem] bg-white/5 sm:w-20">
-                      <Image
-                        src={src}
-                        alt=""
-                        fill
-                        sizes="80px"
-                        className="object-cover"
-                      />
-                    </span>
-                  </button>
-                </li>
-              ))}
-            </ul>
-          ) : null}
-        </div>
+              </li>
+            ))}
+          </ul>
+        ) : null}
 
         <div
           className="mt-10 border-t border-white/12 pt-8 md:mt-12"
@@ -327,7 +296,7 @@ export const FleetShowroom = ({ categories }: FleetShowroomProps) => {
           >
             <Image
               src={current}
-              alt={`${bus.name} — ${counter}`}
+              alt={`${bus.name}, ${counter}`}
               fill
               sizes="100vw"
               className="rounded-2xl object-contain"

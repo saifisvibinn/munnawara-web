@@ -39,7 +39,7 @@ export const photoAlts: Record<string, string> = {
   "workshop-0205": "Two mechanics standing in front of a coach",
   "workshop-0371": "Technicians repairing equipment inside a coach cabin",
   "workshop-0342": "Two warehouse staff checking stock against a clipboard",
-  "company-0444": "The reception desk with the company logo on the wall",
+  "company-0444": "Reception desk beneath the gold DMTC wall logo",
   "company-0449": "Reception desk, flag, and logo wall",
   "company-0454": "A receptionist at the front desk under the company logo",
   "people-0457": "A team member working on a laptop at a desk",

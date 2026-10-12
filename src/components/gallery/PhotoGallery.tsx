@@ -14,7 +14,8 @@ import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react"
 
 const SWIPE_DISTANCE = 72
 const SWIPE_VELOCITY = 550
-const IMAGE_QUALITY = 92
+/** Must match `images.qualities` in next.config.ts */
+const IMAGE_QUALITY = 90
 
 type TabId = "all" | "fleet" | "interior" | "workshop" | "team" | "facilities"
 

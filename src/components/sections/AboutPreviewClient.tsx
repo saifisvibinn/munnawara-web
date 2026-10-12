@@ -1,9 +1,12 @@
 "use client"
 
+import { getStatIcon } from "@/components/sections/statIcons"
 import { SocialFollowButton } from "@/components/ui/SocialFollowButton"
+import type { AboutStat } from "@/content/types"
 import { useReducedMotion } from "@/hooks/useReducedMotion"
 import { Link } from "@/i18n/navigation"
 import { cn } from "@/lib/cn"
+import { toLocaleDigits } from "@/lib/localeDigits"
 import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { useLocale } from "next-intl"
@@ -23,7 +26,7 @@ type SocialLinks = {
 type AboutPreviewClientProps = {
   eyebrow: string
   headlineLines: readonly [string, string]
-  body: string
+  stats: readonly AboutStat[]
   primaryCta: string
   secondaryCta: string
   socialCta: string
@@ -34,7 +37,7 @@ type AboutPreviewClientProps = {
 export const AboutPreviewClient = ({
   eyebrow,
   headlineLines,
-  body,
+  stats,
   primaryCta,
   secondaryCta,
   socialCta,
@@ -87,7 +90,7 @@ export const AboutPreviewClient = ({
     <section
       ref={sectionRef}
       data-about-preview
-      className="relative isolate min-h-[100dvh] overflow-hidden bg-black text-white"
+      className="relative z-20 isolate min-h-[100dvh] overflow-hidden bg-black text-white"
       aria-labelledby="about-preview-heading"
     >
       <div
@@ -147,9 +150,26 @@ export const AboutPreviewClient = ({
           <span className="block">{headlineLines[1]}</span>
         </h2>
 
-        <p className="mt-5 max-w-2xl text-base leading-relaxed text-white/80 sm:mt-6 sm:text-lg">
-          {body}
-        </p>
+        <dl className="mt-10 grid w-full max-w-3xl grid-cols-2 gap-x-4 gap-y-8 sm:mt-12 sm:gap-x-8 md:grid-cols-4">
+          {stats.map((stat) => {
+            const Icon = getStatIcon(stat.id)
+            return (
+              <div key={stat.id} className="min-w-0">
+                <dt className="flex flex-col items-center gap-2">
+                  <span className="inline-flex size-10 items-center justify-center rounded-full border border-white/25 bg-white/10 text-orange">
+                    <Icon aria-hidden className="size-5" strokeWidth={1.75} />
+                  </span>
+                  <span className="font-display text-3xl font-semibold tracking-tight text-white tabular-nums sm:text-4xl">
+                    {toLocaleDigits(stat.value, locale)}
+                  </span>
+                </dt>
+                <dd className="mt-1.5 text-xs leading-snug text-white/70 sm:text-sm">
+                  {stat.label}
+                </dd>
+              </div>
+            )
+          })}
+        </dl>
 
         <div className="mt-8 flex flex-wrap items-center justify-center gap-3 sm:mt-10 sm:gap-4">
           <Link

@@ -1,20 +1,21 @@
 import type { ClientCategory } from "../types"
 
-// Category-level only until client permits named logos
+/** تصنيفات قطاعية مطابقة لجدار شعارات العملاء الرسمي. */
 export const clients: readonly ClientCategory[] = [
   {
     id: "hajj-umrah-operators",
-    label: "منظمو حملات الحج والعمرة",
-    description: "نقل ودعم تشغيلي للمجموعات والحملات.",
+    label: "مشغّلو الحج والعمرة",
+    description: "حملات وشركات عمرة داخل المملكة وفي الأسواق الدولية.",
   },
   {
     id: "corporate",
     label: "الشركات والمؤسسات",
-    description: "نقل الموظفين والطلاب والفرق العاملة.",
+    description: "شركاء نقل الموظفين والمدارس والقوى العاملة والقطاع الخاص.",
   },
   {
     id: "government",
-    label: "الجهات الحكومية والدبلوماسية",
-    description: "ترتيبات نقل رسمية وفق الطلب.",
+    label: "الجهات الحكومية والتعليم",
+    description:
+      "ترتيبات نقل رسمية تشمل برامج وزارة التعليم والتكليفات المؤسسية.",
   },
 ] as const

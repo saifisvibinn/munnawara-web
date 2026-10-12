@@ -48,7 +48,7 @@ export const customerOptions = [
 export const corporateServices: readonly Option[] = [
   {
     id: "workers",
-    label: l("Workers / staff transport", "نقل العمال والموظفين"),
+    label: l("V7 / staff transport", "نقل V7 والموظفين"),
   },
   { id: "education", label: l("School / university transport", "نقل مدارس وجامعات") },
   { id: "tourism_group", label: l("Tourism groups", "مجموعات سياحية") },
@@ -142,16 +142,20 @@ export const allHubStops = (): MapStop[] =>
 /* ---------- Fleet ---------- */
 
 export const busClassOptions = [
-  { id: "vip", label: l("VIP", "في آي بي"), hint: l("32 seats", "٣٢ مقعد") },
+  { id: "vip", label: l("VIP", "في آي بي"), hint: l("28 seats", "٢٨ مقعد") },
   { id: "premium_vip", label: l("Premium VIP", "بريميوم في آي بي"), hint: l("18 seats", "١٨ مقعد") },
-  { id: "standard", label: l("Standard", "عادية"), hint: l("49 seats", "٤٩ مقعد") },
-  { id: "coach", label: l("Coach", "حافلة ٤٥"), hint: l("45 seats", "٤٥ مقعد") },
-  { id: "city_large", label: l("City bus 55", "حافلة مدينة ٥٥"), hint: l("55 seats", "٥٥ مقعد") },
-  { id: "city", label: l("City bus", "حافلة مدينة"), hint: l("19 seats", "١٩ مقعد") },
+  { id: "standard", label: l("Coach", "كوتش"), hint: l("49 seats", "٤٩ مقعد") },
+  { id: "coach", label: l("Coach alt.", "كوتش بديل"), hint: l("49 seats", "٤٩ مقعد") },
+  {
+    id: "city_large",
+    label: l("City bus", "سيتي باص"),
+    hint: l("45 + standing", "٤٥ مع وقوف"),
+  },
+  { id: "city", label: l("Coaster", "كوستر"), hint: l("29 seats", "٢٩ مقعد") },
   {
     id: "employee",
-    label: l("Staff transport", "نقل موظفين"),
-    hint: l("48 & 60 seats", "٤٨ و٦٠ مقعد"),
+    label: l("V7 / staff", "V7 / موظفين"),
+    hint: l("41 seats", "٤١ مقعد"),
   },
 ] as const satisfies readonly Option[]
 

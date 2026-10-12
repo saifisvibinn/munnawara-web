@@ -1,4 +1,5 @@
 import { AboutFilm } from "@/components/about/AboutFilm"
+import { AboutCompanyFacts } from "@/components/sections/AboutCompanyFacts"
 import { getAbout } from "@/content"
 import type { AppLocale } from "@/content/types"
 import { setRequestLocale } from "next-intl/server"
@@ -11,9 +12,14 @@ type PageProps = {
 const AboutPage = async ({ params }: PageProps) => {
   const { locale } = await params
   setRequestLocale(locale)
-  const about = getAbout(locale as AppLocale)
+  const appLocale = locale as AppLocale
+  const about = getAbout(appLocale)
 
-  return <AboutFilm film={about.film} pageTitle={about.title} />
+  return (
+    <AboutFilm film={about.film} pageTitle={about.title}>
+      <AboutCompanyFacts about={about} locale={appLocale} />
+    </AboutFilm>
+  )
 }
 
 export const generateMetadata = async ({ params }: PageProps) =>

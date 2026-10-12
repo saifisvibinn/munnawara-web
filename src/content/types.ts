@@ -80,11 +80,6 @@ export type CareerRole = {
   summary: string
 }
 
-export type AboutFilmFeature = {
-  id: string
-  line: string
-}
-
 export type AboutFilmCompanyBeat = {
   id: string
   name: string
@@ -106,9 +101,6 @@ export type AboutFilmContent = {
   sidesLeft: string
   sidesRight: string
   sidesMerge: string
-  detailsHeadline: string
-  detailsImageNote: string
-  details: readonly AboutFilmFeature[]
   humanLine1: string
   humanLine2: string
   videoHeadline: string
@@ -120,14 +112,45 @@ export type AboutFilmContent = {
   companies: readonly AboutFilmCompanyBeat[]
 }
 
+export type AboutStat = {
+  id: string
+  value: string
+  label: string
+}
+
+export type AboutDriveItem = {
+  id: string
+  title: string
+  body: string
+}
+
+export type AboutValuePillar = {
+  id: string
+  title: string
+  body: string
+}
+
 export type AboutContent = {
   title: string
   intro: string
   historyTitle: string
   history: string
+  visionTitle: string
+  vision: string
   missionTitle: string
   mission: string
-  /** Omit fabricated CR — null until client provides */
+  /** Loginord-style “What drives us” block */
+  drivesEyebrow: string
+  drivesHeadline: string
+  driveItems: readonly AboutDriveItem[]
+  valuesTitle: string
+  valuePillars: readonly AboutValuePillar[]
+  statsTitle: string
+  statsIntro: string
+  stats: readonly AboutStat[]
+  techTitle: string
+  techBody: string
+  /** Omit fabricated CR, null until client provides a number */
   licensingNote: string | null
   /** Cinematic About film narrative */
   film: AboutFilmContent
@@ -195,6 +218,7 @@ export type HomeContent = {
   testimonialsTitle: string
   testimonialsSubtitle: string
   testimonialsCta: string
+  testimonialsViewMore: string
   testimonialsEmpty: string
   newsTitle: string
   newsSubtitle: string

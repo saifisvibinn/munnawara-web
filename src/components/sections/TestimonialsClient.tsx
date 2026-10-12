@@ -1,9 +1,12 @@
 "use client"
 
+import { LogoCloud } from "@/components/sections/LogoCloud"
+import type { Partner } from "@/content/partners"
 import { useReducedMotion } from "@/hooks/useReducedMotion"
 import { Link } from "@/i18n/navigation"
 import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
+import { ArrowUpRight } from "lucide-react"
 import Image from "next/image"
 import { useLayoutEffect, useMemo, useRef } from "react"
 
@@ -17,19 +20,14 @@ type TestimonialItem = {
   avatar: string | null
 }
 
-type ClientItem = {
-  id: string
-  label: string
-  description: string
-}
-
 type TestimonialsClientProps = {
   title: string
   subtitle: string
   ctaLabel: string
+  viewMoreLabel: string
   emptyMessage: string
   items: readonly TestimonialItem[]
-  clients: readonly ClientItem[]
+  partners: readonly Partner[]
 }
 
 const splitColumns = <T,>(items: readonly T[]): [T[], T[]] => {
@@ -46,22 +44,19 @@ export const TestimonialsClient = ({
   title,
   subtitle,
   ctaLabel,
+  viewMoreLabel,
   emptyMessage,
   items,
-  clients,
+  partners,
 }: TestimonialsClientProps) => {
   const reduced = useReducedMotion()
   const sectionRef = useRef<HTMLElement>(null)
   const hasTestimonials = items.length > 0
-  const hasClients = clients.length > 0
+  const hasPartners = partners.length > 0
 
   const [testimonialLeft, testimonialRight] = useMemo(
     () => splitColumns(items),
     [items],
-  )
-  const [clientLeft, clientRight] = useMemo(
-    () => splitColumns(clients),
-    [clients],
   )
 
   useLayoutEffect(() => {
@@ -72,7 +67,11 @@ export const TestimonialsClient = ({
     const cols = gsap.utils.toArray<HTMLElement>("[data-partners-col]")
 
     if (reduced) {
-      gsap.set([copy, ...cols].filter(Boolean), { clearProps: "all", opacity: 1, y: 0 })
+      gsap.set([copy, ...cols].filter(Boolean), {
+        clearProps: "all",
+        opacity: 1,
+        y: 0,
+      })
       return
     }
 
@@ -96,7 +95,6 @@ export const TestimonialsClient = ({
         )
       }
 
-      // Column parallax only from sm up — on phones a single stack + opposing Y causes overlap
       ScrollTrigger.matchMedia({
         "(min-width: 640px)": () => {
           cols.forEach((col, index) => {
@@ -122,7 +120,7 @@ export const TestimonialsClient = ({
     }, section)
 
     return () => ctx.revert()
-  }, [reduced, hasTestimonials, hasClients])
+  }, [reduced, hasTestimonials])
 
   return (
     <section
@@ -131,11 +129,8 @@ export const TestimonialsClient = ({
       className="relative overflow-x-clip bg-surface-muted px-4 py-20 sm:px-6 sm:py-28 md:px-10 md:py-36"
       aria-labelledby="partners-heading"
     >
-      <div className="mx-auto grid max-w-[80rem] gap-12 md:grid-cols-[minmax(14rem,0.85fr)_minmax(0,1.15fr)] md:items-start md:gap-14 lg:gap-20">
-        <div
-          data-partners-copy
-          className="md:sticky md:top-[22vh]"
-        >
+      <div className="mx-auto grid max-w-[80rem] gap-12 md:grid-cols-[minmax(14rem,0.85fr)_minmax(0,1.15fr)] md:items-center md:gap-14 lg:gap-20">
+        <div data-partners-copy className="md:sticky md:top-[22vh]">
           <h2
             id="partners-heading"
             className="font-display max-w-[12ch] text-4xl leading-[1.08] font-semibold tracking-tight text-ink sm:text-5xl md:text-6xl"
@@ -145,12 +140,23 @@ export const TestimonialsClient = ({
           <p className="mt-5 max-w-sm text-base leading-relaxed text-ink/70 sm:text-lg">
             {subtitle}
           </p>
-          <Link
-            href="/contact"
-            className="font-label mt-8 inline-flex items-center justify-center rounded-full border border-ink/15 bg-transparent px-6 py-3 text-sm font-semibold text-ink transition hover:border-orange hover:text-orange focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange"
-          >
-            {ctaLabel}
-          </Link>
+          <div className="mt-8 flex flex-wrap items-center gap-3">
+            <Link
+              href="/contact"
+              className="font-label inline-flex items-center justify-center rounded-full border border-ink/15 bg-transparent px-6 py-3 text-sm font-semibold text-ink transition hover:border-orange hover:text-orange focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange"
+            >
+              {ctaLabel}
+            </Link>
+            {hasPartners ? (
+              <Link
+                href="/clients"
+                className="font-label inline-flex items-center justify-center gap-1.5 rounded-full bg-ink px-6 py-3 text-sm font-semibold text-surface transition hover:bg-orange hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange"
+              >
+                {viewMoreLabel}
+                <ArrowUpRight aria-hidden className="size-4 rtl:scale-x-[-1]" />
+              </Link>
+            ) : null}
+          </div>
         </div>
 
         <div className="min-w-0">
@@ -170,22 +176,8 @@ export const TestimonialsClient = ({
                 ))}
               </div>
             </div>
-          ) : hasClients ? (
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5">
-              <div data-partners-col className="flex flex-col gap-4 sm:gap-5">
-                {clientLeft.map((client) => (
-                  <ClientCard key={client.id} client={client} />
-                ))}
-              </div>
-              <div
-                data-partners-col
-                className="flex flex-col gap-4 sm:mt-10 sm:gap-5"
-              >
-                {clientRight.map((client) => (
-                  <ClientCard key={client.id} client={client} />
-                ))}
-              </div>
-            </div>
+          ) : hasPartners ? (
+            <LogoCloud partners={partners} rows={3} />
           ) : (
             <p className="text-base text-ink/70">{emptyMessage}</p>
           )}
@@ -225,15 +217,4 @@ const TestimonialCard = ({ item }: { item: TestimonialItem }) => (
       </div>
     </figcaption>
   </figure>
-)
-
-const ClientCard = ({ client }: { client: ClientItem }) => (
-  <article className="rounded-2xl bg-surface-elevated px-6 py-7 sm:px-7 sm:py-8">
-    <h3 className="font-display text-xl font-semibold tracking-tight text-ink sm:text-2xl">
-      {client.label}
-    </h3>
-    <p className="mt-3 text-sm leading-relaxed text-ink/70 sm:text-base">
-      {client.description}
-    </p>
-  </article>
 )

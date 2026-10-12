@@ -13,7 +13,7 @@ export const AboutPreview = async () => {
     <AboutPreviewClient
       eyebrow={home.aboutEyebrow}
       headlineLines={home.aboutHeadlineLines}
-      body={about.mission}
+      stats={about.stats}
       primaryCta={home.aboutCta}
       secondaryCta={home.aboutSecondaryCta}
       socialCta={home.aboutSocialCta}
