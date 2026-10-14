@@ -17,14 +17,13 @@ const SWIPE_VELOCITY = 550
 /** Must match `images.qualities` in next.config.ts */
 const IMAGE_QUALITY = 90
 
-type TabId = "all" | "fleet" | "interior" | "workshop" | "team" | "facilities"
+type TabId = "all" | "fleet" | "interior" | "workshop" | "facilities"
 
 const TABS: readonly { id: TabId; categories: readonly PhotoCategory[] }[] = [
-  { id: "all", categories: ["exterior", "interior", "workshop", "people", "company"] },
+  { id: "all", categories: ["exterior", "interior", "workshop", "company"] },
   { id: "fleet", categories: ["exterior"] },
   { id: "interior", categories: ["interior"] },
   { id: "workshop", categories: ["workshop"] },
-  { id: "team", categories: ["people"] },
   { id: "facilities", categories: ["company"] },
 ]
 
@@ -78,7 +77,7 @@ export const PhotoGallery = ({ photos }: PhotoGalleryProps) => {
     x.set(0)
   }, [openIndex, x])
 
-  // Deep-link: /gallery?p=workshop-0146 opens that photo in the lightbox.
+  // Deep-link: /gallery?p=workshop-0331 opens that photo in the lightbox.
   useEffect(() => {
     if (openedFromQuery.current) return
     const id = searchParams.get("p")

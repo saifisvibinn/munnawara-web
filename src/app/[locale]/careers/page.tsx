@@ -23,7 +23,7 @@ const CareersPage = async ({ params }: PageProps) => {
       <div className="mx-auto mt-12 max-w-4xl px-4 sm:px-6">
         <PhotoStrip
           locale={locale as AppLocale}
-          ids={["workshop-0205", "people-0486", "people-0467"]}
+          ids={["exterior-7727", "workshop-0331", "company-0444"]}
         />
       </div>
       <div className="mx-auto mt-16 max-w-2xl px-6 text-center">

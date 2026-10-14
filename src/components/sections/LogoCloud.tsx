@@ -35,7 +35,7 @@ const LogoCell = ({ partner }: { partner: Partner }) => (
       alt={partner.name}
       loading="lazy"
       decoding="async"
-      className="max-h-10 w-full object-contain opacity-70 grayscale transition duration-300 sm:max-h-12 hover:opacity-100 hover:grayscale-0"
+      className="max-h-10 w-full object-contain opacity-90 transition duration-300 sm:max-h-12 hover:opacity-100"
     />
   </div>
 )

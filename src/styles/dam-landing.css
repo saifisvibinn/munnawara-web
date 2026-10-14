@@ -978,197 +978,229 @@ html[dir='ltr'] .hero-video__end-frame {
   align-items: center !important;
 }
 
-/* Floating AI chat — dam-frontend mark (home + site chrome) */
+/* Floating Durri FAB — mascot face + tip bubble */
+.ai-chat-fab {
+  position: relative;
+  z-index: 1;
+  display: inline-grid;
+  place-items: center;
+  overflow: visible;
+}
+
 .ai-chat-btn {
   position: relative;
   z-index: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  display: grid;
+  place-items: center;
   width: var(--fab-size, 3.5rem);
   height: var(--fab-size, 3.5rem);
+  margin: 0;
   padding: 0;
-  color: var(--paper);
-  font-family: var(--font-body, inherit);
-  font-weight: 700;
+  color: inherit;
   text-decoration: none;
   cursor: pointer;
-  overflow: hidden;
-  background-color: var(--ink);
-  border: 2px solid rgb(247, 91, 18);
-  border-radius: 14px;
-  box-shadow: 3px 3px 0 rgba(32, 29, 26, 0.22);
-  transition:
-    background-color 0.28s cubic-bezier(0.25, 0.8, 0.25, 1),
-    border-color 0.28s cubic-bezier(0.25, 0.8, 0.25, 1),
-    box-shadow 0.28s cubic-bezier(0.25, 0.8, 0.25, 1),
-    transform 0.28s cubic-bezier(0.25, 0.8, 0.25, 1);
+  overflow: visible;
+  background: transparent;
+  border: 0;
+  border-radius: 999px;
+  box-shadow: none;
+  transition: transform 0.28s cubic-bezier(0.25, 0.8, 0.25, 1);
   will-change: transform, opacity;
   pointer-events: auto;
 }
 
+.landing-fab-row .ai-chat-fab:has(.ai-chat-btn:not(.is-revealed)),
 .landing-fab-row .ai-chat-btn:not(.is-revealed) {
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
 }
 
-.ai-chat-btn::before,
-.ai-chat-btn::after {
-  content: "";
-  position: absolute;
-  top: 0;
+.ai-chat-btn__face {
+  position: relative;
+  z-index: 2;
+  display: block;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(26, 102, 190, 0.12), transparent);
-  transition: 0.6s;
-  pointer-events: none;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #f7f6f4;
+  box-shadow:
+    0 0 0 2px #fff,
+    0 0 0 3px rgba(45, 138, 214, 0.35),
+    0 10px 24px rgba(32, 29, 26, 0.22),
+    0 0 28px rgba(247, 91, 18, 0.28);
+  animation: durri-glow 2.8s ease-in-out infinite;
 }
 
-.ai-chat-btn::before {
-  left: -100%;
+.ai-chat-btn__photo {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+  object-position: center;
+  transform: scale(1.4);
+  transform-origin: center 36%;
+  background: #f7f6f4;
 }
 
-.ai-chat-btn::after {
-  left: 100%;
+/* The raised hand sits at the image's lower right — frame it so it stays in the circle. */
+.ai-chat-btn__photo[data-mood="wave"] {
+  transform: translate(-11.5%, 0) scale(1.15);
+  transform-origin: center;
 }
 
 .ai-chat-btn:hover,
 .ai-chat-btn:focus-visible {
-  background-color: #faf6ef;
-  border-color: rgb(26, 102, 190);
-  transform: translate(-2px, -2px);
-  box-shadow: 4px 4px 0 rgba(32, 29, 26, 0.2);
+  transform: translateY(-3px) scale(1.04);
   outline: none;
 }
 
-.ai-chat-btn:hover::before,
-.ai-chat-btn:focus-visible::before {
-  animation: ai-swipe-right 1.5s infinite;
-}
-
-.ai-chat-btn:hover::after,
-.ai-chat-btn:focus-visible::after {
-  animation: ai-swipe-left 1.5s infinite;
-}
-
-@keyframes ai-swipe-right {
-  100% {
-    transform: translateX(200%) skew(-45deg);
-  }
-}
-
-@keyframes ai-swipe-left {
-  100% {
-    transform: translateX(-200%) skew(-45deg);
-  }
-}
-
-.ai-chat-btn__mark {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.28s cubic-bezier(0.25, 0.8, 0.25, 1);
-  z-index: 3;
-}
-
-.ai-chat-btn__icon {
-  width: 1.75rem;
-  height: 1.75rem;
-  display: block;
-  transition: all 0.28s cubic-bezier(0.25, 0.8, 0.25, 1);
-}
-
-.ai-chat-btn__text {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  line-height: 1.05;
-  text-align: center;
-  opacity: 0;
-  max-height: 0;
-  overflow: hidden;
-  transition: all 0.28s cubic-bezier(0.25, 0.8, 0.25, 1);
-  z-index: 3;
-}
-
-.ai-chat-btn__text span:first-child {
-  font-size: 0.48rem;
-  font-weight: 500;
-  color: rgba(32, 29, 26, 0.7);
-}
-
-.ai-chat-btn__text span:last-child {
-  font-size: 0.62rem;
-  font-weight: 700;
-  color: rgb(26, 102, 190);
-}
-
-.ai-chat-btn:hover .ai-chat-btn__mark,
-.ai-chat-btn:focus-visible .ai-chat-btn__mark {
-  transform: translateY(-2px);
-}
-
-.ai-chat-btn:hover .ai-chat-btn__icon,
-.ai-chat-btn:focus-visible .ai-chat-btn__icon {
-  width: 1.15rem;
-  height: 1.15rem;
-  animation: ai-pulse 2.8s cubic-bezier(0.25, 0.8, 0.25, 1) infinite;
-}
-
-.ai-chat-btn:hover .ai-chat-btn__text,
-.ai-chat-btn:focus-visible .ai-chat-btn__text {
-  opacity: 1;
-  max-height: 2rem;
-  margin-top: 1px;
-}
-
-@keyframes ai-pulse {
-  0%,
-  100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.08);
-  }
+.ai-chat-btn:hover .ai-chat-btn__face,
+.ai-chat-btn:focus-visible .ai-chat-btn__face {
+  box-shadow:
+    0 0 0 2px #fff,
+    0 0 0 3px rgba(45, 212, 230, 0.55),
+    0 14px 28px rgba(32, 29, 26, 0.28),
+    0 0 36px rgba(247, 91, 18, 0.4);
 }
 
 .ai-chat-btn:active {
-  transform: scale(0.97);
+  transform: scale(0.96);
 }
 
-.ai-chat-btn:active .ai-chat-btn__icon,
-.ai-chat-btn:active .ai-chat-btn__text {
-  transform: scale(0.95);
+.ai-chat-btn.is-open .ai-chat-btn__face {
+  box-shadow:
+    0 0 0 2px #fff,
+    0 0 0 3px rgb(247, 91, 18),
+    0 10px 24px rgba(32, 29, 26, 0.24),
+    0 0 30px rgba(247, 91, 18, 0.45);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .ai-chat-btn:active {
-    transform: none;
+.ai-chat-btn.is-context .ai-chat-btn__face {
+  animation: durri-nudge 0.9s ease-in-out infinite;
+}
+
+.ai-chat-fab__tip {
+  position: absolute;
+  z-index: 6;
+  /* End edge lines up with the button's end edge; the bubble grows toward the page. */
+  inset-inline: auto 0;
+  top: auto;
+  bottom: calc(100% + 0.75rem);
+  width: max-content;
+  max-width: min(15rem, calc(100vw - 6.5rem));
+  padding: 0.6rem 0.85rem;
+  border-radius: 1.05rem;
+  background: #fff;
+  color: #1c2330;
+  font-family: var(--font-body, inherit);
+  font-size: 0.8125rem;
+  font-weight: 650;
+  line-height: 1.3;
+  text-align: start;
+  letter-spacing: 0;
+  white-space: normal;
+  pointer-events: auto;
+  border: 1.5px solid rgba(45, 212, 230, 0.72);
+  box-shadow:
+    0 10px 24px rgba(32, 29, 26, 0.16),
+    0 0 0 1px rgba(255, 255, 255, 0.75) inset;
+  transform-origin: 50% 100%;
+  animation: durri-tip-in 420ms cubic-bezier(0.22, 1, 0.36, 1) both,
+    durri-tip-float 2.8s ease-in-out 420ms infinite;
+}
+
+.ai-chat-fab__tip[dir="rtl"] {
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+/* Tail: a rotated square centred on the button, so it points at Durri in LTR and RTL. */
+.ai-chat-fab__tip::after {
+  content: "";
+  position: absolute;
+  bottom: -7px;
+  inset-inline: auto calc(var(--fab-size, 3.5rem) / 2 - 7.5px);
+  width: 12px;
+  height: 12px;
+  background: #fff;
+  /* Physical edges on purpose: the square is rotated, so the bottom corner is the same in both directions. */
+  border-right: 1.5px solid rgba(45, 212, 230, 0.72);
+  border-bottom: 1.5px solid rgba(45, 212, 230, 0.72);
+  transform: rotate(45deg);
+}
+
+@keyframes durri-tip-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
   }
 }
 
-.ai-chat-btn.is-open {
-  background-color: rgb(247, 91, 18);
-  border-color: rgb(247, 91, 18);
-  color: #fff7f0;
-  box-shadow: 3px 3px 0 rgba(32, 29, 26, 0.2);
+@keyframes durri-glow {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 2px #fff,
+      0 0 0 3px rgba(45, 138, 214, 0.32),
+      0 10px 24px rgba(32, 29, 26, 0.22),
+      0 0 22px rgba(247, 91, 18, 0.22);
+  }
+  50% {
+    box-shadow:
+      0 0 0 2px #fff,
+      0 0 0 3px rgba(45, 212, 230, 0.5),
+      0 12px 26px rgba(32, 29, 26, 0.24),
+      0 0 34px rgba(247, 91, 18, 0.38);
+  }
 }
 
-.ai-chat-btn.is-open .ai-chat-btn__text span:first-child {
-  color: rgba(255, 247, 240, 0.85);
+@keyframes durri-nudge {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-2px);
+  }
 }
 
-.ai-chat-btn.is-open .ai-chat-btn__text span:last-child {
-  color: #fff;
+@keyframes durri-tip-float {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 0 -4px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ai-chat-btn:active,
+  .ai-chat-btn:hover,
+  .ai-chat-btn:focus-visible {
+    transform: none;
+  }
+
+  .ai-chat-btn__face,
+  .ai-chat-btn.is-context .ai-chat-btn__face,
+  .ai-chat-fab__tip {
+    animation: none;
+  }
 }
 
 .ai-chat-btn__badge {
   position: absolute;
-  top: 3px;
-  inset-inline-end: 3px;
+  top: 2px;
+  inset-inline-end: 2px;
   z-index: 5;
   min-width: 1.1rem;
   height: 1.1rem;
@@ -1226,12 +1258,13 @@ a[data-whatsapp-fab] {
 .chat-panel {
   position: fixed;
   inset-inline-end: max(14px, 1.6vw);
-  bottom: calc(max(14px, 2vh) + var(--fab-size, 3.5rem) + 0.75rem);
+  /* Rests a full gap above the buttons so it never covers Durri's face. */
+  bottom: calc(max(14px, 2vh) + var(--fab-size, 3.5rem) + 1rem);
   z-index: 95;
   display: flex;
   flex-direction: column;
   width: min(360px, calc(100vw - 28px));
-  height: min(520px, calc(100svh - 7.5rem));
+  height: min(520px, calc(100svh - 11rem));
   overflow: hidden;
   border: 1px solid rgba(32, 29, 26, 0.08);
   border-radius: 20px;
@@ -1270,10 +1303,29 @@ a[data-whatsapp-fab] {
   color: var(--paper);
 }
 
+.durri-avatar {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  flex: none;
+  border-radius: 999px;
+  background: #f7f6f4;
+  box-shadow: 0 0 0 1px rgba(45, 138, 214, 0.22);
+}
+
+.durri-avatar__photo {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transform: scale(1.4);
+  transform-origin: center 36%;
+}
+
 .chat-panel__avatar {
   width: 1.9rem;
   height: 1.9rem;
-  flex: none;
 }
 
 .chat-panel__title-row {
@@ -1632,12 +1684,33 @@ a[data-whatsapp-fab] {
   cursor: not-allowed;
 }
 
+/* Inner pages: the buttons sit at the footer-aware offset from FloatingActions, so follow it. */
+[data-floating-actions] .chat-panel {
+  bottom: calc(
+    max(1.25rem, env(safe-area-inset-bottom)) + var(--float-lift, 0px) +
+      var(--fab-size, 3.5rem) + 1rem
+  );
+}
+
+@media (min-width: 640px) {
+  [data-floating-actions] .chat-panel {
+    bottom: calc(1.5rem + var(--float-lift, 0px) + var(--fab-size, 3.5rem) + 1rem);
+  }
+}
+
 @media (max-width: 520px) {
   .chat-panel {
     inset-inline: 10px;
-    bottom: calc(max(12px, 1.6vh) + var(--fab-size, 3.5rem) + 0.75rem);
+    bottom: calc(max(12px, 1.6vh) + var(--fab-size, 3.5rem) + 1rem);
     width: auto;
     height: min(68svh, 520px);
+  }
+
+  [data-floating-actions] .chat-panel {
+    bottom: calc(
+      max(1.25rem, env(safe-area-inset-bottom)) + var(--float-lift, 0px) +
+        var(--fab-size, 3.5rem) + 1rem
+    );
   }
 }
 
@@ -3087,7 +3160,7 @@ html.is-locale-in .landing-fab-row {
 
 /* Durri chat: avatar bubbles, link buttons, long menus */
 .chat-bubble:has(> .chat-bubble__avatar) { flex-direction: row; align-items: flex-start; gap: 8px; }
-.chat-bubble__avatar { flex: none; width: 1.7rem; height: 1.7rem; margin-top: 2px; }
+.chat-bubble__avatar { width: 1.7rem; height: 1.7rem; margin-top: 2px; }
 .chat-bubble__body { display: flex; min-width: 0; flex-direction: column; gap: 3px; }
 .chat-bubble p a { color: inherit; text-decoration: underline; text-underline-offset: 2px; word-break: break-all; }
 .chat-panel__options { max-height: 8.5rem; overflow-y: auto; scrollbar-width: thin; }

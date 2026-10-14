@@ -135,7 +135,10 @@ export const FleetShowroom = ({ categories }: FleetShowroomProps) => {
         aria-labelledby={`fleet-tab-${bus.id}`}
         className="min-w-0"
       >
-        <div className="relative aspect-[16/10] overflow-hidden rounded-[1.75rem] bg-white/5 ring-1 ring-white/12">
+        <div
+          data-durri-hint="fleet"
+          className="relative aspect-[16/10] overflow-hidden rounded-[1.75rem] bg-white/5 ring-1 ring-white/12"
+        >
           <Image
             key={current}
             src={current}

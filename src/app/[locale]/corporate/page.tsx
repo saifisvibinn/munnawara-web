@@ -39,7 +39,7 @@ const CorporatePage = async ({ params }: PageProps) => {
       <div className="mx-auto mt-16 max-w-4xl px-4 sm:px-6">
         <PhotoStrip
           locale={locale as AppLocale}
-          ids={["workshop-0123", "workshop-0342", "interior-0269"]}
+          ids={["workshop-0331", "workshop-0334", "interior-0269"]}
         />
       </div>
       <div className="mt-12 text-center">

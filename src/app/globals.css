@@ -609,8 +609,10 @@ body:has([data-quote-page]) main#main {
 /* thin scrollbar inside the wizard body */
 .qw-scroll { scrollbar-width: thin; scrollbar-color: var(--brand-border) transparent; padding-inline: 0.25rem 0.4rem; }
 
-/* Chat / WhatsApp buttons would sit on the wizard's Continue button here */
-body:has([data-quote-page]) [data-floating-actions] { display: none; }
+/* Keep Durri on the quote page; only hide WhatsApp over the wizard CTA */
+body:has([data-quote-page]) [data-floating-actions] [data-whatsapp-fab] {
+  display: none;
+}
 /* Floating chat / WhatsApp / quote chrome rests above the footer (see FloatingActions). */
 .float-above-footer {
   bottom: calc(max(1.25rem, env(safe-area-inset-bottom)) + var(--float-lift, 0px));

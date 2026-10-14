@@ -91,6 +91,7 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
   const unreadRef = useRef(0)
   const dragControls = useDragControls()
   const reducedMotion = useReducedMotion()
+  const [coarsePointer, setCoarsePointer] = useState(false)
 
   const [identity, setIdentity] = useState<VisitorIdentity>(
     () => loadIdentity() || emptyIdentity(),
@@ -108,6 +109,14 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
   const [moreTopics, setMoreTopics] = useState(false)
 
   openRef.current = open
+
+  useEffect(() => {
+    const media = window.matchMedia("(pointer: coarse)")
+    const sync = () => setCoarsePointer(media.matches)
+    sync()
+    media.addEventListener("change", sync)
+    return () => media.removeEventListener("change", sync)
+  }, [])
 
   const setUnread = useCallback(
     (n: number) => {
@@ -510,7 +519,7 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
       animate={reducedMotion ? { opacity: 1 } : { opacity: 1, y: 0, scale: 1 }}
       exit={reducedMotion ? { opacity: 0 } : { opacity: 0, y: 14, scale: 0.98 }}
       transition={SPRING_SHEET}
-      drag={reducedMotion ? false : "y"}
+      drag={reducedMotion || !coarsePointer ? false : "y"}
       dragControls={dragControls}
       dragListener={false}
       dragConstraints={{ top: 0, bottom: 0 }}
@@ -528,7 +537,10 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
       >
         <div className="chat-panel__heading">
           <div className="chat-panel__title-row">
-            <RobotAvatar className="chat-panel__avatar" />
+            <RobotAvatar
+              className="chat-panel__avatar"
+              mood={busy ? "think" : "idle"}
+            />
             <span className="chat-panel__live" aria-hidden />
             <h2 id={titleId}>{t("title")}</h2>
           </div>
@@ -629,7 +641,7 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
                 style={{ animationDelay: `${Math.min(index, 8) * 28}ms` }}
               >
                 {message.role === "assistant" ? (
-                  <RobotAvatar className="chat-bubble__avatar" />
+                  <RobotAvatar className="chat-bubble__avatar" mood="idle" />
                 ) : null}
                 <div className="chat-bubble__body">
                   <span className="chat-bubble__who">{whoLabel(message.role)}</span>

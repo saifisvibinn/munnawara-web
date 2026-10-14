@@ -51,5 +51,4 @@ export const partners: readonly Partner[] = [
   { name: "Client 41", logo: "/partners/pdf-41.png" },
   { name: "Client 42", logo: "/partners/pdf-42.png" },
   { name: "Client 43", logo: "/partners/pdf-43.png" },
-  { name: "Client 44", logo: "/partners/pdf-44.png" },
 ] as const

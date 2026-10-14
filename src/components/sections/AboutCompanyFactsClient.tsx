@@ -199,15 +199,10 @@ export const AboutCompanyFactsClient = ({
                 {...reveal(index * 0.06)}
                 className="border-t border-ink/10 pt-6"
               >
-                <p
-                  className={cn(
-                    "font-label text-[11px] font-semibold text-orange sm:text-xs",
-                    isRtl ? "tracking-normal" : "tracking-[0.14em] uppercase",
-                  )}
-                >
+                <p className="font-display text-4xl font-semibold tabular-nums text-orange md:text-5xl">
                   {toLocaleDigits(String(index + 1).padStart(2, "0"), locale)}
                 </p>
-                <h3 className="font-display mt-3 text-xl font-semibold tracking-tight text-ink md:text-2xl">
+                <h3 className="font-display mt-4 text-xl font-semibold tracking-tight text-ink md:text-2xl">
                   {pillar.title}
                 </h3>
                 <p className="mt-2 text-sm leading-relaxed text-ink-muted md:text-base">

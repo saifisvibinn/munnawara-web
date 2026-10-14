@@ -13,7 +13,7 @@ export const about: AboutContent = {
   missionTitle: "Our mission",
   mission:
     "To deliver a safe, comfortable, and innovative transport experience for our clients, including the guests of Allah, employees, and students, using the latest buses and highly trained staff, while adopting top quality standards and smart technologies.",
-  drivesEyebrow: "Our mission, vision & values",
+  drivesEyebrow: "Vision & mission",
   drivesHeadline: "What drives us.",
   driveItems: [
     {
@@ -100,7 +100,7 @@ export const about: AboutContent = {
       "Durrat Almunawwara Co. brings transport, Umrah support, tourism, and hospitality under one accountable group, so journeys stay clear from request to return.",
     fleetHeadline: "A modern fleet, carefully driven.",
     fleetBody:
-      "VIP, coach, city, V7, and coaster classes, current-model vehicles prepared for sacred routes and institutional travel.",
+      "Current-model vehicles prepared for sacred routes and institutional travel.",
     sidesLeft: "Pilgrims & guests",
     sidesRight: "Operators & institutions",
     sidesMerge: "One group. One standard of care.",

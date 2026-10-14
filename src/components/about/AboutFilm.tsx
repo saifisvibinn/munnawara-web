@@ -24,7 +24,7 @@ type AboutFilmProps = {
 /** Art-directed frames: ratio = intrinsic width / height so buses are never cropped. */
 const FLEET_FRAMES = [
   { src: "/photos/exterior/7725.webp", ratio: 16 / 9 },
-  { src: "/photos/exterior/0436.webp", ratio: 3 / 2 },
+  { src: "/photos/exterior/0418.webp", ratio: 3 / 2 },
   { src: "/photos/exterior/0417.webp", ratio: 3 / 2 },
   { src: "/photos/exterior/0427.webp", ratio: 3 / 2 },
 ] as const
@@ -42,7 +42,14 @@ export const AboutFilm = ({ film, pageTitle, children }: AboutFilmProps) => {
     const root = rootRef.current
     if (!root || reduced) return
 
-    const ctx = gsap.context(() => {
+    // Double rAF: let the locale swap paint text first, then pin ScrollTriggers.
+    // Animated nodes already start at opacity 0 in about-film.css.
+    let ctx: gsap.Context | undefined
+    let cancelled = false
+    const frame = requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        if (cancelled || !rootRef.current) return
+        ctx = gsap.context(() => {
       const mm = gsap.matchMedia()
 
       mm.add(
@@ -265,9 +272,15 @@ export const AboutFilm = ({ film, pageTitle, children }: AboutFilmProps) => {
         cancelAnimationFrame(refreshFrame)
         mm.revert()
       }
-    }, root)
+        }, root)
+      })
+    })
 
-    return () => ctx.revert()
+    return () => {
+      cancelled = true
+      cancelAnimationFrame(frame)
+      ctx?.revert()
+    }
   }, [reduced, film])
 
   return (
@@ -445,7 +458,7 @@ export const AboutFilm = ({ film, pageTitle, children }: AboutFilmProps) => {
                     className="about-film__gallery-item"
                     style={frameStyle(frame.ratio)}
                   >
-                    <div className="about-film__gallery-image">
+                    <div className="about-film__gallery-image" data-durri-hint="fleet">
                       <Image
                         src={frame.src}
                         alt=""

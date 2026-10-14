@@ -28,7 +28,7 @@ export const PartnerLogoGrid = ({ className }: { className?: string }) => {
             alt={partner.name}
             loading="lazy"
             decoding="async"
-            className="max-h-12 w-full object-contain opacity-65 grayscale transition duration-300 group-hover:opacity-100 group-hover:grayscale-0 sm:max-h-14"
+            className="max-h-12 w-full object-contain opacity-90 transition duration-300 group-hover:opacity-100 sm:max-h-14"
           />
         )
 
