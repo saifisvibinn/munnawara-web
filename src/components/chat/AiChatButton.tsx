@@ -45,7 +45,7 @@ const Face = ({ mood }: { mood: DurriMood }) => (
   </span>
 )
 
-/** Floating Durri FAB — expression sheet + tip bubble. */
+/** Floating Durra AI FAB — expression sheet + tip bubble. */
 export const AiChatButton = forwardRef<
   HTMLAnchorElement | HTMLButtonElement,
   AiChatButtonProps
