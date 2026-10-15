@@ -1,6 +1,6 @@
 "use client"
 
-import { submitQuoteRequest } from "@/app/actions/quote"
+import { submitQuoteRequest, updateQuoteRequest } from "@/app/actions/quote"
 import { quoteRequestSchema } from "@/components/forms/formSchemas"
 import { useReducedMotion } from "@/hooks/useReducedMotion"
 import { cn } from "@/lib/cn"
@@ -30,6 +30,12 @@ import {
 import { initialState, type StepId, type WizardProps, type WizardState } from "./quoteWizardTypes"
 import { StepProgress, btnGhost, btnPrimary } from "./quoteWizardUi"
 import { StepBody } from "./QuoteWizardSteps"
+import {
+  clearSavedQuote,
+  loadSavedQuote,
+  storeSavedQuote,
+  type SavedQuote,
+} from "./quoteEditStore"
 
 const QuoteMap = dynamic(() => import("./QuoteMap"), {
   ssr: false,
@@ -65,10 +71,20 @@ export const QuoteWizard = ({
   const [dir, setDir] = useState<"fwd" | "back">("fwd")
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [honeypot, setHoneypot] = useState("")
-  const [status, setStatus] = useState<"idle" | "submitting" | "done" | "error">("idle")
-  const [result, setResult] = useState<{ leadId?: string; sla: number } | null>(null)
+  const [status, setStatus] = useState<"idle" | "submitting" | "done" | "error" | "locked">("idle")
+  const [result, setResult] = useState<{ leadId?: string; sla: number; edited?: boolean } | null>(
+    null,
+  )
+  // Last request sent from this browser (editable until staff pick it up),
+  // and whether the wizard is currently editing it.
+  const [saved, setSaved] = useState<SavedQuote | null>(null)
+  const [editing, setEditing] = useState<SavedQuote | null>(null)
   const topRef = useRef<HTMLDivElement>(null)
   const fleetBusClass = resolveQuoteBusClass(preselectBus)
+
+  useEffect(() => {
+    setSaved(loadSavedQuote())
+  }, [])
 
   useEffect(() => {
     try {
@@ -115,7 +131,7 @@ export const QuoteWizard = ({
   }, [draftStorageKey, fleetBusClass])
 
   useEffect(() => {
-    if (!draftReady) return
+    if (!draftReady || editing) return
     try {
       if (status === "done") {
         sessionStorage.removeItem(draftStorageKey)
@@ -126,7 +142,7 @@ export const QuoteWizard = ({
         JSON.stringify({ version: 2, state, stepIndex }),
       )
     } catch {}
-  }, [draftReady, draftStorageKey, state, stepIndex, status])
+  }, [draftReady, draftStorageKey, editing, state, stepIndex, status])
 
   const patch = (p: Partial<WizardState>) => {
     setState((s) => ({ ...s, ...p }))
@@ -208,8 +224,38 @@ export const QuoteWizard = ({
       setStatus("error")
       return
     }
+    if (editing) {
+      const response = await updateQuoteRequest(
+        { quoteId: editing.quoteId, editToken: editing.editToken },
+        parsed.data,
+      )
+      if (response.ok) {
+        setSaved(
+          storeSavedQuote({
+            quoteId: editing.quoteId,
+            editToken: editing.editToken,
+            leadId: response.leadId || editing.leadId,
+            state,
+          }),
+        )
+        setResult({ leadId: response.leadId || editing.leadId, sla: result?.sla || 24, edited: true })
+        setEditing(null)
+        setStatus("done")
+        scrollTop()
+      } else if (response.messageKey === "locked") {
+        clearSavedQuote()
+        setSaved(null)
+        setStatus("locked")
+      } else {
+        setStatus("error")
+      }
+      return
+    }
     const response = await submitQuoteRequest(parsed.data)
     if (response.ok) {
+      if (response.edit) {
+        setSaved(storeSavedQuote({ ...response.edit, leadId: response.leadId, state }))
+      }
       setResult({ leadId: response.leadId, sla: response.quoteSlaHours || 24 })
       setStatus("done")
       scrollTop()
@@ -223,7 +269,20 @@ export const QuoteWizard = ({
     setStepIndex(0)
     setErrors({})
     setResult(null)
+    setEditing(null)
     setStatus("idle")
+  }
+
+  /** Reopens the last request at the review step, where every section has an Edit link. */
+  const startEdit = (record: SavedQuote) => {
+    const next = { ...initialState, ...record.state }
+    setEditing(record)
+    setState(next)
+    setErrors({})
+    setDir("back")
+    setStepIndex(computeSteps(next.customer).length - 1)
+    setStatus("idle")
+    scrollTop()
   }
 
   /* ---- layout bits ---- */
@@ -342,10 +401,10 @@ export const QuoteWizard = ({
           <QuoteMap stops={finalStops()} locale={locale} className="qmap mb-4" />
         ) : null}
         <p className="font-label text-[0.7rem] font-semibold tracking-[0.14em] text-orange uppercase">
-          {tx(COPY.done.eyebrow)}
+          {tx(result.edited ? COPY.editRequest.savedEyebrow : COPY.done.eyebrow)}
         </p>
         <h3 className="mt-2 text-xl font-semibold text-ink sm:text-2xl">
-          {tx(COPY.done.title)}
+          {tx(result.edited ? COPY.editRequest.savedTitle : COPY.done.title)}
         </h3>
         {result.leadId ? (
           <p className="mt-3 rounded-xl bg-surface-muted px-4 py-3 text-sm text-ink">
@@ -367,9 +426,17 @@ export const QuoteWizard = ({
           ))}
         </dl>
         <p className="mt-3 text-sm text-ink/70">{tx(COPY.done.note)}</p>
-        <button type="button" className={cn(btnGhost, "mt-5")} onClick={reset}>
-          {tx(COPY.done.another)}
-        </button>
+        {saved ? <p className="mt-2 text-sm text-ink/70">{tx(COPY.editRequest.hint)}</p> : null}
+        <div className="mt-5 flex flex-wrap gap-2">
+          {saved ? (
+            <button type="button" className={btnPrimary} onClick={() => startEdit(saved)}>
+              {tx(COPY.editRequest.open)}
+            </button>
+          ) : null}
+          <button type="button" className={btnGhost} onClick={reset}>
+            {tx(COPY.done.another)}
+          </button>
+        </div>
       </div>,
       { stops: finalStops(), context: [] },
     )
@@ -415,6 +482,24 @@ export const QuoteWizard = ({
           {stepLabel}
         </div>
       </div>
+
+      {editing ? (
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-2 rounded-xl bg-orange/10 px-3.5 py-2.5 text-sm text-ink ring-1 ring-orange/25">
+          <span className="font-medium">
+            {tx(COPY.editRequest.editing(editing.leadId || ""))}
+          </span>
+          <button type="button" className="font-semibold text-orange underline-offset-4 hover:underline" onClick={reset}>
+            {tx(COPY.editRequest.cancel)}
+          </button>
+        </div>
+      ) : saved && stepIndexSafe === 0 && status !== "locked" ? (
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-2 rounded-xl bg-surface-muted px-3.5 py-2.5 text-sm text-ink/80">
+          <span>{tx(COPY.editRequest.banner(saved.leadId || ""))}</span>
+          <button type="button" className="font-semibold text-orange underline-offset-4 hover:underline" onClick={() => startEdit(saved)}>
+            {tx(COPY.editRequest.open)}
+          </button>
+        </div>
+      ) : null}
 
       <form
         onSubmit={handleSubmit}
@@ -465,6 +550,13 @@ export const QuoteWizard = ({
           >
             {tx(COPY.error)}
           </div>
+        ) : status === "locked" ? (
+          <div
+            className="mt-4 rounded-xl bg-amber-50 px-3.5 py-3 text-sm text-amber-900 ring-1 ring-amber-200/80 dark:bg-amber-950/60 dark:text-amber-100 dark:ring-amber-400/30"
+            role="alert"
+          >
+            {tx(COPY.editRequest.locked)}
+          </div>
         ) : null}
         </div>
 
@@ -475,8 +567,16 @@ export const QuoteWizard = ({
             </button>
           ) : null}
           {isLast ? (
-            <button type="submit" className={cn(btnPrimary, "ms-auto")} disabled={status === "submitting"}>
-              {status === "submitting" ? tx(COPY.sending) : tx(COPY.submit)}
+            <button
+              type="submit"
+              className={cn(btnPrimary, "ms-auto")}
+              disabled={status === "submitting" || status === "locked"}
+            >
+              {editing
+                ? tx(status === "submitting" ? COPY.editRequest.saving : COPY.editRequest.save)
+                : status === "submitting"
+                  ? tx(COPY.sending)
+                  : tx(COPY.submit)}
             </button>
           ) : (
             <button

@@ -38,6 +38,30 @@ export const COPY = {
   submit: { en: "Send request", ar: "إرسال الطلب" },
   sending: { en: "Sending…", ar: "جارٍ الإرسال…" },
   edit: { en: "Edit", ar: "تعديل" },
+  editRequest: {
+    banner: (id: string): L10n => ({
+      en: `Need to change the request you sent (${id})?`,
+      ar: `هل تريد تعديل طلبك المرسل (${id})؟`,
+    }),
+    open: { en: "Edit my request", ar: "تعديل طلبي" },
+    editing: (id: string): L10n => ({
+      en: `Editing request ${id}`,
+      ar: `تعديل الطلب ${id}`,
+    }),
+    cancel: { en: "Cancel editing", ar: "إلغاء التعديل" },
+    save: { en: "Save changes", ar: "حفظ التعديلات" },
+    saving: { en: "Saving…", ar: "جارٍ الحفظ…" },
+    savedEyebrow: { en: "Request updated", ar: "تم تحديث الطلب" },
+    savedTitle: { en: "Your changes are saved.", ar: "تم حفظ تعديلاتك." },
+    hint: {
+      en: "You can still change this request until our team starts working on it.",
+      ar: "يمكنك تعديل هذا الطلب حتى يبدأ فريقنا العمل عليه.",
+    },
+    locked: {
+      en: "Our team has already started on this request, so it can no longer be changed online. Please call or WhatsApp us and mention your request number.",
+      ar: "بدأ فريقنا العمل على هذا الطلب، لذا لم يعد تعديله ممكناً عبر الموقع. يرجى الاتصال بنا أو مراسلتنا عبر واتساب مع ذكر رقم الطلب.",
+    },
+  },
   error: {
     en: "Something went wrong. Please try again or contact us on WhatsApp.",
     ar: "حدث خطأ ما. حاول مرة أخرى أو تواصل معنا عبر واتساب.",
