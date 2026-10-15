@@ -1,4 +1,5 @@
 import { io, type Socket } from "socket.io-client"
+import { loadIdentity } from "./chat"
 import { DEFAULT_CHAT_API_URL } from "./upstream"
 
 /**
@@ -37,7 +38,8 @@ export const connectCustomerSocket = () => {
 export const joinConversation = (conversationId: string) => {
   if (!conversationId) return
   const s = connectCustomerSocket()
-  s.emit("join:conversation", { conversationId })
+  // The backend only lets the visitor who owns the chat listen in (matched by phone).
+  s.emit("join:conversation", { conversationId, phone: loadIdentity()?.phone })
 }
 
 export const disconnectCustomerSocket = () => {

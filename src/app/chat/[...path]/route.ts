@@ -31,6 +31,9 @@ const HOP_BY_HOP = new Set([
   "origin",
   "referer",
   "cookie",
+  // Set by this proxy below; never trust a visitor-supplied value.
+  "x-proxy-key",
+  "x-client-ip",
   // Re-computed by fetch from the body we forward.
   "content-length",
 ])
@@ -64,6 +67,17 @@ const proxyChat = async (req: NextRequest, context: RouteContext) => {
     headers.set(key, value)
   })
   headers.set("Accept", "application/json")
+
+  // Every visitor reaches the backend from this server's IP. With the shared key the
+  // backend rate-limits on the real visitor IP instead of one bucket for the site.
+  const proxyKey = process.env.CHAT_PROXY_KEY
+  const visitorIp =
+    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+    req.headers.get("x-real-ip")?.trim()
+  if (proxyKey && visitorIp) {
+    headers.set("x-proxy-key", proxyKey)
+    headers.set("x-client-ip", visitorIp)
+  }
 
   let body: ArrayBuffer | undefined
   if (req.method !== "GET" && req.method !== "HEAD") {
