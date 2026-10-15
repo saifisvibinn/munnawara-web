@@ -118,6 +118,7 @@ export const COPY = {
       ar: "هذا ليس تأكيد حجز. الأسعار والتوافر تؤكد فقط في العرض الرسمي.",
     },
     another: { en: "Start another request", ar: "طلب جديد" },
+    track: { en: "Track this request", ar: "تتبع هذا الطلب" },
   },
   summary: {
     who: { en: "Customer", ar: "العميل" },

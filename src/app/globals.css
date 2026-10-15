@@ -659,3 +659,18 @@ html[data-footer-covers] [data-floating-quote-chrome] {
     animation-play-state: paused;
   }
 }
+
+/* Tracking page: the step that is in progress breathes gently. */
+.track-pulse {
+  animation: track-pulse 1.8s ease-in-out infinite;
+}
+@keyframes track-pulse {
+  50% {
+    opacity: 0.45;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .track-pulse {
+    animation: none;
+  }
+}
