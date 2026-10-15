@@ -21,17 +21,27 @@ export const TextLink = ({
     <Link
       href={href}
       className={cn(
-        "font-label inline-flex min-h-11 items-center gap-1.5 text-[15px] font-semibold underline-offset-4 transition hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange",
+        "group/textlink font-label inline-flex min-h-11 items-center gap-1.5 text-[15px] font-semibold underline-offset-4 transition hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange",
         tone === "dark" ? "text-blue" : "text-white/85 hover:text-white",
         className,
       )}
     >
       {back ? (
-        <span aria-hidden className="inline-block rtl:-scale-x-100">‹</span>
+        <span
+          aria-hidden
+          className="inline-block transition-transform duration-200 ease-out group-hover/textlink:-translate-x-0.5 rtl:-scale-x-100 rtl:group-hover/textlink:translate-x-0.5 motion-reduce:transition-none"
+        >
+          ‹
+        </span>
       ) : null}
       {children}
       {back ? null : (
-        <span aria-hidden className="inline-block rtl:-scale-x-100">›</span>
+        <span
+          aria-hidden
+          className="inline-block transition-transform duration-200 ease-out group-hover/textlink:translate-x-0.5 rtl:-scale-x-100 rtl:group-hover/textlink:-translate-x-0.5 motion-reduce:transition-none"
+        >
+          ›
+        </span>
       )}
     </Link>
   )

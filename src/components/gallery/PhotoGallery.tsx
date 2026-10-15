@@ -160,15 +160,17 @@ export const PhotoGallery = ({ photos }: PhotoGalleryProps) => {
               onClick={() => selectTab(entry.id)}
               className={cn(
                 "relative min-h-11 cursor-pointer px-4 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange",
-                selected ? "text-ink" : "text-ink-muted hover:text-ink",
+                selected ? "text-ink" : "group text-ink-muted hover:text-ink",
               )}
             >
               {t(entry.id)}
               <span
                 aria-hidden
                 className={cn(
-                  "absolute inset-x-3 -bottom-px h-0.5 rounded-full bg-orange transition-opacity",
-                  selected ? "opacity-100" : "opacity-0",
+                  "absolute inset-x-3 -bottom-px h-0.5 rounded-full bg-orange transition-[opacity,transform] duration-300 ease-out motion-reduce:transition-none",
+                  selected
+                    ? "scale-x-100 opacity-100"
+                    : "scale-x-50 opacity-0 group-hover:scale-x-75 group-hover:opacity-30",
                 )}
               />
             </button>
