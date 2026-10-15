@@ -25,11 +25,13 @@ import { useReducedMotion } from "@/hooks/useReducedMotion"
 import { project, SPRING_SHEET } from "@/lib/appleMotion"
 import { AnimatePresence, motion, useDragControls } from "motion/react"
 import { RobotAvatar } from "./RobotAvatar"
+import { chatGreeting } from "./chatGreeting"
 import {
   Fragment,
   useCallback,
   useEffect,
   useId,
+  useMemo,
   useRef,
   useState,
   type FormEvent,
@@ -107,6 +109,28 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
   const [bootError, setBootError] = useState<string | null>(null)
   const [booted, setBooted] = useState(false)
   const [moreTopics, setMoreTopics] = useState(false)
+  const [slowReply, setSlowReply] = useState(false)
+  const greeting = useMemo(() => (open ? chatGreeting() : null), [open])
+
+  // After a few seconds of waiting, reassure the visitor that a reply is coming.
+  useEffect(() => {
+    if (!busy) {
+      setSlowReply(false)
+      return
+    }
+    const timer = window.setTimeout(() => setSlowReply(true), 6000)
+    return () => window.clearTimeout(timer)
+  }, [busy])
+
+  const showTopics = async () => {
+    try {
+      const welcome = await fetchGuidedWelcome(lang)
+      setMoreTopics(false)
+      setOptions(welcome.options ?? [])
+    } catch {
+      /* menu is optional; the composer still works */
+    }
+  }
 
   openRef.current = open
 
@@ -634,6 +658,15 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
               <p className="chat-panel__hint">{t("empty")}</p>
             ) : null}
 
+            {greeting && messages.length > 0 ? (
+              <p className="chat-greeting">
+                <span>{t(greeting.time)}</span>
+                {greeting.season ? (
+                  <span className="chat-greeting__season">{t(greeting.season)}</span>
+                ) : null}
+              </p>
+            ) : null}
+
             {messages.map((message, index) => (
               <div
                 key={message.id}
@@ -653,15 +686,28 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
             ))}
 
             {busy ? (
-              <div className="chat-typing" role="status" aria-label={t("typing")}>
-                <span />
-                <span />
-                <span />
+              <div className="chat-typing-row" role="status" aria-label={t("typing")}>
+                <RobotAvatar className="chat-bubble__avatar" mood="think" />
+                <div className="chat-typing">
+                  <span />
+                  <span />
+                  <span />
+                </div>
+                <span className="chat-typing-row__label" aria-hidden>
+                  {slowReply ? t("typingSlow") : t("typing")}
+                </span>
               </div>
             ) : null}
             {bootError ? <p className="chat-panel__error">{bootError}</p> : null}
           </div>
 
+          {options.length === 0 && !escalated && !busy && conversationId && messages.length > 1 ? (
+            <div className="chat-panel__options">
+              <button type="button" className="chat-panel__more" onClick={() => void showTopics()}>
+                {t("showTopics")}
+              </button>
+            </div>
+          ) : null}
           {options.length > 0 && !escalated ? (
             <div className="chat-panel__options">
               {options
