@@ -199,6 +199,7 @@ const TestimonialCard = ({ item }: { item: TestimonialItem }) => (
         <Image
           src={item.avatar}
           alt=""
+          unoptimized={/^https?:/.test(item.avatar)}
           width={40}
           height={40}
           className="size-10 rounded-full object-cover"

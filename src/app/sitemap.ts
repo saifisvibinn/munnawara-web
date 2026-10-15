@@ -1,4 +1,3 @@
-import { getNews } from "@/content"
 import { routing } from "@/i18n/routing"
 import {
   languageAlternates,
@@ -6,9 +5,10 @@ import {
   seoPaths,
   siteOrigin,
 } from "@/lib/seo"
+import { loadNews } from "@/lib/siteContent"
 import type { MetadataRoute } from "next"
 
-const sitemap = (): MetadataRoute.Sitemap => {
+const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
   const origin = siteOrigin()
   const entry = (path: string): MetadataRoute.Sitemap =>
     routing.locales.map((locale) => ({
@@ -23,9 +23,9 @@ const sitemap = (): MetadataRoute.Sitemap => {
       },
     }))
 
-  const newsPaths = routing.locales.flatMap((locale) =>
-    getNews(locale).map((post) => `/news/${post.slug}`),
-  )
+  const newsPaths = (
+    await Promise.all(routing.locales.map((locale) => loadNews(locale)))
+  ).flatMap((posts) => posts.map((post) => `/news/${post.slug}`))
 
   return [
     ...entry("/"),
