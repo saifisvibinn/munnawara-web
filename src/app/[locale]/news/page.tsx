@@ -1,11 +1,12 @@
 import { AnimatedSection } from "@/components/motion/AnimatedSection"
 import { PageIntro } from "@/components/ui/PageIntro"
 import { SocialFeeds } from "@/components/sections/SocialFeeds"
-import { getNews, getSiteConfig } from "@/content"
+import { getSiteConfig } from "@/content"
 import type { AppLocale } from "@/content/types"
 import { Link } from "@/i18n/navigation"
 import { getTranslations, setRequestLocale } from "next-intl/server"
 import { buildPageMetadata } from "@/lib/seo"
+import { formatContentDate, loadNews } from "@/lib/siteContent"
 
 type PageProps = {
   params: Promise<{ locale: string }>
@@ -16,7 +17,7 @@ const NewsPage = async ({ params }: PageProps) => {
   setRequestLocale(locale)
   const t = await getTranslations("nav")
   const tCommon = await getTranslations("common")
-  const posts = getNews(locale as AppLocale)
+  const posts = await loadNews(locale as AppLocale)
   const { social } = getSiteConfig()
 
   return (
@@ -35,6 +36,11 @@ const NewsPage = async ({ params }: PageProps) => {
                 >
                   {post.title}
                 </Link>
+                {post.publishedAt ? (
+                  <p className="mt-2 text-sm text-ink-muted">
+                    {formatContentDate(post.publishedAt, locale as AppLocale)}
+                  </p>
+                ) : null}
                 <p className="mt-3 text-ink-muted">{post.excerpt}</p>
               </li>
             ))}

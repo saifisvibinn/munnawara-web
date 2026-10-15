@@ -1,5 +1,6 @@
 import { TestimonialsClient } from "@/components/sections/TestimonialsClient"
-import { getHome, getTestimonials } from "@/content"
+import { getHome } from "@/content"
+import { loadTestimonials } from "@/lib/siteContent"
 import { partners } from "@/content/partners"
 import type { AppLocale } from "@/content/types"
 import { getLocale } from "next-intl/server"
@@ -7,7 +8,7 @@ import { getLocale } from "next-intl/server"
 export const Testimonials = async () => {
   const locale = (await getLocale()) as AppLocale
   const home = getHome(locale)
-  const items = getTestimonials(locale)
+  const items = await loadTestimonials(locale)
 
   return (
     <TestimonialsClient

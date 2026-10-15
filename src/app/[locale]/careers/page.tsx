@@ -1,10 +1,10 @@
 import { AnimatedSection } from "@/components/motion/AnimatedSection"
 import { PhotoStrip } from "@/components/gallery/PhotoStrip"
 import { PageIntro } from "@/components/ui/PageIntro"
-import { getCareers } from "@/content"
 import type { AppLocale } from "@/content/types"
 import { getTranslations, setRequestLocale } from "next-intl/server"
 import { buildPageMetadata } from "@/lib/seo"
+import { loadCareers } from "@/lib/siteContent"
 
 type PageProps = {
   params: Promise<{ locale: string }>
@@ -15,7 +15,7 @@ const CareersPage = async ({ params }: PageProps) => {
   setRequestLocale(locale)
   const t = await getTranslations("nav")
   const tCommon = await getTranslations("common")
-  const roles = getCareers(locale as AppLocale)
+  const roles = await loadCareers(locale as AppLocale)
 
   return (
     <AnimatedSection className="pt-20">
