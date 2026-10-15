@@ -6,11 +6,11 @@ import {
 
 type RobotAvatarProps = {
   className?: string
-  /** Face crop — idle for chrome, think while Durri is working. */
+  /** Face crop — idle for chrome, think while Durra AI is working. */
   mood?: DurriMood
 }
 
-/** Circular Durri face for the chat panel header and assistant bubbles. */
+/** Circular Durra AI face for the chat panel header and assistant bubbles. */
 export const RobotAvatar = ({
   className,
   mood = "idle",

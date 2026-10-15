@@ -978,7 +978,7 @@ html[dir='ltr'] .hero-video__end-frame {
   align-items: center !important;
 }
 
-/* Floating Durri FAB — mascot face + tip bubble */
+/* Floating Durra AI FAB — mascot face + tip bubble */
 .ai-chat-fab {
   position: relative;
   z-index: 1;
@@ -1119,7 +1119,7 @@ html[dir='ltr'] .hero-video__end-frame {
   line-height: 1.45;
 }
 
-/* Tail: a rotated square centred on the button, so it points at Durri in LTR and RTL. */
+/* Tail: a rotated square centred on the button, so it points at Durra AI in LTR and RTL. */
 .ai-chat-fab__tip::after {
   content: "";
   position: absolute;
@@ -1258,7 +1258,7 @@ a[data-whatsapp-fab] {
 .chat-panel {
   position: fixed;
   inset-inline-end: max(14px, 1.6vw);
-  /* Rests a full gap above the buttons so it never covers Durri's face. */
+  /* Rests a full gap above the buttons so it never covers Durra AI's face. */
   bottom: calc(max(14px, 2vh) + var(--fab-size, 3.5rem) + 1rem);
   z-index: 95;
   display: flex;
@@ -3158,7 +3158,7 @@ html.is-locale-in .landing-fab-row {
 
 
 
-/* Durri chat: avatar bubbles, link buttons, long menus */
+/* Durra AI chat: avatar bubbles, link buttons, long menus */
 .chat-bubble:has(> .chat-bubble__avatar) { flex-direction: row; align-items: flex-start; gap: 8px; }
 .chat-bubble__avatar { width: 1.7rem; height: 1.7rem; margin-top: 2px; }
 .chat-bubble__body { display: flex; min-width: 0; flex-direction: column; gap: 3px; }
@@ -3181,7 +3181,7 @@ html[lang="ar"] .dam-landing {
   --font-body: var(--font-cairo), "Cairo", sans-serif;
 }
 
-/* Durri chat — dark mode (panel bg is dark; base rules use light-theme ink) */
+/* Durra AI chat — dark mode (panel bg is dark; base rules use light-theme ink) */
 html.dark .chat-panel {
   --paper: #f5efe8;
   --muted: rgba(245, 239, 232, 0.62);

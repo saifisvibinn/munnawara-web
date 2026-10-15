@@ -10,7 +10,7 @@ export type ChatReply = {
   status: string
   escalated: boolean
   answer: string | null
-  /** Server id of Durri's reply — used to de-duplicate HTTP + socket copies. */
+  /** Server id of Durra AI's reply — used to de-duplicate HTTP + socket copies. */
   messageId?: string | null
   reason: string | null
   systemMessage: string | null
