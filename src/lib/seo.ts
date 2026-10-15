@@ -14,6 +14,7 @@ export type SeoPage =
   | "careers"
   | "contact"
   | "quote"
+  | "track"
 
 /** Public path (without locale prefix) for each statically routed page. */
 export const seoPaths: Record<SeoPage, string> = {
@@ -27,6 +28,7 @@ export const seoPaths: Record<SeoPage, string> = {
   careers: "/careers",
   contact: "/contact",
   quote: "/quote",
+  track: "/track",
 }
 
 /**

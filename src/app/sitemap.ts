@@ -29,7 +29,10 @@ const sitemap = (): MetadataRoute.Sitemap => {
 
   return [
     ...entry("/"),
-    ...Object.values(seoPaths).flatMap(entry),
+    // The tracking page is personal (noindex), so it stays out of the sitemap.
+    ...Object.values(seoPaths)
+      .filter((path) => path !== seoPaths.track)
+      .flatMap(entry),
     ...[...new Set(newsPaths)].flatMap(entry),
   ]
 }

@@ -7,6 +7,7 @@ import { cn } from "@/lib/cn"
 import { useLocale } from "next-intl"
 import { useEffect, useMemo, useRef, useState, type FormEvent, type ReactNode } from "react"
 import Image from "next/image"
+import { Link } from "@/i18n/navigation"
 import {
   busClassImages,
   busClassOptions,
@@ -83,7 +84,15 @@ export const QuoteWizard = ({
   const fleetBusClass = resolveQuoteBusClass(preselectBus)
 
   useEffect(() => {
-    setSaved(loadSavedQuote())
+    const record = loadSavedQuote()
+    setSaved(record)
+    // /quote?edit=1 (from the tracking page) opens the saved request straight away.
+    if (record && new URLSearchParams(window.location.search).get("edit") === "1") {
+      const next = { ...initialState, ...record.state }
+      setEditing(record)
+      setState(next)
+      setStepIndex(computeSteps(next.customer).length - 1)
+    }
   }, [])
 
   useEffect(() => {
@@ -432,6 +441,11 @@ export const QuoteWizard = ({
             <button type="button" className={btnPrimary} onClick={() => startEdit(saved)}>
               {tx(COPY.editRequest.open)}
             </button>
+          ) : null}
+          {result.leadId && !result.leadId.startsWith("DM-LOCAL") && result.leadId !== "DM-PREVIEW" ? (
+            <Link href={{ pathname: "/track", query: { id: result.leadId } }} className={btnGhost}>
+              {tx(COPY.done.track)}
+            </Link>
           ) : null}
           <button type="button" className={btnGhost} onClick={reset}>
             {tx(COPY.done.another)}
