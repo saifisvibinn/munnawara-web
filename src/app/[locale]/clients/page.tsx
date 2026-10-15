@@ -1,3 +1,4 @@
+import { Stagger, StaggerItem } from "@/components/motion/Stagger"
 import { PartnerLogoGrid } from "@/components/sections/PartnerLogoGrid"
 import { getClients } from "@/content"
 import type { AppLocale } from "@/content/types"
@@ -51,18 +52,22 @@ const ClientsPage = async ({ params }: PageProps) => {
           >
             {tHome("clientsSectorsTitle")}
           </h2>
-          <ul className="mt-12 grid gap-10 sm:grid-cols-3 sm:gap-8 lg:gap-14">
+          <Stagger as="ul" className="mt-12 grid gap-10 sm:grid-cols-3 sm:gap-8 lg:gap-14">
             {clients.map((client) => (
-              <li key={client.id} className="border-t border-ink/10 pt-6">
-                <h3 className="font-display text-xl font-semibold tracking-tight md:text-2xl">
+              <StaggerItem
+                as="li"
+                key={client.id}
+                className="group relative pt-6 before:absolute before:inset-x-0 before:top-0 before:h-px before:bg-ink/10 after:absolute after:start-0 after:top-0 after:h-px after:w-full after:origin-left after:scale-x-0 after:bg-orange after:transition-transform after:duration-500 after:ease-out hover:after:scale-x-100 rtl:after:origin-right motion-reduce:after:transition-none"
+              >
+                <h3 className="font-display text-xl font-semibold tracking-tight transition-colors duration-300 group-hover:text-orange md:text-2xl">
                   {client.label}
                 </h3>
                 <p className="mt-3 text-base leading-relaxed text-ink-muted">
                   {client.description}
                 </p>
-              </li>
+              </StaggerItem>
             ))}
-          </ul>
+          </Stagger>
         </div>
       </section>
 
@@ -79,14 +84,17 @@ const ClientsPage = async ({ params }: PageProps) => {
           <div className="flex flex-wrap gap-3">
             <Link
               href="/quote"
-              className="font-label inline-flex items-center justify-center gap-2 rounded-full bg-orange px-6 py-3 text-sm font-semibold text-black transition hover:bg-orange-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange"
+              className="group font-label inline-flex items-center justify-center gap-2 rounded-full bg-orange px-6 py-3 text-sm font-semibold text-black transition-[transform,background-color] duration-150 ease-out hover:bg-orange-soft active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange motion-reduce:transition-none motion-reduce:active:scale-100"
             >
               {tCommon("requestQuote")}
-              <ArrowUpRight aria-hidden className="size-4 rtl:scale-x-[-1]" />
+              <ArrowUpRight
+                aria-hidden
+                className="size-4 transition-transform duration-200 ease-out group-hover:-translate-y-0.5 group-hover:translate-x-0.5 rtl:scale-x-[-1] rtl:group-hover:-translate-x-0.5 motion-reduce:transition-none"
+              />
             </Link>
             <Link
               href="/contact"
-              className="font-label inline-flex items-center justify-center rounded-full border border-ink/15 px-6 py-3 text-sm font-semibold text-ink transition hover:border-orange hover:text-orange focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange"
+              className="font-label inline-flex items-center justify-center rounded-full border border-ink/15 px-6 py-3 text-sm font-semibold text-ink transition-[transform,border-color,color] duration-150 ease-out hover:border-orange hover:text-orange active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange motion-reduce:transition-none motion-reduce:active:scale-100"
             >
               {t("contact")}
             </Link>
