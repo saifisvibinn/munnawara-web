@@ -4,7 +4,7 @@ import {
   quoteRequestSchema,
   type QuoteRequestInput,
 } from "@/components/forms/formSchemas"
-import { DEFAULT_CHAT_API_URL } from "@/lib/chat/upstream"
+import { DEFAULT_CHAT_API_URL, serverChatApiUrl } from "@/lib/chat/upstream"
 
 export type QuoteActionState = {
   ok: boolean
@@ -29,12 +29,7 @@ const DEFAULT_EMAIL_FROM = "Durrat Almunawwara Co. Website <onboarding@resend.de
 const singleLine = (value: string) => value.replace(/[\r\n]+/g, " ").trim()
 
 function backendBaseUrl() {
-  return (
-    process.env.CHAT_API_URL ||
-    process.env.NEXT_PUBLIC_CHAT_API_URL ||
-    process.env.QUOTE_API_URL ||
-    DEFAULT_CHAT_API_URL
-  ).replace(/\/$/, "")
+  return serverChatApiUrl(process.env.QUOTE_API_URL || DEFAULT_CHAT_API_URL)
 }
 
 type QuoteData = ReturnType<typeof quoteRequestSchema.parse>

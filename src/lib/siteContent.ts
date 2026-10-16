@@ -1,6 +1,6 @@
 import { getCareers, getNews, getTestimonials } from "@/content"
 import type { AppLocale, CareerRole, NewsPost, Testimonial } from "@/content/types"
-import { DEFAULT_CHAT_API_URL } from "@/lib/chat/upstream"
+import { serverChatApiUrl } from "@/lib/chat/upstream"
 
 /**
  * News, careers and testimonials are edited by staff in the admin console
@@ -13,20 +13,11 @@ const TIMEOUT_MS = 5_000
 
 type Kind = "news" | "career" | "testimonial"
 
-function backendBaseUrl() {
-  return (
-    process.env.CHAT_API_URL ||
-    process.env.NEXT_PUBLIC_CHAT_API_URL ||
-    DEFAULT_CHAT_API_URL
-  ).replace(/\/$/, "")
-}
-
 const str = (value: unknown) => (typeof value === "string" ? value : "")
 const strOrNull = (value: unknown) => (typeof value === "string" && value ? value : null)
 
 async function fetchItems(kind: Kind, locale: AppLocale): Promise<unknown[] | null> {
-  const base = backendBaseUrl()
-  if (!base) return null
+  const base = serverChatApiUrl()
   try {
     const response = await fetch(`${base}/content/${kind}?locale=${locale}`, {
       next: { revalidate: REVALIDATE_SECONDS, tags: ["site-content"] },
