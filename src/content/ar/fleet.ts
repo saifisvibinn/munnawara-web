@@ -32,7 +32,7 @@ export const fleet: readonly FleetCategory[] = [
   },
   {
     id: "vip-2026",
-    name: "??? VIP",
+    name: "باص VIP",
     seatsLabel: "28 + 1 + 1",
     summary:
       "الوفود الرسمية ونقل VIP والرحلات الطويلة الفاخرة, مقاعد VIP قابلة للتعديل لرحلة أكثر راحة.",
@@ -59,7 +59,7 @@ export const fleet: readonly FleetCategory[] = [
   },
   {
     id: "coach-2025-2026",
-    name: "???? ???",
+    name: "كوتش باص",
     seatsLabel: "49 + 1 + 1",
     summary:
       "النقل بين المدن ونقل الموظفين والرحلات السياحية والجماعية, مجهّز وفق معايير راحة وسلامة عالية.",
@@ -86,7 +86,7 @@ export const fleet: readonly FleetCategory[] = [
   },
   {
     id: "city-2025",
-    name: "???? ???",
+    name: "سيتي باص",
     seatsLabel: "45 + وقوف",
     summary:
       "النقل الترددي وخدمات الصلوات, مقاعد مريحة مع مساحة للوقوف لتنقل حضري ومشاعري بكفاءة.",
@@ -106,7 +106,7 @@ export const fleet: readonly FleetCategory[] = [
   },
   {
     id: "labour-2024",
-    name: "??? ??? ????",
+    name: "باص نقل عمال",
     seatsLabel: "41",
     summary:
       "نقل الموظفين والنقل المدرسي والرحلات الدورية, فئة عملية متوسطة للمسارات المؤسسية اليومية.",
@@ -124,7 +124,7 @@ export const fleet: readonly FleetCategory[] = [
   },
   {
     id: "coaster-2026",
-    name: "????? ???",
+    name: "كوستر باص",
     seatsLabel: "29",
     summary:
       "المجموعات الصغيرة ونقل الموظفين والرحلات السريعة, سهلة الحركة في شوارع المدن وطرق المشاعر.",
