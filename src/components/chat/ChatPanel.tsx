@@ -539,6 +539,7 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
 
   const COMPACT_TOPICS = 6
   const topics = options.filter((o) => !o.href)
+  const links = options.filter((o) => o.href)
   const compactMenu = messages.length > 2 && !moreTopics && topics.length > COMPACT_TOPICS
   const visibleTopics = compactMenu ? topics.slice(0, COMPACT_TOPICS) : topics
   const hiddenCount = topics.length - COMPACT_TOPICS
@@ -722,6 +723,23 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
               ),
             )}
 
+            {/* Links the bot offers (e.g. open the quote form) sit in the conversation, not behind the choices toggle. */}
+            {links.length > 0 && !busy ? (
+              <div className="chat-panel__links">
+                {links.map((option, i) => (
+                  <Link
+                    key={option.id}
+                    href={option.href!}
+                    className="chat-panel__option-link"
+                    style={{ animationDelay: `${i * 40}ms` }}
+                    onClick={onClose}
+                  >
+                    {option.label} →
+                  </Link>
+                ))}
+              </div>
+            ) : null}
+
             {/* The reply often lands over the socket before the request resolves: drop the dots
                 the moment it does, so the bubble takes their place instead of popping in above. */}
             {busy && (messages.length === 0 || messages[messages.length - 1].role === "user") ? (
@@ -737,14 +755,14 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
             {bootError ? <p className="chat-panel__error">{bootError}</p> : null}
           </div>
 
-          {options.length === 0 && !escalated && !busy && conversationId && messages.length > 1 ? (
+          {topics.length === 0 && !escalated && !busy && conversationId && messages.length > 1 ? (
             <div className="chat-panel__options">
               <button type="button" className="chat-panel__more" onClick={() => void showTopics()}>
                 {t("showTopics")}
               </button>
             </div>
           ) : null}
-          {options.length > 0 && !escalated ? (
+          {topics.length > 0 && !escalated ? (
             <div className="chat-panel__options">
               <button
                 type="button"
@@ -752,23 +770,10 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
                 aria-expanded={choicesOpen}
                 onClick={() => setChoicesOpen((v) => !v)}
               >
-                {choicesOpen ? t("hideChoices") : `${t("showChoices")} (${options.length})`}
+                {choicesOpen ? t("hideChoices") : `${t("showChoices")} (${topics.length})`}
               </button>
               {choicesOpen ? (
                 <>
-              {options
-                .filter((o) => o.href)
-                .map((option, i) => (
-                  <Link
-                    key={option.id}
-                    href={option.href!}
-                    className="chat-panel__option-link"
-                    style={{ animationDelay: `${i * 40}ms` }}
-                    onClick={onClose}
-                  >
-                    {option.label} →
-                  </Link>
-                ))}
               {visibleTopics.map((option, i) => (
                 <button
                   key={option.id}

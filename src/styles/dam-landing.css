@@ -3172,6 +3172,7 @@ html.is-locale-in .landing-fab-row {
   animation: chat-bubble-in 360ms cubic-bezier(0.22, 1, 0.36, 1) both;
   transition: transform 160ms ease, box-shadow 160ms ease;
 }
+.chat-panel__links { display: flex; flex-wrap: wrap; gap: 6px; align-self: flex-start; }
 .chat-panel__option-link:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(247, 91, 18, 0.35); }
 html[dir='rtl'] .chat-panel__option-link { direction: rtl; }.chat-panel__options .chat-panel__more { border-style: dashed; color: var(--brand-orange); background: transparent; }
 /* Arabic: Cairo for body and display text (Latin stacks lack Arabic glyphs). */
