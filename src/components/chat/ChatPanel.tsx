@@ -270,18 +270,51 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
 
     socket.on("message:new", onMessage)
     socket.on("conversation:claimed", onClaimed)
-    socket.on("conversation:escalated", onEscalated)
+    // Chat closed (by the team or for inactivity): Durra AI answers the next message.
+    const onClosed = (payload: { conversationId?: string }) => {
+      if (payload.conversationId && payload.conversationId !== conversationId) {
+        return
+      }
+      setEscalated(false)
+      setClaimed(false)
+      fetchGuidedWelcome(lang)
+        .then((welcome) => setOptions(welcome.options ?? []))
+        .catch(() => {})
+    }
 
-    const onConnect = () => joinConversation(conversationId)
+    socket.on("conversation:escalated", onEscalated)
+    socket.on("conversation:closed", onClosed)
+
+    // Rooms are lost on disconnect: rejoin, and after a *re*connect pull anything missed.
+    let wasConnected = socket.connected
+    const onConnect = () => {
+      joinConversation(conversationId)
+      if (!wasConnected) {
+        wasConnected = true
+        return
+      }
+      const phone = loadIdentity()?.phone
+      if (!phone) return
+      fetchChatHistory(conversationId, phone)
+        .then((history) => {
+          if (!history.resumable) return
+          for (const m of history.messages) {
+            if (m.sender === "customer") continue
+            appendMessage({ id: m.id, role: mapSocketSender(m.sender), text: m.text })
+          }
+        })
+        .catch(() => {})
+    }
     socket.on("connect", onConnect)
 
     return () => {
       socket.off("message:new", onMessage)
       socket.off("conversation:claimed", onClaimed)
       socket.off("conversation:escalated", onEscalated)
+      socket.off("conversation:closed", onClosed)
       socket.off("connect", onConnect)
     }
-  }, [conversationId, appendMessage, bumpUnread, t])
+  }, [conversationId, appendMessage, bumpUnread, t, lang])
 
   useEffect(() => {
     return () => disconnectCustomerSocket()
@@ -426,6 +459,11 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
           setEscalated(true)
         }
         if (reply.reason === "claimed") setClaimed(true)
+        // Reopened after a close: Durra AI is answering again.
+        if (reply.status === "ai_handling") {
+          setEscalated(false)
+          setClaimed(false)
+        }
         setOptions(reply.options ?? [])
 
         if (reply.escalated && reply.systemMessage) {
