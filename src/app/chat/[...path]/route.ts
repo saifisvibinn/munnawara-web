@@ -1,11 +1,7 @@
-import { DEFAULT_CHAT_API_URL } from "@/lib/chat/upstream"
+import { serverChatApiUrl } from "@/lib/chat/upstream"
 import { NextRequest, NextResponse } from "next/server"
 
-const UPSTREAM = (
-  process.env.CHAT_API_URL ||
-  process.env.NEXT_PUBLIC_CHAT_API_URL ||
-  DEFAULT_CHAT_API_URL
-).replace(/\/$/, "")
+const UPSTREAM = serverChatApiUrl()
 
 const UPSTREAM_TIMEOUT_MS = 30_000
 const MAX_BODY_BYTES = 64 * 1024

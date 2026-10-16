@@ -1,6 +1,6 @@
 "use server"
 
-import { DEFAULT_CHAT_API_URL } from "@/lib/chat/upstream"
+import { DEFAULT_CHAT_API_URL, serverChatApiUrl } from "@/lib/chat/upstream"
 
 export type QuoteTracking = {
   leadId: string
@@ -25,12 +25,7 @@ const LEAD_ID_RE = /^DM-[A-Z0-9]{4,20}$/i
 const TIMEOUT_MS = 10_000
 
 function backendBaseUrl() {
-  return (
-    process.env.CHAT_API_URL ||
-    process.env.NEXT_PUBLIC_CHAT_API_URL ||
-    process.env.QUOTE_API_URL ||
-    DEFAULT_CHAT_API_URL
-  ).replace(/\/$/, "")
+  return serverChatApiUrl(process.env.QUOTE_API_URL || DEFAULT_CHAT_API_URL)
 }
 
 /** Looks up a request by its lead ID plus the phone number it was sent with. */

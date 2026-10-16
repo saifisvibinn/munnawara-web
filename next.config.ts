@@ -1,13 +1,10 @@
 import type { NextConfig } from "next"
 import createNextIntlPlugin from "next-intl/plugin"
+import { serverChatApiUrl } from "./src/lib/chat/upstream"
 
 const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts")
 
-const chatApiTarget = (
-  process.env.CHAT_API_URL ||
-  process.env.NEXT_PUBLIC_CHAT_API_URL ||
-  "https://164-92-131-93.sslip.io"
-).replace(/\/$/, "")
+const chatApiTarget = serverChatApiUrl()
 
 const nextConfig: NextConfig = {
   images: {
