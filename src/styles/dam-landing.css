@@ -3289,15 +3289,7 @@ html.dark .chat-panel__composer textarea::placeholder {
   align-self: flex-start;
 }
 
-.chat-typing-row__label {
-  color: rgba(32, 29, 26, 0.5);
-  font-size: 0.68rem;
-  font-weight: 600;
-  animation: chat-bubble-in 280ms ease both;
-}
-
-html.dark .chat-greeting,
-html.dark .chat-typing-row__label {
+html.dark .chat-greeting {
   color: rgba(245, 239, 232, 0.55);
 }
 

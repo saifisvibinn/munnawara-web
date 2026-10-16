@@ -109,19 +109,8 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
   const [bootError, setBootError] = useState<string | null>(null)
   const [booted, setBooted] = useState(false)
   const [moreTopics, setMoreTopics] = useState(false)
-  const [choicesOpen, setChoicesOpen] = useState(true)
-  const [slowReply, setSlowReply] = useState(false)
+  const [choicesOpen, setChoicesOpen] = useState(false)
   const greeting = useMemo(() => (open ? chatGreeting() : null), [open])
-
-  // After a few seconds of waiting, reassure the visitor that a reply is coming.
-  useEffect(() => {
-    if (!busy) {
-      setSlowReply(false)
-      return
-    }
-    const timer = window.setTimeout(() => setSlowReply(true), 6000)
-    return () => window.clearTimeout(timer)
-  }, [busy])
 
   const showTopics = async () => {
     try {
@@ -734,9 +723,6 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
                   <span />
                   <span />
                 </div>
-                <span className="chat-typing-row__label" aria-hidden>
-                  {slowReply ? t("typingSlow") : t("typing")}
-                </span>
               </div>
             ) : null}
             {bootError ? <p className="chat-panel__error">{bootError}</p> : null}
