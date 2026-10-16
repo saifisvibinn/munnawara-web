@@ -697,7 +697,13 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
               </p>
             ) : null}
 
-            {messages.map((message, index) => (
+            {messages.map((message, index) =>
+              // Status notices (handed to a human, agent joined, chat closed) read as a quiet line, not a bubble.
+              message.role === "system" ? (
+                <p key={message.id} className="chat-greeting chat-notice" dir="auto">
+                  {message.text}
+                </p>
+              ) : (
               <div
                 key={message.id}
                 className={`chat-bubble chat-bubble--${message.role}`}
@@ -713,7 +719,8 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
                   </p>
                 </div>
               </div>
-            ))}
+              ),
+            )}
 
             {busy ? (
               <div className="chat-typing-row" role="status" aria-label={t("typing")}>

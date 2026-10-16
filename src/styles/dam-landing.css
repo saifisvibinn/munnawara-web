@@ -3289,6 +3289,12 @@ html.dark .chat-panel__composer textarea::placeholder {
   align-self: flex-start;
 }
 
+/* System notices reuse the greeting look; long ones wrap centered. */
+.chat-notice {
+  text-align: center;
+  margin: 2px 12px;
+}
+
 html.dark .chat-greeting {
   color: rgba(245, 239, 232, 0.55);
 }
