@@ -182,8 +182,8 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
   const scrollToEnd = useCallback(() => {
     const el = listRef.current
     if (!el) return
-    el.scrollTop = el.scrollHeight
-  }, [])
+    el.scrollTo({ top: el.scrollHeight, behavior: reducedMotion ? "auto" : "smooth" })
+  }, [reducedMotion])
 
   useEffect(() => {
     if (open && identified) scrollToEnd()
@@ -722,7 +722,9 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
               ),
             )}
 
-            {busy ? (
+            {/* The reply often lands over the socket before the request resolves: drop the dots
+                the moment it does, so the bubble takes their place instead of popping in above. */}
+            {busy && (messages.length === 0 || messages[messages.length - 1].role === "user") ? (
               <div className="chat-typing-row" role="status" aria-label={t("typing")}>
                 <RobotAvatar className="chat-bubble__avatar" mood="think" />
                 <div className="chat-typing">
