@@ -109,6 +109,7 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
   const [bootError, setBootError] = useState<string | null>(null)
   const [booted, setBooted] = useState(false)
   const [moreTopics, setMoreTopics] = useState(false)
+  const [choicesOpen, setChoicesOpen] = useState(true)
   const [slowReply, setSlowReply] = useState(false)
   const greeting = useMemo(() => (open ? chatGreeting() : null), [open])
 
@@ -687,6 +688,8 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
         <>
           <div
             className="chat-panel__messages"
+            // Lenis smooth scroll swallows wheel events unless the scroller opts out.
+            data-lenis-prevent
             ref={listRef}
             role="log"
             aria-live="polite"
@@ -748,6 +751,16 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
           ) : null}
           {options.length > 0 && !escalated ? (
             <div className="chat-panel__options">
+              <button
+                type="button"
+                className="chat-panel__more"
+                aria-expanded={choicesOpen}
+                onClick={() => setChoicesOpen((v) => !v)}
+              >
+                {choicesOpen ? t("hideChoices") : `${t("showChoices")} (${options.length})`}
+              </button>
+              {choicesOpen ? (
+                <>
               {options
                 .filter((o) => o.href)
                 .map((option, i) => (
@@ -783,6 +796,8 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
                 >
                   {moreTopics ? t("fewerTopics") : `${t("moreTopics")} (${hiddenCount})`}
                 </button>
+              ) : null}
+                </>
               ) : null}
             </div>
           ) : null}
