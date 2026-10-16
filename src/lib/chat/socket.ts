@@ -22,7 +22,8 @@ export const getCustomerSocket = (): Socket => {
       transports: ["polling", "websocket"],
       autoConnect: false,
       reconnection: true,
-      reconnectionAttempts: 8,
+      reconnectionAttempts: Infinity,
+      reconnectionDelayMax: 5000,
       reconnectionDelay: 800,
     })
   }
