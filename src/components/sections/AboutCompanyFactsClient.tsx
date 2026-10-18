@@ -1,12 +1,7 @@
 "use client"
 
 import { AboutLeadership } from "@/components/sections/AboutLeadership"
-import type {
-  AboutDriveItem,
-  AboutLeader,
-  AboutStat,
-  AboutStrategicObjective,
-} from "@/content/types"
+import type { AboutContent, AppLocale } from "@/content/types"
 import { useReducedMotion } from "@/hooks/useReducedMotion"
 import { cn } from "@/lib/cn"
 import { toLocaleDigits } from "@/lib/localeDigits"
@@ -32,13 +27,11 @@ const SectionShell = ({
   tone,
   base,
   labelledBy,
-  className,
   children,
 }: {
   tone: AtmosphereTone
   base: string
   labelledBy: string
-  className?: string
   children: ReactNode
 }) => (
   <section
@@ -46,7 +39,6 @@ const SectionShell = ({
     className={cn(
       "relative overflow-x-clip px-4 py-20 sm:px-6 lg:py-28",
       base,
-      className,
     )}
   >
     <div
@@ -58,20 +50,8 @@ const SectionShell = ({
 )
 
 type AboutCompanyFactsClientProps = {
-  overviewTitle: string
-  overviewParagraphs: readonly string[]
-  drivesEyebrow: string
-  drivesHeadline: string
-  driveItems: readonly AboutDriveItem[]
-  strategicObjectivesTitle: string
-  strategicObjectives: readonly AboutStrategicObjective[]
-  leadershipTitle: string
-  leadership: readonly AboutLeader[]
-  statsTitle: string
-  stats: readonly AboutStat[]
-  techTitle: string
-  techBody: string
-  locale: string
+  about: AboutContent
+  locale: AppLocale
 }
 
 const parseStatValue = (value: string) => {
@@ -139,25 +119,28 @@ const StatCount = ({ value, locale, active, reduced }: StatCountProps) => {
 }
 
 export const AboutCompanyFactsClient = ({
-  overviewTitle,
-  overviewParagraphs,
-  drivesEyebrow,
-  drivesHeadline,
-  driveItems,
-  strategicObjectivesTitle,
-  strategicObjectives,
-  leadershipTitle,
-  leadership,
-  statsTitle,
-  stats,
-  techTitle,
-  techBody,
+  about,
   locale,
 }: AboutCompanyFactsClientProps) => {
+  const {
+    overviewTitle,
+    overviewParagraphs,
+    drivesEyebrow,
+    drivesHeadline,
+    driveItems,
+    strategicObjectivesTitle,
+    strategicObjectives,
+    leadershipTitle,
+    leadership,
+    statsTitle,
+    stats,
+    techTitle,
+    techBody,
+  } = about
   const reduced = useReducedMotion()
   const statsRef = useRef<HTMLDListElement>(null)
   const statsInView = useInView(statsRef, { once: true, amount: 0.5 })
-  const isRtl = locale.startsWith("ar")
+  const isRtl = locale === "ar"
 
   const reveal = (delay = 0) =>
     reduced

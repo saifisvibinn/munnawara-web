@@ -117,12 +117,6 @@ export type AboutDriveItem = {
   body: string
 }
 
-export type AboutValuePillar = {
-  id: string
-  title: string
-  body: string
-}
-
 export type AboutStrategicObjective = {
   id: string
   title: string
@@ -140,33 +134,20 @@ export type AboutLeader = {
 
 export type AboutContent = {
   title: string
-  intro: string
   overviewTitle: string
   overviewParagraphs: readonly string[]
-  historyTitle: string
-  history: string
-  visionTitle: string
-  vision: string
-  missionTitle: string
-  mission: string
   /** Vision & mission editorial block */
   drivesEyebrow: string
   drivesHeadline: string
   driveItems: readonly AboutDriveItem[]
-  /** Retained for compatibility; About page renders strategicObjectives instead */
-  valuesTitle: string
-  valuePillars: readonly AboutValuePillar[]
   strategicObjectivesTitle: string
   strategicObjectives: readonly AboutStrategicObjective[]
   leadershipTitle: string
   leadership: readonly AboutLeader[]
   statsTitle: string
-  statsIntro: string
   stats: readonly AboutStat[]
   techTitle: string
   techBody: string
-  /** Omit fabricated CR, null until client provides a number */
-  licensingNote: string | null
   /** Cinematic About film narrative */
   film: AboutFilmContent
 }
@@ -276,7 +257,6 @@ export type ContactContent = {
   whatsappCta: string
   channelsTitle: string
   whatsappNote: string
-  phoneLabel: string
   /** Department lines shown on Contact (sales, management, operations). */
   phoneLines: readonly ContactPhoneLine[]
   emailNote: string

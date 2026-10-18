@@ -73,7 +73,7 @@ export const resolveContextHint = (
 
   if (
     target.closest(
-      "#fleet-panel, [data-af-fleet], [data-fleet-bus], .about-film__gallery-image, [data-fleet-hero]",
+      "#fleet-panel, [data-af-fleet], [data-fleet-bus], [data-fleet-hero]",
     )
   ) {
     return "fleet"

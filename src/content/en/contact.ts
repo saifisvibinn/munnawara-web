@@ -8,7 +8,6 @@ export const contact: ContactContent = {
   whatsappCta: "Message us on WhatsApp",
   channelsTitle: "Reach us directly",
   whatsappNote: "Message our operations team",
-  phoneLabel: "Call",
   phoneLines: [
     {
       id: "sales",

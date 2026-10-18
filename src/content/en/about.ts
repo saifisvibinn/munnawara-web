@@ -2,23 +2,12 @@ import type { AboutContent } from "../types"
 
 export const about: AboutContent = {
   title: "About Durrat Almunawwara Co.",
-  intro:
-    "Durrat Al-Munawwara Transport is a Saudi company specializing in integrated transport services and solutions, drawing on more than 12 years of operational experience serving Hajj and Umrah, tourism, school transport, and corporate and government workforce mobility.",
   overviewTitle: "About the company",
   overviewParagraphs: [
     "Durrat Al-Munawwara Transport is a Saudi company specializing in integrated transport services and solutions, drawing on more than 12 years of operational experience serving Hajj and Umrah, tourism, school transport, and corporate and government workforce mobility.",
     "Through a diverse fleet of modern, well-equipped coaches and specialized administrative, technical, and operations teams, we deliver transport that is efficient, reliable, and safe — meeting each client’s needs to the highest quality standards.",
     "We take pride in serving the Guests of Allah and in contributing to the development of the Kingdom’s transport ecosystem through investment in modern technology, stronger operational readiness, people development, and strategic partnerships at home and abroad.",
   ],
-  historyTitle: "Our story",
-  history:
-    "From 86 buses in 2015 to more than 1500 modern vehicles today, Durrat Al-Munawwara Transport has built its reputation through continuous operations, long experience, and a fleet equipped with the latest technologies, serving government and private organizations across the Kingdom.",
-  visionTitle: "Our vision",
-  vision:
-    "To be among the leading providers of integrated, intelligent transport solutions in the Kingdom of Saudi Arabia, and a benchmark for quality, safety, innovation, and service to the Guests of Allah.",
-  missionTitle: "Our mission",
-  mission:
-    "To deliver safe, reliable, and distinguished transport services through a modern fleet, qualified people, and smart operating systems — earning client trust, elevating the passenger experience, and supporting the goals of Saudi Vision 2030.",
   drivesEyebrow: "Vision & mission",
   drivesHeadline: "What drives us.",
   driveItems: [
@@ -31,29 +20,6 @@ export const about: AboutContent = {
       id: "mission",
       title: "Mission",
       body: "To deliver safe, reliable, and distinguished transport services through a modern fleet, qualified people, and smart operating systems — earning client trust, elevating the passenger experience, and supporting the goals of Saudi Vision 2030.",
-    },
-  ],
-  valuesTitle: "Values",
-  valuePillars: [
-    {
-      id: "safety",
-      title: "Safety first",
-      body: "Every assignment starts with safe vehicles, trained drivers, and disciplined operations.",
-    },
-    {
-      id: "commitment",
-      title: "Commitment & quality",
-      body: "Clear standards and reliable delivery for government and private partners.",
-    },
-    {
-      id: "hospitality",
-      title: "Hospitality & professionalism",
-      body: "Respectful service for guests of Allah, employees, students, and formal delegations.",
-    },
-    {
-      id: "innovation",
-      title: "Innovation & operations",
-      body: "Smart technologies and continuous improvement across the fleet and control room.",
     },
   ],
   strategicObjectivesTitle: "Our strategic objectives",
@@ -125,8 +91,6 @@ export const about: AboutContent = {
     },
   ],
   statsTitle: "Trust at scale.",
-  statsIntro:
-    "Our leadership in the Saudi transport market is reflected in numbers that highlight our fleet growth and the unlimited trust of our clients.",
   stats: [
     {
       id: "fleet",
@@ -152,7 +116,6 @@ export const about: AboutContent = {
   techTitle: "Advanced technology, safety & quality",
   techBody:
     "Durrat Al-Munawwara integrates advanced operational technologies to ensure maximum efficiency, safety, and service quality. Our 24/7 Control & Monitoring Center oversees fleet operations, while a smart preventive maintenance system ensures vehicle readiness before every trip. We employ highly qualified drivers, fully comply with all official transport regulations and licenses, and equip our buses with surveillance cameras and smart safety sensors. Combined with continuous maintenance and sanitization programs, these measures provide a safe, reliable, and comfortable transportation experience for all passengers.",
-  licensingNote: null,
   film: {
     brandName: "Durrat Almunawwara Co.",
     journeyHeadline:

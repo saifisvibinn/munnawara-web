@@ -67,15 +67,6 @@ const ContactPage = async ({ params }: PageProps) => {
       external: false,
       Icon: Phone,
     })),
-    ...config.phones.map((phone) => ({
-      id: phone,
-      label: content.phoneLabel,
-      value: formatPhone(phone),
-      note: hours,
-      href: `tel:${phone}`,
-      external: false,
-      Icon: Phone,
-    })),
     {
       id: "email",
       label: tCommon("email"),

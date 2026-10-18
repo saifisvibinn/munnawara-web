@@ -613,16 +613,6 @@ body:has([data-quote-page]) main#main {
 body:has([data-quote-page]) [data-floating-actions] [data-whatsapp-fab] {
   display: none;
 }
-/* Legacy class kept for any remaining callers — pinned bottom, no footer chase. */
-.float-above-footer {
-  bottom: max(1.25rem, env(safe-area-inset-bottom));
-}
-@media (min-width: 640px) {
-  .float-above-footer {
-    bottom: 1.5rem;
-  }
-}
-
 /* Partners logo cloud — infinite horizontal marquee (duplicated track = -50%) */
 @keyframes logo-marquee {
   from {
