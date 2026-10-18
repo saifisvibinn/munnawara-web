@@ -58,6 +58,15 @@ const ContactPage = async ({ params }: PageProps) => {
       external: true,
       Icon: WhatsAppIcon,
     },
+    ...content.phoneLines.map((line) => ({
+      id: line.id,
+      label: line.label,
+      value: formatPhone(line.phone),
+      note: line.note,
+      href: `tel:${line.phone}`,
+      external: false,
+      Icon: Phone,
+    })),
     ...config.phones.map((phone) => ({
       id: phone,
       label: content.phoneLabel,

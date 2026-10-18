@@ -10,6 +10,8 @@ type LogoCloudProps = {
   className?: string
   /** How many horizontal rows (logo-cloud-06 style). */
   rows?: 2 | 3 | 4
+  /** Edge fade base — match the section surface so the mask blends. */
+  fadeFrom?: "surface-muted" | "surface-mint" | "surface"
 }
 
 const chunkRows = (items: readonly Partner[], rowCount: number) => {
@@ -40,16 +42,24 @@ const LogoCell = ({ partner }: { partner: Partner }) => (
   </div>
 )
 
+const FADE_FROM = {
+  "surface-muted": "from-surface-muted",
+  "surface-mint": "from-surface-mint",
+  surface: "from-surface",
+} as const
+
 export const LogoCloud = ({
   partners,
   className,
   rows = 3,
+  fadeFrom = "surface-muted",
 }: LogoCloudProps) => {
   const reduced = useReducedMotion()
   const rowItems = useMemo(
     () => chunkRows(partners, rows),
     [partners, rows],
   )
+  const fade = FADE_FROM[fadeFrom]
 
   if (partners.length === 0) return null
 
@@ -80,11 +90,17 @@ export const LogoCloud = ({
     >
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-y-0 left-0 z-10 w-10 bg-gradient-to-r from-surface-muted to-transparent sm:w-16"
+        className={cn(
+          "pointer-events-none absolute inset-y-0 left-0 z-10 w-10 bg-gradient-to-r to-transparent sm:w-16",
+          fade,
+        )}
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-y-0 right-0 z-10 w-10 bg-gradient-to-l from-surface-muted to-transparent sm:w-16"
+        className={cn(
+          "pointer-events-none absolute inset-y-0 right-0 z-10 w-10 bg-gradient-to-l to-transparent sm:w-16",
+          fade,
+        )}
       />
 
       {rowItems.map((row, rowIndex) => {

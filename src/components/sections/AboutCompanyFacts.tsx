@@ -9,11 +9,15 @@ type AboutCompanyFactsProps = {
 export const AboutCompanyFacts = ({ about, locale }: AboutCompanyFactsProps) => {
   return (
     <AboutCompanyFactsClient
+      overviewTitle={about.overviewTitle}
+      overviewParagraphs={about.overviewParagraphs}
       drivesEyebrow={about.drivesEyebrow}
       drivesHeadline={about.drivesHeadline}
       driveItems={about.driveItems}
-      valuesTitle={about.valuesTitle}
-      valuePillars={about.valuePillars}
+      strategicObjectivesTitle={about.strategicObjectivesTitle}
+      strategicObjectives={about.strategicObjectives}
+      leadershipTitle={about.leadershipTitle}
+      leadership={about.leadership}
       statsTitle={about.statsTitle}
       stats={about.stats}
       techTitle={about.techTitle}

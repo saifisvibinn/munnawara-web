@@ -9,6 +9,26 @@ export const contact: ContactContent = {
   channelsTitle: "Reach us directly",
   whatsappNote: "Message our operations team",
   phoneLabel: "Call",
+  phoneLines: [
+    {
+      id: "sales",
+      label: "Sales",
+      note: "Quotes, bookings, and commercial inquiries",
+      phone: "+966535731923",
+    },
+    {
+      id: "management",
+      label: "Management",
+      note: "Dedicated line for complaints and suggestions",
+      phone: "+966555967366",
+    },
+    {
+      id: "operations",
+      label: "Operations",
+      note: "Fleet operations and day-of-travel support",
+      phone: "+966504352314",
+    },
+  ],
   emailNote: "For detailed requests and documents",
   officeTitle: "Visit our office",
   mapTitle: "Map showing Durrat Almunawwara Co. in Makkah, Kingdom of Saudi Arabia",

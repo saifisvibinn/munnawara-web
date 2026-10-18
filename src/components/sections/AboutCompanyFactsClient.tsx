@@ -1,46 +1,78 @@
 "use client"
 
-import type { AboutDriveItem, AboutStat, AboutValuePillar } from "@/content/types"
+import { AboutLeadership } from "@/components/sections/AboutLeadership"
+import type {
+  AboutDriveItem,
+  AboutLeader,
+  AboutStat,
+  AboutStrategicObjective,
+} from "@/content/types"
 import { useReducedMotion } from "@/hooks/useReducedMotion"
 import { cn } from "@/lib/cn"
 import { toLocaleDigits } from "@/lib/localeDigits"
 import { animate, motion, useInView } from "motion/react"
-import { useLayoutEffect, useRef } from "react"
+import { useLayoutEffect, useRef, type ReactNode } from "react"
 
 const EASE_OUT = [0.23, 1, 0.32, 1] as const
 /** Long, soft landing: fast start, slow settle. All figures share it so they finish together. */
 const COUNT_EASE = [0.16, 1, 0.3, 1] as const
 const COUNT_DURATION = 2.6
 
+/** Soft brand washes — keeps About facts off flat white without inventing hex. */
+const ATMOSPHERE = {
+  warm: "bg-[radial-gradient(ellipse_80%_60%_at_0%_0%,color-mix(in_srgb,var(--brand-orange)_16%,transparent),transparent_58%),radial-gradient(ellipse_65%_50%_at_100%_100%,color-mix(in_srgb,var(--brand-blue)_11%,transparent),transparent_55%)]",
+  cool: "bg-[radial-gradient(ellipse_70%_55%_at_100%_0%,color-mix(in_srgb,var(--brand-blue)_14%,transparent),transparent_58%),radial-gradient(ellipse_60%_50%_at_0%_100%,color-mix(in_srgb,var(--brand-wordmark)_10%,transparent),transparent_55%)]",
+  ember: "bg-[radial-gradient(ellipse_90%_70%_at_50%_-10%,color-mix(in_srgb,var(--brand-orange)_18%,transparent),transparent_55%),radial-gradient(ellipse_55%_45%_at_90%_90%,color-mix(in_srgb,var(--brand-blue)_8%,transparent),transparent_50%)]",
+  steel: "bg-[radial-gradient(ellipse_70%_55%_at_0%_40%,color-mix(in_srgb,var(--brand-blue)_13%,transparent),transparent_55%),radial-gradient(ellipse_60%_50%_at_100%_0%,color-mix(in_srgb,var(--brand-orange)_9%,transparent),transparent_50%)]",
+} as const
+
+type AtmosphereTone = keyof typeof ATMOSPHERE
+
+const SectionShell = ({
+  tone,
+  base,
+  labelledBy,
+  className,
+  children,
+}: {
+  tone: AtmosphereTone
+  base: string
+  labelledBy: string
+  className?: string
+  children: ReactNode
+}) => (
+  <section
+    aria-labelledby={labelledBy}
+    className={cn(
+      "relative overflow-x-clip px-4 py-20 sm:px-6 lg:py-28",
+      base,
+      className,
+    )}
+  >
+    <div
+      aria-hidden
+      className={cn("pointer-events-none absolute inset-0", ATMOSPHERE[tone])}
+    />
+    <div className="relative z-[1]">{children}</div>
+  </section>
+)
+
 type AboutCompanyFactsClientProps = {
+  overviewTitle: string
+  overviewParagraphs: readonly string[]
   drivesEyebrow: string
   drivesHeadline: string
   driveItems: readonly AboutDriveItem[]
-  valuesTitle: string
-  valuePillars: readonly AboutValuePillar[]
+  strategicObjectivesTitle: string
+  strategicObjectives: readonly AboutStrategicObjective[]
+  leadershipTitle: string
+  leadership: readonly AboutLeader[]
   statsTitle: string
   stats: readonly AboutStat[]
   techTitle: string
   techBody: string
   locale: string
 }
-
-const DriveArrow = ({ className }: { className?: string }) => (
-  <svg
-    aria-hidden
-    viewBox="0 0 24 24"
-    fill="none"
-    className={cn("size-5 shrink-0 text-orange", className)}
-  >
-    <path
-      d="M4 5v14M9 12h11M15 7l5 5-5 5"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-  </svg>
-)
 
 const parseStatValue = (value: string) => {
   const match = value.match(/^(\D*)(\d+)(.*)$/)
@@ -107,11 +139,15 @@ const StatCount = ({ value, locale, active, reduced }: StatCountProps) => {
 }
 
 export const AboutCompanyFactsClient = ({
+  overviewTitle,
+  overviewParagraphs,
   drivesEyebrow,
   drivesHeadline,
   driveItems,
-  valuesTitle,
-  valuePillars,
+  strategicObjectivesTitle,
+  strategicObjectives,
+  leadershipTitle,
+  leadership,
   statsTitle,
   stats,
   techTitle,
@@ -130,15 +166,42 @@ export const AboutCompanyFactsClient = ({
           initial: { opacity: 0, transform: "translateY(16px)" },
           whileInView: { opacity: 1, transform: "translateY(0px)" },
           transition: { duration: 0.9, delay, ease: EASE_OUT },
-          // "some" so tall blocks still trigger on short viewports.
-          viewport: { once: true, amount: "some" as const, margin: "0px 0px -6% 0px" },
+          viewport: {
+            once: true,
+            amount: "some" as const,
+            margin: "0px 0px -6% 0px",
+          },
         }
 
   return (
-    <div className="bg-surface text-ink">
-      <section
-        aria-labelledby="about-drives-heading"
-        className="px-4 py-20 sm:px-6 lg:py-28"
+    <div className="text-ink">
+      <SectionShell
+        tone="warm"
+        base="bg-surface-mint"
+        labelledBy="about-overview-heading"
+      >
+        <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.25fr)] lg:items-start lg:gap-20">
+          <motion.h2
+            id="about-overview-heading"
+            {...reveal(0)}
+            className="font-display max-w-[12ch] text-[clamp(2.2rem,4.2vw,3.25rem)] leading-[1.05] font-semibold tracking-tight text-balance text-ink lg:sticky lg:top-28"
+          >
+            {overviewTitle}
+          </motion.h2>
+          <div className="space-y-5 text-base leading-[1.75] text-ink-muted md:text-lg md:leading-[1.8]">
+            {overviewParagraphs.map((paragraph, index) => (
+              <motion.p key={paragraph.slice(0, 40)} {...reveal(index * 0.06)}>
+                {paragraph}
+              </motion.p>
+            ))}
+          </div>
+        </div>
+      </SectionShell>
+
+      <SectionShell
+        tone="cool"
+        base="bg-surface-muted"
+        labelledBy="about-drives-heading"
       >
         <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.2fr)] lg:items-start lg:gap-24">
           <motion.div {...reveal(0)} className="lg:sticky lg:top-28">
@@ -163,60 +226,59 @@ export const AboutCompanyFactsClient = ({
               <motion.li
                 key={item.id}
                 {...reveal(index * 0.08)}
-                className="grid grid-cols-[auto_minmax(0,1fr)] gap-x-4 border-t border-ink/10 py-8 first:border-t-0 first:pt-0 md:gap-x-5"
+                className="border-t border-ink/10 py-8 first:border-t-0 first:pt-0"
               >
-                <DriveArrow className={cn("mt-1.5", isRtl && "scale-x-[-1]")} />
-                <div>
-                  <h3 className="font-display text-xl font-semibold tracking-tight text-ink md:text-2xl">
-                    {item.title}
-                  </h3>
-                  <p className="mt-2 max-w-xl text-base leading-relaxed text-ink-muted md:text-lg">
-                    {item.body}
-                  </p>
-                </div>
+                <h3 className="font-display text-xl font-semibold tracking-tight text-ink md:text-2xl">
+                  {item.title}
+                </h3>
+                <p className="mt-3 max-w-xl text-base leading-relaxed text-ink-muted md:text-lg">
+                  {item.body}
+                </p>
               </motion.li>
             ))}
           </ul>
         </div>
-      </section>
+      </SectionShell>
 
-      <section
-        aria-labelledby="about-values-heading"
-        className="border-t border-ink/10 px-4 py-20 sm:px-6 lg:py-28"
+      <SectionShell
+        tone="warm"
+        base="bg-surface-mint"
+        labelledBy="about-objectives-heading"
       >
         <div className="mx-auto max-w-6xl">
           <motion.h2
-            id="about-values-heading"
+            id="about-objectives-heading"
             {...reveal(0)}
             className="font-display max-w-2xl text-3xl font-semibold tracking-tight text-balance text-ink md:text-5xl md:leading-[1.1]"
           >
-            {valuesTitle}
+            {strategicObjectivesTitle}
           </motion.h2>
-          <ul className="mt-12 grid gap-10 sm:grid-cols-2 lg:mt-16 lg:grid-cols-4 lg:gap-8">
-            {valuePillars.map((pillar, index) => (
+          <ul className="mt-12 grid gap-8 sm:grid-cols-2 lg:mt-16 lg:grid-cols-3 xl:grid-cols-4 lg:gap-x-8 lg:gap-y-12">
+            {strategicObjectives.map((objective, index) => (
               <motion.li
-                key={pillar.id}
-                {...reveal(index * 0.06)}
-                className="border-t border-ink/10 pt-6"
+                key={objective.id}
+                {...reveal(index * 0.05)}
+                className="border-t border-ink/15 pt-6"
               >
-                <p className="font-display text-4xl font-semibold tabular-nums text-orange md:text-5xl">
+                <p className="font-display text-3xl font-semibold tabular-nums text-orange md:text-4xl">
                   {toLocaleDigits(String(index + 1).padStart(2, "0"), locale)}
                 </p>
-                <h3 className="font-display mt-4 text-xl font-semibold tracking-tight text-ink md:text-2xl">
-                  {pillar.title}
+                <h3 className="font-display mt-4 text-lg font-semibold tracking-tight text-ink md:text-xl">
+                  {objective.title}
                 </h3>
                 <p className="mt-2 text-sm leading-relaxed text-ink-muted md:text-base">
-                  {pillar.body}
+                  {objective.body}
                 </p>
               </motion.li>
             ))}
           </ul>
         </div>
-      </section>
+      </SectionShell>
 
-      <section
-        aria-labelledby="numbers-heading"
-        className="px-4 pt-4 pb-20 sm:px-6 lg:pb-28"
+      <SectionShell
+        tone="ember"
+        base="bg-surface-muted"
+        labelledBy="numbers-heading"
       >
         <div className="mx-auto max-w-6xl">
           <motion.h2
@@ -233,7 +295,7 @@ export const AboutCompanyFactsClient = ({
             className="mt-12 grid grid-cols-2 gap-x-10 gap-y-12 md:mt-16 md:grid-cols-4 md:gap-x-12"
           >
             {stats.map((stat) => (
-              <div key={stat.id} className="min-w-0 border-t border-ink/10 pt-6">
+              <div key={stat.id} className="min-w-0 border-t border-ink/15 pt-6">
                 <dt>
                   <StatCount
                     value={stat.value}
@@ -249,11 +311,18 @@ export const AboutCompanyFactsClient = ({
             ))}
           </motion.dl>
         </div>
-      </section>
+      </SectionShell>
 
-      <section
-        aria-labelledby="about-tech-heading"
-        className="border-t border-ink/10 px-4 py-20 sm:px-6 lg:py-28"
+      <AboutLeadership
+        title={leadershipTitle}
+        leaders={leadership}
+        locale={locale}
+      />
+
+      <SectionShell
+        tone="steel"
+        base="bg-surface-mint"
+        labelledBy="about-tech-heading"
       >
         <div className="mx-auto grid max-w-6xl gap-8 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.2fr)] lg:gap-24">
           <motion.h2
@@ -270,7 +339,7 @@ export const AboutCompanyFactsClient = ({
             {techBody}
           </motion.p>
         </div>
-      </section>
+      </SectionShell>
     </div>
   )
 }

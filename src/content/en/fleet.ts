@@ -1,6 +1,6 @@
 import type { FleetCategory } from "../types"
 
-/** PDF seat labels. Showroom photos: side/front/interior.webp. premium-vip kept for hero caption + quote map. */
+/** PDF seat labels. Showroom photos: side/front + interior-*. premium-vip kept for hero caption + quote map. */
 export const fleet: readonly FleetCategory[] = [
   {
     id: "premium-vip-2026",
@@ -27,7 +27,14 @@ export const fleet: readonly FleetCategory[] = [
     ],
     coverImage: "/fleet/vip-2026/side.webp",
     exteriorImages: ["/fleet/vip-2026/side.webp", "/fleet/vip-2026/front.webp"],
-    interiorImages: ["/fleet/vip-2026/interior.webp"],
+    interiorImages: [
+      "/fleet/vip-2026/interior-aisle.jpeg",
+      "/fleet/vip-2026/interior-seats.jpeg",
+      "/fleet/vip-2026/interior-legrest.jpeg",
+      "/fleet/vip-2026/interior-cabin.jpeg",
+      "/fleet/vip-2026/interior-rear.jpeg",
+      "/fleet/vip-2026/interior-forward.jpeg",
+    ],
     images: ["/fleet/vip-2026/side.webp"],
   },
   {
@@ -54,7 +61,14 @@ export const fleet: readonly FleetCategory[] = [
     ],
     coverImage: "/fleet/vip-2026/side.webp",
     exteriorImages: ["/fleet/vip-2026/side.webp", "/fleet/vip-2026/front.webp"],
-    interiorImages: ["/fleet/vip-2026/interior.webp"],
+    interiorImages: [
+      "/fleet/vip-2026/interior-aisle.jpeg",
+      "/fleet/vip-2026/interior-seats.jpeg",
+      "/fleet/vip-2026/interior-legrest.jpeg",
+      "/fleet/vip-2026/interior-cabin.jpeg",
+      "/fleet/vip-2026/interior-rear.jpeg",
+      "/fleet/vip-2026/interior-forward.jpeg",
+    ],
     images: ["/fleet/vip-2026/side.webp"],
   },
   {
@@ -137,7 +151,12 @@ export const fleet: readonly FleetCategory[] = [
     ],
     coverImage: "/fleet/coaster-2026/side.webp",
     exteriorImages: ["/fleet/coaster-2026/side.webp", "/fleet/coaster-2026/front.webp"],
-    interiorImages: ["/fleet/coaster-2026/interior.webp"],
+    interiorImages: [
+      "/fleet/coaster-2026/interior-aisle.jpeg",
+      "/fleet/coaster-2026/interior-cabin.jpeg",
+      "/fleet/coaster-2026/interior-curtains.jpeg",
+      "/fleet/coaster-2026/interior-vents.jpeg",
+    ],
     images: ["/fleet/coaster-2026/side.webp"],
   },
 ] as const

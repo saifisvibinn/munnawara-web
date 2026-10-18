@@ -98,10 +98,12 @@ export const FloatingQuoteCta = () => {
       }
 
       const doc = document.documentElement
-      const remaining = doc.scrollHeight - (window.scrollY + window.innerHeight)
-      const footer = document.querySelector("footer")
+      const scrolled = window.scrollY + window.innerHeight
+      const remaining = doc.scrollHeight - scrolled
+      // Truly at the end — do not use "footer in view" (About's tall pins make
+      // the footer peek while leadership copy is still mid-viewport).
       const nearEnd =
-        remaining <= window.innerHeight * 0.6 || (footer ? inView(footer) : false)
+        remaining <= 120 || scrolled / Math.max(doc.scrollHeight, 1) >= 0.985
 
       const main = document.querySelector("main")
       const quoteCtaOnScreen =
@@ -194,7 +196,7 @@ export const FloatingQuoteCta = () => {
   return (
     <div
       data-floating-quote-chrome
-      className="float-above-footer pointer-events-none fixed inset-x-0 z-[50] flex justify-start ps-3 pe-[8.75rem] sm:justify-center sm:px-4"
+      className="pointer-events-none fixed inset-x-0 bottom-[max(1.25rem,env(safe-area-inset-bottom))] z-[50] flex justify-start ps-3 pe-[8.75rem] sm:bottom-6 sm:justify-center sm:px-4"
       aria-hidden={!visible}
     >
       <Link

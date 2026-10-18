@@ -63,7 +63,7 @@ export const companies: readonly Company[] = [
       "Hajj and Umrah program support",
     ],
     logo: "/brand/company-hospitality.png",
-    heroImage: "/fleet/vip-2026/interior.webp",
+    heroImage: "/fleet/vip-2026/interior-aisle.jpeg",
     contentReady: true,
   },
 ] as const

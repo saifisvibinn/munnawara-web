@@ -9,7 +9,7 @@ import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { ArrowUpRight } from "lucide-react"
 import Image from "next/image"
-import { useLayoutEffect, useRef, type CSSProperties, type ReactNode } from "react"
+import { useLayoutEffect, useRef, type ReactNode } from "react"
 import "@/styles/about-film.css"
 
 gsap.registerPlugin(ScrollTrigger)
@@ -20,19 +20,6 @@ type AboutFilmProps = {
   /** Static company facts (vision, mission, numbers) before the final CTA */
   children?: ReactNode
 }
-
-/** Art-directed frames: ratio = intrinsic width / height so buses are never cropped. */
-const FLEET_FRAMES = [
-  { src: "/photos/exterior/7725.webp", ratio: 16 / 9 },
-  { src: "/photos/exterior/0418.webp", ratio: 3 / 2 },
-  { src: "/photos/exterior/0417.webp", ratio: 3 / 2 },
-  { src: "/photos/exterior/0427.webp", ratio: 3 / 2 },
-] as const
-
-const GALLERY_SIZES = "(max-width: 767px) 80vw, 50vw"
-
-const frameStyle = (ratio: number) =>
-  ({ "--af-ratio": ratio }) as CSSProperties
 
 export const AboutFilm = ({ film, pageTitle, children }: AboutFilmProps) => {
   const reduced = useReducedMotion()
@@ -197,51 +184,6 @@ export const AboutFilm = ({ film, pageTitle, children }: AboutFilmProps) => {
               .to(title, { opacity: 1, y: 0, duration: 0.14 }, 0.62)
               .to(body, { opacity: 1, y: 0, duration: 0.14 }, 0.68)
               .to(companies, { opacity: 1, y: 0, duration: 0.16, stagger: 0.03 }, 0.74)
-          }
-
-          root.querySelectorAll<HTMLElement>("[data-af-gallery]").forEach((scene) => {
-            const track = scene.querySelector<HTMLElement>("[data-af-track]")
-            if (!track) return
-            const direction = getComputedStyle(scene).direction === "rtl" ? 1 : -1
-
-            gsap.timeline({
-              scrollTrigger: {
-                trigger: scene,
-                start: "top top",
-                end: "bottom bottom",
-                scrub,
-                invalidateOnRefresh: true,
-              },
-            })
-              .fromTo(track, { x: 0 }, {
-                x: () => direction * Math.max(0, track.scrollWidth - track.clientWidth),
-                ease: "none",
-                duration: 0.8,
-              }, 0.1)
-              .to({}, { duration: 0.1 })
-          })
-
-          /* —— Scene 08: Human —— */
-          const human = root.querySelector<HTMLElement>("[data-af-human]")
-          if (human) {
-            const line1 = human.querySelector("[data-af-human-1]")
-            const line2 = human.querySelector("[data-af-human-2]")
-            gsap.set([line1, line2].filter(Boolean), { opacity: 0, y: 20 })
-
-            const tl = gsap.timeline({
-              scrollTrigger: {
-                trigger: human,
-                start: "top 70%",
-                end: "center center",
-                scrub: scrub * 0.8,
-              },
-            })
-
-            tl.to(line1, { opacity: 1, y: 0, duration: 0.4 }, 0).to(
-              line2,
-              { opacity: 1, y: 0, duration: 0.35 },
-              0.35,
-            )
           }
 
           /* —— Final CTA —— */
@@ -431,99 +373,7 @@ export const AboutFilm = ({ film, pageTitle, children }: AboutFilmProps) => {
         </div>
       </section>
 
-      {/* 05 — Fleet */}
-      <section
-        className="about-film__scene about-film__pin about-film__pin--gallery"
-        data-af-fleet
-        data-af-gallery
-      >
-        <div className="about-film__sticky bg-surface">
-          <div className="about-film__stage about-film__stage--gallery">
-            <div className="about-film__content">
-              <h2
-                data-af-fleet-title
-                className="about-film__display about-film__display--md"
-              >
-                {film.fleetHeadline}
-              </h2>
-              <p data-af-fleet-body className="about-film__body">
-                {film.fleetBody}
-              </p>
-            </div>
-            <div className="about-film__gallery-window">
-              <div data-af-track className="about-film__gallery-track">
-                {FLEET_FRAMES.map((frame) => (
-                  <figure
-                    key={frame.src}
-                    className="about-film__gallery-item"
-                    style={frameStyle(frame.ratio)}
-                  >
-                    <div className="about-film__gallery-image" data-durri-hint="fleet">
-                      <Image
-                        src={frame.src}
-                        alt=""
-                        fill
-                        sizes={GALLERY_SIZES}
-                        className="object-cover"
-                      />
-                    </div>
-                  </figure>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 06 — Two sides */}
-      <section className="about-film__scene about-film__sides-band" data-af-sides>
-        <div className="about-film__sides-content">
-          <div className="about-film__content">
-            <div className="about-film__split">
-              <div data-af-side-left className="about-film__side">
-                <Image
-                  src="/brand/company-umrah.png"
-                  alt=""
-                  width={140}
-                  height={140}
-                  className="about-film__side-mark"
-                />
-                <p className="about-film__side-title">{film.sidesLeft}</p>
-              </div>
-              <div data-af-side-right className="about-film__side">
-                <Image
-                  src="/brand/company-group.png"
-                  alt=""
-                  width={140}
-                  height={140}
-                  className="about-film__side-mark"
-                />
-                <p className="about-film__side-title">{film.sidesRight}</p>
-              </div>
-            </div>
-            <p data-af-sides-merge className="about-film__merge about-film__display">
-              {film.sidesMerge}
-            </p>
-          </div>
-        </div>
-      </section>
-
       {children}
-
-      {/* 07 — Human */}
-      <section className="about-film__breath" data-af-human>
-        <div className="mx-auto grid max-w-xl gap-6">
-          <p
-            data-af-human-1
-            className="about-film__display about-film__display--md text-ink-muted"
-          >
-            {film.humanLine1}
-          </p>
-          <p data-af-human-2 className="about-film__display about-film__display--lg">
-            {film.humanLine2}
-          </p>
-        </div>
-      </section>
 
       <AboutVideo headline={film.videoHeadline} label={film.videoLabel} />
 

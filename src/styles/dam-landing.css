@@ -1684,17 +1684,16 @@ a[data-whatsapp-fab] {
   cursor: not-allowed;
 }
 
-/* Inner pages: the buttons sit at the footer-aware offset from FloatingActions, so follow it. */
+/* Inner pages: sit above the fixed chat / WhatsApp FABs. */
 [data-floating-actions] .chat-panel {
   bottom: calc(
-    max(1.25rem, env(safe-area-inset-bottom)) + var(--float-lift, 0px) +
-      var(--fab-size, 3.5rem) + 1rem
+    max(1.25rem, env(safe-area-inset-bottom)) + var(--fab-size, 3.5rem) + 1rem
   );
 }
 
 @media (min-width: 640px) {
   [data-floating-actions] .chat-panel {
-    bottom: calc(1.5rem + var(--float-lift, 0px) + var(--fab-size, 3.5rem) + 1rem);
+    bottom: calc(1.5rem + var(--fab-size, 3.5rem) + 1rem);
   }
 }
 
@@ -1708,8 +1707,7 @@ a[data-whatsapp-fab] {
 
   [data-floating-actions] .chat-panel {
     bottom: calc(
-      max(1.25rem, env(safe-area-inset-bottom)) + var(--float-lift, 0px) +
-        var(--fab-size, 3.5rem) + 1rem
+      max(1.25rem, env(safe-area-inset-bottom)) + var(--fab-size, 3.5rem) + 1rem
     );
   }
 }

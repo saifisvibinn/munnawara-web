@@ -96,13 +96,6 @@ export type AboutFilmContent = {
   problemLines: readonly string[]
   connectionHeadline: string
   connectionBody: string
-  fleetHeadline: string
-  fleetBody: string
-  sidesLeft: string
-  sidesRight: string
-  sidesMerge: string
-  humanLine1: string
-  humanLine2: string
   videoHeadline: string
   videoLabel: string
   ctaHeadline: string
@@ -130,21 +123,43 @@ export type AboutValuePillar = {
   body: string
 }
 
+export type AboutStrategicObjective = {
+  id: string
+  title: string
+  body: string
+}
+
+export type AboutLeader = {
+  id: string
+  role: string
+  name: string
+  paragraphs: readonly string[]
+  portraitSrc: string
+  portraitAlt: string
+}
+
 export type AboutContent = {
   title: string
   intro: string
+  overviewTitle: string
+  overviewParagraphs: readonly string[]
   historyTitle: string
   history: string
   visionTitle: string
   vision: string
   missionTitle: string
   mission: string
-  /** Loginord-style “What drives us” block */
+  /** Vision & mission editorial block */
   drivesEyebrow: string
   drivesHeadline: string
   driveItems: readonly AboutDriveItem[]
+  /** Retained for compatibility; About page renders strategicObjectives instead */
   valuesTitle: string
   valuePillars: readonly AboutValuePillar[]
+  strategicObjectivesTitle: string
+  strategicObjectives: readonly AboutStrategicObjective[]
+  leadershipTitle: string
+  leadership: readonly AboutLeader[]
   statsTitle: string
   statsIntro: string
   stats: readonly AboutStat[]
@@ -246,6 +261,14 @@ export type CareRevealContent = {
   benefits: readonly CareRevealBenefit[]
 }
 
+export type ContactPhoneLine = {
+  id: string
+  label: string
+  note: string
+  /** E.164 with leading +, e.g. +966535731923 */
+  phone: string
+}
+
 export type ContactContent = {
   headline: string
   intro: string
@@ -254,6 +277,8 @@ export type ContactContent = {
   channelsTitle: string
   whatsappNote: string
   phoneLabel: string
+  /** Department lines shown on Contact (sales, management, operations). */
+  phoneLines: readonly ContactPhoneLine[]
   emailNote: string
   officeTitle: string
   mapTitle: string

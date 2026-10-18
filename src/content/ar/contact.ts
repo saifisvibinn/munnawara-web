@@ -9,6 +9,26 @@ export const contact: ContactContent = {
   channelsTitle: "تواصلوا معنا مباشرة",
   whatsappNote: "راسلوا فريق العمليات",
   phoneLabel: "اتصال",
+  phoneLines: [
+    {
+      id: "sales",
+      label: "المبيعات",
+      note: "عروض الأسعار والحجوزات والاستفسارات التجارية",
+      phone: "+966535731923",
+    },
+    {
+      id: "management",
+      label: "الإدارة",
+      note: "رقم مخصص للشكاوى والمقترحات",
+      phone: "+966555967366",
+    },
+    {
+      id: "operations",
+      label: "التشغيل",
+      note: "عمليات الأسطول والدعم أثناء الرحلة",
+      phone: "+966504352314",
+    },
+  ],
   emailNote: "للطلبات التفصيلية والمستندات",
   officeTitle: "زوروا مكتبنا",
   mapTitle: "خريطة توضح موقع درة المنورة في مكة المكرمة، المملكة العربية السعودية",
