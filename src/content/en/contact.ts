@@ -16,16 +16,16 @@ export const contact: ContactContent = {
       phone: "+966535731923",
     },
     {
-      id: "management",
-      label: "Management",
-      note: "Dedicated line for complaints and suggestions",
-      phone: "+966555967366",
-    },
-    {
       id: "operations",
       label: "Operations",
       note: "Fleet operations and day-of-travel support",
       phone: "+966504352314",
+    },
+    {
+      id: "management",
+      label: "Management",
+      note: "Dedicated line for complaints and suggestions",
+      phone: "+966555967366",
     },
   ],
   emailNote: "For detailed requests and documents",

@@ -100,7 +100,13 @@ export function formatContentDate(value: string, locale: AppLocale): string {
   if (!/^\d{4}-\d{2}-\d{2}/.test(value)) return value
   const date = new Date(value)
   if (Number.isNaN(date.getTime())) return value
-  return date.toLocaleDateString(locale === "ar" ? "ar-SA-u-ca-gregory" : "en-GB", {
+  const dateLocales: Record<AppLocale, string> = {
+    ar: "ar-SA-u-ca-gregory",
+    en: "en-GB",
+    fr: "fr-FR",
+    id: "id-ID",
+  }
+  return date.toLocaleDateString(dateLocales[locale], {
     day: "numeric",
     month: "long",
     year: "numeric",

@@ -4,7 +4,7 @@ import { FloatingQuoteCta } from "@/components/layout/FloatingQuoteCta"
 import { Header } from "@/components/layout/Header"
 import { SmoothScrollProvider } from "@/components/motion/SmoothScrollProvider"
 import { ThemeProvider } from "@/components/theme/ThemeProvider"
-import { routing } from "@/i18n/routing"
+import { isRtlLocale, ogLocaleTag, routing } from "@/i18n/routing"
 import { NextIntlClientProvider, hasLocale } from "next-intl"
 import { getMessages, getTranslations, setRequestLocale } from "next-intl/server"
 import type { Metadata } from "next"
@@ -46,14 +46,17 @@ export const generateMetadata = async ({
   const brandNameEn = getSiteConfig().brandNameEn
   const description = tSeo("site")
 
+  const useEnglishBrandTitle = locale === "ar"
   return {
     metadataBase: new URL(siteOrigin()),
     title: {
-      default: locale === "en" ? siteName : `${brandNameEn} | ${siteName}`,
+      default: useEnglishBrandTitle
+        ? `${brandNameEn} | ${siteName}`
+        : siteName,
       template: `%s | ${siteName}`,
     },
     description,
-    applicationName: locale === "en" ? siteName : brandNameEn,
+    applicationName: useEnglishBrandTitle ? brandNameEn : siteName,
     icons: {
       icon: "/icon.png",
       apple: "/icon.png",
@@ -61,7 +64,7 @@ export const generateMetadata = async ({
     openGraph: {
       type: "website",
       siteName,
-      locale: locale === "ar" ? "ar_SA" : "en_US",
+      locale: ogLocaleTag(locale),
       description,
     },
   }
@@ -81,7 +84,7 @@ const LocaleLayout = async ({ children, params }: LocaleLayoutProps) => {
 
   setRequestLocale(locale)
   const messages = await getMessages()
-  const dir = locale === "ar" ? "rtl" : "ltr"
+  const dir = isRtlLocale(locale) ? "rtl" : "ltr"
 
   return (
     <html
@@ -94,7 +97,7 @@ const LocaleLayout = async ({ children, params }: LocaleLayoutProps) => {
         <script dangerouslySetInnerHTML={{ __html: THEME_BOOT_SCRIPT }} />
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var p=location.pathname.replace(/\\/+$/,"")||"/";if(p==="/"||p==="/en"||p==="/ar"){if("scrollRestoration"in history)history.scrollRestoration="manual";window.scrollTo(0,0);document.documentElement.scrollTop=0;document.body.scrollTop=0;}}catch(e){}})();`,
+            __html: `(function(){try{var p=location.pathname.replace(/\\/+$/,"")||"/";if(p==="/"||p==="/en"||p==="/ar"||p==="/fr"||p==="/id"){if("scrollRestoration"in history)history.scrollRestoration="manual";window.scrollTo(0,0);document.documentElement.scrollTop=0;document.body.scrollTop=0;}}catch(e){}})();`,
           }}
         />
         <script

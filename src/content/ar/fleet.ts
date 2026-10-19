@@ -114,8 +114,20 @@ export const fleet: readonly FleetCategory[] = [
       "تكييف مناسب للأجواء",
     ],
     coverImage: "/fleet/city-2025/side.webp",
-    exteriorImages: ["/fleet/city-2025/side.webp", "/fleet/city-2025/front.webp"],
-    interiorImages: ["/fleet/city-2025/interior.webp"],
+    exteriorImages: [
+      "/fleet/city-2025/side.webp",
+      "/fleet/city-2025/front.webp",
+      "/fleet/city-2025/side-plaza.jpg",
+      "/fleet/city-2025/front-plaza.jpg",
+    ],
+    interiorImages: [
+      "/fleet/city-2025/interior.webp",
+      "/fleet/city-2025/interior-seats.jpeg",
+      "/fleet/city-2025/interior-rows.jpeg",
+      "/fleet/city-2025/interior-aisle.jpeg",
+      "/fleet/city-2025/interior-cabin.jpeg",
+      "/fleet/city-2025/interior-curtains.jpeg",
+    ],
     images: ["/fleet/city-2025/side.webp"],
   },
   {
@@ -139,7 +151,7 @@ export const fleet: readonly FleetCategory[] = [
   {
     id: "coaster-2026",
     name: "كوستر باص",
-    seatsLabel: "29",
+    seatsLabel: "28",
     summary:
       "المجموعات الصغيرة ونقل الموظفين والرحلات السريعة, سهلة الحركة في شوارع المدن وطرق المشاعر.",
     amenities: [

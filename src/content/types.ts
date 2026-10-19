@@ -1,4 +1,6 @@
-export type AppLocale = "ar" | "en"
+import type { AppLocale } from "@/i18n/routing"
+
+export type { AppLocale }
 
 export type CompanySlug =
   | "transport"
@@ -275,14 +277,8 @@ export type SiteConfig = {
   email: string
   phones: readonly string[]
   whatsappNumber: string
-  address: {
-    ar: string
-    en: string
-  }
-  workingHours: {
-    ar: string
-    en: string
-  }
+  address: Record<AppLocale, string>
+  workingHours: Record<AppLocale, string>
   social: {
     handle: string
     twitter?: string

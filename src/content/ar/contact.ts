@@ -16,16 +16,16 @@ export const contact: ContactContent = {
       phone: "+966535731923",
     },
     {
-      id: "management",
-      label: "الإدارة",
-      note: "رقم مخصص للشكاوى والمقترحات",
-      phone: "+966555967366",
-    },
-    {
       id: "operations",
       label: "التشغيل",
       note: "عمليات الأسطول والدعم أثناء الرحلة",
       phone: "+966504352314",
+    },
+    {
+      id: "management",
+      label: "الإدارة",
+      note: "رقم مخصص للشكاوى والمقترحات",
+      phone: "+966555967366",
     },
   ],
   emailNote: "للطلبات التفصيلية والمستندات",

@@ -3,7 +3,7 @@
  * Options mirror the production quote form.
  */
 
-export type L10n = { en: string; ar: string }
+export type L10n = { en: string; ar: string; fr?: string; id?: string }
 
 export type Option<T extends string = string> = {
   id: T
@@ -11,7 +11,13 @@ export type Option<T extends string = string> = {
   hint?: L10n
 }
 
-export const l = (en: string, ar: string): L10n => ({ en, ar })
+/** `fr` / `id` default to English until translated. */
+export const l = (en: string, ar: string, fr = en, id = en): L10n => ({
+  en,
+  ar,
+  fr,
+  id,
+})
 
 /* ---------- Step 1: who is asking ---------- */
 
@@ -145,13 +151,13 @@ export const busClassOptions = [
   { id: "vip", label: l("VIP", "في آي بي"), hint: l("28 seats", "٢٨ مقعد") },
   { id: "premium_vip", label: l("Premium VIP", "بريميوم في آي بي"), hint: l("18 seats", "١٨ مقعد") },
   { id: "standard", label: l("Coach", "كوتش"), hint: l("49 seats", "٤٩ مقعد") },
-  { id: "coach", label: l("Coach alt.", "كوتش بديل"), hint: l("49 seats", "٤٩ مقعد") },
+  { id: "coach", label: l("City bus", "سيتي باص"), hint: l("45 seats", "٤٥ مقعد") },
   {
     id: "city_large",
     label: l("City bus", "سيتي باص"),
     hint: l("45 + standing", "٤٥ مع وقوف"),
   },
-  { id: "city", label: l("Coaster", "كوستر"), hint: l("29 seats", "٢٩ مقعد") },
+  { id: "city", label: l("Coaster", "كوستر"), hint: l("28 seats", "٢٨ مقعد") },
   {
     id: "employee",
     label: l("V7 / staff", "V7 / موظفين"),
@@ -190,7 +196,12 @@ export const resolveQuoteBusClass = (raw: string | undefined | null): BusClassId
 
 /* ---------- Helpers ---------- */
 
-export const pick = (text: L10n, locale: string) => (locale === "ar" ? text.ar : text.en)
+export const pick = (text: L10n, locale: string) => {
+  if (locale === "ar") return text.ar
+  if (locale === "fr") return text.fr ?? text.en
+  if (locale === "id") return text.id ?? text.en
+  return text.en
+}
 
 export const findOption = <T extends Option>(list: readonly T[], id: string) =>
   list.find((o) => o.id === id)

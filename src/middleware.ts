@@ -7,7 +7,7 @@ export const config = {
   // Exclude chat API rewrites + Socket.io from locale redirects.
   matcher: [
     "/",
-    "/(ar|en)/:path*",
+    "/(ar|en|fr|id)/:path*",
     "/((?!_next|_vercel|chat|socket\\.io|.*\\..*).*)",
   ],
 }

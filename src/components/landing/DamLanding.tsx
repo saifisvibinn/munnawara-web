@@ -47,7 +47,8 @@ const clearIntroSeenOnHardReload = () => {
       | undefined
     if (nav?.type !== "reload") return
     const loadedUrl = new URL(nav.name || window.location.href, window.location.origin)
-    const loadedPath = loadedUrl.pathname.replace(/^\/(ar|en)(?=\/|$)/, "") || "/"
+    const loadedPath =
+      loadedUrl.pathname.replace(/^\/(ar|en|fr|id)(?=\/|$)/, "") || "/"
     if (loadedPath === "/") {
       sessionStorage.removeItem(LOGO_INTRO_SEEN_KEY)
     }
@@ -284,7 +285,7 @@ export const DamLanding = ({ copy }: DamLandingProps) => {
   const navRef = useRef<HTMLElement>(null)
   const navBarRef = useRef<HTMLDivElement>(null)
   const navItemsRef = useRef<HTMLElement[]>([])
-  const langSwitchRef = useRef<HTMLAnchorElement>(null)
+  const langSwitchRef = useRef<HTMLDivElement>(null)
   const themeToggleRef = useRef<HTMLButtonElement>(null)
   const heroLinesRef = useRef<HTMLElement[]>([])
   const heroVideoRef = useRef<HeroVideoHandle>(null)

@@ -3,13 +3,13 @@
 ## Stack
 - Next.js 15 App Router + TypeScript
 - Tailwind CSS v4 with CSS variables from `src/lib/theme.ts`
-- `next-intl` with default locale `ar` (RTL) and secondary `en` (LTR)
-- Local typed content in `src/content/{ar,en}/` via accessor functions in `src/content/index.ts`
+- `next-intl` with default locale `ar` (RTL) and LTR locales `en`, `fr`, `id`
+- Local typed content in `src/content/{ar,en,fr,id}/` via accessor functions in `src/content/index.ts`
 - Motion (Framer), GSAP + ScrollTrigger, Lenis for animation
 - Shipped brand tokens are orange / blue / purple from `theme.ts` (not the green/gold draft in `DESIGN.md`)
 
 ## Hard rules
-- Never hardcode user-facing strings in components — use `src/messages/{ar,en}.json` for UI chrome and `src/content/{ar,en}/` for page copy
+- Never hardcode user-facing strings in components — use `src/messages/{ar,en,fr,id}.json` for UI chrome and `src/content/{ar,en,fr,id}/` for page copy
 - Never hardcode hex colors in components — use theme CSS variables / Tailwind tokens (`bg-orange`, `text-wordmark`, etc.)
 - Use logical CSS (`ms-`, `me-`, `ps-`, `pe-`, `start`, `end`) — never physical `left`/`right` for layout that must flip
 - Never invent company facts (CR numbers, licenses, Tourism services, named clients). Use `TODO(content):` comments and `ContentPlaceholder` instead
@@ -19,13 +19,13 @@
 
 ## About film
 - Route: `src/app/[locale]/about/page.tsx` → `AboutFilm`
-- Story copy lives in `AboutContent.film` (EN/AR). Keep Durrah Al-Munawwara group narrative; do not pivot this page to Munawwara Care product marketing unless the user asks.
+- Story copy lives in `AboutContent.film` (per locale). Keep Durrah Al-Munawwara group narrative; do not pivot this page to Munawwara Care product marketing unless the user asks.
 - Motion is GSAP + ScrollTrigger only (no Three.js / R3F on About). Prefer one scrubbed timeline per scene; clip decorative nodes inside the stage.
 - Full-bleed opening: keep `html:has([data-about-film])` spacer suppression so the hero is not pushed down by `.site-chrome__spacer`
 
 ## Locales
-- URL: `/ar/...` and `/en/...`; `/` redirects to `/ar`
-- Set `dir` and `lang` on `<html>` from the locale layout
+- URL: `/ar/...`, `/en/...`, `/fr/...`, `/id/...`; `/` redirects to `/ar`
+- Set `dir` and `lang` on `<html>` from the locale layout (`ar` RTL; others LTR)
 
 ## Agent skills
 `impeccable` is installed as a project skill in `.agents/skills/` (mirrored at `.cursor/skills/` for Cursor). Restore project skills with `npx skills experimental_install`. Emil Kowalski skills (`emilkowalski/skills`) are installed globally — available in every project. Impeccable design hook is enabled via `.cursor/hooks.json` + `.impeccable/config.json`. Prefer these for UI craft work:

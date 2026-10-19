@@ -12,10 +12,14 @@ export const siteConfig: SiteConfig = {
   address: {
     ar: "مكة المكرمة، المملكة العربية السعودية",
     en: "Makkah, Kingdom of Saudi Arabia",
+    fr: "La Mecque, Royaume d’Arabie saoudite",
+    id: "Makkah, Kerajaan Arab Saudi",
   },
   workingHours: {
     ar: "على مدار الساعة، ٧ أيام في الأسبوع",
     en: "24/7",
+    fr: "24h/24, 7j/7",
+    id: "24/7",
   },
   social: {
     handle: "@dmtcSA",

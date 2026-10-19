@@ -3,10 +3,14 @@ import { hasLocale } from "next-intl"
 import { routing } from "./routing"
 import ar from "../messages/ar.json"
 import en from "../messages/en.json"
+import fr from "../messages/fr.json"
+import id from "../messages/id.json"
 
 const catalogs = {
   ar,
   en,
+  fr,
+  id,
 } as const
 
 export default getRequestConfig(async ({ requestLocale }) => {

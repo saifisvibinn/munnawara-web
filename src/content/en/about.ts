@@ -60,7 +60,7 @@ export const about: AboutContent = {
       body: "Contribute to elevating pilgrim and Umrah transport and improving their journey.",
     },
   ],
-  leadershipTitle: "Leadership messages",
+  leadershipTitle: "CEO's message",
   leadership: [
     {
       id: "ceo",

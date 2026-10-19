@@ -29,21 +29,42 @@ const panelClass =
   "qw-pop fixed z-[1000] overflow-y-auto rounded-2xl border border-border bg-surface-elevated p-1.5 text-ink shadow-[0_18px_50px_-12px_rgb(0_0_0/0.45)] ring-1 ring-black/5"
 
 const UI = {
-  today: { en: "Today", ar: "اليوم" },
-  clear: { en: "Clear", ar: "مسح" },
-  done: { en: "Done", ar: "تم" },
-  am: { en: "AM", ar: "ص" },
-  pm: { en: "PM", ar: "م" },
-  prevMonth: { en: "Previous month", ar: "الشهر السابق" },
-  nextMonth: { en: "Next month", ar: "الشهر التالي" },
-  hour: { en: "Hour", ar: "الساعة" },
-  minute: { en: "Minute", ar: "الدقيقة" },
-  none: { en: "No options", ar: "لا توجد خيارات" },
-  dec: { en: "Decrease", ar: "إنقاص" },
-  inc: { en: "Increase", ar: "زيادة" },
+  today: { en: "Today", ar: "اليوم", fr: "Aujourd’hui", id: "Hari ini" },
+  clear: { en: "Clear", ar: "مسح", fr: "Effacer", id: "Hapus" },
+  done: { en: "Done", ar: "تم", fr: "Terminé", id: "Selesai" },
+  am: { en: "AM", ar: "ص", fr: "AM", id: "AM" },
+  pm: { en: "PM", ar: "م", fr: "PM", id: "PM" },
+  prevMonth: {
+    en: "Previous month",
+    ar: "الشهر السابق",
+    fr: "Mois précédent",
+    id: "Bulan sebelumnya",
+  },
+  nextMonth: {
+    en: "Next month",
+    ar: "الشهر التالي",
+    fr: "Mois suivant",
+    id: "Bulan berikutnya",
+  },
+  hour: { en: "Hour", ar: "الساعة", fr: "Heure", id: "Jam" },
+  minute: { en: "Minute", ar: "الدقيقة", fr: "Minute", id: "Menit" },
+  none: {
+    en: "No options",
+    ar: "لا توجد خيارات",
+    fr: "Aucune option",
+    id: "Tidak ada opsi",
+  },
+  dec: { en: "Decrease", ar: "إنقاص", fr: "Diminuer", id: "Kurangi" },
+  inc: { en: "Increase", ar: "زيادة", fr: "Augmenter", id: "Tambah" },
 } as const
 
-const t = (key: keyof typeof UI, locale: string) => (locale === "ar" ? UI[key].ar : UI[key].en)
+const t = (key: keyof typeof UI, locale: string) => {
+  const row = UI[key]
+  if (locale === "ar") return row.ar
+  if (locale === "fr") return row.fr
+  if (locale === "id") return row.id
+  return row.en
+}
 
 function Chevron({ open }: { open?: boolean }) {
   return (

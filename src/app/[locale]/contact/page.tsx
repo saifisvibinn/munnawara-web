@@ -49,15 +49,6 @@ const ContactPage = async ({ params }: PageProps) => {
   const mapsHref = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(config.address.en)}`
 
   const channels: Channel[] = [
-    {
-      id: "whatsapp",
-      label: tCommon("whatsapp"),
-      value: formatPhone(config.whatsappNumber),
-      note: content.whatsappNote,
-      href: whatsappHref,
-      external: true,
-      Icon: WhatsAppIcon,
-    },
     ...content.phoneLines.map((line) => ({
       id: line.id,
       label: line.label,
@@ -75,6 +66,15 @@ const ContactPage = async ({ params }: PageProps) => {
       href: `mailto:${config.email}`,
       external: false,
       Icon: Mail,
+    },
+    {
+      id: "whatsapp",
+      label: tCommon("whatsapp"),
+      value: formatPhone(config.whatsappNumber),
+      note: content.whatsappNote,
+      href: whatsappHref,
+      external: true,
+      Icon: WhatsAppIcon,
     },
   ]
 

@@ -60,7 +60,7 @@ export const about: AboutContent = {
       body: "الإسهام في الارتقاء بمنظومة نقل الحجاج والمعتمرين وتحسين تجربتهم.",
     },
   ],
-  leadershipTitle: "كلمة القيادة",
+  leadershipTitle: "كلمة الرئيس التنفيذي",
   leadership: [
     {
       id: "ceo",
