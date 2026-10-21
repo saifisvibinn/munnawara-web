@@ -125,15 +125,6 @@ export type AboutStrategicObjective = {
   body: string
 }
 
-export type AboutLeader = {
-  id: string
-  role: string
-  name: string
-  paragraphs: readonly string[]
-  portraitSrc: string
-  portraitAlt: string
-}
-
 export type AboutContent = {
   title: string
   overviewTitle: string
@@ -144,8 +135,6 @@ export type AboutContent = {
   driveItems: readonly AboutDriveItem[]
   strategicObjectivesTitle: string
   strategicObjectives: readonly AboutStrategicObjective[]
-  leadershipTitle: string
-  leadership: readonly AboutLeader[]
   statsTitle: string
   stats: readonly AboutStat[]
   techTitle: string

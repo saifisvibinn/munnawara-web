@@ -60,36 +60,6 @@ export const about: AboutContent = {
       body: "Berkontribusi pada peningkatan transportasi jemaah haji dan umrah serta memperbaiki perjalanan mereka.",
     },
   ],
-  leadershipTitle: "Pesan CEO",
-  leadership: [
-    {
-      id: "ceo",
-      role: "Chief Executive Officer",
-      name: "Abdulaziz Al-Ashrafi",
-      paragraphs: [
-        "Dengan nama Allah Yang Maha Pengasih, Maha Penyayang.",
-        "Di Durrat Al-Munawwara Transport, kami meyakini bahwa transportasi bukan sekadar berpindah dari satu tempat ke tempat lain — melainkan tanggung jawab, amanah, dan pengalaman utuh yang dimulai dari perencanaan perjalanan hingga tiba dengan selamat.",
-        "Sejak hari-hari awal perusahaan, kami sengaja membangun sistem transportasi terpadu yang berlandaskan kualitas dan efisiensi operasional, berinvestasi pada armada, SDM, dan teknologi modern agar dapat menjadi mitra terpercaya bagi klien di setiap sektor yang kami layani.",
-        "Kami terutama bangga atas kontribusi kami dalam melayani Tamu Allah — tanggung jawab yang mendalam sekaligus kehormatan yang kami jaga. Melalui itu, kami berupaya menghadirkan layanan yang mencerminkan kedudukan dan kepemimpinan Kerajaan Arab Saudi dalam merawat jemaah haji dan umrah.",
-        "Seiring sektor transportasi Kerajaan terus berkembang, kami memperbarui komitmen untuk bertumbuh dan berkembang, memperkuat kemitraan strategis, serta berperan aktif dalam mewujudkan tujuan Visi Saudi 2030.",
-      ],
-      portraitSrc: "/about/leadership/abdulaziz-al-ashrafi.svg",
-      portraitAlt: "Placeholder potret Abdulaziz Al-Ashrafi, Chief Executive Officer",
-    },
-    {
-      id: "vice-ceo",
-      role: "Deputy Chief Executive Officer",
-      name: "Omar Al-Ashrafi",
-      paragraphs: [
-        "Kesuksesan dalam transportasi tidak diukur hanya dari ukuran armada, melainkan dari kemampuan organisasi mengelola sumber daya secara efisien, menjaga kesiapan operasional, dan menepati komitmen kepada klien dalam setiap keadaan.",
-        "Dari keyakinan itu, kami di Durrat Al-Munawwara Transport bekerja untuk memperdalam integrasi antar departemen, memperkuat sistem operasional, meningkatkan kinerja perawatan dan operasi, serta membangun budaya kerja yang berlandaskan disiplin, akuntabilitas, dan perbaikan berkelanjutan.",
-        "Kami juga memberikan perhatian khusus pada transformasi digital, pengawasan dan pemantauan yang lebih kuat, serta pemanfaatan data dan teknologi modern untuk meningkatkan kinerja dan kualitas layanan.",
-        "Kami percaya investasi sejati dimulai dari manusia — dan bahwa tim kami adalah fondasi keberhasilan yang bertahan serta masa depan yang ingin kami bangun.",
-      ],
-      portraitSrc: "/about/leadership/omar-al-ashrafi.svg",
-      portraitAlt: "Placeholder potret Omar Al-Ashrafi, Deputy Chief Executive Officer",
-    },
-  ],
   statsTitle: "Kepercayaan dalam skala besar.",
   stats: [
     {

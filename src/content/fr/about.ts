@@ -60,36 +60,6 @@ export const about: AboutContent = {
       body: "Contribuer à élever le transport des pèlerins et des visiteurs de la Omra, et à améliorer leur parcours.",
     },
   ],
-  leadershipTitle: "Message du directeur général",
-  leadership: [
-    {
-      id: "ceo",
-      role: "Directeur général",
-      name: "Abdulaziz Al-Ashrafi",
-      paragraphs: [
-        "Au nom d'Allah, le Tout Miséricordieux, le Très Miséricordieux.",
-        "Chez Durrat Al-Munawwara Transport, nous croyons que le transport n'est pas seulement un déplacement d'un lieu à un autre — c'est une responsabilité, une confiance et une expérience complète qui commence par la planification du trajet et se termine par une arrivée en toute sécurité.",
-        "Depuis les premiers jours de l'entreprise, nous avons délibérément construit un système de transport intégré fondé sur la qualité et l'efficacité opérationnelle, en investissant dans notre flotte, nos équipes et les technologies modernes, afin d'être un partenaire de confiance pour les clients dans tous les secteurs que nous servons.",
-        "Nous sommes particulièrement fiers de notre contribution au service des hôtes d'Allah — une responsabilité profonde et un honneur que nous chérissons. Par elle, nous nous efforçons d'offrir des services qui reflètent le rayonnement et le leadership du Royaume d'Arabie saoudite dans l'accueil des pèlerins et des visiteurs de la Omra.",
-        "Alors que le secteur des transports du Royaume continue d'évoluer, nous renouvelons notre engagement en faveur de la croissance et du développement, du renforcement de nos partenariats stratégiques, et de notre participation active à la réalisation des objectifs de la Vision saoudienne 2030.",
-      ],
-      portraitSrc: "/about/leadership/abdulaziz-al-ashrafi.svg",
-      portraitAlt: "Espace réservé pour le portrait d'Abdulaziz Al-Ashrafi, directeur général",
-    },
-    {
-      id: "vice-ceo",
-      role: "Directeur général adjoint",
-      name: "Omar Al-Ashrafi",
-      paragraphs: [
-        "Le succès dans le transport ne se mesure pas uniquement à la taille de la flotte, mais à la capacité d'une organisation à gérer efficacement ses ressources, à maintenir sa préparation opérationnelle et à honorer ses engagements envers les clients en toutes circonstances.",
-        "C'est dans cette conviction que nous œuvrons, chez Durrat Al-Munawwara Transport, à approfondir l'intégration entre les départements, à renforcer les systèmes d'exploitation, à élever les performances de la maintenance et des opérations, et à favoriser un environnement de travail fondé sur la discipline, la responsabilité et l'amélioration continue.",
-        "Nous accordons également une attention particulière à la transformation numérique, au renforcement du contrôle et du suivi, ainsi qu'à l'utilisation des données et des technologies modernes pour améliorer les performances et élever la qualité de service.",
-        "Nous croyons que le véritable investissement commence par les personnes — et que nos équipes sont le fondement d'un succès durable et de l'avenir que nous souhaitons construire.",
-      ],
-      portraitSrc: "/about/leadership/omar-al-ashrafi.svg",
-      portraitAlt: "Espace réservé pour le portrait d'Omar Al-Ashrafi, directeur général adjoint",
-    },
-  ],
   statsTitle: "La confiance à grande échelle.",
   stats: [
     {

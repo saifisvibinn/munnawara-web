@@ -60,36 +60,6 @@ export const about: AboutContent = {
       body: "Contribute to elevating pilgrim and Umrah transport and improving their journey.",
     },
   ],
-  leadershipTitle: "CEO's message",
-  leadership: [
-    {
-      id: "ceo",
-      role: "Chief Executive Officer",
-      name: "Abdulaziz Al-Ashrafi",
-      paragraphs: [
-        "In the name of Allah, the Most Gracious, the Most Merciful.",
-        "At Durrat Al-Munawwara Transport, we believe transport is not merely moving from one place to another — it is a responsibility, a trust, and a complete experience that begins with planning the journey and ends with a safe arrival.",
-        "From the company’s earliest days, we have been deliberate about building an integrated transport system grounded in quality and operational efficiency, investing in our fleet, our people, and modern technology so we can be a trusted partner to clients across every sector we serve.",
-        "We are especially proud of our contribution to serving the Guests of Allah — a profound responsibility and an honor we hold dear. Through it, we strive to deliver services that reflect the Kingdom of Saudi Arabia’s standing and leadership in caring for pilgrims and Umrah visitors.",
-        "As the Kingdom’s transport sector continues to evolve, we renew our commitment to growth and development, to strengthening our strategic partnerships, and to playing an active part in realizing the goals of Saudi Vision 2030.",
-      ],
-      portraitSrc: "/about/leadership/abdulaziz-al-ashrafi.svg",
-      portraitAlt: "Portrait placeholder for Abdulaziz Al-Ashrafi, Chief Executive Officer",
-    },
-    {
-      id: "vice-ceo",
-      role: "Deputy Chief Executive Officer",
-      name: "Omar Al-Ashrafi",
-      paragraphs: [
-        "Success in transport is not measured by fleet size alone, but by an organization’s ability to manage its resources efficiently, sustain operational readiness, and honor its commitments to clients in every circumstance.",
-        "From that conviction, we work at Durrat Al-Munawwara Transport to deepen integration across departments, strengthen operating systems, raise maintenance and operations performance, and foster a workplace built on discipline, accountability, and continuous improvement.",
-        "We also give particular attention to digital transformation, stronger oversight and monitoring, and the use of data and modern technology to improve performance and elevate service quality.",
-        "We believe real investment begins with people — and that our teams are the foundation of lasting success and of the future we aim to build.",
-      ],
-      portraitSrc: "/about/leadership/omar-al-ashrafi.svg",
-      portraitAlt: "Portrait placeholder for Omar Al-Ashrafi, Deputy Chief Executive Officer",
-    },
-  ],
   statsTitle: "Trust at scale.",
   stats: [
     {

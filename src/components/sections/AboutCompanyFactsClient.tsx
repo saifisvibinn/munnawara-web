@@ -1,6 +1,5 @@
 "use client"
 
-import { AboutLeadership } from "@/components/sections/AboutLeadership"
 import type { AboutContent, AppLocale } from "@/content/types"
 import { useReducedMotion } from "@/hooks/useReducedMotion"
 import { cn } from "@/lib/cn"
@@ -130,8 +129,6 @@ export const AboutCompanyFactsClient = ({
     driveItems,
     strategicObjectivesTitle,
     strategicObjectives,
-    leadershipTitle,
-    leadership,
     statsTitle,
     stats,
     techTitle,
@@ -295,12 +292,6 @@ export const AboutCompanyFactsClient = ({
           </motion.dl>
         </div>
       </SectionShell>
-
-      <AboutLeadership
-        title={leadershipTitle}
-        leaders={leadership}
-        locale={locale}
-      />
 
       <SectionShell
         tone="steel"
