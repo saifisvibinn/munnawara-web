@@ -2,7 +2,6 @@ import type {
   AboutContent,
   AppLocale,
   CareRevealContent,
-  CareerRole,
   ClientCategory,
   Company,
   ContactContent,
@@ -31,10 +30,6 @@ import { careReveal as careRevealAr } from "./ar/careReveal"
 import { careReveal as careRevealEn } from "./en/careReveal"
 import { careReveal as careRevealFr } from "./fr/careReveal"
 import { careReveal as careRevealId } from "./id/careReveal"
-import { careers as careersAr } from "./ar/careers"
-import { careers as careersEn } from "./en/careers"
-import { careers as careersFr } from "./fr/careers"
-import { careers as careersId } from "./id/careers"
 import { clients as clientsAr } from "./ar/clients"
 import { clients as clientsEn } from "./en/clients"
 import { clients as clientsFr } from "./fr/clients"
@@ -112,12 +107,6 @@ const clientsByLocale = {
   id: clientsId,
 } as const
 const faqByLocale = { ar: faqAr, en: faqEn, fr: faqFr, id: faqId } as const
-const careersByLocale = {
-  ar: careersAr,
-  en: careersEn,
-  fr: careersFr,
-  id: careersId,
-} as const
 const newsByLocale = { ar: newsAr, en: newsEn, fr: newsFr, id: newsId } as const
 const photoAltsByLocale = {
   ar: photoAltsAr,
@@ -164,9 +153,6 @@ export const getClients = (locale: AppLocale): readonly ClientCategory[] =>
   clientsByLocale[locale]
 
 export const getFaq = (locale: AppLocale): readonly FaqItem[] => faqByLocale[locale]
-
-export const getCareers = (locale: AppLocale): readonly CareerRole[] =>
-  careersByLocale[locale]
 
 export const getNews = (locale: AppLocale): readonly NewsPost[] => newsByLocale[locale]
 

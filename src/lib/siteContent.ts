@@ -1,9 +1,9 @@
-import { getCareers, getNews, getTestimonials } from "@/content"
-import type { AppLocale, CareerRole, NewsPost, Testimonial } from "@/content/types"
+import { getNews, getTestimonials } from "@/content"
+import type { AppLocale, NewsPost, Testimonial } from "@/content/types"
 import { serverChatApiUrl } from "@/lib/chat/upstream"
 
 /**
- * News, careers and testimonials are edited by staff in the admin console
+ * News and testimonials are edited by staff in the admin console
  * (backend `GET /content/:kind`). Pages re-check at most once a minute. If the
  * backend is down or returns nothing usable, the hard-coded lists in
  * src/content are used so the site never breaks.
@@ -11,7 +11,7 @@ import { serverChatApiUrl } from "@/lib/chat/upstream"
 const REVALIDATE_SECONDS = 60
 const TIMEOUT_MS = 5_000
 
-type Kind = "news" | "career" | "testimonial"
+type Kind = "news" | "testimonial"
 
 const str = (value: unknown) => (typeof value === "string" ? value : "")
 const strOrNull = (value: unknown) => (typeof value === "string" && value ? value : null)
@@ -60,26 +60,6 @@ export async function loadNewsPost(
   slug: string,
 ): Promise<NewsPost | undefined> {
   return (await loadNews(locale)).find((post) => post.slug === slug)
-}
-
-export async function loadCareers(locale: AppLocale): Promise<readonly CareerRole[]> {
-  const items = await fetchItems("career", locale)
-  if (!items) return getCareers(locale)
-  const roles = items.filter(isRecord).flatMap((item): CareerRole[] => {
-    const id = str(item.id)
-    const title = str(item.title)
-    if (!id || !title) return []
-    return [
-      {
-        id,
-        title,
-        location: str(item.location),
-        type: str(item.type),
-        summary: str(item.summary),
-      },
-    ]
-  })
-  return roles.length ? roles : getCareers(locale)
 }
 
 export async function loadTestimonials(locale: AppLocale): Promise<readonly Testimonial[]> {

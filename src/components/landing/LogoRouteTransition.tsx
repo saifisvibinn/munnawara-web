@@ -59,7 +59,7 @@ const isInternalNavClick = (event: MouseEvent, currentPath: string) => {
 
 const SITE_ROUTES = [
   "/", "/about", "/companies", "/fleet", "/corporate",
-  "/clients", "/gallery", "/news", "/careers", "/contact", "/quote",
+  "/clients", "/gallery", "/news", "/contact", "/quote",
 ]
 
 export const PageRouteTransition = () => {

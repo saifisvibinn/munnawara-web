@@ -11,7 +11,6 @@ export type SeoPage =
   | "clients"
   | "gallery"
   | "news"
-  | "careers"
   | "contact"
   | "quote"
   | "track"
@@ -25,7 +24,6 @@ export const seoPaths: Record<SeoPage, string> = {
   clients: "/clients",
   gallery: "/gallery",
   news: "/news",
-  careers: "/careers",
   contact: "/contact",
   quote: "/quote",
   track: "/track",

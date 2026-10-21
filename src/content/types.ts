@@ -74,14 +74,6 @@ export type NewsPost = {
   coverImage: string | null
 }
 
-export type CareerRole = {
-  id: string
-  title: string
-  location: string
-  type: string
-  summary: string
-}
-
 export type AboutFilmCompanyBeat = {
   id: string
   name: string
