@@ -202,7 +202,13 @@
     "identityPhonePh": "+966 5xx xxx xxx",
     "identityContinue": "Continuer",
     "identityStarting": "Démarrage…",
-    "identityChange": "Modifier les informations"
+    "identityChange": "Modifier les informations",
+    "attach": "Joindre un fichier",
+    "attachUploading": "Envoi de {name}…",
+    "attachTooBig": "Ce fichier dépasse {max} Mo. Choisissez un fichier plus petit.",
+    "attachWrongType": "Ce type de fichier n’est pas accepté ici.",
+    "attachFailed": "L’envoi a échoué. Réessayez.",
+    "attachPlaceholder": "Touchez le trombone pour joindre le fichier…"
   },
   "fleetViewer": {
     "previousShot": "Vue précédente",

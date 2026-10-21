@@ -202,7 +202,13 @@
     "identityPhonePh": "+966 5xx xxx xxx",
     "identityContinue": "Continue",
     "identityStarting": "Starting…",
-    "identityChange": "Change details"
+    "identityChange": "Change details",
+    "attach": "Attach file",
+    "attachUploading": "Uploading {name}…",
+    "attachTooBig": "This file is larger than {max} MB. Please choose a smaller one.",
+    "attachWrongType": "This file type isn’t accepted here.",
+    "attachFailed": "The upload didn’t go through. Please try again.",
+    "attachPlaceholder": "Tap the paperclip to attach the file…"
   },
   "fleetViewer": {
     "previousShot": "Previous view",

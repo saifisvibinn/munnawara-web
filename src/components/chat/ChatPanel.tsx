@@ -16,8 +16,10 @@ import {
   saveIdentity,
   sendChatMessage,
   startChatSession,
+  uploadChatFile,
   type ChatLang,
   type ChatOption,
+  type ChatUpload,
   type VisitorIdentity,
 } from "@/lib/chat"
 import { useLocale, useTranslations } from "next-intl"
@@ -34,6 +36,7 @@ import {
   useMemo,
   useRef,
   useState,
+  type ChangeEvent,
   type FormEvent,
   type KeyboardEvent,
 } from "react"
@@ -88,6 +91,7 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
   const titleId = useId()
   const listRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
+  const fileRef = useRef<HTMLInputElement>(null)
   const seenIdsRef = useRef<Set<string>>(new Set())
   const openRef = useRef(open)
   const unreadRef = useRef(0)
@@ -101,6 +105,9 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
   const [identified, setIdentified] = useState(() => Boolean(loadIdentity()))
   const [messages, setMessages] = useState<UiMessage[]>([])
   const [options, setOptions] = useState<ChatOption[]>([])
+  /** Set while Durra waits for a file (CV, complaint photo). */
+  const [upload, setUpload] = useState<ChatUpload | null>(null)
+  const [uploadingName, setUploadingName] = useState<string | null>(null)
   const [conversationId, setConversationId] = useState<string | null>(null)
   const [draft, setDraft] = useState("")
   const [busy, setBusy] = useState(false)
@@ -232,6 +239,7 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
         setClaimed(true)
         setEscalated(true)
         setOptions([])
+        setUpload(null)
       }
     }
 
@@ -242,6 +250,7 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
       setClaimed(true)
       setEscalated(true)
       setOptions([])
+      setUpload(null)
       appendMessage({
         id: `claimed-${uid()}`,
         role: "system",
@@ -256,6 +265,7 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
       }
       setEscalated(true)
       setOptions([])
+      setUpload(null)
     }
 
     socket.on("message:new", onMessage)
@@ -336,6 +346,7 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
                 })),
               )
               setOptions(history.options ?? [])
+              setUpload(history.upload ?? null)
               setConversationId(history.conversationId)
               joinConversation(history.conversationId)
               setEscalated(history.status === "needs_human" || history.status === "claimed")
@@ -363,6 +374,7 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
         seenIdsRef.current.add(welcomeMsg.id)
         setMessages([welcomeMsg])
         setOptions(welcome.options ?? [])
+        setUpload(null)
         setConversationId(session.conversationId)
         saveConversationId(session.conversationId)
         joinConversation(session.conversationId)
@@ -413,26 +425,34 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
   }
 
   const send = useCallback(
-    async (payload: { text?: string; choiceId?: string; label?: string }) => {
+    async (payload: {
+      text?: string
+      choiceId?: string
+      label?: string
+      attachment?: { key: string; name: string }
+    }) => {
       if (busy || !conversationId) return
       const text = payload.text?.trim()
-      const choiceId = payload.choiceId
-      if (!text && !choiceId) return
+      const { choiceId, attachment } = payload
+      if (!text && !choiceId && !attachment) return
 
       setBusy(true)
       setBootError(null)
       const previousOptions = options
+      const previousUpload = upload
       const optimistic = payload.label || text || ""
       if (optimistic) {
         appendMessage({ id: uid(), role: "user", text: optimistic })
       }
       setDraft("")
       setOptions([])
+      setUpload(null)
 
       try {
         const reply = await sendChatMessage({
           text: text || undefined,
           choiceId,
+          attachment,
           conversationId,
           lang,
         })
@@ -455,6 +475,7 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
           setClaimed(false)
         }
         setOptions(reply.options ?? [])
+        setUpload(reply.upload ?? null)
 
         if (reply.escalated && reply.systemMessage) {
           appendMessage({
@@ -475,13 +496,41 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
         // Give the customer their words and buttons back so nothing is lost.
         setDraft(text ?? "")
         setOptions(previousOptions)
+        setUpload(previousUpload)
         setBootError(err instanceof ApiError ? err.message : t("error"))
       } finally {
         setBusy(false)
       }
     },
-    [appendMessage, busy, conversationId, lang, options, t],
+    [appendMessage, busy, conversationId, lang, options, upload, t],
   )
+
+  /** Check the picked file, upload it straight to storage, then send it as the answer. */
+  const handleFile = async (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    event.target.value = ""
+    if (!file || !upload || !conversationId || busy) return
+    if (!upload.accept.includes(file.type)) {
+      setBootError(t("attachWrongType"))
+      return
+    }
+    if (file.size > upload.maxMb * 1024 * 1024) {
+      setBootError(t("attachTooBig", { max: upload.maxMb }))
+      return
+    }
+    setBootError(null)
+    setUploadingName(file.name)
+    let attachment: { key: string; name: string }
+    try {
+      attachment = await uploadChatFile(conversationId, file)
+    } catch {
+      setBootError(t("attachFailed"))
+      return
+    } finally {
+      setUploadingName(null)
+    }
+    await send({ attachment, label: file.name })
+  }
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault()
@@ -500,6 +549,7 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
     setConversationId(null)
     setMessages([])
     setOptions([])
+    setUpload(null)
     setEscalated(false)
     setClaimed(false)
     setBooted(false)
@@ -518,6 +568,7 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
     setBooted(false)
     setMessages([])
     setOptions([])
+    setUpload(null)
     setEscalated(false)
     setClaimed(false)
     setBootError(null)
@@ -752,6 +803,11 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
                 </div>
               </div>
             ) : null}
+            {uploadingName ? (
+              <p className="chat-panel__hint" role="status">
+                {t("attachUploading", { name: uploadingName })}
+              </p>
+            ) : null}
             {bootError ? <p className="chat-panel__error">{bootError}</p> : null}
           </div>
 
@@ -801,7 +857,33 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
               ) : null}
             </div>
           ) : null}
-          <form className="chat-panel__composer" onSubmit={handleSubmit}>
+          <form
+            className={`chat-panel__composer${upload ? " chat-panel__composer--attach" : ""}`}
+            onSubmit={handleSubmit}
+          >
+            {upload ? (
+              <>
+                <button
+                  type="button"
+                  className="chat-panel__attach"
+                  aria-label={t("attach")}
+                  title={t("attach")}
+                  disabled={busy || Boolean(uploadingName)}
+                  onClick={() => fileRef.current?.click()}
+                >
+                  <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48" />
+                  </svg>
+                </button>
+                <input
+                  ref={fileRef}
+                  type="file"
+                  hidden
+                  accept={upload.accept.join(",")}
+                  onChange={(e) => void handleFile(e)}
+                />
+              </>
+            ) : null}
             <textarea
               ref={inputRef}
               rows={2}
@@ -809,7 +891,7 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
               maxLength={1000}
               value={draft}
               disabled={busy || !conversationId}
-              placeholder={t("placeholder")}
+              placeholder={upload && !upload.optional ? t("attachPlaceholder") : t("placeholder")}
               onChange={(event) => setDraft(event.target.value)}
               onKeyDown={handleKeyDown}
             />

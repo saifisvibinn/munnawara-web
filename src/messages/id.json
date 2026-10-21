@@ -202,7 +202,13 @@
     "identityPhonePh": "+966 5xx xxx xxx",
     "identityContinue": "Lanjutkan",
     "identityStarting": "Memulai…",
-    "identityChange": "Ubah detail"
+    "identityChange": "Ubah detail",
+    "attach": "Lampirkan file",
+    "attachUploading": "Mengunggah {name}…",
+    "attachTooBig": "File ini lebih dari {max} MB. Pilih file yang lebih kecil.",
+    "attachWrongType": "Jenis file ini tidak diterima di sini.",
+    "attachFailed": "Unggahan gagal. Silakan coba lagi.",
+    "attachPlaceholder": "Ketuk ikon klip untuk melampirkan file…"
   },
   "fleetViewer": {
     "previousShot": "Tampilan sebelumnya",

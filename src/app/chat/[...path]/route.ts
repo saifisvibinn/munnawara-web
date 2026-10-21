@@ -12,6 +12,7 @@ const ALLOWED_ROUTES: Record<string, readonly string[]> = {
   history: ["GET"],
   session: ["POST"],
   message: ["POST"],
+  upload: ["POST"],
 }
 
 const HOP_BY_HOP = new Set([

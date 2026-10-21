@@ -8,11 +8,13 @@ export {
   saveIdentity,
   sendChatMessage,
   startChatSession,
+  uploadChatFile,
   type ChatHistory,
   type ChatLang,
   type ChatOption,
   type ChatReply,
   type ChatSession,
+  type ChatUpload,
   type GuidedWelcome,
   type VisitorIdentity,
 } from "./chat"

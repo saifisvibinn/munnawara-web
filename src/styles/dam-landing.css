@@ -1684,6 +1684,26 @@ a[data-whatsapp-fab] {
   cursor: not-allowed;
 }
 
+/* A form step wants a file (CV, complaint photo): paperclip before the text box. */
+.chat-panel__composer--attach {
+  grid-template-columns: auto 1fr auto;
+}
+
+.chat-panel__composer .chat-panel__attach {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  padding: 0;
+  border: 1px solid rgba(247, 91, 18, 0.45);
+  background: rgba(255, 255, 255, 0.72);
+  color: var(--brand-orange);
+}
+
+.chat-panel__composer .chat-panel__attach:focus-visible {
+  outline: 2px solid rgba(247, 91, 18, 0.5);
+  outline-offset: 2px;
+}
+
 /* Inner pages: sit above the fixed chat / WhatsApp FABs. */
 [data-floating-actions] .chat-panel {
   bottom: calc(

@@ -202,7 +202,13 @@
     "identityPhonePh": "+966 5xx xxx xxx",
     "identityContinue": "متابعة",
     "identityStarting": "جارٍ البدء…",
-    "identityChange": "تغيير البيانات"
+    "identityChange": "تغيير البيانات",
+    "attach": "إرفاق ملف",
+    "attachUploading": "جارٍ رفع {name}…",
+    "attachTooBig": "حجم الملف أكبر من {max} ميجابايت. اختر ملفاً أصغر.",
+    "attachWrongType": "نوع هذا الملف غير مقبول هنا.",
+    "attachFailed": "لم يكتمل الرفع. حاول مرة أخرى.",
+    "attachPlaceholder": "اضغط المشبك لإرفاق الملف…"
   },
   "fleetViewer": {
     "previousShot": "الصورة السابقة",
