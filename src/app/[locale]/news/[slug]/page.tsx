@@ -84,6 +84,39 @@ const NewsPostPage = async ({ params }: PageProps) => {
               </p>
             ))}
         </div>
+        {post.media && post.media.length > 1 ? (
+          <div className="mt-10 grid grid-cols-2 gap-3">
+            {post.media.slice(1).map((url, i) =>
+              isVideo(url) ? (
+                <video
+                  key={url + i}
+                  src={url}
+                  controls
+                  playsInline
+                  preload="metadata"
+                  className="col-span-2 aspect-[16/9] w-full rounded-2xl bg-surface-muted object-cover"
+                />
+              ) : (
+                <a
+                  key={url + i}
+                  href={url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="relative block aspect-[4/3] overflow-hidden rounded-2xl bg-surface-muted"
+                >
+                  <Image
+                    src={url}
+                    alt=""
+                    fill
+                    unoptimized={/^https?:/.test(url)}
+                    className="object-cover"
+                    sizes="(max-width: 768px) 50vw, 21rem"
+                  />
+                </a>
+              ),
+            )}
+          </div>
+        ) : null}
       </div>
     </AnimatedSection>
   )

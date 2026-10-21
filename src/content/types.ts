@@ -72,6 +72,8 @@ export type NewsPost = {
   body: string
   /** Optional cover; null until editorial assets are provided */
   coverImage: string | null
+  /** Admin uploads in order (images or videos); the first is the cover. */
+  media?: readonly string[]
 }
 
 export type AboutFilmCompanyBeat = {

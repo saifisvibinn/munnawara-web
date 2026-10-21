@@ -49,6 +49,7 @@ export async function loadNews(locale: AppLocale): Promise<readonly NewsPost[]> 
         body: str(item.body),
         publishedAt: str(item.publishedAt),
         coverImage: strOrNull(item.coverImage),
+        media: Array.isArray(item.media) ? item.media.map(str).filter(Boolean) : [],
       },
     ]
   })
