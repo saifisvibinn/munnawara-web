@@ -5,6 +5,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server"
 import { languageAlternates, localizedPath } from "@/lib/seo"
 import { formatContentDate, loadNewsPost } from "@/lib/siteContent"
 import Image from "next/image"
+import { isVideo } from "@/lib/media"
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 
@@ -23,7 +24,8 @@ export const generateMetadata = async ({
   return {
     title: post.title,
     description: post.excerpt || undefined,
-    openGraph: post.coverImage ? { images: [post.coverImage] } : undefined,
+    openGraph:
+      post.coverImage && !isVideo(post.coverImage) ? { images: [post.coverImage] } : undefined,
     alternates: {
       canonical: localizedPath(locale, path),
       languages: languageAlternates(path),
@@ -49,7 +51,15 @@ const NewsPostPage = async ({ params }: PageProps) => {
         <p className="mt-3 text-sm text-ink-muted">
           {formatContentDate(post.publishedAt, locale as AppLocale)}
         </p>
-        {post.coverImage ? (
+        {post.coverImage && isVideo(post.coverImage) ? (
+          <video
+            src={post.coverImage}
+            controls
+            playsInline
+            preload="metadata"
+            className="mt-8 aspect-[16/9] w-full rounded-2xl bg-surface-muted object-cover"
+          />
+        ) : post.coverImage ? (
           <div className="relative mt-8 aspect-[16/9] overflow-hidden rounded-2xl bg-surface-muted">
             <Image
               src={post.coverImage}

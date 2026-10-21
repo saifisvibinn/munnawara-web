@@ -5,6 +5,7 @@ import { Link } from "@/i18n/navigation"
 import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import Image from "next/image"
+import { isVideo } from "@/lib/media"
 import { useLayoutEffect, useRef } from "react"
 
 gsap.registerPlugin(ScrollTrigger)
@@ -122,7 +123,16 @@ export const NewsTeaserClient = ({
                   className="relative block aspect-[4/5] overflow-hidden rounded-2xl bg-surface-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange"
                   aria-label={post.title}
                 >
-                  {post.coverImage ? (
+                  {post.coverImage && isVideo(post.coverImage) ? (
+                    <video
+                      src={`${post.coverImage}#t=0.1`}
+                      muted
+                      playsInline
+                      preload="metadata"
+                      aria-hidden
+                      className="absolute inset-0 size-full object-cover transition duration-500 group-hover:scale-[1.03]"
+                    />
+                  ) : post.coverImage ? (
                     <Image
                       src={post.coverImage}
                       alt=""

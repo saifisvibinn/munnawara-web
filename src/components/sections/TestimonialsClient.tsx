@@ -8,6 +8,7 @@ import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { ArrowUpRight } from "lucide-react"
 import Image from "next/image"
+import { isVideo } from "@/lib/media"
 import { useLayoutEffect, useMemo, useRef } from "react"
 
 gsap.registerPlugin(ScrollTrigger)
@@ -189,13 +190,22 @@ export const TestimonialsClient = ({
 
 const TestimonialCard = ({ item }: { item: TestimonialItem }) => (
   <figure className="rounded-2xl bg-surface-elevated px-6 py-7 sm:px-7 sm:py-8">
+    {item.avatar && isVideo(item.avatar) ? (
+      <video
+        src={item.avatar}
+        controls
+        playsInline
+        preload="metadata"
+        className="mb-6 aspect-video w-full rounded-xl bg-surface-muted object-cover"
+      />
+    ) : null}
     <blockquote>
       <p className="text-base leading-relaxed text-ink sm:text-lg">
         “{item.quote}”
       </p>
     </blockquote>
     <figcaption className="mt-6 flex items-center gap-3">
-      {item.avatar ? (
+      {item.avatar && !isVideo(item.avatar) ? (
         <Image
           src={item.avatar}
           alt=""
