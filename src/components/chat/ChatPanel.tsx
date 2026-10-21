@@ -66,6 +66,15 @@ const mapSocketSender = (sender: string): Role => {
 
 const emptyIdentity = (): VisitorIdentity => ({ name: "", phone: "" })
 
+const TYPE_BY_EXT: Record<string, string> = {
+  pdf: "application/pdf",
+  docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  jpg: "image/jpeg",
+  jpeg: "image/jpeg",
+  png: "image/png",
+  webp: "image/webp",
+}
+
 /** Turn bare https:// links in a message into real links. */
 const RichText = ({ text }: { text: string }) => {
   const parts = text.split(/(https?:\/\/[^\s)]+)/g)
@@ -507,9 +516,14 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
 
   /** Check the picked file, upload it straight to storage, then send it as the answer. */
   const handleFile = async (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
+    const picked = event.target.files?.[0]
     event.target.value = ""
-    if (!file || !upload || !conversationId || busy) return
+    if (!picked || !upload || !conversationId || busy) return
+    // Some systems (Windows without Office, Android pickers) give Word files no type: use the extension.
+    const type = upload.accept.includes(picked.type)
+      ? picked.type
+      : TYPE_BY_EXT[picked.name.split(".").pop()?.toLowerCase() ?? ""] ?? picked.type
+    const file = type === picked.type ? picked : new File([picked], picked.name, { type })
     if (!upload.accept.includes(file.type)) {
       setBootError(t("attachWrongType"))
       return
