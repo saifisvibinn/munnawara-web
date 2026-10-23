@@ -1,5 +1,5 @@
 import { QuoteBackLink, QuoteHomePrefetch, QuotePageLock } from "@/components/forms/QuotePageChrome"
-import { QuoteWizard } from "@/components/forms/QuoteWizard"
+import { QuoteWizardLoader } from "@/components/forms/QuoteWizardLoader"
 import { getHome } from "@/content"
 import type { AppLocale } from "@/content/types"
 import { getTranslations, setRequestLocale } from "next-intl/server"
@@ -22,7 +22,7 @@ const QuotePage = async ({ params, searchParams }: PageProps) => {
     <div data-quote-page className="qpage qpage-in">
       <QuotePageLock />
       <QuoteHomePrefetch />
-      <QuoteWizard
+      <QuoteWizardLoader
         layout="split"
         heading={{ eyebrow: home.quoteEyebrow, title: t("title") }}
         toolbar={<QuoteBackLink />}

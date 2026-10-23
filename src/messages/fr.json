@@ -148,7 +148,8 @@
   },
   "quote": {
     "title": "Demander un devis",
-    "backToTicket": "Retour au ticket"
+    "backToTicket": "Retour au ticket",
+    "loading": "Chargement du formulaire de devis"
   },
   "whatsappPrefill": "Bonjour, je souhaite me renseigner sur les services de Durrat Almunawwara Co.",
   "chat": {

@@ -53,11 +53,10 @@ export function QuoteTicket() {
   const [opening, setOpening] = useState(false)
   const timer = useRef<number | null>(null)
 
-  // Warm the quote route + heavy client chunks while the ticket is on screen.
+  // Warm the quote route + wizard shell. Map/Leaflet stays on-demand after navigation.
   useEffect(() => {
     router.prefetch("/quote")
     void import("@/components/forms/QuoteWizard")
-    void import("@/components/forms/QuoteMap")
     return () => {
       if (timer.current !== null) window.clearTimeout(timer.current)
     }
@@ -128,11 +127,11 @@ export function QuoteTicket() {
               <circle cx="6" cy="18" r="2.6" />
               <path d="M8.2 7.6 20 17M8.2 16.4 20 7" />
             </svg>
-            <p className="text-[0.62rem] font-semibold tracking-[0.2em] uppercase opacity-80">
+            <p className="text-[0.7rem] font-bold tracking-[0.18em] text-ink uppercase">
               {c.tear}
             </p>
-            <p className="text-lg leading-tight font-bold">{c.stubTitle}</p>
-            <p className="text-xs opacity-85">{c.stubSub}</p>
+            <p className="text-lg leading-tight font-bold text-ink">{c.stubTitle}</p>
+            <p className="text-xs font-semibold text-ink">{c.stubSub}</p>
             <div className={vertical ? "hidden" : "mt-1 flex h-6 items-stretch gap-[2px] opacity-70"} aria-hidden="true">
               {[3, 1, 2, 1, 3, 2, 1, 1, 3, 1, 2].map((w, i) => (
                 <span key={i} className="bg-white" style={{ width: w }} />

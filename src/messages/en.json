@@ -148,7 +148,8 @@
   },
   "quote": {
     "title": "Request a quote",
-    "backToTicket": "Back to ticket"
+    "backToTicket": "Back to ticket",
+    "loading": "Loading quote form"
   },
   "whatsappPrefill": "Hello, I would like to inquire about Durrat Almunawwara Co. services",
   "chat": {

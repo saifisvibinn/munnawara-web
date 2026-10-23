@@ -161,7 +161,7 @@ export const NewsTeaserClient = ({
                   <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-ink/70 sm:text-base">
                     {post.excerpt}
                   </p>
-                  <p className="font-label mt-4 text-xs tracking-wide text-ink/40">
+                  <p className="font-label mt-4 text-xs tracking-wide text-ink-muted">
                     {post.publishedAt}
                   </p>
                   <Link

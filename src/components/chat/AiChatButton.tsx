@@ -70,6 +70,8 @@ export const AiChatButton = forwardRef<
       </span>
     ) : null
 
+  // Tip sits outside the control so its visible text does not fight aria-label
+  // (axe label-content-name-mismatch).
   const tipNode =
     tip && tip.length > 0 ? (
       <span
@@ -85,7 +87,6 @@ export const AiChatButton = forwardRef<
 
   const inner = (
     <>
-      {tipNode}
       {badge}
       <Face mood={mood} />
     </>
@@ -95,6 +96,7 @@ export const AiChatButton = forwardRef<
     const { href, className = "", ...rest } = domProps
     return (
       <span className={cn("ai-chat-fab", tip && "has-tip")}>
+        {tipNode}
         <a
           className={cn("ai-chat-btn", className)}
           href={href}
@@ -114,6 +116,7 @@ export const AiChatButton = forwardRef<
   >
   return (
     <span className={cn("ai-chat-fab", tip && "has-tip")}>
+      {tipNode}
       <button
         className={cn("ai-chat-btn", className)}
         type="button"

@@ -30,7 +30,6 @@ import {
 } from "./quoteWizardLogic"
 import { initialState, type StepId, type WizardProps, type WizardState } from "./quoteWizardTypes"
 import { StepProgress, btnGhost, btnPrimary } from "./quoteWizardUi"
-import { StepBody } from "./QuoteWizardSteps"
 import {
   clearSavedQuote,
   loadSavedQuote,
@@ -42,6 +41,17 @@ const QuoteMap = dynamic(() => import("./QuoteMap"), {
   ssr: false,
   loading: () => <div className="qmap animate-pulse bg-surface-muted" aria-hidden="true" />,
 })
+
+/** Heavy step UI (pickers, choices) — keep out of the quote route's critical First Load JS. */
+const StepBody = dynamic(
+  () => import("./QuoteWizardSteps").then((m) => m.StepBody),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="min-h-[12rem] animate-pulse rounded-xl bg-surface-muted" aria-hidden="true" />
+    ),
+  },
+)
 
 export const QuoteWizard = ({
   className,

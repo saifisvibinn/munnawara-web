@@ -379,7 +379,9 @@ html[dir="rtl"] .about-film__cta-arrow {
   font-weight: 600;
   letter-spacing: 0;
   line-height: 1.5;
-  color: var(--af-muted);
+  /* ink-muted on surface failed axe (~2.5:1); use stronger ink for AA */
+  color: var(--af-ink);
+  opacity: 0.78;
 }
 
 html[lang="ar"] .about-film__company span {

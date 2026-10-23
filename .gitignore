@@ -13,6 +13,15 @@
 # testing
 /coverage
 /.playwright-mcp/
+/test-results/
+/playwright-report/
+/blob-report/
+
+# audit toolkit — generated reports + local scanner binaries
+/audit/reports/
+/tools/gitleaks/
+/tools/zap/
+/tools/*.zip
 
 # next.js
 /.next/

@@ -81,7 +81,8 @@ export const LandingLanguageSwitcher = forwardRef<HTMLDivElement>(
         <button
           type="button"
           className="lang-switch__trigger"
-          aria-label={t("switchLanguage")}
+          // Accessible name must include visible trigger text (axe label-content-name-mismatch).
+          aria-label={`${t("switchLanguage")}: ${triggerLabels[locale]}`}
           aria-haspopup="listbox"
           aria-expanded={open}
           aria-controls={listId}
@@ -101,6 +102,7 @@ export const LandingLanguageSwitcher = forwardRef<HTMLDivElement>(
             className="lang-switch__label"
             lang={locale}
             dir={isRtlLocale(locale) ? "rtl" : "ltr"}
+            aria-hidden="true"
           >
             {triggerLabels[locale]}
           </span>

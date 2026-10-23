@@ -148,7 +148,8 @@
   },
   "quote": {
     "title": "Minta penawaran",
-    "backToTicket": "Kembali ke tiket"
+    "backToTicket": "Kembali ke tiket",
+    "loading": "Memuat formulir penawaran"
   },
   "whatsappPrefill": "Halo, saya ingin menanyakan layanan Durrat Almunawwara Co.",
   "chat": {
