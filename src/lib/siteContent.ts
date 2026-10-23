@@ -18,8 +18,10 @@ const strOrNull = (value: unknown) => (typeof value === "string" && value ? valu
 
 async function fetchItems(kind: Kind, locale: AppLocale): Promise<unknown[] | null> {
   const base = serverChatApiUrl()
+  // Staff write Arabic and English only; French and Indonesian pages read the English.
+  const contentLocale = locale === "ar" ? "ar" : "en"
   try {
-    const response = await fetch(`${base}/content/${kind}?locale=${locale}`, {
+    const response = await fetch(`${base}/content/${kind}?locale=${contentLocale}`, {
       next: { revalidate: REVALIDATE_SECONDS, tags: ["site-content"] },
       signal: AbortSignal.timeout(TIMEOUT_MS),
     })
