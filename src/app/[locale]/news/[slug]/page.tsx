@@ -5,7 +5,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server"
 import { languageAlternates, localizedPath } from "@/lib/seo"
 import { formatContentDate, loadNewsPost } from "@/lib/siteContent"
 import Image from "next/image"
-import { isVideo } from "@/lib/media"
+import { isVideo, skipOptimizer } from "@/lib/media"
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 
@@ -66,7 +66,7 @@ const NewsPostPage = async ({ params }: PageProps) => {
               alt=""
               fill
               priority
-              unoptimized={/^https?:/.test(post.coverImage)}
+              unoptimized={skipOptimizer(post.coverImage)}
               className="object-cover"
               sizes="(max-width: 768px) 100vw, 42rem"
             />
@@ -108,7 +108,7 @@ const NewsPostPage = async ({ params }: PageProps) => {
                     src={url}
                     alt=""
                     fill
-                    unoptimized={/^https?:/.test(url)}
+                    unoptimized={skipOptimizer(url)}
                     className="object-cover"
                     sizes="(max-width: 768px) 50vw, 21rem"
                   />

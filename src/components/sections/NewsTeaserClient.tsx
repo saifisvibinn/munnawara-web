@@ -5,7 +5,7 @@ import { Link } from "@/i18n/navigation"
 import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import Image from "next/image"
-import { isVideo } from "@/lib/media"
+import { isVideo, skipOptimizer } from "@/lib/media"
 import { useLayoutEffect, useRef } from "react"
 
 gsap.registerPlugin(ScrollTrigger)
@@ -137,7 +137,7 @@ export const NewsTeaserClient = ({
                       src={post.coverImage}
                       alt=""
                       fill
-                      unoptimized={/^https?:/.test(post.coverImage)}
+                      unoptimized={skipOptimizer(post.coverImage)}
                       className="object-cover transition duration-500 group-hover:scale-[1.03]"
                       sizes="(max-width: 768px) 100vw, 33vw"
                     />
