@@ -72,7 +72,7 @@ export const QuoteWizard = ({
   const [dir, setDir] = useState<"fwd" | "back">("fwd")
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [honeypot, setHoneypot] = useState("")
-  const [status, setStatus] = useState<"idle" | "submitting" | "done" | "error" | "locked">("idle")
+  const [status, setStatus] = useState<"idle" | "submitting" | "done" | "error" | "rateLimited" | "locked">("idle")
   const [result, setResult] = useState<{ leadId?: string; sla: number; edited?: boolean } | null>(
     null,
   )
@@ -233,11 +233,13 @@ export const QuoteWizard = ({
       setStatus("error")
       return
     }
+    // A network drop, or an old tab calling an action from a previous deploy, throws.
+    const failed = { ok: false, messageKey: "error" } as const
     if (editing) {
       const response = await updateQuoteRequest(
         { quoteId: editing.quoteId, editToken: editing.editToken },
         parsed.data,
-      )
+      ).catch(() => failed)
       if (response.ok) {
         setSaved(
           storeSavedQuote({
@@ -256,11 +258,11 @@ export const QuoteWizard = ({
         setSaved(null)
         setStatus("locked")
       } else {
-        setStatus("error")
+        setStatus(response.messageKey === "rateLimited" ? "rateLimited" : "error")
       }
       return
     }
-    const response = await submitQuoteRequest(parsed.data)
+    const response = await submitQuoteRequest(parsed.data).catch(() => failed)
     if (response.ok) {
       if (response.edit) {
         setSaved(storeSavedQuote({ ...response.edit, leadId: response.leadId, state }))
@@ -269,7 +271,7 @@ export const QuoteWizard = ({
       setStatus("done")
       scrollTop()
     } else {
-      setStatus("error")
+      setStatus(response.messageKey === "rateLimited" ? "rateLimited" : "error")
     }
   }
 
@@ -557,12 +559,12 @@ export const QuoteWizard = ({
           onChange={(e) => setHoneypot(e.target.value)}
         />
 
-        {status === "error" ? (
+        {status === "error" || status === "rateLimited" ? (
           <div
             className="mt-4 rounded-xl bg-red-50 px-3.5 py-3 text-sm text-red-800 ring-1 ring-red-200/80 dark:bg-red-950/60 dark:text-red-200 dark:ring-red-400/30"
             role="alert"
           >
-            {tx(COPY.error)}
+            {tx(status === "rateLimited" ? COPY.rateLimited : COPY.error)}
           </div>
         ) : status === "locked" ? (
           <div

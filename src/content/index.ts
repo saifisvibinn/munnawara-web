@@ -1,14 +1,12 @@
 import type {
   AboutContent,
   AppLocale,
-  CareRevealContent,
   ClientCategory,
   Company,
   ContactContent,
   CompanySlug,
   FaqItem,
   FleetCategory,
-  FleetCategoryId,
   FleetPageContent,
   HomeContent,
   NewsPost,
@@ -26,10 +24,6 @@ import { about as aboutAr } from "./ar/about"
 import { about as aboutEn } from "./en/about"
 import { about as aboutFr } from "./fr/about"
 import { about as aboutId } from "./id/about"
-import { careReveal as careRevealAr } from "./ar/careReveal"
-import { careReveal as careRevealEn } from "./en/careReveal"
-import { careReveal as careRevealFr } from "./fr/careReveal"
-import { careReveal as careRevealId } from "./id/careReveal"
 import { clients as clientsAr } from "./ar/clients"
 import { clients as clientsEn } from "./en/clients"
 import { clients as clientsFr } from "./fr/clients"
@@ -68,12 +62,6 @@ import { testimonials as testimonialsFr } from "./fr/testimonials"
 import { testimonials as testimonialsId } from "./id/testimonials"
 
 const aboutByLocale = { ar: aboutAr, en: aboutEn, fr: aboutFr, id: aboutId } as const
-const careRevealByLocale = {
-  ar: careRevealAr,
-  en: careRevealEn,
-  fr: careRevealFr,
-  id: careRevealId,
-} as const
 const contactByLocale = {
   ar: contactAr,
   en: contactEn,
@@ -119,9 +107,6 @@ export const getSiteConfig = (): SiteConfig => siteConfig
 
 export const getAbout = (locale: AppLocale): AboutContent => aboutByLocale[locale]
 
-export const getCareReveal = (locale: AppLocale): CareRevealContent =>
-  careRevealByLocale[locale]
-
 export const getContact = (locale: AppLocale): ContactContent =>
   contactByLocale[locale]
 
@@ -144,22 +129,12 @@ export const getFleet = (locale: AppLocale): readonly FleetCategory[] =>
 export const getFleetPage = (locale: AppLocale): FleetPageContent =>
   fleetPageByLocale[locale]
 
-export const getFleetCategory = (
-  locale: AppLocale,
-  id: FleetCategoryId,
-): FleetCategory | undefined => getFleet(locale).find((f) => f.id === id)
-
 export const getClients = (locale: AppLocale): readonly ClientCategory[] =>
   clientsByLocale[locale]
 
 export const getFaq = (locale: AppLocale): readonly FaqItem[] => faqByLocale[locale]
 
 export const getNews = (locale: AppLocale): readonly NewsPost[] => newsByLocale[locale]
-
-export const getNewsPost = (
-  locale: AppLocale,
-  slug: string,
-): NewsPost | undefined => getNews(locale).find((p) => p.slug === slug)
 
 export type GalleryPhoto = PhotoEntry & { alt: string }
 

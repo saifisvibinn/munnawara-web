@@ -208,7 +208,8 @@
     "attachTooBig": "Ce fichier dépasse {max} Mo. Choisissez un fichier plus petit.",
     "attachWrongType": "Ce type de fichier n’est pas accepté ici.",
     "attachFailed": "L’envoi a échoué. Réessayez.",
-    "attachPlaceholder": "Touchez le trombone pour joindre le fichier…"
+    "attachPlaceholder": "Touchez le trombone pour joindre le fichier…",
+    "restarted": "Cette conversation a été fermée, nous en avons donc ouvert une nouvelle. Merci de renvoyer votre message."
   },
   "fleetViewer": {
     "previousShot": "Vue précédente",

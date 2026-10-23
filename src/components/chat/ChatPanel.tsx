@@ -66,6 +66,14 @@ const mapSocketSender = (sender: string): Role => {
 
 const emptyIdentity = (): VisitorIdentity => ({ name: "", phone: "" })
 
+/** The server's text only when it is meant for visitors (rate limit, already translated); else our own. */
+const visitorError = (err: unknown, fallback: string) =>
+  err instanceof ApiError && err.status === 429 ? err.message : fallback
+
+/** The stored chat is gone (deleted by staff, or not this visitor's): 404, or 400 for an unknown id. */
+const chatIsGone = (err: unknown) =>
+  err instanceof ApiError && (err.status === 404 || err.status === 400)
+
 const TYPE_BY_EXT: Record<string, string> = {
   pdf: "application/pdf",
   docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
@@ -102,6 +110,7 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
   const inputRef = useRef<HTMLTextAreaElement>(null)
   const fileRef = useRef<HTMLInputElement>(null)
   const seenIdsRef = useRef<Set<string>>(new Set())
+  const restartRef = useRef<() => void>(() => {})
   const openRef = useRef(open)
   const unreadRef = useRef(0)
   const dragControls = useDragControls()
@@ -291,8 +300,17 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
         .catch(() => {})
     }
 
+    // Staff deleted the chat: open a fresh one so the visitor isn't left writing into nothing.
+    const onDeleted = (payload: { conversationId?: string }) => {
+      if (payload.conversationId && payload.conversationId !== conversationId) {
+        return
+      }
+      restartRef.current()
+    }
+
     socket.on("conversation:escalated", onEscalated)
     socket.on("conversation:closed", onClosed)
+    socket.on("conversation:deleted", onDeleted)
 
     // Rooms are lost on disconnect: rejoin, and after a *re*connect pull anything missed.
     let wasConnected = socket.connected
@@ -321,6 +339,7 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
       socket.off("conversation:claimed", onClaimed)
       socket.off("conversation:escalated", onEscalated)
       socket.off("conversation:closed", onClosed)
+      socket.off("conversation:deleted", onDeleted)
       socket.off("connect", onConnect)
     }
   }, [conversationId, appendMessage, bumpUnread, t, lang])
@@ -393,7 +412,7 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
         setBooted(true)
         setUnread(0)
       } catch (err) {
-        setBootError(err instanceof ApiError ? err.message : t("error"))
+        setBootError(visitorError(err, t("error")))
         throw err
       } finally {
         setBusy(false)
@@ -401,6 +420,26 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
     },
     [t, setUnread, lang],
   )
+
+  /** Drop the stored chat and start a new one for the same visitor. */
+  const restartChat = useCallback(async () => {
+    saveConversationId(null)
+    setConversationId(null)
+    const visitor = loadIdentity()
+    if (!visitor) {
+      setIdentified(false)
+      setBooted(false)
+      return
+    }
+    try {
+      await beginSession(visitor)
+      appendMessage({ id: uid(), role: "system", text: t("restarted") })
+    } catch {
+      /* bootError set */
+    }
+  }, [beginSession, appendMessage, t])
+
+  restartRef.current = () => void restartChat()
 
   useEffect(() => {
     if (!open || !identified || booted) return
@@ -504,14 +543,18 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
       } catch (err) {
         // Give the customer their words and buttons back so nothing is lost.
         setDraft(text ?? "")
+        if (chatIsGone(err)) {
+          await restartChat()
+          return
+        }
         setOptions(previousOptions)
         setUpload(previousUpload)
-        setBootError(err instanceof ApiError ? err.message : t("error"))
+        setBootError(visitorError(err, t("error")))
       } finally {
         setBusy(false)
       }
     },
-    [appendMessage, busy, conversationId, lang, options, upload, t],
+    [appendMessage, busy, conversationId, lang, options, upload, t, restartChat],
   )
 
   /** Check the picked file, upload it straight to storage, then send it as the answer. */
@@ -711,6 +754,7 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
               name="name"
               autoComplete="name"
               required
+              maxLength={120}
               value={identity.name}
               placeholder={t("identityNamePh")}
               onChange={(e) =>
@@ -725,6 +769,8 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
               name="phone"
               dir="ltr"
               autoComplete="tel"
+              minLength={5}
+              maxLength={40}
               inputMode="tel"
               required
               value={identity.phone}

@@ -8,7 +8,7 @@ import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { ArrowUpRight } from "lucide-react"
 import Image from "next/image"
-import { isVideo } from "@/lib/media"
+import { isVideo, skipOptimizer } from "@/lib/media"
 import { useLayoutEffect, useMemo, useRef } from "react"
 
 gsap.registerPlugin(ScrollTrigger)
@@ -209,7 +209,7 @@ const TestimonialCard = ({ item }: { item: TestimonialItem }) => (
         <Image
           src={item.avatar}
           alt=""
-          unoptimized={/^https?:/.test(item.avatar)}
+          unoptimized={skipOptimizer(item.avatar)}
           width={40}
           height={40}
           className="size-10 rounded-full object-cover"

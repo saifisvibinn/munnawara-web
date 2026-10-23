@@ -4,7 +4,6 @@ import { getPhotos } from "@/content"
 import type { AppLocale } from "@/content/types"
 import { buildPageMetadata } from "@/lib/seo"
 import { getTranslations, setRequestLocale } from "next-intl/server"
-import { Suspense } from "react"
 
 type PageProps = {
   params: Promise<{ locale: string }>
@@ -28,9 +27,7 @@ const GalleryPage = async ({ params }: PageProps) => {
           </p>
         </header>
         <div className="mt-12 md:mt-16">
-          <Suspense fallback={null}>
-            <PhotoGallery photos={photos} />
-          </Suspense>
+          <PhotoGallery photos={photos} />
         </div>
       </div>
     </AnimatedSection>
