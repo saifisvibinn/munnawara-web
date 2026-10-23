@@ -94,6 +94,11 @@ function hideFabs(elements: Pick<IntroElements, 'aiChat' | 'whatsapp'>) {
   })
 }
 
+/** Latch React tip gate on the button inside the AI wrapper. */
+function markAiChatRevealed(aiChatWrap: HTMLElement) {
+  aiChatWrap.querySelector('.ai-chat-btn')?.classList.add('is-revealed')
+}
+
 function showFabsSettled(elements: Pick<IntroElements, 'aiChat' | 'whatsapp'>) {
   gsap.set([elements.aiChat, elements.whatsapp], {
     opacity: 1,
@@ -104,7 +109,7 @@ function showFabsSettled(elements: Pick<IntroElements, 'aiChat' | 'whatsapp'>) {
     visibility: 'visible',
     pointerEvents: 'auto',
   })
-  elements.aiChat.classList.add('is-revealed')
+  markAiChatRevealed(elements.aiChat)
   elements.whatsapp.classList.add('is-revealed')
 }
 
@@ -130,7 +135,7 @@ export function playFabEntrance(
   const timeline = gsap.timeline({
     defaults: { ease: 'back.out(2.2)' },
     onComplete: () => {
-      elements.aiChat.classList.add('is-revealed')
+      markAiChatRevealed(elements.aiChat)
       elements.whatsapp.classList.add('is-revealed')
     },
   })

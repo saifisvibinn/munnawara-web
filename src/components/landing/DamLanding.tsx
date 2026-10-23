@@ -291,7 +291,7 @@ export const DamLanding = ({ copy }: DamLandingProps) => {
   const heroVideoRef = useRef<HeroVideoHandle>(null)
   const heroCardRef = useRef<HTMLDivElement>(null)
   const videoStageRef = useRef<HTMLDivElement>(null)
-  const aiChatRef = useRef<HTMLButtonElement>(null)
+  const aiChatRef = useRef<HTMLDivElement>(null)
   const whatsappRef = useRef<HTMLDivElement>(null)
 
   const collectNavItem = (element: HTMLElement | null) => {
@@ -1069,7 +1069,9 @@ export const DamLanding = ({ copy }: DamLandingProps) => {
         <LandingLanguageSwitcher ref={langSwitchRef} />
 
         <div className="landing-fab-row">
-          <ChatWidget ref={aiChatRef} revealed={false} />
+          <div className="landing-ai-chat-btn" ref={aiChatRef}>
+            <ChatWidget revealed={false} />
+          </div>
           <div className="landing-whatsapp-btn" ref={whatsappRef}>
             <WhatsAppButton />
           </div>

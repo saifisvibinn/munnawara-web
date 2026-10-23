@@ -125,14 +125,15 @@ export const ChatWidget = forwardRef<HTMLButtonElement, ChatWidgetProps>(
       [ref],
     )
 
-    // Soft-enter tip after first paint so it doesn't flash during route loads.
+    // Soft-enter tip only after the FAB is revealed — never during landing loader.
     useEffect(() => {
       setTipReady(false)
       setContextHint(null)
       setIdleIndex(0)
+      if (!fabRevealed) return
       const id = window.setTimeout(() => setTipReady(true), 650)
       return () => window.clearTimeout(id)
-    }, [pathname])
+    }, [pathname, fabRevealed])
 
     const rotationHints = useMemo(() => {
       const page = pageDefaultHint(pathname)
@@ -200,7 +201,7 @@ export const ChatWidget = forwardRef<HTMLButtonElement, ChatWidgetProps>(
         null)
 
     const tip =
-      tipReady && !open
+      fabRevealed && tipReady && !open
         ? hoveringFab
           ? t("hintHello")
           : tipKey

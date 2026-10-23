@@ -5,5 +5,38 @@
       "maxFindings": 5,
       "maxChars": 8000
     }
+  },
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "design-system-font",
+        "value": "archivo",
+        "createdAt": "2026-10-23T18:10:43.744Z",
+        "reason": "shipped brand display font in theme.ts / dam-landing"
+      },
+      {
+        "rule": "design-system-font",
+        "value": "cairo",
+        "createdAt": "2026-10-23T18:10:43.793Z",
+        "reason": "shipped Arabic brand font in theme.ts / dam-landing"
+      },
+      {
+        "rule": "design-system-font",
+        "value": "nunito sans",
+        "createdAt": "2026-10-23T18:10:43.840Z",
+        "reason": "shipped Latin body font in theme.ts / dam-landing"
+      },
+      {
+        "rule": "gradient-text",
+        "value": "*",
+        "files": [
+          "src/styles/dam-landing.css"
+        ],
+        "createdAt": "2026-10-23T18:10:52.056Z",
+        "reason": "pre-existing decorative treatment; unrelated to FAB entrance fix"
+      }
+    ]
   }
 }

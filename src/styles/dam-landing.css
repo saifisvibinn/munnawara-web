@@ -152,7 +152,8 @@ body.is-loading {
 body.is-loading .loader-surface {
   position: fixed;
   inset: 0;
-  z-index: 45;
+  /* Must sit above .landing-fab-row (z-index 80) */
+  z-index: 95;
 }
 
 .intro {
@@ -1009,11 +1010,24 @@ html[dir='ltr'] .hero-video__end-frame {
   pointer-events: auto;
 }
 
-.landing-fab-row .ai-chat-fab:has(.ai-chat-btn:not(.is-revealed)),
-.landing-fab-row .ai-chat-btn:not(.is-revealed) {
+/* Both FABs start hidden on the landing wrappers — GSAP owns the entrance.
+   Tip lives outside the button, so the wrapper must stay opaque until then. */
+.landing-ai-chat-btn,
+.landing-whatsapp-btn {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
+  will-change: transform, opacity;
+}
+
+body.is-loading .landing-fab-row,
+body.is-loading .ai-chat-fab__tip {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
 }
 
 .ai-chat-btn__face {
@@ -1732,21 +1746,13 @@ a[data-whatsapp-fab] {
   }
 }
 
-/* WhatsApp FAB beside the AI chat control — hidden until intro morph */
-.landing-whatsapp-btn {
-  position: relative;
-  z-index: 1;
-  display: inline-flex;
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-  will-change: transform, opacity;
-}
+/* FAB wrappers share initial hide styles under .landing-ai-chat-btn / .landing-whatsapp-btn */
 
 .loader-surface {
   position: absolute;
   inset: 0;
-  z-index: 20;
+  /* Above landing FABs (80) so nothing can peek through the veil */
+  z-index: 90;
   background:
     radial-gradient(circle at 50% 44%, rgba(151, 36, 143, 0.18), transparent 30%),
     radial-gradient(circle at 43% 51%, rgba(247, 91, 18, 0.2), transparent 34%),
