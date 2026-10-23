@@ -208,7 +208,8 @@
     "attachTooBig": "File ini lebih dari {max} MB. Pilih file yang lebih kecil.",
     "attachWrongType": "Jenis file ini tidak diterima di sini.",
     "attachFailed": "Unggahan gagal. Silakan coba lagi.",
-    "attachPlaceholder": "Ketuk ikon klip untuk melampirkan file…"
+    "attachPlaceholder": "Ketuk ikon klip untuk melampirkan file…",
+    "restarted": "Percakapan itu sudah ditutup, jadi kami memulai yang baru. Silakan kirim pesan Anda lagi."
   },
   "fleetViewer": {
     "previousShot": "Tampilan sebelumnya",
