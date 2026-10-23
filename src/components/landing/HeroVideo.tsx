@@ -1,5 +1,6 @@
 "use client"
 
+import { SiteImage } from "@/components/ui/SiteImage"
 import {
   forwardRef,
   useCallback,
@@ -24,7 +25,7 @@ type HeroVideoProps = {
 const VIDEO_SRC = "/hero/NewHero.mp4"
 // Frame at (duration - endFrameOffsetSeconds), the exact point playback freezes on.
 /* Bump when replacing the still so browsers don’t keep a stale depot frame. */
-const END_FRAME_SRC = "/hero/hero-end.jpg?v=2"
+const END_FRAME_SRC = "/hero/hero-end.jpg"
 
 export const HeroVideo = forwardRef<HeroVideoHandle, HeroVideoProps>(
   function HeroVideo({ reducedMotion }, ref) {
@@ -242,12 +243,13 @@ export const HeroVideo = forwardRef<HeroVideoHandle, HeroVideoProps>(
           preload="none"
           loop={false}
         />
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
+        <SiteImage
           className="hero-video__end-frame"
           src={END_FRAME_SRC}
           alt=""
-          decoding="async"
+          fill
+          sizes="100vw"
+          priority={false}
         />
       </div>
     )

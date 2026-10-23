@@ -4,7 +4,7 @@ import { OPEN_QUOTE_EVENT } from "@/components/layout/FloatingQuoteCta"
 import { useReducedMotion } from "@/hooks/useReducedMotion"
 import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
-import Image from "next/image"
+import { SiteImage as Image } from "@/components/ui/SiteImage"
 import { useLayoutEffect, useRef } from "react"
 
 gsap.registerPlugin(ScrollTrigger)
@@ -77,10 +77,10 @@ export const CTABandClient = ({
         <Image
           src="/hero/landing-sky.jpg"
           alt=""
-          width={1024}
-          height={576}
-          className="absolute inset-0 size-full object-cover object-center"
+          fill
           sizes="100vw"
+          className="object-cover object-center"
+          priority={false}
         />
         <div className="absolute inset-0 bg-gradient-to-b from-white/55 via-white/70 to-white/90 dark:from-black/72 dark:via-black/82 dark:to-black/92" />
       </div>

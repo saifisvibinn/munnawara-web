@@ -7,7 +7,7 @@ import { Link } from "@/i18n/navigation"
 import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { ArrowUpRight } from "lucide-react"
-import Image from "next/image"
+import { SiteImage as Image } from "@/components/ui/SiteImage"
 import { isVideo, skipOptimizer } from "@/lib/media"
 import { useLayoutEffect, useMemo, useRef } from "react"
 

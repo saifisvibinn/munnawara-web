@@ -3,7 +3,7 @@
 import { useReducedMotion } from "@/hooks/useReducedMotion"
 import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
-import Image from "next/image"
+import { SiteImage as Image } from "@/components/ui/SiteImage"
 import { useEffect, useRef } from "react"
 import "./fleet.css"
 

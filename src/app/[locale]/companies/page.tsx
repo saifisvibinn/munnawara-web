@@ -5,7 +5,7 @@ import { TextLink } from "@/components/ui/TextLink"
 import { getCompanies } from "@/content"
 import type { AppLocale } from "@/content/types"
 import { getTranslations, setRequestLocale } from "next-intl/server"
-import Image from "next/image"
+import { SiteImage as Image } from "@/components/ui/SiteImage"
 import { buildPageMetadata } from "@/lib/seo"
 
 type PageProps = {

@@ -6,7 +6,7 @@ import { useReducedMotion } from "@/hooks/useReducedMotion"
 import { cn } from "@/lib/cn"
 import { useLocale } from "next-intl"
 import { useEffect, useMemo, useRef, useState, type FormEvent, type ReactNode } from "react"
-import Image from "next/image"
+import { SiteImage as Image } from "@/components/ui/SiteImage"
 import { Link } from "@/i18n/navigation"
 import {
   busClassImages,

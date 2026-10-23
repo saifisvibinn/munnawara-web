@@ -5,7 +5,7 @@ import { cn } from "@/lib/cn"
 import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { useLocale } from "next-intl"
-import Image from "next/image"
+import { SiteImage as Image } from "@/components/ui/SiteImage"
 import { useEffect, useRef } from "react"
 
 gsap.registerPlugin(ScrollTrigger)

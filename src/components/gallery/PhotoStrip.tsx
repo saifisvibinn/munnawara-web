@@ -2,7 +2,7 @@ import { getPhotos } from "@/content"
 import type { AppLocale } from "@/content/types"
 import { Link } from "@/i18n/navigation"
 import { cn } from "@/lib/cn"
-import Image from "next/image"
+import { SiteImage as Image } from "@/components/ui/SiteImage"
 
 type PhotoStripProps = {
   locale: AppLocale
@@ -110,7 +110,6 @@ const StripFrame = ({
       width={photo.width}
       height={photo.height}
       sizes={sizes}
-      quality={90}
       priority={priority}
       className="size-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
     />

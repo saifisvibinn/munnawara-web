@@ -1,6 +1,6 @@
 import type { TripType } from "@/components/forms/formSchemas"
 import { cn } from "@/lib/cn"
-import Image from "next/image"
+import { SiteImage as Image } from "@/components/ui/SiteImage"
 import { useState } from "react"
 import {
   busClassImages,

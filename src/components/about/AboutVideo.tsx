@@ -1,6 +1,6 @@
 "use client"
 
-import Image from "next/image"
+import { SiteImage as Image } from "@/components/ui/SiteImage"
 import { useEffect, useRef, useState } from "react"
 import { FramerVideoPlayer } from "@/components/about/FramerVideoPlayer"
 

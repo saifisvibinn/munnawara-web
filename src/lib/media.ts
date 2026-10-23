@@ -1,6 +1,9 @@
 /** Admin uploads can be a video (mp4/webm) in place of an image. */
 export const isVideo = (url: string) => /\.(mp4|webm)(\?|#|$)/i.test(url)
 
+/** Site-wide Next/Image quality (must be listed in next.config `images.qualities`). */
+export const IMAGE_QUALITY = 90
+
 /**
  * Hosts whose images go through the Next image optimizer (resized, WebP/AVIF).
  * Admin uploads live in Cloudflare R2: its r2.dev URLs, plus a custom domain if one

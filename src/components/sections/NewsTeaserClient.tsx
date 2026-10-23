@@ -4,7 +4,7 @@ import { useReducedMotion } from "@/hooks/useReducedMotion"
 import { Link } from "@/i18n/navigation"
 import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
-import Image from "next/image"
+import { SiteImage as Image } from "@/components/ui/SiteImage"
 import { isVideo, skipOptimizer } from "@/lib/media"
 import { useLayoutEffect, useRef } from "react"
 

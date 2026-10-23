@@ -5,7 +5,7 @@ import { Link } from "@/i18n/navigation"
 import { cn } from "@/lib/cn"
 import type { FleetCategory } from "@/content/types"
 import { useTranslations } from "next-intl"
-import Image from "next/image"
+import { SiteImage as Image } from "@/components/ui/SiteImage"
 import "./fleet.css"
 import { useCallback, useEffect, useState } from "react"
 
@@ -145,7 +145,8 @@ export const FleetShowroom = ({ categories }: FleetShowroomProps) => {
             alt={`${bus.name}, ${counter}`}
             fill
             priority={index === 0 && shot === 0}
-            sizes="(min-width:1024px) 60vw, 100vw"
+            quality={100}
+            sizes="(min-width:1024px) 70vw, 100vw"
             className="object-cover motion-safe:animate-[fleet-fade_450ms_ease-out]"
           />
           {count > 1 ? (
@@ -301,6 +302,7 @@ export const FleetShowroom = ({ categories }: FleetShowroomProps) => {
               src={current}
               alt={`${bus.name}, ${counter}`}
               fill
+              quality={100}
               sizes="100vw"
               className="rounded-2xl object-contain"
             />

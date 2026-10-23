@@ -10,7 +10,7 @@ import { toLocaleDigits } from "@/lib/localeDigits"
 import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { useLocale } from "next-intl"
-import Image from "next/image"
+import { SiteImage as Image } from "@/components/ui/SiteImage"
 import { useLayoutEffect, useRef } from "react"
 
 gsap.registerPlugin(ScrollTrigger)
@@ -101,10 +101,9 @@ export const AboutPreviewClient = ({
         <Image
           src="/hero/landing-sky.jpg"
           alt=""
-          width={1024}
-          height={576}
-          className="absolute inset-0 size-full object-cover object-center"
+          fill
           sizes="130vw"
+          className="object-cover object-center"
           priority={false}
         />
       </div>

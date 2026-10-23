@@ -8,13 +8,11 @@ import { cn } from "@/lib/cn"
 import { ChevronLeft, ChevronRight, X } from "lucide-react"
 import { motion, useMotionValue } from "motion/react"
 import { useTranslations } from "next-intl"
-import Image from "next/image"
+import { SiteImage as Image } from "@/components/ui/SiteImage"
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react"
 
 const SWIPE_DISTANCE = 72
 const SWIPE_VELOCITY = 550
-/** Must match `images.qualities` in next.config.ts */
-const IMAGE_QUALITY = 90
 
 type TabId = "all" | "fleet" | "interior" | "workshop" | "facilities"
 
@@ -197,7 +195,6 @@ export const PhotoGallery = ({ photos }: PhotoGalleryProps) => {
               width={photo.width}
               height={photo.height}
               sizes="(max-width: 767px) 50vw, (max-width: 1279px) 33vw, 25vw"
-              quality={IMAGE_QUALITY}
               priority={index < 4}
               className="h-auto w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
             />
@@ -233,7 +230,6 @@ export const PhotoGallery = ({ photos }: PhotoGalleryProps) => {
                 width={current.width}
                 height={current.height}
                 sizes="100vw"
-                quality={IMAGE_QUALITY}
                 priority
                 draggable={false}
                 className="pointer-events-none max-h-[min(82dvh,920px)] w-auto max-w-[min(96vw,1400px)] object-contain shadow-[0_24px_80px_-28px_rgba(0,0,0,0.65)]"

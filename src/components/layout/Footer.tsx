@@ -3,7 +3,7 @@ import { getCompanies, getSiteConfig } from "@/content"
 import type { AppLocale } from "@/content/types"
 import { Link } from "@/i18n/navigation"
 import { getLocale, getTranslations } from "next-intl/server"
-import Image from "next/image"
+import { SiteImage as Image } from "@/components/ui/SiteImage"
 
 export const Footer = async () => {
   const t = await getTranslations("footer")

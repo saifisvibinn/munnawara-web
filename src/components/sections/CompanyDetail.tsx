@@ -5,7 +5,7 @@ import { getCompany } from "@/content"
 import type { AppLocale, CompanySlug } from "@/content/types"
 import { getTranslations, setRequestLocale } from "next-intl/server"
 import { notFound } from "next/navigation"
-import Image from "next/image"
+import { SiteImage as Image } from "@/components/ui/SiteImage"
 
 type PageProps = {
   params: Promise<{ locale: string }>
