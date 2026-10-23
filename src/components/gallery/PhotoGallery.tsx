@@ -9,7 +9,6 @@ import { ChevronLeft, ChevronRight, X } from "lucide-react"
 import { motion, useMotionValue } from "motion/react"
 import { useTranslations } from "next-intl"
 import Image from "next/image"
-import { useSearchParams } from "next/navigation"
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react"
 
 const SWIPE_DISTANCE = 72
@@ -42,7 +41,6 @@ type PhotoGalleryProps = {
 
 export const PhotoGallery = ({ photos }: PhotoGalleryProps) => {
   const t = useTranslations("photoGallery")
-  const searchParams = useSearchParams()
   const [tab, setTab] = useState<TabId>("all")
   const [openIndex, setOpenIndex] = useState<number | null>(null)
   const dialogRef = useRef<HTMLDialogElement>(null)
@@ -78,9 +76,10 @@ export const PhotoGallery = ({ photos }: PhotoGalleryProps) => {
   }, [openIndex, x])
 
   // Deep-link: /gallery?p=workshop-0331 opens that photo in the lightbox.
+  // Read from the URL after mount (not useSearchParams), so the grid itself renders on the server.
   useEffect(() => {
     if (openedFromQuery.current) return
-    const id = searchParams.get("p")
+    const id = new URLSearchParams(window.location.search).get("p")
     if (!id) return
     const allCategories = TABS[0]?.categories ?? []
     const index = photos
@@ -90,7 +89,7 @@ export const PhotoGallery = ({ photos }: PhotoGalleryProps) => {
     openedFromQuery.current = true
     setTab("all")
     setOpenIndex(index)
-  }, [photos, searchParams])
+  }, [photos])
 
   const handleDragEnd = (
     _: unknown,

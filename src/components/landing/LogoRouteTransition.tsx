@@ -66,25 +66,13 @@ export const PageRouteTransition = () => {
   const pathname = usePathname()
   const router = useRouter()
 
-  // Warm every page in both locales. Prefetch is a no-op in `next dev`.
-  // Locale Links never prefetch; warming both locales makes AR↔EN switches cheap.
+  // Warm every page in the visitor's language. Other languages are warmed when the
+  // visitor points at the language switcher; most never switch.
   useEffect(() => {
     const connection = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection
     if (connection?.saveData) return
-    for (const route of SITE_ROUTES) {
-      for (const locale of routing.locales) {
-        router.prefetch(route, { locale })
-      }
-    }
+    for (const route of SITE_ROUTES) router.prefetch(route)
   }, [router])
-
-  useEffect(() => {
-    const connection = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection
-    if (connection?.saveData) return
-    for (const locale of routing.locales) {
-      router.prefetch(pathname, { locale })
-    }
-  }, [router, pathname])
 
   const pathnameRef = useRef(pathname)
   const firstPathRef = useRef(true)

@@ -39,17 +39,6 @@ export const LandingLanguageSwitcher = forwardRef<HTMLDivElement>(
     const listId = useId()
 
     useEffect(() => {
-      const connection = (
-        navigator as Navigator & { connection?: { saveData?: boolean } }
-      ).connection
-      if (connection?.saveData) return
-      for (const next of routing.locales) {
-        if (next === locale) continue
-        router.prefetch(pathname, { locale: next })
-      }
-    }, [router, pathname, locale])
-
-    useEffect(() => {
       if (!open) return
       const handlePointer = (event: MouseEvent) => {
         if (!rootRef.current?.contains(event.target as Node)) setOpen(false)
