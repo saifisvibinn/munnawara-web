@@ -252,7 +252,7 @@ export const updateQuoteRequest = async (
   const data = parsed.data
   const { body, ...summary } = buildBackendQuote(data)
   try {
-    const response = await fetch(`${serverChatApiUrl()}/quotes/${edit.quoteId}`, {
+    const response = await fetch(`${serverChatApiUrl()}/quotes/${encodeURIComponent(edit.quoteId)}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
