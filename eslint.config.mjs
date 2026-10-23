@@ -18,9 +18,10 @@ const eslintConfig = [
       "out/**",
       "build/**",
       "next-env.d.ts",
-      // Vendored Framer modules (minified) — linting them is noise.
+      // Agent skill tooling, not site code.
+      ".agents/**",
+      // Vendored Framer module (minified) — linting it is noise.
       "src/components/about/framer-video-player.js",
-      "src/components/framer/liquid-glass-button.js",
     ],
   },
 ];

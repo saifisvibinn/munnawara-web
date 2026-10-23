@@ -1,7 +1,6 @@
 /**
  * Live chat backend (the droplet). Used when no env var is set, so removing
  * this would break production chat if CHAT_API_URL is missing on Vercel.
- * `next.config.ts` imports this too, so keep it free of other imports.
  */
 export const DEFAULT_CHAT_API_URL = "https://164-92-131-93.sslip.io"
 

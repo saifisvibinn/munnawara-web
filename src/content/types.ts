@@ -212,21 +212,6 @@ export type HomeContent = {
   ctaBandSubtitle: string
 }
 
-export type CareRevealBenefitIcon = "group" | "signal" | "shield" | "route"
-
-export type CareRevealBenefit = {
-  id: string
-  icon: CareRevealBenefitIcon
-  label: string
-}
-
-export type CareRevealContent = {
-  eyebrow: string
-  headingLines: readonly [string, string]
-  body: string
-  benefits: readonly CareRevealBenefit[]
-}
-
 export type ContactPhoneLine = {
   id: string
   label: string

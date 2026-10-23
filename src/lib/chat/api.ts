@@ -57,5 +57,3 @@ export const api = async <T>(
   }
   return data as T
 }
-
-export const chatApiBase = () => API_BASE
