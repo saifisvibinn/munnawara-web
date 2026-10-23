@@ -6,18 +6,6 @@
       "sourceType": "github",
       "skillPath": ".agents/skills/impeccable/SKILL.md",
       "computedHash": "d55800186ff7651be356015b103047b9dd84f83172cc257042a322491df3502e"
-    },
-    "security-audit": {
-      "source": "cloudflare/security-audit-skill",
-      "sourceType": "github",
-      "skillPath": "skills/security-audit/SKILL.md",
-      "computedHash": "e6b2e317de75da97e9de18d842982994803f3a67a4a6d8154a82323dc3de8528"
-    },
-    "ui-test": {
-      "source": "browserbase/skills",
-      "sourceType": "github",
-      "skillPath": "skills/ui-test/SKILL.md",
-      "computedHash": "d881ae3b0140ba5d1bb0155a1fe818b6ff2acfd76637e2f0f38913a8e66b469a"
     }
   }
 }

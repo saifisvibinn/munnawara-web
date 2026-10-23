@@ -21,8 +21,7 @@ Open `http://localhost:3000` → redirects to `/ar`. Key routes: `/en/about`, `/
 |------|---------|
 | `AGENTS.md` | **Start here** — stack, hard rules, About film, skills |
 | `README.md` | Surfaces, assets, dev commands |
-| `DESIGN.md` | Editorial “Sacred Hospitality” draft — **hex/tokens in production follow `src/lib/theme.ts` (orange/blue/purple)** |
-| `src/lib/theme.ts` | Shipped brand tokens |
+| `src/lib/theme.ts` | Shipped brand tokens (orange / blue / purple) |
 | `src/content/{ar,en}/` | Page copy; accessors in `src/content/index.ts` |
 | `src/messages/{ar,en}.json` | UI chrome (nav, quote labels, etc.) |
 

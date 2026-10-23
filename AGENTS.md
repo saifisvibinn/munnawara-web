@@ -6,7 +6,7 @@
 - `next-intl` with default locale `ar` (RTL) and LTR locales `en`, `fr`, `id`
 - Local typed content in `src/content/{ar,en,fr,id}/` via accessor functions in `src/content/index.ts`
 - Motion (Framer), GSAP + ScrollTrigger, Lenis for animation
-- Shipped brand tokens are orange / blue / purple from `theme.ts` (not the green/gold draft in `DESIGN.md`)
+- Shipped brand tokens are orange / blue / purple from `theme.ts`
 
 ## Hard rules
 - Never hardcode user-facing strings in components — use `src/messages/{ar,en,fr,id}.json` for UI chrome and `src/content/{ar,en,fr,id}/` for page copy
@@ -28,7 +28,7 @@
 - Set `dir` and `lang` on `<html>` from the locale layout (`ar` RTL; others LTR)
 
 ## Agent skills
-`impeccable` is installed as a project skill in `.agents/skills/` (mirrored at `.cursor/skills/` for Cursor). Restore project skills with `npx skills experimental_install`. Emil Kowalski skills (`emilkowalski/skills`) are installed globally — available in every project. Impeccable design hook is enabled via `.cursor/hooks.json` + `.impeccable/config.json`. Prefer these for UI craft work:
+`impeccable` is installed as a project skill in `.agents/skills/` (mirrored at `.cursor/skills/` for Cursor). Restore with `npx skills experimental_install` — the Windows binary is not committed; the install step fetches it. Emil Kowalski skills (`emilkowalski/skills`) and ponytail skills are global. Impeccable design hook: `.cursor/hooks.json` + `.impeccable/config.json`. Prefer these for UI craft work:
 
 | Skill | Use when |
 |---|---|
@@ -40,9 +40,9 @@
 | `pick-ui-library` | Choosing a UI library |
 | `break-ui` | Stress-test UI with worst-case data (long names, empty states, overflow) |
 
-Also available globally (use only if relevant): `animate-expo`, `apple-design`, `mobile-native`, `write-swift`.
+Also available globally (use only if relevant): `animate-expo`, `apple-design`, `mobile-native`, `write-swift`, `ponytail-audit`.
 
-Do not invent brand tokens — follow `src/lib/theme.ts`, `DESIGN.md`, and existing page patterns.
+Do not invent brand tokens — follow `src/lib/theme.ts` and existing page patterns.
 
 ## Documentation & MCP (handover)
 
