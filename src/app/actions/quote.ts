@@ -4,11 +4,14 @@ import {
   quoteRequestSchema,
   type QuoteRequestInput,
 } from "@/components/forms/formSchemas"
-import { DEFAULT_CHAT_API_URL, serverChatApiUrl } from "@/lib/chat/upstream"
+import { proxyHeadersFrom } from "@/lib/chat/proxyHeaders"
+import { serverChatApiUrl } from "@/lib/chat/upstream"
+import { headers } from "next/headers"
+import { after } from "next/server"
 
 export type QuoteActionState = {
   ok: boolean
-  messageKey: "success" | "error"
+  messageKey: "success" | "error" | "rateLimited"
   leadId?: string
   quoteSlaHours?: number
   /** Lets the same browser edit the request until staff start on it. */
@@ -17,7 +20,7 @@ export type QuoteActionState = {
 
 export type QuoteEditState = {
   ok: boolean
-  messageKey: "success" | "error" | "locked"
+  messageKey: "success" | "error" | "locked" | "rateLimited"
   leadId?: string
 }
 
@@ -27,10 +30,6 @@ const DEFAULT_EMAIL_FROM = "Durrat Almunawwara Co. Website <onboarding@resend.de
 
 /** Collapse CR/LF so user text cannot inject headers into an email subject. */
 const singleLine = (value: string) => value.replace(/[\r\n]+/g, " ").trim()
-
-function backendBaseUrl() {
-  return serverChatApiUrl(process.env.QUOTE_API_URL || DEFAULT_CHAT_API_URL)
-}
 
 type QuoteData = ReturnType<typeof quoteRequestSchema.parse>
 
@@ -182,52 +181,43 @@ export const submitQuoteRequest = async (
   }
 
   const data = parsed.data
-  const base = backendBaseUrl()
   const { body, ...summary } = buildBackendQuote(data)
   let leadId: string | undefined
   let quoteSlaHours = 24
   let edit: QuoteActionState["edit"]
 
-  if (base) {
-    try {
-      const response = await fetch(`${base}/quotes`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        signal: AbortSignal.timeout(BACKEND_TIMEOUT_MS),
-        body: JSON.stringify(body),
-      })
+  try {
+    const response = await fetch(`${serverChatApiUrl()}/quotes`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", ...proxyHeadersFrom(await headers()) },
+      signal: AbortSignal.timeout(BACKEND_TIMEOUT_MS),
+      body: JSON.stringify(body),
+    })
 
-      if (!response.ok) {
-        console.error("[quote] backend failed", await response.text())
-        return { ok: false, messageKey: "error" }
-      }
-
-      const created = (await response.json()) as {
-        leadId?: string
-        quoteSlaHours?: number
-        editToken?: string
-        quote?: { _id?: string; leadId?: string }
-      }
-      leadId = created.leadId || created.quote?.leadId
-      if (created.quoteSlaHours) quoteSlaHours = created.quoteSlaHours
-      if (created.quote?._id && created.editToken) {
-        edit = { quoteId: String(created.quote._id), editToken: created.editToken }
-      }
-    } catch (error) {
-      console.error("[quote] backend submit failed", error)
+    if (response.status === 429) return { ok: false, messageKey: "rateLimited" }
+    if (!response.ok) {
+      console.error("[quote] backend failed", await response.text())
       return { ok: false, messageKey: "error" }
     }
-  } else {
-    leadId = `DM-LOCAL-${Date.now().toString(36).toUpperCase()}`
-    console.info("[quote] preview submission (no CHAT_API_URL)", {
-      leadId,
-      tripType: data.tripType,
-      pickup: data.pickup,
-      destination: data.destination,
-    })
+
+    const created = (await response.json()) as {
+      leadId?: string
+      quoteSlaHours?: number
+      editToken?: string
+      quote?: { _id?: string; leadId?: string }
+    }
+    leadId = created.leadId || created.quote?.leadId
+    if (created.quoteSlaHours) quoteSlaHours = created.quoteSlaHours
+    if (created.quote?._id && created.editToken) {
+      edit = { quoteId: String(created.quote._id), editToken: created.editToken }
+    }
+  } catch (error) {
+    console.error("[quote] backend submit failed", error)
+    return { ok: false, messageKey: "error" }
   }
 
-  await emailInbox(data, leadId, summary)
+  // The request is saved; the inbox copy should not hold up the customer.
+  after(() => emailInbox(data, leadId, summary))
 
   return {
     ok: true,
@@ -250,11 +240,9 @@ export const updateQuoteRequest = async (
   raw: QuoteRequestInput,
 ): Promise<QuoteEditState> => {
   const parsed = quoteRequestSchema.safeParse(raw)
-  const base = backendBaseUrl()
   if (
     !parsed.success ||
     parsed.data.companyWebsite ||
-    !base ||
     !QUOTE_ID_RE.test(edit?.quoteId ?? "") ||
     !EDIT_TOKEN_RE.test(edit?.editToken ?? "")
   ) {
@@ -264,20 +252,25 @@ export const updateQuoteRequest = async (
   const data = parsed.data
   const { body, ...summary } = buildBackendQuote(data)
   try {
-    const response = await fetch(`${base}/quotes/${edit.quoteId}`, {
+    const response = await fetch(`${serverChatApiUrl()}/quotes/${edit.quoteId}`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json", "x-edit-token": edit.editToken },
+      headers: {
+        "Content-Type": "application/json",
+        "x-edit-token": edit.editToken,
+        ...proxyHeadersFrom(await headers()),
+      },
       signal: AbortSignal.timeout(BACKEND_TIMEOUT_MS),
       body: JSON.stringify(body),
     })
     if (response.status === 409) return { ok: false, messageKey: "locked" }
+    if (response.status === 429) return { ok: false, messageKey: "rateLimited" }
     if (!response.ok) {
       console.error("[quote] backend edit failed", response.status, await response.text())
       return { ok: false, messageKey: "error" }
     }
     const updated = (await response.json()) as { leadId?: string; quote?: { leadId?: string } }
     const leadId = updated.leadId || updated.quote?.leadId
-    await emailInbox(data, leadId, summary, true)
+    after(() => emailInbox(data, leadId, summary, true))
     return { ok: true, messageKey: "success", leadId }
   } catch (error) {
     console.error("[quote] backend edit failed", error)

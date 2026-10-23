@@ -66,6 +66,10 @@ export const COPY = {
     en: "Something went wrong. Please try again or contact us on WhatsApp.",
     ar: "حدث خطأ ما. حاول مرة أخرى أو تواصل معنا عبر واتساب.",
   },
+  rateLimited: {
+    en: "Too many requests from this number. Please try again in a few minutes.",
+    ar: "طلبات كثيرة من هذا الرقم. حاول مرة أخرى بعد بضع دقائق.",
+  },
   fields: {
     name: { en: "Full name", ar: "الاسم الكامل" },
     organization: { en: "Organization / mission", ar: "اسم الجهة" },

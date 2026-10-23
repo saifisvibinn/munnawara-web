@@ -57,7 +57,6 @@ const COPY = {
       ar: "هذا الطلب مغلق. تواصل معنا إذا رغبت في إعادة فتحه أو التخطيط لرحلة جديدة.",
     },
   },
-  price: { en: "Quoted price", ar: "السعر المعروض" },
   route: { en: "Route", ar: "المسار" },
   date: { en: "Trip date", ar: "تاريخ الرحلة" },
   group: { en: "Group", ar: "المجموعة" },
@@ -100,7 +99,13 @@ export const TrackRequest = ({ initialLeadId = "" }: { initialLeadId?: string })
 
   const lookup = async (id: string, tel: string) => {
     setPending(true)
-    const next = await trackQuoteRequest(id, tel)
+    let next: TrackResult
+    try {
+      next = await trackQuoteRequest(id, tel)
+    } catch {
+      // Network drop, or an old tab calling an action from a previous deploy.
+      next = { ok: false, reason: "error" }
+    }
     setResult(next)
     setPending(false)
     const saved = loadSavedQuote()
@@ -126,10 +131,6 @@ export const TrackRequest = ({ initialLeadId = "" }: { initialLeadId?: string })
     void lookup(leadId, phone)
   }
 
-  const money = (amount: number, currency: string) =>
-    `${new Intl.NumberFormat(isAr ? "ar-SA" : "en-US", { maximumFractionDigits: 2 }).format(amount)} ${
-      currency === "SAR" ? (isAr ? "ريال سعودي" : "SAR") : currency
-    }`
   const day = (iso: string) => {
     const d = new Date(iso)
     return Number.isNaN(d.getTime())
@@ -223,15 +224,6 @@ export const TrackRequest = ({ initialLeadId = "" }: { initialLeadId?: string })
               ))}
             </ol>
             <p className="mt-5 text-base leading-relaxed text-ink">{tx(COPY.status[tracking.status])}</p>
-
-            {tracking.quotedPrice != null ? (
-              <div className="mt-4 rounded-xl bg-orange/10 px-4 py-3 ring-1 ring-orange/25">
-                <p className="text-xs text-ink-muted">{tx(COPY.price)}</p>
-                <p className="mt-0.5 text-2xl font-semibold tabular-nums text-ink">
-                  {money(tracking.quotedPrice, tracking.currency)}
-                </p>
-              </div>
-            ) : null}
 
             <dl className="mt-4 space-y-1.5 rounded-xl bg-surface-muted/60 px-4 py-3 text-sm">
               <div className="flex flex-wrap gap-x-2">

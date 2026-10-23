@@ -1,3 +1,4 @@
+import { proxyHeadersFrom } from "@/lib/chat/proxyHeaders"
 import { serverChatApiUrl } from "@/lib/chat/upstream"
 import { NextRequest, NextResponse } from "next/server"
 
@@ -65,15 +66,8 @@ const proxyChat = async (req: NextRequest, context: RouteContext) => {
   })
   headers.set("Accept", "application/json")
 
-  // Every visitor reaches the backend from this server's IP. With the shared key the
-  // backend rate-limits on the real visitor IP instead of one bucket for the site.
-  const proxyKey = process.env.CHAT_PROXY_KEY
-  const visitorIp =
-    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
-    req.headers.get("x-real-ip")?.trim()
-  if (proxyKey && visitorIp) {
-    headers.set("x-proxy-key", proxyKey)
-    headers.set("x-client-ip", visitorIp)
+  for (const [key, value] of Object.entries(proxyHeadersFrom(req.headers))) {
+    headers.set(key, value)
   }
 
   let body: ArrayBuffer | undefined
