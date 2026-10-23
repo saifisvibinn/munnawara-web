@@ -142,7 +142,11 @@ export const fetchChatHistory = (conversationId: string, phone: string) =>
 export const uploadChatFile = async (conversationId: string, file: File) => {
   const slot = await api<{ key: string; uploadUrl: string; headers: Record<string, string> }>(
     "/chat/upload",
-    { method: "POST", json: { conversationId, contentType: file.type, size: file.size } },
+    {
+      method: "POST",
+      // The phone proves this visitor owns the chat (same check as history and live updates).
+      json: { conversationId, contentType: file.type, size: file.size, customerPhone: loadIdentity()?.phone },
+    },
   )
   const res = await fetch(slot.uploadUrl, { method: "PUT", headers: slot.headers, body: file })
   if (!res.ok) throw new ApiError(res.status, "Upload failed")
@@ -166,6 +170,8 @@ export const sendChatMessage = (input: {
       choiceId: input.choiceId,
       attachment: input.attachment,
       conversationId: input.conversationId,
+      // The phone proves this visitor owns the chat (same check as history and live updates).
+      customerPhone: loadIdentity()?.phone,
       lang: input.lang,
     },
   })
