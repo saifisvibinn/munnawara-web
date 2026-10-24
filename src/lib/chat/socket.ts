@@ -5,13 +5,20 @@ import { DEFAULT_CHAT_API_URL } from "./upstream"
 /**
  * Socket server URL.
  * Prefer explicit public API host — Next rewrites don't proxy WebSockets reliably.
+ * A badly typed value (e.g. "https//host") falls back to the default host,
+ * the same way the CSP in next.config.ts does, so the two always match.
  */
-const socketServerUrl = () =>
-  (
+const socketServerUrl = () => {
+  const raw =
     process.env.NEXT_PUBLIC_CHAT_API_URL ||
     process.env.NEXT_PUBLIC_CHAT_SOCKET_URL ||
     DEFAULT_CHAT_API_URL
-  ).replace(/\/$/, "")
+  try {
+    return new URL(raw.trim()).origin
+  } catch {
+    return DEFAULT_CHAT_API_URL
+  }
+}
 
 let socket: Socket | null = null
 
