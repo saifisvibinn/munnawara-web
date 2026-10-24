@@ -2731,6 +2731,14 @@ body.is-landing-menu-open .site-nav__bar {
     padding: 8px 12px;
   }
 
+  /* The switcher sits on the start side here, so the menu opens inward from its start
+     edge (the desktop end-anchoring pushed it off-screen). */
+  .lang-switch__menu {
+    inset-inline-start: 0;
+    inset-inline-end: auto;
+    max-width: calc(100vw - 2 * var(--page-pad));
+  }
+
   .theme-toggle {
     /* Centered on the 52px menu pill, sitting just before it (pill = 44px + 32px padding) */
     top: 20px;
