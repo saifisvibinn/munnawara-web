@@ -12,7 +12,7 @@ import {
 import { CheckBadge, choiceIcon } from "./QuoteChoiceIcons"
 import { DatePicker, NumberStepper, TimePicker } from "./QuoteFields"
 import { COPY } from "./quoteWizardCopy"
-import { tripLine, type SummaryRow, type Tx } from "./quoteWizardLogic"
+import { getSeatCapacity, tripLine, type SummaryRow, type Tx } from "./quoteWizardLogic"
 import { MAX_TRIPS, emptyTrip, type StepId, type Trip, type WizardState } from "./quoteWizardTypes"
 import { Choices, Field, PlaceSelect, fieldClass, fieldErrorRing } from "./quoteWizardUi"
 
@@ -309,7 +309,7 @@ export function StepBody({
               id="qw-pax"
               locale={locale}
               min={1}
-              max={500}
+              max={Math.min(500, Math.max(1, getSeatCapacity(state)))}
               step={1}
               error={errors.passengers}
               value={state.passengers}

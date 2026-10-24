@@ -24,6 +24,20 @@ export const busClasses = [
 
 export type BusClass = (typeof busClasses)[number]
 
+/** Seated capacity per bus class. Passengers in a quote may not exceed the chosen buses' total. */
+export const busSeats: Record<BusClass, number> = {
+  standard: 49,
+  vip: 28,
+  city: 28,
+  coach: 45,
+  employee: 41,
+  premium_vip: 18,
+  city_large: 45,
+}
+
+export const seatCapacity = (buses: readonly { busClass: BusClass; count: number }[]) =>
+  buses.reduce((total, bus) => total + busSeats[bus.busClass] * bus.count, 0)
+
 export const orgRequiredTypes: readonly TripType[] = [
   "company",
   "government",
@@ -73,6 +87,16 @@ export const quoteRequestSchema = z
         code: z.ZodIssueCode.custom,
         message: "bus count exceeds maximum",
         path: ["busMix"],
+      })
+    }
+    const buses = data.busMix.length
+      ? data.busMix
+      : [{ busClass: data.busClass, count: data.busCount }]
+    if (data.passengers > seatCapacity(buses)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "passengers exceed seat capacity",
+        path: ["passengers"],
       })
     }
     if (

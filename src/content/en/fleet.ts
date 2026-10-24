@@ -152,7 +152,7 @@ export const fleet: readonly FleetCategory[] = [
     name: "Coaster Bus",
     seatsLabel: "28",
     summary:
-      "Small groups, staff transport, and quick trips, easy to move through city streets and holy-site roads.",
+      "Built for school transport: daily student runs, plus small groups and staff trips, easy to move through city streets and holy-site roads.",
     amenities: [
       "Seat belts",
       "Safety features",

@@ -86,6 +86,10 @@ export const COPY = {
     notes: { en: "Anything else we should know?", ar: "هل هناك أي شيء آخر نحتاج أن نعرفه؟" },
   },
   trip: (n: number): L10n => ({ en: `Trip ${n}`, ar: `الرحلة ${n}` }),
+  seatsExceeded: (n: number): L10n => ({
+    en: `Your buses seat ${n} passengers. Lower the number or add another bus.`,
+    ar: `الحافلات المختارة تتسع لـ ${n} راكباً. قلّل العدد أو أضف حافلة أخرى.`,
+  }),
   addTrip: { en: "Add another trip", ar: "إضافة رحلة أخرى" },
   removeTrip: { en: "Remove this trip", ar: "حذف هذه الرحلة" },
   pickPlace: { en: "Choose a location", ar: "اختر الموقع" },

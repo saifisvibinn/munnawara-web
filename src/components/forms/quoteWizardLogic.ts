@@ -10,6 +10,7 @@ import {
   type MapStop,
 } from "./quoteWizardConfig"
 import { COPY } from "./quoteWizardCopy"
+import { seatCapacity } from "./formSchemas"
 import type { StepId, Trip, WizardState } from "./quoteWizardTypes"
 
 export type Tx = (text: L10n) => string
@@ -90,6 +91,16 @@ export function tripLine(t: Trip, locale: string, short = false): string {
     .join(" · ")
 }
 
+/** Total seats across the buses chosen in the vehicle step. */
+export function getSeatCapacity(state: WizardState): number {
+  return seatCapacity(
+    busClassOptions.map((option) => ({
+      busClass: option.id,
+      count: Number(state.busCounts[option.id] ?? 0),
+    })),
+  )
+}
+
 export function validateStep(
   id: StepId,
   state: WizardState,
@@ -116,6 +127,8 @@ export function validateStep(
     case "passengers":
       if (!Number(state.passengers) || Number(state.passengers) < 1) {
         e.passengers = tx(COPY.errors.passengers)
+      } else if (Number(state.passengers) > getSeatCapacity(state)) {
+        e.passengers = tx(COPY.seatsExceeded(getSeatCapacity(state)))
       }
       break
     case "vehicle":

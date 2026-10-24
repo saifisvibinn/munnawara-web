@@ -152,7 +152,7 @@ export const fleet: readonly FleetCategory[] = [
     name: "Bus Coaster",
     seatsLabel: "28",
     summary:
-      "Petits groupes, transport de personnel et trajets rapides, facile à manœuvrer dans les rues de la ville et sur les routes des Lieux saints.",
+      "Conçu pour le transport scolaire : trajets quotidiens des élèves, ainsi que petits groupes et transport de personnel, facile à manœuvrer dans les rues de la ville et sur les routes des Lieux saints.",
     amenities: [
       "Ceintures de sécurité",
       "Équipements de sécurité",

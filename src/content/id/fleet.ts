@@ -152,7 +152,7 @@ export const fleet: readonly FleetCategory[] = [
     name: "Bus Coaster",
     seatsLabel: "28",
     summary:
-      "Kelompok kecil, transportasi staf, dan perjalanan singkat, mudah bergerak di jalan kota dan rute Tempat Suci.",
+      "Dirancang untuk transportasi sekolah: antar-jemput siswa harian, serta kelompok kecil dan transportasi staf, mudah bergerak di jalan kota dan rute Tempat Suci.",
     amenities: [
       "Sabuk pengaman",
       "Fitur keselamatan",
