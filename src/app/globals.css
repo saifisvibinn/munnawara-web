@@ -336,6 +336,28 @@ body {
   animation: haze-drift 26s ease-in-out infinite alternate-reverse;
 }
 
+/*
+ * Scroll reveal (AnimatedSection / Stagger). Content is visible in the server
+ * HTML; only browsers with scroll-driven animations fade it up as it enters.
+ * Anything already on screen at load is past its entry range, so it never hides.
+ */
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .reveal {
+      animation: reveal-up linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 40%;
+    }
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-ken-burns,
   .animate-haze,

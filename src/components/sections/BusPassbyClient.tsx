@@ -148,8 +148,10 @@ export const BusPassbyClient = ({
               isRtl && "-scale-x-100",
             )}
           >
+            {/* Unoptimized on purpose: same URL the landing preloads, so it is fetched once (49 KB). */}
             <Image
-              src="/motion/bus-top.png"
+              src="/motion/bus-top.webp"
+              unoptimized
               alt=""
               width={1800}
               height={452}

@@ -124,7 +124,7 @@ export function QuoteTicket() {
         key={vertical ? "v" : "h"}
         orientation={vertical ? "vertical" : "horizontal"}
         {...size}
-        image="/hero/quote-ticket-bus.jpg"
+        image="/hero/quote-ticket-bus.webp"
         imageAlt=""
         imageRadius={10}
         radius={18}

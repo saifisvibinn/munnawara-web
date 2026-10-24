@@ -111,7 +111,7 @@ const ASSET_FAILSAFE_MS = 9000
 
 /** First-scroll assets that sit outside the intro root but cause jank if cold. */
 const CRITICAL_PRELOAD_URLS = [
-  "/motion/bus-top.png",
+  "/motion/bus-top.webp",
   "/hero/landing-sky.jpg",
 ] as const
 

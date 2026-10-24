@@ -1,7 +1,6 @@
 "use client"
 
 import { AiChatButton } from "@/components/chat/AiChatButton"
-import { ChatPanel } from "@/components/chat/ChatPanel"
 import {
   IDLE_HINTS,
   fabMood,
@@ -12,6 +11,7 @@ import { cn } from "@/lib/cn"
 import { useReducedMotion } from "@/hooks/useReducedMotion"
 import { usePathname } from "@/i18n/navigation"
 import { useTranslations } from "next-intl"
+import dynamic from "next/dynamic"
 import {
   useCallback,
   useEffect,
@@ -20,6 +20,10 @@ import {
   useState,
   type MouseEvent as ReactMouseEvent,
 } from "react"
+
+// The panel (and socket.io) only does work once opened, so it stays out of every page's first load.
+const loadChatPanel = () => import("@/components/chat/ChatPanel")
+const ChatPanel = dynamic(() => loadChatPanel().then((m) => m.ChatPanel), { ssr: false })
 
 type ChatWidgetProps = {
   className?: string
@@ -71,6 +75,8 @@ export const ChatWidget = ({
   const pathname = usePathname()
   const reduced = useReducedMotion()
   const [open, setOpen] = useState(false)
+  // Mounted on first open, then kept so live replies still raise the unread badge.
+  const [panelMounted, setPanelMounted] = useState(false)
   const [unread, setUnread] = useState(0)
   const [idleIndex, setIdleIndex] = useState(0)
   const [contextHint, setContextHint] = useState<DurriHintKey | null>(null)
@@ -196,6 +202,7 @@ export const ChatWidget = ({
 
   const handleClick = (event: ReactMouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
+    setPanelMounted(true)
     setOpen((value) => {
       const next = !value
       if (next) setUnread(0)
@@ -218,14 +225,20 @@ export const ChatWidget = ({
         tip={tip}
         mood={mood}
         onClick={handleClick}
-        onPointerEnter={() => setHoveringFab(true)}
+        onPointerEnter={() => {
+          setHoveringFab(true)
+          void loadChatPanel()
+        }}
+        onFocus={() => void loadChatPanel()}
         onPointerLeave={() => setHoveringFab(false)}
       />
-      <ChatPanel
-        open={open}
-        onClose={() => setOpen(false)}
-        onUnreadChange={handleUnread}
-      />
+      {panelMounted ? (
+        <ChatPanel
+          open={open}
+          onClose={() => setOpen(false)}
+          onUnreadChange={handleUnread}
+        />
+      ) : null}
     </>
   )
 }

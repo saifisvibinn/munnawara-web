@@ -84,7 +84,7 @@ export const HeroVideo = forwardRef<HeroVideoHandle, HeroVideoProps>(
 
       if (video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA) {
         // Mobile often ignores preload until play is requested — nudge it, but never
-        // while it is already downloading: load() restarts the 22 MB fetch from zero.
+        // while it is already downloading: load() restarts the clip download from zero.
         playPendingRef.current = true
         if (video.networkState !== HTMLMediaElement.NETWORK_LOADING) {
           try {

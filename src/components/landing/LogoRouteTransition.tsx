@@ -71,7 +71,16 @@ export const PageRouteTransition = () => {
   useEffect(() => {
     const connection = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection
     if (connection?.saveData) return
-    for (const route of SITE_ROUTES) router.prefetch(route)
+    // Wait until the page has settled so prefetching never competes with first paint.
+    const warm = () => {
+      for (const route of SITE_ROUTES) router.prefetch(route)
+    }
+    if (typeof window.requestIdleCallback === "function") {
+      const id = window.requestIdleCallback(warm, { timeout: 4000 })
+      return () => window.cancelIdleCallback(id)
+    }
+    const id = window.setTimeout(warm, 2500)
+    return () => window.clearTimeout(id)
   }, [router])
 
   const pathnameRef = useRef(pathname)
