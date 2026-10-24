@@ -59,7 +59,8 @@ export function getServiceType(state: WizardState): string {
   return state.customer === "company" && state.service ? `company_${state.service}` : "charter"
 }
 
-const localeTag = (locale: string) => (locale === "ar" ? "ar-SA-u-ca-gregory-nu-latn" : "en-GB")
+const localeTag = (locale: string) =>
+  ({ ar: "ar-SA-u-ca-gregory-nu-latn", fr: "fr-FR", id: "id-ID" } as Record<string, string>)[locale] ?? "en-GB"
 
 export function fmtDate(iso: string, locale: string, short = false): string {
   const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso)

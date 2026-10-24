@@ -371,7 +371,8 @@ const fromISO = (s: string): Date | null => {
   const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s)
   return m ? new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3])) : null
 }
-const localeTag = (locale: string) => (locale === "ar" ? "ar-SA-u-ca-gregory-nu-latn" : "en-GB")
+const localeTag = (locale: string) =>
+  ({ ar: "ar-SA-u-ca-gregory-nu-latn", fr: "fr-FR", id: "id-ID" } as Record<string, string>)[locale] ?? "en-GB"
 
 export function DatePicker({
   id,

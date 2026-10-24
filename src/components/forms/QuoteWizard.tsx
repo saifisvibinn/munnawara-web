@@ -384,7 +384,7 @@ export const QuoteWizard = ({
               </div>
             )}
             {showMap ? (
-              <div className="qw-split__map qw-step qw-step--fwd" aria-label={isAr ? "الخريطة" : "Route map"}>
+              <div className="qw-split__map qw-step qw-step--fwd" aria-label={tx({ en: "Route map", ar: "الخريطة", fr: "Carte de l'itinéraire", id: "Peta rute" })}>
                 <QuoteMap
                   stops={view.stops}
                   context={view.context}

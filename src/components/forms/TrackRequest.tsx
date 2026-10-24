@@ -11,62 +11,95 @@ import { pick, type L10n } from "./quoteWizardConfig"
 import { Field, btnPrimary, fieldClass } from "./quoteWizardUi"
 
 const COPY = {
-  leadId: { en: "Request number", ar: "رقم الطلب" },
-  phone: { en: "Phone used in the request", ar: "رقم الجوال المستخدم في الطلب" },
-  submit: { en: "Check status", ar: "عرض الحالة" },
-  checking: { en: "Checking…", ar: "جارٍ التحقق…" },
+  leadId: { en: "Request number", ar: "رقم الطلب", fr: "Numéro de demande", id: "Nomor permintaan" },
+  phone: {
+    en: "Phone used in the request",
+    ar: "رقم الجوال المستخدم في الطلب",
+    fr: "Téléphone indiqué dans la demande",
+    id: "Nomor telepon yang digunakan dalam permintaan",
+  },
+  submit: { en: "Check status", ar: "عرض الحالة", fr: "Voir le statut", id: "Cek status" },
+  checking: { en: "Checking…", ar: "جارٍ التحقق…", fr: "Vérification…", id: "Memeriksa…" },
   errors: {
     invalid: {
       en: "Enter the request number (like DM-1A2B3C4D) and your phone number.",
       ar: "أدخل رقم الطلب (مثل DM-1A2B3C4D) ورقم جوالك.",
+      fr: "Saisissez le numéro de demande (par ex. DM-1A2B3C4D) et votre numéro de téléphone.",
+      id: "Masukkan nomor permintaan (misalnya DM-1A2B3C4D) dan nomor telepon Anda.",
     },
     not_found: {
       en: "We couldn't find a request with that number and phone. Check both and try again.",
       ar: "لم نجد طلباً بهذا الرقم والجوال. تحقق منهما وحاول مرة أخرى.",
+      fr: "Aucune demande ne correspond à ce numéro et à ce téléphone. Vérifiez-les et réessayez.",
+      id: "Kami tidak menemukan permintaan dengan nomor dan telepon tersebut. Periksa keduanya dan coba lagi.",
     },
     rate_limited: {
       en: "Too many tries for this request. Please wait a few minutes and try again.",
       ar: "محاولات كثيرة لهذا الطلب. يرجى الانتظار بضع دقائق ثم المحاولة مرة أخرى.",
+      fr: "Trop de tentatives pour cette demande. Patientez quelques minutes puis réessayez.",
+      id: "Terlalu banyak percobaan untuk permintaan ini. Silakan tunggu beberapa menit lalu coba lagi.",
     },
     error: {
       en: "Something went wrong. Please try again or contact us on WhatsApp.",
       ar: "حدث خطأ ما. حاول مرة أخرى أو تواصل معنا عبر واتساب.",
+      fr: "Une erreur s'est produite. Réessayez ou contactez-nous sur WhatsApp.",
+      id: "Terjadi kesalahan. Silakan coba lagi atau hubungi kami melalui WhatsApp.",
     },
   },
   steps: {
-    received: { en: "Request received", ar: "تم استلام الطلب" },
-    priced: { en: "Price sent", ar: "تم إرسال السعر" },
-    confirmed: { en: "Booking confirmed", ar: "تم تأكيد الحجز" },
-    closed: { en: "Request closed", ar: "تم إغلاق الطلب" },
+    received: { en: "Request received", ar: "تم استلام الطلب", fr: "Demande reçue", id: "Permintaan diterima" },
+    priced: { en: "Price sent", ar: "تم إرسال السعر", fr: "Prix envoyé", id: "Harga dikirim" },
+    confirmed: { en: "Booking confirmed", ar: "تم تأكيد الحجز", fr: "Réservation confirmée", id: "Pemesanan dikonfirmasi" },
+    closed: { en: "Request closed", ar: "تم إغلاق الطلب", fr: "Demande clôturée", id: "Permintaan ditutup" },
   },
   status: {
     new: {
       en: "Our team is reviewing your request and preparing a price.",
       ar: "يراجع فريقنا طلبك ويجهز عرض السعر.",
+      fr: "Notre équipe étudie votre demande et prépare un prix.",
+      id: "Tim kami sedang meninjau permintaan Anda dan menyiapkan harga.",
     },
     quoted: {
       en: "Your price is ready. Our team will contact you to confirm the booking.",
       ar: "عرض السعر جاهز. سيتواصل معك فريقنا لتأكيد الحجز.",
+      fr: "Votre prix est prêt. Notre équipe vous contactera pour confirmer la réservation.",
+      id: "Harga Anda sudah siap. Tim kami akan menghubungi Anda untuk mengonfirmasi pemesanan.",
     },
     won: {
       en: "Your booking is confirmed. Thank you for choosing us.",
       ar: "تم تأكيد حجزك. شكراً لاختيارك لنا.",
+      fr: "Votre réservation est confirmée. Merci de nous avoir choisis.",
+      id: "Pemesanan Anda telah dikonfirmasi. Terima kasih telah memilih kami.",
     },
     lost: {
       en: "This request is closed. Contact us if you would like to reopen it or plan a new trip.",
       ar: "هذا الطلب مغلق. تواصل معنا إذا رغبت في إعادة فتحه أو التخطيط لرحلة جديدة.",
+      fr: "Cette demande est clôturée. Contactez-nous pour la rouvrir ou préparer un nouveau voyage.",
+      id: "Permintaan ini sudah ditutup. Hubungi kami jika Anda ingin membukanya kembali atau merencanakan perjalanan baru.",
     },
   },
-  route: { en: "Route", ar: "المسار" },
-  date: { en: "Trip date", ar: "تاريخ الرحلة" },
-  group: { en: "Group", ar: "المجموعة" },
-  passengers: (n: number): L10n => ({ en: `${n} passengers`, ar: `${n} راكب` }),
-  buses: (n: number): L10n => ({ en: `${n} bus${n === 1 ? "" : "es"}`, ar: `${n} حافلة` }),
-  updated: { en: "Last updated", ar: "آخر تحديث" },
-  edit: { en: "Edit my request", ar: "تعديل طلبي" },
+  route: { en: "Route", ar: "المسار", fr: "Itinéraire", id: "Rute" },
+  date: { en: "Trip date", ar: "تاريخ الرحلة", fr: "Date du trajet", id: "Tanggal perjalanan" },
+  group: { en: "Group", ar: "المجموعة", fr: "Groupe", id: "Rombongan" },
+  passengers: (n: number): L10n => ({
+    en: `${n} passengers`,
+    ar: `${n} راكب`,
+    fr: `${n} passager${n > 1 ? "s" : ""}`,
+    id: `${n} penumpang`,
+  }),
+  buses: (n: number): L10n => ({
+    en: `${n} bus${n === 1 ? "" : "es"}`,
+    ar: `${n} حافلة`,
+    fr: `${n} autocar${n > 1 ? "s" : ""}`,
+    id: `${n} bus`,
+  }),
+  updated: { en: "Last updated", ar: "آخر تحديث", fr: "Dernière mise à jour", id: "Terakhir diperbarui" },
+  edit: { en: "Edit my request", ar: "تعديل طلبي", fr: "Modifier ma demande", id: "Ubah permintaan saya" },
   editHint: {
     en: "You can still change this request until our team starts working on it.",
     ar: "يمكنك تعديل هذا الطلب حتى يبدأ فريقنا العمل عليه.",
+    fr: "Vous pouvez encore modifier cette demande jusqu'à ce que notre équipe commence à la traiter.",
+    id: "Anda masih dapat mengubah permintaan ini sampai tim kami mulai memprosesnya.",
   },
 }
 
@@ -135,7 +168,7 @@ export const TrackRequest = ({ initialLeadId = "" }: { initialLeadId?: string })
     const d = new Date(iso)
     return Number.isNaN(d.getTime())
       ? iso
-      : d.toLocaleDateString(isAr ? "ar-SA-u-ca-gregory" : "en-GB", {
+      : d.toLocaleDateString(({ ar: "ar-SA-u-ca-gregory", fr: "fr-FR", id: "id-ID" } as Record<string, string>)[locale] ?? "en-GB", {
           day: "numeric",
           month: "short",
           year: "numeric",

@@ -35,6 +35,34 @@ const COPY = {
     skip: "تفضّل نموذجاً عادياً؟",
     used: "تم استخدام التذكرة",
   },
+  fr: {
+    pass: "Carte d'embarquement",
+    brand: "Durrat Almunawwara Co.",
+    title: "Votre voyage commence ici",
+    sub: "Circuits Omra · Transferts · Entreprises · Location",
+    route: "Djeddah → La Mecque → Médine",
+    tear: "Détacher ici",
+    stubTitle: "Demander un devis",
+    stubSub: "Tirez le coupon",
+    hint: "Tirez le coupon orange pour le détacher. Votre devis commence juste après.",
+    opening: "Ouverture de votre devis…",
+    skip: "Vous préférez un formulaire classique ?",
+    used: "Billet utilisé",
+  },
+  id: {
+    pass: "Boarding pass",
+    brand: "Durrat Almunawwara Co.",
+    title: "Perjalanan Anda dimulai di sini",
+    sub: "Paket umrah · Antar-jemput · Korporat · Sewa bus",
+    route: "Jeddah → Makkah → Madinah",
+    tear: "Sobek di sini",
+    stubTitle: "Minta penawaran",
+    stubSub: "Tarik sobekan",
+    hint: "Tarik sobekan oranye untuk menyobeknya. Permintaan penawaran langsung dimulai.",
+    opening: "Membuka permintaan penawaran…",
+    skip: "Lebih suka formulir biasa?",
+    used: "Tiket sudah dipakai",
+  },
 } as const
 
 const query = "(max-width: 639px)"
@@ -48,7 +76,7 @@ const subscribe = (cb: () => void) => {
 export function QuoteTicket() {
   const locale = useLocale()
   const isAr = locale === "ar"
-  const c = COPY[isAr ? "ar" : "en"]
+  const c = COPY[locale in COPY ? (locale as keyof typeof COPY) : "en"]
   const router = useRouter()
   const [opening, setOpening] = useState(false)
   const timer = useRef<number | null>(null)
