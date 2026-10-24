@@ -56,7 +56,7 @@ export const installAuditMocks = async (page: Page) => {
     route.fulfill({ status: 200, contentType: 'application/json', body: '{"routes":[]}' }),
   )
 
-  await page.route('**/164-92-131-93.sslip.io/**', (route) =>
+  await page.route('**/104-248-198-154.sslip.io/**', (route) =>
     route.fulfill({ status: 503, body: 'blocked-by-audit' }),
   )
 
