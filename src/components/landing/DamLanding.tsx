@@ -601,6 +601,19 @@ export const DamLanding = ({ copy }: DamLandingProps) => {
           ease: "sine.inOut",
         })
 
+      // Start the petal flight once hydration and first effects have run, so it never
+      // animates through the long frames of the first second.
+      const loaderAnims = [assemble, breathing, loadingPulse]
+      loaderAnims.forEach((anim) => anim?.pause())
+      const startLoaderAnims = () => {
+        if (!cancelled) loaderAnims.forEach((anim) => anim?.resume())
+      }
+      if (typeof window.requestIdleCallback === "function") {
+        window.requestIdleCallback(startLoaderAnims, { timeout: 900 })
+      } else {
+        window.setTimeout(startLoaderAnims, 300)
+      }
+
       const finishLoading = async () => {
         await waitForPageAssets(elements.root)
         const remaining = Math.max(

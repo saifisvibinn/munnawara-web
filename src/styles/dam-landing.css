@@ -1044,6 +1044,21 @@ body.is-loading .ai-chat-fab__tip {
     0 0 0 3px rgba(45, 138, 214, 0.35),
     0 10px 24px rgba(32, 29, 26, 0.22),
     0 0 28px rgba(247, 91, 18, 0.28);
+}
+
+/* Breathing glow: a fixed shadow whose opacity pulses (GPU-composited), instead of
+   animating box-shadow, which repainted the button on every frame of every page. */
+.ai-chat-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: 999px;
+  pointer-events: none;
+  box-shadow:
+    0 0 0 3px rgba(45, 212, 230, 0.5),
+    0 0 34px rgba(247, 91, 18, 0.38);
+  opacity: 0;
   animation: durri-glow 2.8s ease-in-out infinite;
 }
 
@@ -1160,20 +1175,8 @@ body.is-loading .ai-chat-fab__tip {
 }
 
 @keyframes durri-glow {
-  0%,
-  100% {
-    box-shadow:
-      0 0 0 2px #fff,
-      0 0 0 3px rgba(45, 138, 214, 0.32),
-      0 10px 24px rgba(32, 29, 26, 0.22),
-      0 0 22px rgba(247, 91, 18, 0.22);
-  }
   50% {
-    box-shadow:
-      0 0 0 2px #fff,
-      0 0 0 3px rgba(45, 212, 230, 0.5),
-      0 12px 26px rgba(32, 29, 26, 0.24),
-      0 0 34px rgba(247, 91, 18, 0.38);
+    opacity: 1;
   }
 }
 
@@ -1204,6 +1207,7 @@ body.is-loading .ai-chat-fab__tip {
     transform: none;
   }
 
+  .ai-chat-btn::before,
   .ai-chat-btn__face,
   .ai-chat-btn.is-context .ai-chat-btn__face,
   .ai-chat-fab__tip {
@@ -1955,9 +1959,32 @@ html[dir="rtl"] .route-transition-progress { transform-origin: right center; }
 body.is-page-leaving .route-transition-progress { transform: scaleX(0.78); opacity: 1; }
 body.is-page-arriving .route-transition-progress { transform: scaleX(1); opacity: 0; transition-duration: 120ms, 120ms; }
 
+/* Page-change veil: covers the content (not the nav, logo or FABs) while the next page
+   renders, then fades out over the settled page. Opacity only, so it stays smooth even
+   while the main thread is busy. Fade-in duration must match VEIL_IN_MS. */
+.route-veil {
+  position: fixed;
+  inset: 0;
+  z-index: 35;
+  pointer-events: none;
+  /* Same colour as body (globals.css), so the veil reads as the page, in both themes. */
+  background: var(--brand-surface-elevated);
+  opacity: 0;
+  transition: opacity 320ms cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: opacity;
+}
+html:has(.dam-landing) .route-veil {
+  background: var(--brand-surface);
+}
+body.is-page-transitioning .route-veil {
+  opacity: 1;
+  transition-duration: 180ms;
+}
+
 /* No transform on header/main: it traps fixed children and drops the nav under the blur scrim. */
 @media (prefers-reduced-motion: reduce) {
-  .route-transition-progress { display: none; }
+  .route-transition-progress,
+  .route-veil { display: none; }
 }
 
 .corner-target {
@@ -1998,6 +2025,12 @@ body.is-page-arriving .route-transition-progress { transform: scaleX(1); opacity
 
 .corner-logo.is-petal-flying .logo-mark--live .petal {
   animation: none;
+}
+
+/* SVG <g> transforms can't be composited, so each petal frame repaints. A layer of
+   its own keeps that repaint to the small logo instead of the whole page. */
+.logo-mark--live {
+  will-change: transform;
 }
 
 /* Gentle infinite petal dance ??? corner + chat marks */

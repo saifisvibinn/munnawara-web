@@ -261,7 +261,13 @@ export function createIntroTimeline(elements: IntroElements) {
       { opacity: 0, y: -12, duration: 0.24, ease: motion.ease.soft },
       0,
     )
-    .call(elements.playVideo, [], motion.video.introStart)
+    // Play once the stage's blur/clip reveal is done: re-blurring live video frames
+    // is what made the handoff stutter on integrated GPUs.
+    .call(
+      elements.playVideo,
+      [],
+      motion.videoFrame.revealStart + motion.videoFrame.revealDuration,
+    )
     .to(
       elements.videoLayer,
       {

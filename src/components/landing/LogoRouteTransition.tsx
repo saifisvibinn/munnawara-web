@@ -1,10 +1,16 @@
 "use client"
 
 import { usePathname, useRouter } from "@/i18n/navigation"
+import { useRouter as useNextRouter } from "next/navigation"
 import { useEffect, useLayoutEffect, useRef } from "react"
 import { routing } from "@/i18n/routing"
 
 export const LOGO_INTRO_SEEN_KEY = "dmtc-logo-intro-seen"
+
+/** Must match the `.route-veil` fade-in in dam-landing.css. */
+const VEIL_IN_MS = 180
+/** Longest the veil waits for the new page's images before revealing anyway. */
+const ARRIVAL_CAP_MS = 600
 
 let skipNext = false
 let skipTimer: number | null = null
@@ -88,6 +94,8 @@ export const PageRouteTransition = () => {
   const pointerNavigationRef = useRef(false)
   const safetyTimerRef = useRef<number | null>(null)
   const arrivalTimerRef = useRef<number | null>(null)
+  const navTimerRef = useRef<number | null>(null)
+  const nextRouter = useNextRouter()
 
   pathnameRef.current = pathname
 
@@ -95,8 +103,10 @@ export const PageRouteTransition = () => {
     const clearTimers = () => {
       if (safetyTimerRef.current !== null) window.clearTimeout(safetyTimerRef.current)
       if (arrivalTimerRef.current !== null) window.clearTimeout(arrivalTimerRef.current)
+      if (navTimerRef.current !== null) window.clearTimeout(navTimerRef.current)
       safetyTimerRef.current = null
       arrivalTimerRef.current = null
+      navTimerRef.current = null
     }
     const clearTransition = () => {
       clearTimers()
@@ -107,9 +117,19 @@ export const PageRouteTransition = () => {
       if (!isInternalNavClick(event, pathnameRef.current)) return
       markSeen()
       if (event.detail === 0 || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return
+      const anchor = (event.target as Element).closest("a[href]") as HTMLAnchorElement
+      const url = new URL(anchor.href, window.location.href)
+      // Fade the veil in first, then navigate: the new page's heavy first render
+      // happens under it instead of as a visible hitch.
+      event.preventDefault()
       pointerNavigationRef.current = true
       document.body.classList.remove("is-page-arriving")
       document.body.classList.add("is-page-transitioning", "is-page-leaving")
+      if (navTimerRef.current !== null) window.clearTimeout(navTimerRef.current)
+      navTimerRef.current = window.setTimeout(() => {
+        navTimerRef.current = null
+        nextRouter.push(url.pathname + url.search + url.hash)
+      }, VEIL_IN_MS)
       if (safetyTimerRef.current !== null) window.clearTimeout(safetyTimerRef.current)
       safetyTimerRef.current = window.setTimeout(clearTransition, 5000)
     }
@@ -120,7 +140,7 @@ export const PageRouteTransition = () => {
       clearTimers()
       document.body.classList.remove("is-page-transitioning", "is-page-leaving", "is-page-arriving")
     }
-  }, [])
+  }, [nextRouter])
 
   useLayoutEffect(() => {
     if (firstPathRef.current) {
@@ -143,14 +163,44 @@ export const PageRouteTransition = () => {
     if (safetyTimerRef.current !== null) window.clearTimeout(safetyTimerRef.current)
     safetyTimerRef.current = null
 
+    // Keep the veil up until the new page has painted and its on-screen images
+    // are decoded (capped), then fade it out over a settled page.
     const body = document.body
-    body.classList.remove("is-page-transitioning", "is-page-leaving")
+    body.classList.remove("is-page-leaving")
     body.classList.add("is-page-arriving")
-    arrivalTimerRef.current = window.setTimeout(() => {
-      body.classList.remove("is-page-arriving")
-      arrivalTimerRef.current = null
-    }, 240)
+    let cancelled = false
+    const reveal = () => {
+      if (cancelled) return
+      body.classList.remove("is-page-transitioning", "is-page-arriving")
+    }
+    requestAnimationFrame(() =>
+      requestAnimationFrame(() => {
+        const images = [...document.querySelectorAll<HTMLImageElement>("main img")].filter((img) => {
+          const box = img.getBoundingClientRect()
+          return box.bottom > 0 && box.top < window.innerHeight
+        })
+        const decoded = Promise.allSettled(images.map((img) => img.decode()))
+        // Idle = the new page's own setup (scroll scenes, effects) has run too.
+        const idle = new Promise((resolve) =>
+          typeof window.requestIdleCallback === "function"
+            ? window.requestIdleCallback(resolve, { timeout: ARRIVAL_CAP_MS })
+            : resolve(null),
+        )
+        const cap = new Promise((resolve) => {
+          arrivalTimerRef.current = window.setTimeout(resolve, ARRIVAL_CAP_MS)
+        })
+        void Promise.race([Promise.all([decoded, idle]), cap]).then(reveal)
+      }),
+    )
+    return () => {
+      cancelled = true
+    }
   }, [pathname])
 
-  return <div className="route-transition-progress" aria-hidden="true" />
+  return (
+    <>
+      <div className="route-veil" aria-hidden="true" />
+      <div className="route-transition-progress" aria-hidden="true" />
+    </>
+  )
 }
