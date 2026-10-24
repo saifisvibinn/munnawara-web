@@ -348,6 +348,29 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
     return () => disconnectCustomerSocket()
   }, [])
 
+  // Safety net: if the live connection is down while staff handle the chat,
+  // check for their replies every 10 seconds so the visitor still sees them.
+  useEffect(() => {
+    if (!conversationId || !escalated) return
+    const timer = window.setInterval(() => {
+      if (connectCustomerSocket().connected) return
+      const phone = loadIdentity()?.phone
+      if (!phone) return
+      fetchChatHistory(conversationId, phone)
+        .then((history) => {
+          if (!history.resumable) return
+          if (history.status === "claimed") setClaimed(true)
+          for (const m of history.messages) {
+            if (m.sender === "customer" || seenIdsRef.current.has(m.id)) continue
+            appendMessage({ id: m.id, role: mapSocketSender(m.sender), text: m.text })
+            bumpUnread()
+          }
+        })
+        .catch(() => {})
+    }, 10_000)
+    return () => window.clearInterval(timer)
+  }, [conversationId, escalated, appendMessage, bumpUnread])
+
   /**
    * Open the chat: restore the stored conversation if the server still has it open,
    * otherwise start a fresh session with the welcome menu.
