@@ -36,21 +36,14 @@ export const photoManifest: readonly PhotoEntry[] = [
     "category": "exterior",
     "src": "/photos/exterior/0417.webp",
     "width": 1920,
-    "height": 1280
+    "height": 1281
   },
   {
     "id": "exterior-0418",
     "category": "exterior",
     "src": "/photos/exterior/0418.webp",
     "width": 1920,
-    "height": 1280
-  },
-  {
-    "id": "exterior-0422",
-    "category": "exterior",
-    "src": "/photos/exterior/0422.webp",
-    "width": 1920,
-    "height": 1280
+    "height": 1281
   },
   {
     "id": "exterior-0427",
@@ -162,42 +155,42 @@ export const photoManifest: readonly PhotoEntry[] = [
     "category": "workshop",
     "src": "/photos/workshop/0331.webp",
     "width": 1920,
-    "height": 1280
+    "height": 1279
   },
   {
     "id": "workshop-0334",
     "category": "workshop",
     "src": "/photos/workshop/0334.webp",
     "width": 1920,
-    "height": 1280
+    "height": 1279
   },
   {
     "id": "workshop-0358",
     "category": "workshop",
     "src": "/photos/workshop/0358.webp",
     "width": 1920,
-    "height": 1280
+    "height": 1072
   },
   {
     "id": "workshop-0362",
     "category": "workshop",
     "src": "/photos/workshop/0362.webp",
     "width": 1920,
-    "height": 1280
+    "height": 1281
   },
   {
     "id": "company-0098",
     "category": "company",
     "src": "/photos/company/0098.webp",
     "width": 1920,
-    "height": 1280
+    "height": 1279
   },
   {
     "id": "company-0108",
     "category": "company",
     "src": "/photos/company/0108.webp",
     "width": 1920,
-    "height": 1280
+    "height": 1279
   },
   {
     "id": "company-0113",

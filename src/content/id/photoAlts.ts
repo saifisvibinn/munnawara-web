@@ -4,7 +4,6 @@ export const photoAlts: Record<string, string> = {
   "exterior-7724": "Bus-bus diparkir berjajar di bawah kanopi teduh",
   "exterior-7725": "Tampak depan bus-bus yang diparkir di bawah kanopi",
   "exterior-0417": "Pemandangan udara bus yang diparkir di halaman",
-  "exterior-0422": "Halaman luas dengan barisan parkir bus beratap",
   "exterior-0427": "Barisan parkir bus beratap",
   "exterior-0441": "Deretan bus kuning Durrat Almunawwara Co.",
   "exterior-0418": "Pemandangan udara bus yang diparkir di samping jalur rumput",

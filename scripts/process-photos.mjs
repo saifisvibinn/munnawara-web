@@ -22,7 +22,7 @@ if (!source) {
 /** category folder -> photo ids shipped on the site. No photos with people. */
 const SELECTION = {
   exterior: [
-    "IMG_7727", "IMG_7724", "IMG_7725", "IMG_0417", "IMG_0418", "IMG_0422",
+    "IMG_7727", "IMG_7724", "IMG_7725", "IMG_0417", "IMG_0418",
     "IMG_0427", "IMG_0441",
   ],
   interior: [

@@ -4,7 +4,6 @@ export const photoAlts: Record<string, string> = {
   "exterior-7724": "Coaches parked in a row under a shaded canopy",
   "exterior-7725": "Front view of coaches parked under a canopy",
   "exterior-0417": "Aerial view of a coach parked in a yard",
-  "exterior-0422": "A large yard with rows of covered bus parking",
   "exterior-0427": "Rows of covered bus parking",
   "exterior-0441": "A line of yellow Durrat Almunawwara Co. buses",
   "exterior-0418": "Aerial view of a coach parked next to a grass strip",
