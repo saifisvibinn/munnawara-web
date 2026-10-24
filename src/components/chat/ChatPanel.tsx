@@ -165,8 +165,9 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
     [onUnreadChange],
   )
 
+  // Unseen = panel closed, or open in a browser tab the visitor has left.
   const bumpUnread = useCallback(() => {
-    if (openRef.current) return
+    if (openRef.current && !document.hidden) return
     const next = unreadRef.current + 1
     setUnread(next)
     playChatNotifySound()
@@ -175,6 +176,41 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
   useEffect(() => {
     if (open) setUnread(0)
   }, [open, setUnread])
+
+  // Coming back to the tab with the chat open counts as reading it.
+  useEffect(() => {
+    const onVisible = () => {
+      if (!document.hidden && openRef.current) setUnread(0)
+    }
+    document.addEventListener("visibilitychange", onVisible)
+    return () => document.removeEventListener("visibilitychange", onVisible)
+  }, [setUnread])
+
+  // Phones: the panel fills the screen. Track the visual viewport so the on-screen
+  // keyboard shrinks the panel instead of covering the composer, and stop the page behind from scrolling.
+  const [viewport, setViewport] = useState<{ top: number; height: number } | null>(null)
+  useEffect(() => {
+    const phone = window.matchMedia("(max-width: 520px)")
+    if (!open || !phone.matches) return
+    const vv = window.visualViewport
+    const sync = () => {
+      // Rotated or resized past phone width: back to the floating panel.
+      if (!phone.matches) return setViewport(null)
+      if (vv) setViewport({ top: vv.offsetTop, height: vv.height })
+    }
+    sync()
+    vv?.addEventListener("resize", sync)
+    vv?.addEventListener("scroll", sync)
+    const root = document.documentElement
+    const prevOverflow = root.style.overflow
+    root.style.overflow = "hidden"
+    return () => {
+      vv?.removeEventListener("resize", sync)
+      vv?.removeEventListener("scroll", sync)
+      root.style.overflow = prevOverflow
+      setViewport(null)
+    }
+  }, [open])
 
   // Escape closes the panel.
   useEffect(() => {
@@ -376,7 +412,8 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
    * otherwise start a fresh session with the welcome menu.
    */
   const beginSession = useCallback(
-    async (visitor: VisitorIdentity) => {
+    /** `resumeOnly`: reconnect a stored live chat in the background, never start a new one. */
+    async (visitor: VisitorIdentity, resumeOnly = false) => {
       setBusy(true)
       setBootError(null)
       try {
@@ -410,8 +447,10 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
           } catch {
             /* stale or unreachable history — fall through to a fresh chat */
           }
+          if (resumeOnly) return
           saveConversationId(null)
         }
+        if (resumeOnly) return
 
         const session = await startChatSession(visitor, lang)
         const welcome = await fetchGuidedWelcome(lang)
@@ -435,6 +474,7 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
         setBooted(true)
         setUnread(0)
       } catch (err) {
+        if (resumeOnly) return
         setBootError(visitorError(err, t("error")))
         throw err
       } finally {
@@ -465,14 +505,16 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
   restartRef.current = () => void restartChat()
 
   useEffect(() => {
-    if (!open || !identified || booted) return
+    if (!identified || booted) return
+    // Closed: only reconnect a returning visitor's chat, so staff replies still ring.
+    if (!open && !loadConversationId()) return
     const visitor = loadIdentity()
     if (!visitor) {
       setIdentified(false)
       return
     }
     let cancelled = false
-    void beginSession(visitor).catch(() => {
+    void beginSession(visitor, !open).catch(() => {
       if (!cancelled) setIdentified(false)
     })
     return () => {
@@ -699,6 +741,11 @@ export const ChatPanel = ({ open, onClose, onUnreadChange }: ChatPanelProps) => 
       aria-modal="true"
       aria-labelledby={titleId}
       dir={locale === "ar" ? "rtl" : "ltr"}
+      style={
+        viewport
+          ? { top: viewport.top, height: viewport.height, bottom: "auto" }
+          : undefined
+      }
       initial={reducedMotion ? { opacity: 0 } : { opacity: 0, y: 18, scale: 0.98 }}
       animate={reducedMotion ? { opacity: 1 } : { opacity: 1, y: 0, scale: 1 }}
       exit={reducedMotion ? { opacity: 0 } : { opacity: 0, y: 14, scale: 0.98 }}

@@ -24,4 +24,4 @@ export {
   disconnectCustomerSocket,
   joinConversation,
 } from "./socket"
-export { playChatNotifySound } from "./chatNotify"
+export { playChatNotifySound, unlockChatSound } from "./chatNotify"

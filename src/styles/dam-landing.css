@@ -1288,6 +1288,9 @@ a[data-whatsapp-fab] {
 
 /* —— Site chat panel (backend-connected) —— */
 .chat-panel {
+  /* Own tokens: the app's shadcn --muted (near white) otherwise wins on inner pages. */
+  --paper: #201d1a;
+  --muted: rgba(32, 29, 26, 0.62);
   position: fixed;
   inset-inline-end: max(14px, 1.6vw);
   /* Rests a full gap above the buttons so it never covers Durra AI's face. */
@@ -1749,18 +1752,56 @@ a[data-whatsapp-fab] {
   }
 }
 
+/* Phones: full-screen sheet above the nav and buttons. ChatPanel pins top/height to the
+   visual viewport so the keyboard shrinks it instead of covering the composer. */
 @media (max-width: 520px) {
-  .chat-panel {
-    inset-inline: 10px;
-    bottom: calc(max(12px, 1.6vh) + var(--fab-size, 3.5rem) + 1rem);
-    width: auto;
-    height: min(68svh, 520px);
+  /* The FAB row is its own stacking context: lift it over the nav while the sheet is up. */
+  [data-floating-actions]:has(.chat-panel),
+  .landing-fab-row:has(.chat-panel) {
+    z-index: 125;
   }
 
+  /* GSAP leaves an (identity) transform on the landing FAB, which would pin the fixed
+     sheet inside the button instead of the screen. */
+  .landing-ai-chat-btn:has(.chat-panel) {
+    z-index: 2;
+    transform: none !important;
+    will-change: auto;
+  }
+
+  .chat-panel,
   [data-floating-actions] .chat-panel {
-    bottom: calc(
-      max(1.25rem, env(safe-area-inset-bottom)) + var(--fab-size, 3.5rem) + 1rem
-    );
+    inset: 0;
+    /* The build turns the base inset-inline-end into :lang(ar) left/right rules that outrank this one. */
+    inset-inline: 0 !important;
+    z-index: 120;
+    width: auto;
+    height: 100dvh;
+    border: 0;
+    border-radius: 0;
+    padding-top: env(safe-area-inset-top);
+    background: rgb(250, 247, 241);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  /* body: outranks the later translucent dark-mode panel rules. */
+  html.dark body .chat-panel {
+    background: rgb(28, 22, 20);
+  }
+
+  .chat-panel__header {
+    padding: 10px 12px;
+  }
+
+  .chat-panel__composer {
+    padding-bottom: max(12px, env(safe-area-inset-bottom));
+  }
+
+  .chat-panel__close {
+    width: 40px;
+    height: 40px;
+    font-size: 1.5rem;
   }
 }
 

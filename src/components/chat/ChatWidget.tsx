@@ -8,6 +8,8 @@ import {
   type DurriHintKey,
 } from "@/components/chat/durriMoods"
 import { cn } from "@/lib/cn"
+import { loadConversationId, loadIdentity } from "@/lib/chat/chat"
+import { unlockChatSound } from "@/lib/chat/chatNotify"
 import { useReducedMotion } from "@/hooks/useReducedMotion"
 import { usePathname } from "@/i18n/navigation"
 import { useTranslations } from "next-intl"
@@ -95,6 +97,30 @@ export const ChatWidget = ({
   useEffect(() => {
     if (revealed) setFabRevealed(true)
   }, [revealed])
+
+  // Returning visitor with a chat under way: connect in the background so replies
+  // from the team raise the badge and chime even before the panel is opened.
+  // The landing page hides the layout's copy with display:none; only the visible widget connects.
+  useEffect(() => {
+    const visible = (buttonNodeRef.current?.getClientRects().length ?? 0) > 0
+    if (visible && loadConversationId() && loadIdentity()) setPanelMounted(true)
+  }, [pathname])
+
+  // iOS only plays sound after a tap has unlocked audio: take the visitor's first one.
+  useEffect(() => {
+    document.addEventListener("pointerdown", unlockChatSound, { once: true })
+    document.addEventListener("keydown", unlockChatSound, { once: true })
+    return () => {
+      document.removeEventListener("pointerdown", unlockChatSound)
+      document.removeEventListener("keydown", unlockChatSound)
+    }
+  }, [])
+
+  // Unread count in the tab title, so a visitor on another tab sees a reply came in.
+  useEffect(() => {
+    const base = document.title.replace(/^\(\d+\+?\) /, "")
+    document.title = unread > 0 ? `(${unread > 9 ? "9+" : unread}) ${base}` : base
+  }, [unread, pathname])
 
   useEffect(() => {
     if (fabRevealed) return
@@ -204,6 +230,7 @@ export const ChatWidget = ({
 
   const handleClick = (event: ReactMouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
+    unlockChatSound()
     setPanelMounted(true)
     setOpen((value) => {
       const next = !value
