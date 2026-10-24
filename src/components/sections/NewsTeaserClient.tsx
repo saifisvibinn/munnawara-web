@@ -142,10 +142,18 @@ export const NewsTeaserClient = ({
                       sizes="(max-width: 768px) 100vw, 33vw"
                     />
                   ) : (
+                    // No cover uploaded: a branded tile instead of an empty box.
                     <span
                       aria-hidden
-                      className="absolute inset-0 bg-gradient-to-br from-ink/10 via-surface to-orange/15"
-                    />
+                      className="absolute inset-0 grid place-items-center bg-gradient-to-br from-ink/10 via-surface to-orange/15"
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element -- decorative SVG mark */}
+                      <img
+                        src="/logo-mark.svg"
+                        alt=""
+                        className="w-[38%] opacity-80 transition duration-500 group-hover:scale-[1.05]"
+                      />
+                    </span>
                   )}
                 </Link>
 

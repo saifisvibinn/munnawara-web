@@ -199,6 +199,7 @@ export const PageRouteTransition = () => {
 
   return (
     <>
+      <div className="header-scrim" aria-hidden="true" />
       <div className="route-veil" aria-hidden="true" />
       <div className="route-transition-progress" aria-hidden="true" />
     </>

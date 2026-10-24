@@ -1082,13 +1082,27 @@ body.is-loading .ai-chat-fab__tip {
   transform-origin: center;
 }
 
-.ai-chat-btn:hover,
+/* Hover styles only for real pointers: a tap that changes styles on :hover makes
+   iOS swallow the click (first tap = hover, second tap = open). */
 .ai-chat-btn:focus-visible {
   transform: translateY(-3px) scale(1.04);
   outline: none;
 }
 
-.ai-chat-btn:hover .ai-chat-btn__face,
+@media (hover: hover) and (pointer: fine) {
+  .ai-chat-btn:hover {
+    transform: translateY(-3px) scale(1.04);
+  }
+
+  .ai-chat-btn:hover .ai-chat-btn__face {
+    box-shadow:
+      0 0 0 2px #fff,
+      0 0 0 3px rgba(45, 212, 230, 0.55),
+      0 14px 28px rgba(32, 29, 26, 0.28),
+      0 0 36px rgba(247, 91, 18, 0.4);
+  }
+}
+
 .ai-chat-btn:focus-visible .ai-chat-btn__face {
   box-shadow:
     0 0 0 2px #fff,
@@ -1958,6 +1972,56 @@ a[data-whatsapp-fab] {
 html[dir="rtl"] .route-transition-progress { transform-origin: right center; }
 body.is-page-leaving .route-transition-progress { transform: scaleX(0.78); opacity: 1; }
 body.is-page-arriving .route-transition-progress { transform: scaleX(1); opacity: 0; transition-duration: 120ms, 120ms; }
+
+.header-scrim {
+  display: none;
+}
+
+/* Mobile: the header controls float with no bar, so content scrolled under them read
+   as overlapping text. A page-coloured fade sits behind them once the page scrolls
+   (scroll-driven, no JS); browsers without scroll timelines show it always. */
+@media (max-width: 980px) {
+  .header-scrim {
+    display: block;
+    position: fixed;
+    inset-inline: 0;
+    top: 0;
+    z-index: 38;
+    height: calc(84px + env(safe-area-inset-top));
+    pointer-events: none;
+    background: linear-gradient(
+      to bottom,
+      var(--brand-surface-elevated) 78%,
+      color-mix(in srgb, var(--brand-surface-elevated) 0%, transparent)
+    );
+  }
+  html:has(.dam-landing) .header-scrim {
+    background: linear-gradient(
+      to bottom,
+      var(--brand-surface) 78%,
+      color-mix(in srgb, var(--brand-surface) 0%, transparent)
+    );
+  }
+  /* Dark full-bleed film scenes and the home intro keep a clean top edge. */
+  html:has([data-about-film]) .header-scrim,
+  html:has([data-quote-page]) .header-scrim,
+  body.is-loading .header-scrim {
+    display: none;
+  }
+  @supports (animation-timeline: scroll()) {
+    .header-scrim {
+      animation: header-scrim-in linear both;
+      animation-timeline: scroll(root);
+      animation-range: 0 80px;
+    }
+  }
+}
+
+@keyframes header-scrim-in {
+  from {
+    opacity: 0;
+  }
+}
 
 /* Page-change veil: covers the content (not the nav, logo or FABs) while the next page
    renders, then fades out over the settled page. Opacity only, so it stays smooth even

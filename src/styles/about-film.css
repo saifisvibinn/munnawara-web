@@ -538,37 +538,62 @@ html[lang="ar"] .about-film__company span {
   background: var(--color-black);
 }
 
+/* Soft vignette so the play button reads on any frame. */
+.about-film-player__preview::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at center,
+    color-mix(in oklab, var(--color-black) 28%, transparent),
+    transparent 62%
+  );
+  pointer-events: none;
+}
+
+/* Play glyph always points right (it is universal, not a reading direction), so it is
+   centred with physical insets instead of logical ones. */
 .about-film-player__preview-play {
   position: absolute;
-  inset-inline-start: 50%;
-  top: 50%;
+  inset: 0;
   z-index: 1;
-  width: 3.5rem;
-  height: 3.5rem;
-  translate: -50% -50%;
+  width: 4.75rem;
+  height: 4.75rem;
+  margin: auto;
   border-radius: 9999px;
-  background: color-mix(in oklab, var(--color-white) 18%, transparent);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  background: color-mix(in oklab, var(--color-white) 94%, transparent);
+  box-shadow:
+    0 14px 34px -12px color-mix(in oklab, var(--color-black) 60%, transparent),
+    0 0 0 8px color-mix(in oklab, var(--color-white) 22%, transparent);
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
   pointer-events: none;
 }
 
 .about-film-player__preview-play::after {
   content: "";
   position: absolute;
-  inset-inline-start: 54%;
+  left: 54%;
   top: 50%;
-  width: 0;
-  height: 0;
   translate: -50% -50%;
-  border-block: 0.55rem solid transparent;
-  border-inline-start: 0.9rem solid var(--color-white);
+  border-block: 0.7rem solid transparent;
+  border-left: 1.15rem solid var(--color-orange);
 }
 
-html[dir="rtl"] .about-film-player__preview-play::after {
-  inset-inline-start: 46%;
-  border-inline-start: 0;
-  border-inline-end: 0.9rem solid var(--color-white);
+@media (hover: hover) and (pointer: fine) {
+  .about-film-player__preview:hover .about-film-player__preview-play {
+    transform: scale(1.08);
+  }
+}
+
+.about-film-player__preview:active .about-film-player__preview-play {
+  transform: scale(0.96);
+}
+
+@media (max-width: 640px) {
+  .about-film-player__preview-play {
+    width: 4rem;
+    height: 4rem;
+  }
 }
 
 .about-film-player__preview:focus-visible {
@@ -578,7 +603,41 @@ html[dir="rtl"] .about-film-player__preview-play::after {
 
 @media (prefers-reduced-motion: reduce) {
   .about-film-player__preview-play {
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
+    transition: none;
+  }
+}
+
+/* Vendored player overrides (framer-video-player.js keeps its own CSS):
+   - LTR: its seek math is left-to-right; in RTL the bar filled from the right and the
+     time read "1:23 / 0:02".
+   - No backdrop blur on the buttons: re-blurring live video every frame is GPU-heavy.
+   - Bigger touch targets on phones. */
+.about-film-player--framer .framer-vp {
+  direction: ltr;
+}
+
+.about-film-player--framer .framer-vp .ctrl-btn {
+  background: rgba(0, 0, 0, 0.42);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+@media (pointer: coarse) {
+  .about-film-player--framer .framer-vp .ctrl-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+  }
+
+  .about-film-player--framer .framer-vp .ctrl-row {
+    gap: 8px;
+  }
+
+  .about-film-player--framer .framer-vp .time-display {
+    font-size: 13px;
+  }
+
+  .about-film-player--framer .framer-vp .controls {
+    padding: 48px 12px 12px;
   }
 }

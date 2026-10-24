@@ -42,7 +42,7 @@ const contentSecurityPolicy = [
   // Same-origin /chat proxy, live socket, OSRM routing, OSM tiles, social widgets, Vercel live preview.
   `connect-src 'self' ${chatOrigin} ${chatWsOrigin} https://router.project-osrm.org https://tile.openstreetmap.org https://syndication.twitter.com https://cdn.syndication.twimg.com https://*.twitter.com https://*.x.com https://www.facebook.com https://connect.facebook.net https://vercel.live wss://vercel.live`,
   // Contact map + Facebook page plugin (+ Twitter iframe fallbacks).
-  "frame-src 'self' https://www.google.com https://maps.google.com https://www.facebook.com https://platform.twitter.com https://syndication.twitter.com https://vercel.live",
+  "frame-src 'self' https://www.google.com https://maps.google.com https://www.facebook.com https://web.facebook.com https://platform.twitter.com https://syndication.twitter.com https://vercel.live",
   "worker-src 'self' blob:",
   "media-src 'self' blob: https://*.r2.dev" + mediaImgSrc,
   "object-src 'none'",

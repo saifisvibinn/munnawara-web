@@ -6,13 +6,20 @@ import { useReducedMotion } from "@/hooks/useReducedMotion"
 import { project } from "@/lib/appleMotion"
 import { cn } from "@/lib/cn"
 import { ChevronLeft, ChevronRight, X } from "lucide-react"
-import { motion, useMotionValue } from "motion/react"
+import { AnimatePresence, motion, useMotionValue, type Variants } from "motion/react"
 import { useTranslations } from "next-intl"
 import { SiteImage as Image } from "@/components/ui/SiteImage"
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react"
 
 const SWIPE_DISTANCE = 72
 const SWIPE_VELOCITY = 550
+
+/** custom = visual direction: 1 = new photo enters from the right, -1 = from the left. */
+const slideVariants: Variants = {
+  enter: (dir: number) => ({ x: dir * 64, opacity: 0 }),
+  center: { x: 0, opacity: 1 },
+  exit: (dir: number) => ({ x: dir * -64, opacity: 0 }),
+}
 
 type TabId = "all" | "fleet" | "interior" | "workshop" | "facilities"
 
@@ -42,6 +49,8 @@ export const PhotoGallery = ({ photos }: PhotoGalleryProps) => {
   const [tab, setTab] = useState<TabId>("all")
   const [openIndex, setOpenIndex] = useState<number | null>(null)
   const dialogRef = useRef<HTMLDialogElement>(null)
+  const stripRef = useRef<HTMLDivElement>(null)
+  const [slide, setSlide] = useState(1)
   const openedFromQuery = useRef(false)
   const panelId = useId()
   const x = useMotionValue(0)
@@ -69,9 +78,23 @@ export const PhotoGallery = ({ photos }: PhotoGalleryProps) => {
     [visible.length],
   )
 
+  /** Step by delta and slide in the matching direction (mirrored in RTL). */
+  const go = useCallback(
+    (delta: number) => {
+      if (delta === 0) return
+      const rtl = document.documentElement.dir === "rtl"
+      setSlide((delta > 0) !== rtl ? 1 : -1)
+      step(delta)
+    },
+    [step],
+  )
+
   useEffect(() => {
     x.set(0)
-  }, [openIndex, x])
+    stripRef.current
+      ?.querySelector("[data-active]")
+      ?.scrollIntoView({ block: "nearest", inline: "center", behavior: reduced ? "auto" : "smooth" })
+  }, [openIndex, x, reduced])
 
   // Deep-link: /gallery?p=workshop-0331 opens that photo in the lightbox.
   // Read from the URL after mount (not useSearchParams), so the grid itself renders on the server.
@@ -101,7 +124,7 @@ export const PhotoGallery = ({ photos }: PhotoGalleryProps) => {
       Math.abs(info.velocity.x) > SWIPE_VELOCITY
     if (!flicked) return
     const forward = rtl ? projected > 0 : projected < 0
-    step(forward ? 1 : -1)
+    go(forward ? 1 : -1)
   }
 
   useEffect(() => {
@@ -127,8 +150,8 @@ export const PhotoGallery = ({ photos }: PhotoGalleryProps) => {
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLDialogElement>) => {
     const rtl = document.documentElement.dir === "rtl"
-    if (event.key === "ArrowRight") step(rtl ? -1 : 1)
-    else if (event.key === "ArrowLeft") step(rtl ? 1 : -1)
+    if (event.key === "ArrowRight") go(rtl ? -1 : 1)
+    else if (event.key === "ArrowLeft") go(rtl ? 1 : -1)
     else if (event.key === "Escape") close()
   }
 
@@ -210,45 +233,126 @@ export const PhotoGallery = ({ photos }: PhotoGalleryProps) => {
         onClick={(event) => {
           if (event.target === dialogRef.current) close()
         }}
-        className="fixed inset-0 m-0 h-dvh max-h-none w-dvw max-w-none border-0 bg-transparent p-0 text-white backdrop:bg-ink/92 backdrop:backdrop-blur-sm"
+        className="fixed inset-0 m-0 h-dvh max-h-none w-dvw max-w-none border-0 bg-transparent p-0 text-white backdrop:bg-black/95"
       >
         {current ? (
-          <div className="relative flex size-full flex-col items-center justify-center px-3 pb-16 pt-16 sm:px-8">
+          <div className="relative flex size-full flex-col items-center justify-center px-3 pb-28 pt-16 sm:px-8 sm:pb-32">
             <motion.div
-              key={current.id}
               drag={reduced || count < 2 ? false : "x"}
               dragConstraints={{ left: 0, right: 0 }}
               dragElastic={0.22}
               dragTransition={{ bounceStiffness: 420, bounceDamping: 32 }}
               style={{ x }}
               onDragEnd={handleDragEnd}
-              className="flex max-h-full max-w-full cursor-grab touch-pan-y select-none items-center justify-center active:cursor-grabbing"
+              className="grid max-h-full max-w-full cursor-grab touch-pan-y select-none place-items-center active:cursor-grabbing"
             >
-              <Image
-                src={current.src}
-                alt={current.alt}
-                width={current.width}
-                height={current.height}
-                sizes="100vw"
-                priority
-                draggable={false}
-                className="pointer-events-none max-h-[min(82dvh,920px)] w-auto max-w-[min(96vw,1400px)] object-contain shadow-[0_24px_80px_-28px_rgba(0,0,0,0.65)]"
-              />
+              <AnimatePresence initial={false} custom={slide} mode="popLayout">
+                <motion.div
+                  key={current.id}
+                  custom={slide}
+                  variants={reduced ? undefined : slideVariants}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
+                  transition={{ duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
+                  className="[grid-area:1/1]"
+                >
+                  <Image
+                    src={current.src}
+                    alt={current.alt}
+                    width={current.width}
+                    height={current.height}
+                    sizes="100vw"
+                    priority
+                    draggable={false}
+                    className="pointer-events-none max-h-[min(72dvh,880px)] w-auto max-w-[min(96vw,1400px)] rounded-xl object-contain shadow-[0_24px_80px_-28px_rgba(0,0,0,0.65)]"
+                  />
+                </motion.div>
+              </AnimatePresence>
             </motion.div>
 
-            <div className="absolute inset-x-0 bottom-0 flex flex-col items-center gap-1 px-4 pb-5 pt-10 bg-gradient-to-t from-black/70 to-transparent">
-              <p className="max-w-2xl text-center text-sm text-white/90 sm:text-base">
-                {current.alt}
-              </p>
+            {/* Warm the neighbours so a swipe never waits on the network. */}
+            {count > 1
+              ? [visible[(openIndex! + 1) % count], visible[(openIndex! - 1 + count) % count]].map(
+                  (photo) =>
+                    photo ? (
+                      <Image
+                        key={`warm-${photo.id}`}
+                        src={photo.src}
+                        alt=""
+                        aria-hidden
+                        width={photo.width}
+                        height={photo.height}
+                        sizes="100vw"
+                        loading="eager"
+                        className="pointer-events-none absolute size-px opacity-0"
+                      />
+                    ) : null,
+                )
+              : null}
+
+            {/* Mobile: tap the side thirds to step (arrow buttons are desktop-only). */}
+            {count > 1 ? (
+              <>
+                <button
+                  type="button"
+                  tabIndex={-1}
+                  aria-hidden
+                  onClick={() => go(-1)}
+                  className="absolute inset-y-16 start-0 w-1/4 sm:hidden"
+                />
+                <button
+                  type="button"
+                  tabIndex={-1}
+                  aria-hidden
+                  onClick={() => go(1)}
+                  className="absolute inset-y-16 end-0 w-1/4 sm:hidden"
+                />
+              </>
+            ) : null}
+
+            <div className="absolute inset-x-0 bottom-0 flex flex-col items-center gap-3 bg-gradient-to-t from-black/70 to-transparent px-3 pt-8 pb-[max(1rem,env(safe-area-inset-bottom))]">
               <p
                 aria-live="polite"
-                className="font-label text-xs tracking-wide text-white/55 uppercase"
+                className="font-label text-xs tracking-wide text-white/60 uppercase"
               >
                 {t("counter", {
                   current: (openIndex ?? 0) + 1,
                   total: visible.length,
                 })}
               </p>
+              {count > 1 ? (
+                <div
+                  ref={stripRef}
+                  className="flex max-w-full gap-2 overflow-x-auto px-1 pb-1 outline-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+                >
+                  {visible.map((photo, index) => (
+                    <button
+                      key={photo.id}
+                      type="button"
+                      data-active={index === openIndex ? "" : undefined}
+                      aria-label={`${t("open")} ${index + 1}`}
+                      aria-current={index === openIndex ? "true" : undefined}
+                      onClick={() => go(index - (openIndex ?? 0))}
+                      className={cn(
+                        "relative size-12 shrink-0 cursor-pointer overflow-hidden rounded-lg ring-2 transition-[opacity,box-shadow] duration-200 focus-visible:outline-none sm:size-14",
+                        index === openIndex
+                          ? "opacity-100 ring-orange"
+                          : "opacity-45 ring-transparent hover:opacity-80",
+                      )}
+                    >
+                      <Image
+                        src={photo.src}
+                        alt=""
+                        fill
+                        sizes="56px"
+                        quality={75}
+                        className="object-cover"
+                      />
+                    </button>
+                  ))}
+                </div>
+              ) : null}
             </div>
 
             <button
@@ -264,7 +368,7 @@ export const PhotoGallery = ({ photos }: PhotoGalleryProps) => {
               <>
                 <button
                   type="button"
-                  onClick={() => step(-1)}
+                  onClick={() => go(-1)}
                   aria-label={t("prev")}
                   className="absolute start-2 top-1/2 hidden -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-white/10 text-white transition-[transform,background-color] duration-100 ease-out hover:bg-white/20 active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange motion-reduce:transition-none motion-reduce:active:scale-100 sm:inline-flex sm:size-12"
                 >
@@ -272,7 +376,7 @@ export const PhotoGallery = ({ photos }: PhotoGalleryProps) => {
                 </button>
                 <button
                   type="button"
-                  onClick={() => step(1)}
+                  onClick={() => go(1)}
                   aria-label={t("next")}
                   className="absolute end-2 top-1/2 hidden -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-white/10 text-white transition-[transform,background-color] duration-100 ease-out hover:bg-white/20 active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange motion-reduce:transition-none motion-reduce:active:scale-100 sm:inline-flex sm:size-12"
                 >

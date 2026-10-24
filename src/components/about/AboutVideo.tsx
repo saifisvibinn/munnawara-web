@@ -95,7 +95,8 @@ export const AboutVideo = ({ headline, label }: AboutVideoProps) => {
             cornerRadius={20}
             progressColor="var(--color-orange)"
             autoplay={false}
-            autoMute
+            // Played only by a tap/click (a user gesture), so it may start with sound.
+            autoMute={false}
             loop={false}
             hideUI={false}
           />

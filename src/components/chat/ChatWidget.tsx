@@ -146,6 +146,8 @@ export const ChatWidget = ({
     }
 
     const onOver = (event: Event) => {
+      // Mouse only: changing the tip on a touch "hover" makes iOS need two taps on links.
+      if ((event as PointerEvent).pointerType !== "mouse") return
       const hint = resolveContextHint(event.target)
       if (!hint) return
       clearContextTimer()
@@ -225,10 +227,13 @@ export const ChatWidget = ({
         tip={tip}
         mood={mood}
         onClick={handleClick}
-        onPointerEnter={() => {
-          setHoveringFab(true)
+        onPointerEnter={(event) => {
           void loadChatPanel()
+          // Touch must not change the tip on "hover": iOS then treats the first tap
+          // as a hover and swallows the click, so the chat needed two taps to open.
+          if (event.pointerType === "mouse") setHoveringFab(true)
         }}
+        onTouchStart={() => void loadChatPanel()}
         onFocus={() => void loadChatPanel()}
         onPointerLeave={() => setHoveringFab(false)}
       />

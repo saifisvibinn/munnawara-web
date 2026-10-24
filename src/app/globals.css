@@ -633,6 +633,16 @@ body:has([data-quote-page]) main#main {
 body:has([data-quote-page]) [data-floating-actions] [data-whatsapp-fab] {
   display: none;
 }
+/* Mobile: the wizard's Continue/Back bar sits where the chat FAB lives — lift the
+   FAB above it and drop the tip so the main action is never covered. */
+@media (max-width: 1023px) {
+  body:has([data-quote-page]) [data-floating-actions] {
+    bottom: calc(5.75rem + env(safe-area-inset-bottom));
+  }
+  body:has([data-quote-page]) .ai-chat-fab__tip {
+    display: none;
+  }
+}
 /* Partners logo cloud — infinite horizontal marquee (duplicated track = -50%) */
 @keyframes logo-marquee {
   from {
