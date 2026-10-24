@@ -29,7 +29,8 @@ export const Footer = async () => {
             />
             <div>
               <p className="font-label text-sm font-semibold text-ink">
-                {config.brandNameEn}
+                {/* Isolated LTR so the trailing "." stays at the end in Arabic pages. */}
+                <bdi dir="ltr">{config.brandNameEn}</bdi>
               </p>
               {locale === "ar" ? (
                 <p className="text-sm text-ink/70">{tMeta("siteName")}</p>
