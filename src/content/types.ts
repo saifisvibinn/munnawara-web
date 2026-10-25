@@ -246,6 +246,10 @@ export type SiteConfig = {
   phones: readonly string[]
   whatsappNumber: string
   address: Record<AppLocale, string>
+  /** Google Maps place link for “Visit our office”. */
+  mapsUrl: string
+  /** Query used by the contact-page map embed (same place as `mapsUrl`). */
+  mapsQuery: string
   workingHours: Record<AppLocale, string>
   social: {
     handle: string

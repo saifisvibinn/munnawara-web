@@ -32,13 +32,6 @@ export const photoManifest: readonly PhotoEntry[] = [
     "height": 1080
   },
   {
-    "id": "exterior-0417",
-    "category": "exterior",
-    "src": "/photos/exterior/0417.webp",
-    "width": 1920,
-    "height": 1281
-  },
-  {
     "id": "exterior-0418",
     "category": "exterior",
     "src": "/photos/exterior/0418.webp",
@@ -177,13 +170,6 @@ export const photoManifest: readonly PhotoEntry[] = [
     "src": "/photos/workshop/0362.webp",
     "width": 1920,
     "height": 1281
-  },
-  {
-    "id": "company-0098",
-    "category": "company",
-    "src": "/photos/company/0098.webp",
-    "width": 1920,
-    "height": 1279
   },
   {
     "id": "company-0108",

@@ -27,6 +27,12 @@ export const contact: ContactContent = {
       note: "رقم مخصص للشكاوى والمقترحات",
       phone: "+966555967366",
     },
+    {
+      id: "international",
+      label: "النقل الدولي",
+      note: "الرحلات والمعاملات عبر الحدود",
+      phone: "+966549058538",
+    },
   ],
   emailNote: "للطلبات التفصيلية والمستندات",
   officeTitle: "زوروا مكتبنا",

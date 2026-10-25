@@ -27,6 +27,12 @@ export const contact: ContactContent = {
       note: "Saluran khusus untuk keluhan dan saran",
       phone: "+966555967366",
     },
+    {
+      id: "international",
+      label: "Transportasi internasional",
+      note: "Perjalanan lintas batas dan koordinasi",
+      phone: "+966549058538",
+    },
   ],
   emailNote: "Untuk permintaan detail dan dokumen",
   officeTitle: "Kunjungi kantor kami",

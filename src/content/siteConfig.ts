@@ -10,11 +10,13 @@ export const siteConfig: SiteConfig = {
   // Ops WhatsApp channel (not listed on the profile page)
   whatsappNumber: "966556616713",
   address: {
-    ar: "مكة المكرمة، المملكة العربية السعودية",
-    en: "Makkah, Kingdom of Saudi Arabia",
-    fr: "La Mecque, Royaume d’Arabie saoudite",
-    id: "Makkah, Kerajaan Arab Saudi",
+    ar: "شركة درة المنورة للنقل، طريق الغير مسلمين، مكة 21455",
+    en: "Durrat Almunawwara Transport Co., Al-Ghayr Muslimeen Rd, Makkah 21455",
+    fr: "Durrat Almunawwara Transport Co., route Al-Ghayr Muslimeen, La Mecque 21455",
+    id: "Durrat Almunawwara Transport Co., Jl. Al-Ghayr Muslimeen, Makkah 21455",
   },
+  mapsUrl: "https://maps.app.goo.gl/tPqdnpCzXAydMXex9",
+  mapsQuery: "شركة درة المنورة للنقل، طريق الغير مسلمين، مكة 21455",
   workingHours: {
     ar: "على مدار الساعة، ٧ أيام في الأسبوع",
     en: "24/7",

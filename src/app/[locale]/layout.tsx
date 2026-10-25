@@ -70,8 +70,13 @@ export const generateMetadata = async ({
   }
 }
 
-export const generateStaticParams = () =>
-  routing.locales.map((locale) => ({ locale }))
+// Skip in dev: Next.js races concurrent prerender-manifest.json writes for
+// [locale] generateStaticParams and can throw "Unexpected end of JSON input".
+// https://github.com/vercel/next.js/issues/96664
+export const generateStaticParams = () => {
+  if (process.env.NODE_ENV === "development") return []
+  return routing.locales.map((locale) => ({ locale }))
+}
 
 // Light is the default; only an explicit saved "dark" choice switches theme.
 const THEME_BOOT_SCRIPT = `(function(){try{var d=document.documentElement;var t=localStorage.getItem("theme")==="dark"?"dark":"light";d.classList.add(t);d.style.colorScheme=t}catch(e){}})();`

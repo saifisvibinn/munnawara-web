@@ -27,6 +27,12 @@ export const contact: ContactContent = {
       note: "Ligne dédiée aux réclamations et suggestions",
       phone: "+966555967366",
     },
+    {
+      id: "international",
+      label: "Transport international",
+      note: "Trajets transfrontaliers et coordination",
+      phone: "+966549058538",
+    },
   ],
   emailNote: "Pour les demandes détaillées et les documents",
   officeTitle: "Visitez notre bureau",

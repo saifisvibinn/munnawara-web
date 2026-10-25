@@ -46,7 +46,7 @@ const ContactPage = async ({ params }: PageProps) => {
   const address = config.address[currentLocale]
   const hours = config.workingHours[currentLocale]
   const whatsappHref = `https://wa.me/${config.whatsappNumber}?text=${encodeURIComponent(t("whatsappPrefill"))}`
-  const mapsHref = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(config.address.en)}`
+  const mapsHref = config.mapsUrl
 
   const channels: Channel[] = [
     ...content.phoneLines.map((line) => ({
@@ -178,7 +178,7 @@ const ContactPage = async ({ params }: PageProps) => {
           </div>
           <div className="overflow-hidden rounded-lg border border-border bg-surface-elevated">
             <MapEmbed
-              query={config.address.en}
+              query={config.mapsQuery}
               title={content.mapTitle}
               className="h-[22rem] lg:h-full lg:min-h-[28rem]"
             />

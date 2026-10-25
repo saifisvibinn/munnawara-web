@@ -22,7 +22,7 @@ if (!source) {
 /** category folder -> photo ids shipped on the site. No photos with people. */
 const SELECTION = {
   exterior: [
-    "IMG_7727", "IMG_7724", "IMG_7725", "IMG_0417", "IMG_0418",
+    "IMG_7727", "IMG_7724", "IMG_7725", "IMG_0418",
     "IMG_0427", "IMG_0441",
   ],
   interior: [
@@ -30,7 +30,7 @@ const SELECTION = {
     "IMG_0225", "IMG_0269", "IMG_0274", "IMG_0283", "IMG_0301", "IMG_0394", "IMG_0396",
   ],
   workshop: ["IMG_0331", "IMG_0334", "IMG_0358", "IMG_0362"],
-  company: ["IMG_0098", "IMG_0108", "IMG_0113", "IMG_0444"],
+  company: ["IMG_0108", "IMG_0113", "IMG_0444"],
 }
 
 const outRoot = path.resolve("public/photos")
