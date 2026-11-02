@@ -2,7 +2,8 @@ import { AnimatedSection } from "@/components/motion/AnimatedSection"
 import { TextLink } from "@/components/ui/TextLink"
 import type { AppLocale } from "@/content/types"
 import { getTranslations, setRequestLocale } from "next-intl/server"
-import { languageAlternates, localizedPath } from "@/lib/seo"
+import { ogLocaleTag } from "@/i18n/routing"
+import { languageAlternates, localizedPath, shareImageMeta } from "@/lib/seo"
 import { formatContentDate, loadNewsPost } from "@/lib/siteContent"
 import { SiteImage as Image } from "@/components/ui/SiteImage"
 import { isVideo, skipOptimizer } from "@/lib/media"
@@ -21,11 +22,30 @@ export const generateMetadata = async ({
   if (!post) return { title: "404", robots: { index: false } }
 
   const path = `/news/${slug}`
+  const tMeta = await getTranslations({ locale, namespace: "meta" })
+  const image =
+    post.coverImage && !isVideo(post.coverImage)
+      ? [{ url: post.coverImage, alt: post.title }]
+      : [shareImageMeta(post.title)]
+
   return {
     title: post.title,
     description: post.excerpt || undefined,
-    openGraph:
-      post.coverImage && !isVideo(post.coverImage) ? { images: [post.coverImage] } : undefined,
+    openGraph: {
+      type: "website",
+      siteName: tMeta("siteName"),
+      locale: ogLocaleTag(locale),
+      title: post.title,
+      description: post.excerpt || undefined,
+      url: localizedPath(locale, path),
+      images: image,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: post.title,
+      description: post.excerpt || undefined,
+      images: image,
+    },
     alternates: {
       canonical: localizedPath(locale, path),
       languages: languageAlternates(path),

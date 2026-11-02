@@ -10,9 +10,10 @@ import { Testimonials } from "@/components/sections/Testimonials"
 import { DamLanding } from "@/components/landing/DamLanding"
 import { getHome } from "@/content"
 import type { AppLocale } from "@/content/types"
-import { languageAlternates, localizedPath } from "@/lib/seo"
+import { ogLocaleTag } from "@/i18n/routing"
+import { languageAlternates, localizedPath, shareImageMeta } from "@/lib/seo"
 import type { Metadata } from "next"
-import { setRequestLocale } from "next-intl/server"
+import { getTranslations, setRequestLocale } from "next-intl/server"
 
 type PageProps = {
   params: Promise<{ locale: string }>
@@ -22,10 +23,33 @@ export const generateMetadata = async ({
   params,
 }: PageProps): Promise<Metadata> => {
   const { locale } = await params
+  const [tMeta, tSeo] = await Promise.all([
+    getTranslations({ locale, namespace: "meta" }),
+    getTranslations({ locale, namespace: "seo" }),
+  ])
+  const siteName = tMeta("siteName")
+  const description = tSeo("site")
+  const image = shareImageMeta(siteName)
+
   return {
     alternates: {
       canonical: localizedPath(locale, "/"),
       languages: languageAlternates("/"),
+    },
+    openGraph: {
+      type: "website",
+      siteName,
+      title: siteName,
+      description,
+      url: localizedPath(locale, "/"),
+      locale: ogLocaleTag(locale),
+      images: [image],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: siteName,
+      description,
+      images: [image],
     },
   }
 }

@@ -1,5 +1,5 @@
 import { getSiteConfig } from "@/content"
-import { routing } from "@/i18n/routing"
+import { ogLocaleTag, routing } from "@/i18n/routing"
 import type { Metadata } from "next"
 import { getTranslations } from "next-intl/server"
 
@@ -46,6 +46,18 @@ export const siteOrigin = () => {
 export const localizedPath = (locale: string, path: string) =>
   `/${locale}${path === "/" ? "" : path}`
 
+/** Brand card used when a link is shared (WhatsApp, iMessage, X, and the rest). */
+export const shareImage = {
+  url: "/og.png",
+  width: 1200,
+  height: 630,
+} as const
+
+export const shareImageMeta = (alt: string) => ({
+  ...shareImage,
+  alt,
+})
+
 /** hreflang map for one page, with `x-default` pointing at the default locale. */
 export const languageAlternates = (path: string) => ({
   ...Object.fromEntries(
@@ -62,13 +74,16 @@ export const buildPageMetadata = async (
   locale: string,
   page: SeoPage,
 ): Promise<Metadata> => {
-  const [tNav, tSeo] = await Promise.all([
+  const [tNav, tSeo, tMeta] = await Promise.all([
     getTranslations({ locale, namespace: "nav" }),
     getTranslations({ locale, namespace: "seo" }),
+    getTranslations({ locale, namespace: "meta" }),
   ])
   const path = seoPaths[page]
   const title = tNav(page)
   const description = tSeo(page)
+  const siteName = tMeta("siteName")
+  const image = shareImageMeta(title)
 
   return {
     title,
@@ -77,6 +92,20 @@ export const buildPageMetadata = async (
       canonical: localizedPath(locale, path),
       languages: languageAlternates(path),
     },
-    openGraph: { title, description, url: localizedPath(locale, path) },
+    openGraph: {
+      type: "website",
+      siteName,
+      locale: ogLocaleTag(locale),
+      title,
+      description,
+      url: localizedPath(locale, path),
+      images: [image],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [image],
+    },
   }
 }

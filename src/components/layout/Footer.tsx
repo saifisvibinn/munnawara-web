@@ -23,8 +23,8 @@ export const Footer = async () => {
             <Image
               src="/logo.png"
               alt=""
-              width={605}
-              height={491}
+              width={640}
+              height={411}
               className="h-9 w-auto object-contain"
             />
             <div>

@@ -1,4 +1,5 @@
 import { getSiteConfig } from "@/content"
+import { siteOrigin } from "@/lib/seo"
 
 /** JSON-LD Organization, built from `siteConfig` so facts live in one place. */
 export const buildOrganizationSchema = () => {
@@ -13,6 +14,8 @@ export const buildOrganizationSchema = () => {
     name: config.brandNameEn,
     alternateName: [config.brandShort, config.brandNameAr],
     url: config.siteUrl,
+    logo: `${siteOrigin()}/icon.png`,
+    image: `${siteOrigin()}/og.png`,
     email: config.email,
     telephone: config.phones[0],
     sameAs: profiles,

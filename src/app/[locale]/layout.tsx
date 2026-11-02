@@ -14,7 +14,7 @@ import type { ReactNode } from "react"
 import { PageRouteTransition } from "@/components/landing/LogoRouteTransition"
 import { getSiteConfig } from "@/content"
 import { buildOrganizationSchema, serializeJsonLd } from "@/lib/schema"
-import { siteOrigin } from "@/lib/seo"
+import { shareImageMeta, siteOrigin } from "@/lib/seo"
 import "../globals.css"
 import "@/styles/dam-landing.css"
 
@@ -47,25 +47,38 @@ export const generateMetadata = async ({
   const description = tSeo("site")
 
   const useEnglishBrandTitle = locale === "ar"
+  const title = useEnglishBrandTitle
+    ? `${brandNameEn} | ${siteName}`
+    : siteName
+  const image = shareImageMeta(siteName)
+
   return {
     metadataBase: new URL(siteOrigin()),
     title: {
-      default: useEnglishBrandTitle
-        ? `${brandNameEn} | ${siteName}`
-        : siteName,
+      default: title,
       template: `%s | ${siteName}`,
     },
     description,
     applicationName: useEnglishBrandTitle ? brandNameEn : siteName,
     icons: {
-      icon: "/icon.png",
-      apple: "/icon.png",
+      icon: [{ url: "/icon.png", type: "image/png", sizes: "512x512" }],
+      apple: [
+        { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+      ],
     },
     openGraph: {
       type: "website",
       siteName,
-      locale: ogLocaleTag(locale),
+      title,
       description,
+      locale: ogLocaleTag(locale),
+      images: [image],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [image],
     },
   }
 }
