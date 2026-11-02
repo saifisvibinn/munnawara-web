@@ -2020,7 +2020,8 @@ body.is-page-arriving .route-transition-progress { transform: scaleX(1); opacity
 
 /* Mobile: the header controls float with no bar, so content scrolled under them read
    as overlapping text. A page-coloured fade sits behind them once the page scrolls
-   (scroll-driven, no JS); browsers without scroll timelines show it always. */
+   (scroll-driven, no JS). Default opacity 0 so first paint / browsers without scroll
+   timelines never flash a white bar. */
 @media (max-width: 980px) {
   .header-scrim {
     display: block;
@@ -2030,23 +2031,17 @@ body.is-page-arriving .route-transition-progress { transform: scaleX(1); opacity
     z-index: 38;
     height: calc(84px + env(safe-area-inset-top));
     pointer-events: none;
+    opacity: 0;
     background: linear-gradient(
       to bottom,
       var(--brand-surface-elevated) 78%,
       color-mix(in srgb, var(--brand-surface-elevated) 0%, transparent)
     );
   }
-  html:has(.dam-landing) .header-scrim {
-    background: linear-gradient(
-      to bottom,
-      var(--brand-surface) 78%,
-      color-mix(in srgb, var(--brand-surface) 0%, transparent)
-    );
-  }
-  /* Dark full-bleed film scenes and the home intro keep a clean top edge. */
+  /* Home hero owns the top edge; about/quote are full-bleed. */
+  html:has(.dam-landing) .header-scrim,
   html:has([data-about-film]) .header-scrim,
-  html:has([data-quote-page]) .header-scrim,
-  body.is-loading .header-scrim {
+  html:has([data-quote-page]) .header-scrim {
     display: none;
   }
   @supports (animation-timeline: scroll()) {
@@ -2061,6 +2056,9 @@ body.is-page-arriving .route-transition-progress { transform: scaleX(1); opacity
 @keyframes header-scrim-in {
   from {
     opacity: 0;
+  }
+  to {
+    opacity: 1;
   }
 }
 
