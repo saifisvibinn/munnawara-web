@@ -4,6 +4,7 @@ import { FleetShowroom } from "@/components/fleet/FleetShowroom"
 import { getFleet, getFleetPage } from "@/content"
 import type { AppLocale } from "@/content/types"
 import { Link } from "@/i18n/navigation"
+import { loadFleet } from "@/lib/siteContent"
 import { buildPageMetadata } from "@/lib/seo"
 import { getTranslations, setRequestLocale } from "next-intl/server"
 
@@ -15,12 +16,18 @@ const FleetPage = async ({ params }: PageProps) => {
   const { locale } = await params
   setRequestLocale(locale)
   const appLocale = locale as AppLocale
-  const fleet = getFleet(appLocale)
+  const fleet = await loadFleet(appLocale)
   const page = getFleetPage(appLocale)
   const tCommon = await getTranslations("common")
-  // The showroom lists the five photographed classes; premium VIP only labels the hero image.
-  const showroomBuses = fleet.filter((bus) => bus.id !== "premium-vip-2026")
-  const nameOf = (id: string) => fleet.find((bus) => bus.id === id)?.name ?? ""
+  // Static premium VIP only labels the hero image; admin data sets showInShowroom explicitly.
+  // A bus with no photos would blank the showroom, so it is left out.
+  const showroomBuses = fleet.filter(
+    (bus) => (bus.showInShowroom ?? bus.id !== "premium-vip-2026") && bus.images.length > 0,
+  )
+  // Hero labels a fixed photo: fall back to the static names if staff removed/renamed a slug.
+  const nameOf = (id: string) =>
+    (fleet.find((bus) => bus.id === id) ?? getFleet(appLocale).find((bus) => bus.id === id))
+      ?.name ?? ""
   // Left-to-right order of the buses in /fleet/preview.webp.
   const busLabels = [nameOf("city-2025"), nameOf("premium-vip-2026"), nameOf("vip-2026")] as const
 

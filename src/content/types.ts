@@ -19,13 +19,8 @@ export type Company = {
   contentReady: boolean
 }
 
-export type FleetCategoryId =
-  | "premium-vip-2026"
-  | "vip-2026"
-  | "coach-2025-2026"
-  | "city-2025"
-  | "labour-2024"
-  | "coaster-2026"
+/** Bus slug — fixed in the static fallback, admin-defined when loaded from the backend. */
+export type FleetCategoryId = string
 
 export type FleetCategory = {
   id: FleetCategoryId
@@ -37,6 +32,10 @@ export type FleetCategory = {
   exteriorImages: readonly string[]
   interiorImages: readonly string[]
   images: readonly string[]
+  /** Listed in the showroom tabs; defaults to true. */
+  showInShowroom?: boolean
+  /** Quote form bus class (e.g. "vip"); the quote link falls back to `id`. */
+  quoteClass?: string
 }
 
 export type FleetPageContent = {

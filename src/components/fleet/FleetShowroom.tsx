@@ -6,6 +6,7 @@ import { cn } from "@/lib/cn"
 import type { FleetCategory } from "@/content/types"
 import { useTranslations } from "next-intl"
 import { SiteImage as Image } from "@/components/ui/SiteImage"
+import { skipOptimizer } from "@/lib/media"
 import "./fleet.css"
 import { useCallback, useEffect, useState } from "react"
 
@@ -144,6 +145,7 @@ export const FleetShowroom = ({ categories }: FleetShowroomProps) => {
             src={current}
             alt={`${bus.name}, ${counter}`}
             fill
+            unoptimized={skipOptimizer(current)}
             priority={index === 0 && shot === 0}
             quality={100}
             sizes="(min-width:1024px) 70vw, 100vw"
@@ -222,6 +224,7 @@ export const FleetShowroom = ({ categories }: FleetShowroomProps) => {
                       src={src}
                       alt=""
                       fill
+                      unoptimized={skipOptimizer(src)}
                       sizes="80px"
                       className="object-cover"
                     />
@@ -246,7 +249,7 @@ export const FleetShowroom = ({ categories }: FleetShowroomProps) => {
               </p>
             </div>
             <Link
-              href={`/quote?bus=${encodeURIComponent(bus.id)}`}
+              href={`/quote?bus=${encodeURIComponent(bus.quoteClass || bus.id)}`}
               className="inline-flex shrink-0 rounded-full bg-orange px-5 py-2.5 text-sm font-semibold text-white transition-[transform,background-color] duration-150 ease-out hover:bg-orange-soft active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange focus-visible:ring-offset-2 focus-visible:ring-offset-black motion-reduce:transition-none motion-reduce:active:scale-100"
             >
               {t("requestThisBus")}
@@ -302,6 +305,7 @@ export const FleetShowroom = ({ categories }: FleetShowroomProps) => {
               src={current}
               alt={`${bus.name}, ${counter}`}
               fill
+              unoptimized={skipOptimizer(current)}
               quality={100}
               sizes="100vw"
               className="rounded-2xl object-contain"
