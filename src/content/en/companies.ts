@@ -17,7 +17,6 @@ export const companies: readonly Company[] = [
       "Hajj mission contracting via the electronic path",
     ],
     logo: "/brand/company-group.png",
-    heroImage: "/fleet/coach-2025-2026/side.webp",
     contentReady: true,
   },
   {
@@ -32,7 +31,6 @@ export const companies: readonly Company[] = [
       "Group program coordination with transport and hospitality",
     ],
     logo: "/brand/company-umrah.png",
-    heroImage: "/fleet/vip-2026/side.webp",
     contentReady: true,
   },
   {
@@ -49,7 +47,6 @@ export const companies: readonly Company[] = [
       "Multi-bus event fleets",
     ],
     logo: "/brand/company-tourism.png",
-    heroImage: "/fleet/vip-2026/front.webp",
     contentReady: true,
   },
   {
@@ -63,7 +60,6 @@ export const companies: readonly Company[] = [
       "Hajj and Umrah program support",
     ],
     logo: "/brand/company-hospitality.png",
-    heroImage: "/fleet/vip-2026/interior-aisle.jpeg",
     contentReady: true,
   },
 ] as const

@@ -14,7 +14,6 @@ export const home: HomeContent = {
   valueTitle: "نقل مصمم للرحلات المقدسة",
   valueIntro:
     "تنسّق مجموعة درة المنورة أسطولاً حديثاً وتشغيلاً دقيقاً وتواصلاً واضحاً ليشعر الحجاج والمؤسسات بالثقة في كل رحلة.",
-  valueImage: "/fleet/vip-2026/side.webp",
   valueBullets: [
     {
       id: "safety",
@@ -76,7 +75,6 @@ export const home: HomeContent = {
   aboutCta: "اقرأ قصتنا",
   aboutSecondaryCta: "تواصل معنا",
   aboutSocialCta: "تابعوا @dmtcSA",
-  aboutImage: "/hero/landing-sky.jpg",
   aboutHeadlineLines: [
     "رحلات آمنة ومريحة.",
     "أسطول منظم. معايير واضحة.",

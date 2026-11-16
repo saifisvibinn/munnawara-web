@@ -89,6 +89,7 @@ export async function loadFleet(locale: AppLocale): Promise<readonly FleetCatego
     if (!id || !name) return []
     const exteriorImages = strList(item.exteriorImages)
     const interiorImages = strList(item.interiorImages)
+    const coverImage = str(item.coverImage) // the backend already falls back to the first exterior photo
     return [
       {
         id,
@@ -96,10 +97,11 @@ export async function loadFleet(locale: AppLocale): Promise<readonly FleetCatego
         seatsLabel: str(item.seatsLabel),
         summary: str(item.summary),
         amenities: strList(item.amenities),
-        coverImage: str(item.coverImage) || exteriorImages[0] || "",
-        exteriorImages,
+        coverImage,
+        // A bus with only a cover photo must still show (the showroom skips buses with no images).
+        exteriorImages: exteriorImages.length ? exteriorImages : [coverImage].filter(Boolean),
         interiorImages,
-        images: [...exteriorImages, ...interiorImages],
+        images: [...new Set([coverImage, ...exteriorImages, ...interiorImages].filter(Boolean))],
         showInShowroom: item.showInShowroom !== false,
         quoteClass: str(item.quoteClass),
       },

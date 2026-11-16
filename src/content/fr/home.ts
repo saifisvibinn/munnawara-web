@@ -14,7 +14,6 @@ export const home: HomeContent = {
   valueTitle: "Un transport pensé pour les trajets sacrés",
   valueIntro:
     "Durrat Almunawwara Co. coordonne des autocars modernes, des opérations soignées et une communication claire pour que pèlerins et institutions voyagent en toute confiance.",
-  valueImage: "/fleet/vip-2026/side.webp",
   valueBullets: [
     {
       id: "safety",
@@ -76,7 +75,6 @@ export const home: HomeContent = {
   aboutCta: "Lire notre histoire",
   aboutSecondaryCta: "Nous contacter",
   aboutSocialCta: "Suivre @dmtcSA",
-  aboutImage: "/hero/landing-sky.jpg",
   aboutHeadlineLines: [
     "Des trajets sûrs et confortables.",
     "Flotte organisée. Standards clairs.",

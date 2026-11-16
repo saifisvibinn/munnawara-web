@@ -15,7 +15,6 @@ export type Company = {
   services: readonly string[]
   /** Subsidiary brand lockup on dark background */
   logo: string
-  heroImage: string
   contentReady: boolean
 }
 
@@ -177,7 +176,6 @@ export type HomeContent = {
   landingHero: LandingHeroContent
   valueTitle: string
   valueIntro: string
-  valueImage: string
   valueBullets: readonly HomeValueBullet[]
   passbyEyebrow: string
   passbyTitle: string
@@ -188,7 +186,6 @@ export type HomeContent = {
   howSteps: readonly HomeHowStep[]
   aboutEyebrow: string
   aboutCta: string
-  aboutImage: string
   aboutHeadlineLines: readonly [string, string]
   aboutSecondaryCta: string
   aboutSocialCta: string

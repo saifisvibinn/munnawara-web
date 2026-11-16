@@ -14,7 +14,6 @@ export const home: HomeContent = {
   valueTitle: "Transport built for sacred journeys",
   valueIntro:
     "Durrat Almunawwara Co. coordinates modern coaches, careful operations, and clear communication so pilgrims and institutions travel with confidence.",
-  valueImage: "/fleet/vip-2026/side.webp",
   valueBullets: [
     {
       id: "safety",
@@ -76,7 +75,6 @@ export const home: HomeContent = {
   aboutCta: "Read our story",
   aboutSecondaryCta: "Contact us",
   aboutSocialCta: "Follow @dmtcSA",
-  aboutImage: "/hero/landing-sky.jpg",
   aboutHeadlineLines: [
     "Safe, comfortable journeys.",
     "Organized fleet. Clear standards.",

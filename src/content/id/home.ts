@@ -14,7 +14,6 @@ export const home: HomeContent = {
   valueTitle: "Transportasi untuk perjalanan suci",
   valueIntro:
     "Durrat Almunawwara Co. mengoordinasikan bus modern, operasional yang cermat, dan komunikasi yang jelas agar jemaah dan lembaga bepergian dengan percaya diri.",
-  valueImage: "/fleet/vip-2026/side.webp",
   valueBullets: [
     {
       id: "safety",
@@ -76,7 +75,6 @@ export const home: HomeContent = {
   aboutCta: "Baca kisah kami",
   aboutSecondaryCta: "Hubungi kami",
   aboutSocialCta: "Ikuti @dmtcSA",
-  aboutImage: "/hero/landing-sky.jpg",
   aboutHeadlineLines: [
     "Perjalanan aman dan nyaman.",
     "Armada terorganisir. Standar jelas.",

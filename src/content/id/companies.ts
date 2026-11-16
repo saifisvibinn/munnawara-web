@@ -17,7 +17,6 @@ export const companies: readonly Company[] = [
       "Kontrak misi haji melalui jalur elektronik",
     ],
     logo: "/brand/company-group.png",
-    heroImage: "/fleet/coach-2025-2026/side.webp",
     contentReady: true,
   },
   {
@@ -32,7 +31,6 @@ export const companies: readonly Company[] = [
       "Koordinasi program kelompok dengan transportasi dan perhotelan",
     ],
     logo: "/brand/company-umrah.png",
-    heroImage: "/fleet/vip-2026/side.webp",
     contentReady: true,
   },
   {
@@ -49,7 +47,6 @@ export const companies: readonly Company[] = [
       "Armada multi-bus untuk acara",
     ],
     logo: "/brand/company-tourism.png",
-    heroImage: "/fleet/vip-2026/front.webp",
     contentReady: true,
   },
   {
@@ -63,7 +60,6 @@ export const companies: readonly Company[] = [
       "Dukungan program haji dan umrah",
     ],
     logo: "/brand/company-hospitality.png",
-    heroImage: "/fleet/vip-2026/interior-aisle.jpeg",
     contentReady: true,
   },
 ] as const

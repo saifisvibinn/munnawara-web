@@ -17,7 +17,6 @@ export const companies: readonly Company[] = [
       "Contrats de missions Hajj via le parcours électronique",
     ],
     logo: "/brand/company-group.png",
-    heroImage: "/fleet/coach-2025-2026/side.webp",
     contentReady: true,
   },
   {
@@ -32,7 +31,6 @@ export const companies: readonly Company[] = [
       "Coordination des programmes de groupe avec transport et hospitalité",
     ],
     logo: "/brand/company-umrah.png",
-    heroImage: "/fleet/vip-2026/side.webp",
     contentReady: true,
   },
   {
@@ -49,7 +47,6 @@ export const companies: readonly Company[] = [
       "Flottes multi-autocars pour événements",
     ],
     logo: "/brand/company-tourism.png",
-    heroImage: "/fleet/vip-2026/front.webp",
     contentReady: true,
   },
   {
@@ -63,7 +60,6 @@ export const companies: readonly Company[] = [
       "Soutien aux programmes Hajj et Omra",
     ],
     logo: "/brand/company-hospitality.png",
-    heroImage: "/fleet/vip-2026/interior-aisle.jpeg",
     contentReady: true,
   },
 ] as const

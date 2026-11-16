@@ -10,11 +10,11 @@ const chatOrigin = (() => {
     process.env.NEXT_PUBLIC_CHAT_API_URL ||
     process.env.NEXT_PUBLIC_CHAT_SOCKET_URL ||
     process.env.CHAT_API_URL ||
-    "https://104-248-198-154.sslip.io"
+    "https://142-93-135-187.sslip.io"
   try {
     return new URL(raw).origin
   } catch {
-    return "https://104-248-198-154.sslip.io"
+    return "https://142-93-135-187.sslip.io"
   }
 })()
 

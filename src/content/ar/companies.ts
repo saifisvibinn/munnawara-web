@@ -17,7 +17,6 @@ export const companies: readonly Company[] = [
       "تعاقد بعثات الحج عبر المسار الإلكتروني",
     ],
     logo: "/brand/company-group.png",
-    heroImage: "/fleet/coach-2025-2026/side.webp",
     contentReady: true,
   },
   {
@@ -32,7 +31,6 @@ export const companies: readonly Company[] = [
       "تنسيق برامج المجموعات مع النقل والضيافة",
     ],
     logo: "/brand/company-umrah.png",
-    heroImage: "/fleet/vip-2026/side.webp",
     contentReady: true,
   },
   {
@@ -49,7 +47,6 @@ export const companies: readonly Company[] = [
       "أسطول متعدد الحافلات للفعاليات",
     ],
     logo: "/brand/company-tourism.png",
-    heroImage: "/fleet/vip-2026/front.webp",
     contentReady: true,
   },
   {
@@ -63,7 +60,6 @@ export const companies: readonly Company[] = [
       "دعم برامج الحج والعمرة",
     ],
     logo: "/brand/company-hospitality.png",
-    heroImage: "/fleet/vip-2026/interior-aisle.jpeg",
     contentReady: true,
   },
 ] as const
